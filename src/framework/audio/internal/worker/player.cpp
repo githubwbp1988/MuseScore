@@ -90,6 +90,7 @@ TrackSequenceId Player::sequenceId() const
 
 void Player::play()
 {
+    LOGALEX();
     ONLY_AUDIO_MAIN_THREAD;
 
     Async::call(this, [this]() {

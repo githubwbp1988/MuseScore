@@ -643,6 +643,8 @@ void PlaybackController::play()
         seek(startSecs);
     }
 
+    LOGALEX();
+
     currentPlayer()->play();
 }
 

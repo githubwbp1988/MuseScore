@@ -44,6 +44,7 @@ SequencePlayer::SequencePlayer(IGetTracks* getTracks, IClockPtr clock, const mod
 
 void SequencePlayer::play()
 {
+    LOGALEX();
     ONLY_AUDIO_WORKER_THREAD;
 
     audioEngine()->setMode(RenderMode::RealTimeMode);
