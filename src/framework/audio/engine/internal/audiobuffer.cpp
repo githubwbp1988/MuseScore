@@ -184,6 +184,7 @@ void AudioBuffer::forward()
             }
         }
 
+        // LOGALEX() << "m_source->process(m_data.data() + nextWriteIdx, renderStep)";
         m_source->process(m_data.data() + nextWriteIdx, renderStep);
 
         nextWriteIdx += samplesToRender;
