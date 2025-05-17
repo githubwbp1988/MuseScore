@@ -46,6 +46,10 @@ public:
     KeyState keyState(piano_key_t key) const;
     muse::async::Notification keyStatesChanged() const;
 
+    KeyState playbackKeyState(piano_key_t key) const;
+    bool playbackKeyStatesEmpty() const;
+    muse::async::Notification playbackKeyStatesChanged() const;
+
     bool isFromMidi() const;
 
 private:
@@ -53,6 +57,7 @@ private:
 
     void onNotationChanged();
     void updateNotesKeys(const std::vector<const Note*>& receivedNotes);
+    void updatePlaybackNotesKeys(const std::vector<const Note*>& receivedNotes);
 
     void sendNoteOn(piano_key_t key);
     void sendNoteOff(piano_key_t key);
@@ -62,8 +67,13 @@ private:
     std::unordered_set<piano_key_t> m_keys;
     std::unordered_set<piano_key_t> m_otherNotesInChord;
 
+    std::unordered_set<piano_key_t> m_righthand_keys;
+    std::unordered_set<piano_key_t> m_lefthand_keys;
+
     bool m_isFromMidi = false;
 
     muse::async::Notification m_keyStatesChanged;
+
+    muse::async::Notification m_playbackKeyStatesChanged;
 };
 }
