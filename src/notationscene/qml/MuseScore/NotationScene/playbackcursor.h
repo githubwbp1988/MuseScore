@@ -53,11 +53,9 @@ public:
     const muse::RectF& rect() const;
 
     // alex::
-    std::vector<EngravingItem*>& hit_elements();
     int hit_measure_no();
     Measure *hit_measure();
 
-    void setHitElements(std::vector<EngravingItem*>& el);
     void setHitMeasureNo(int m_no);
     void setHitMeasure(Measure *m);
 
@@ -78,8 +76,10 @@ private:
     INotationPtr m_notation;
 
     // alex::
-    std::vector<EngravingItem*> m_hit_el;
     int m_hit_measure_no = -1;
     Measure *m_hit_measure = nullptr;
+
+    std::set<ClefType> clefTypes;
+    std::set<mu::engraving::Key> keySigKeys;
 };
 }
