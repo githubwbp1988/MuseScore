@@ -65,9 +65,7 @@ public:
     muse::async::Notification arpeggioTickChanged() const;
 
     muse::async::Notification clefKeySigsKeysChanged() const;
-
     std::set<uint> clefKeySigsKeys() const;
-    
     void clearClefKeySigsKeys();
 
 private:
