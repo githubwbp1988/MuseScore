@@ -214,7 +214,15 @@ public:
     {
         
     }
+    virtual void addTrillNote1(mu::engraving::Note*, int, int, int) 
+    {
+        
+    }
     virtual int trillNoteTicks() const 
+    {
+        return 0;
+    }
+    virtual int trillNoteTicks1() const 
     {
         return 0;
     }
@@ -222,7 +230,15 @@ public:
     {
         return 0;
     }
+    virtual int trillNoteDurationticks1() const 
+    {
+        return 0;
+    }
     virtual int trillNoteTremolotype() const
+    {
+        return 0;
+    }
+    virtual int trillNoteTremolotype1() const
     {
         return 0;
     }
@@ -230,7 +246,15 @@ public:
     {
         return 0;
     }
+    virtual int trillCurrticks1() const 
+    {
+        return 0;
+    }
     virtual void trillNoteUpdate() 
+    {
+        
+    }
+    virtual void trillNoteUpdate1() 
     {
         
     }
@@ -238,7 +262,15 @@ public:
     {
         return nullptr;
     }
+    virtual mu::engraving::Note *trillNote1() const 
+    {
+        return nullptr;
+    }
     virtual bool trillTick(int) 
+    {
+        return false;
+    }
+    virtual bool trillTick1(int) 
     {
         return false;
     }
@@ -246,7 +278,15 @@ public:
     {
         return muse::async::Notification();
     }
+    virtual muse::async::Notification trillNoteChanged1() 
+    {
+        return muse::async::Notification();
+    }
     virtual muse::async::Notification trillTickChanged() 
+    {
+        return muse::async::Notification();
+    }
+    virtual muse::async::Notification trillTickChanged1() 
     {
         return muse::async::Notification();
     }
