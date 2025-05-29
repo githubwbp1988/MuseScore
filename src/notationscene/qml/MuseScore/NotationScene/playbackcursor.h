@@ -30,6 +30,7 @@
 #include "midi/miditypes.h"
 
 #include "notation/inotation.h"
+#include <future>
 
 class QColor;
 
@@ -69,6 +70,8 @@ private:
     QColor color() const;
     muse::RectF resolveCursorRectByTick(muse::midi::tick_t tick) const;
     muse::RectF resolveCursorRectByTick(muse::midi::tick_t tick, bool isPlaying = true);
+    void processOttava(mu::engraving::Score* score);
+    void processOttavaAsync(mu::engraving::Score* score);
 
     bool m_visible = false;
     muse::RectF m_rect;
@@ -83,6 +86,10 @@ private:
     std::map<Note*, int> tremolo_type_map;
     std::map<Note*, bool> tremolo_half_map;
     Note *curr_trill_note1 = nullptr;
+    std::map<const Note*, int> ottava_map;
+
+    std::future<void> m_ottavaProcessFuture;
+    std::atomic<bool> m_isOttavaProcessed{ false };
 
     std::set<ClefType> clefTypes;
     std::unordered_set<ClefType> curr_clefTypes;

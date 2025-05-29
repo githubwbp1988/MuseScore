@@ -96,15 +96,19 @@ public:
     {
         return {};
     }
-    virtual void addPlaybackNote(mu::engraving::Note*) 
+    virtual void addPlaybackNote(mu::engraving::Note*, int) 
     {
 
     }
-    virtual void addGlissandoNote(mu::engraving::Note*, int, int) 
+    virtual int noteOttavaType(const mu::engraving::Note*) 
+    {
+        return 0;
+    }
+    virtual void addGlissandoNote(mu::engraving::Note*, int, int, int) 
     {
 
     }
-    virtual void addGlissandoEndNote(mu::engraving::Note*) 
+    virtual void addGlissandoEndNote(mu::engraving::Note*, int) 
     {
 
     }
@@ -161,7 +165,7 @@ public:
     {
 
     }
-    virtual void addArpeggioNote(mu::engraving::Note*, int, int) 
+    virtual void addArpeggioNote(mu::engraving::Note*, int, int, int) 
     {
 
     }
@@ -169,7 +173,7 @@ public:
     {
         
     }
-    virtual void addArpeggioNote(mu::engraving::Note *) 
+    virtual void addArpeggioNote(mu::engraving::Note*, int) 
     {
 
     }
@@ -210,11 +214,11 @@ public:
         return muse::async::Notification();
     }
 
-    virtual void addTrillNote(mu::engraving::Note*, int, int, int) 
+    virtual void addTrillNote(mu::engraving::Note*, int, int, int, int) 
     {
         
     }
-    virtual void addTrillNote1(mu::engraving::Note*, int, int, int) 
+    virtual void addTrillNote1(mu::engraving::Note*, int, int, int, int) 
     {
         
     }
