@@ -1210,9 +1210,10 @@ muse::async::Notification NotationInteraction::arpeggioTickChanged()
     return m_arpeggioTickChanged;
 }
 
-void NotationInteraction::addTrillNote(mu::engraving::Note* note, int ticks, int duration_ticks, int tremolo_type, int ottavaType) 
+void NotationInteraction::addTrillNote(mu::engraving::Note* note, int ticks, int duration_ticks, int tremolo_type, int ottavaType, bool hasTie) 
 {
     trill_note = note;
+    till_note_hastie = hasTie;
     trill_ticks = ticks;
     trill_duration_ticks = duration_ticks;
     trill_tremolo_type = tremolo_type;
@@ -1220,9 +1221,10 @@ void NotationInteraction::addTrillNote(mu::engraving::Note* note, int ticks, int
         m_ottava_map[note] = ottavaType;
     }
 }
-void NotationInteraction::addTrillNote1(mu::engraving::Note* note, int ticks, int duration_ticks, int tremolo_type, int ottavaType) 
+void NotationInteraction::addTrillNote1(mu::engraving::Note* note, int ticks, int duration_ticks, int tremolo_type, int ottavaType, bool hasTie) 
 {
     trill_note1 = note;
+    till_note1_hastie = hasTie;
     trill_ticks1 = ticks;
     trill_duration_ticks1 = duration_ticks;
     trill_tremolo_type1 = tremolo_type;
@@ -1237,6 +1239,14 @@ int NotationInteraction::trillNoteTicks() const
 int NotationInteraction::trillNoteTicks1() const 
 {
     return trill_ticks1;
+}
+bool NotationInteraction::trillNoteHasTie() const 
+{
+    return till_note_hastie;
+}
+bool NotationInteraction::trillNote1HasTie() const 
+{
+    return till_note1_hastie;
 }
 int NotationInteraction::trillNoteDurationticks() const 
 {
@@ -1283,7 +1293,11 @@ bool NotationInteraction::trillTick(int ticks)
     if (trill_duration_ticks == 0) {
         return false;
     }
-    if (ticks < trill_ticks || ticks > trill_ticks + trill_duration_ticks) 
+    int _trill_duration_ticks = trill_duration_ticks;
+    if (till_note_hastie) {
+        _trill_duration_ticks = trill_duration_ticks * 2;
+    }
+    if (ticks < trill_ticks || ticks > trill_ticks + _trill_duration_ticks) 
     {
         trill_curr_ticks = 0;
         trill_ticks = 0;
@@ -1302,7 +1316,11 @@ bool NotationInteraction::trillTick1(int ticks)
     if (trill_duration_ticks1 == 0) {
         return false;
     }
-    if (ticks < trill_ticks1 || ticks > trill_ticks1 + trill_duration_ticks1) 
+    int _trill_duration_ticks = trill_duration_ticks1;
+    if (till_note_hastie) {
+        _trill_duration_ticks = trill_duration_ticks1 * 2;
+    }
+    if (ticks < trill_ticks1 || ticks > trill_ticks1 + _trill_duration_ticks) 
     {
         trill_curr_ticks1 = 0;
         trill_ticks1 = 0;
