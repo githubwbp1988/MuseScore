@@ -148,34 +148,14 @@ public:
     {
         return muse::async::Notification();
     }
-
-    virtual bool arpeggioNoteTicksExist(muse::PointF) const 
-    {
-        return false;
-    }
-    virtual bool arpeggioPointEqual(muse::PointF) 
-    {
-        return false;
-    }
-    virtual void addArpeggioPoint(muse::PointF) 
-    {
-
-    }
-    virtual void arpeggioPointClear() 
-    {
-
-    }
-    virtual void addArpeggioNote(mu::engraving::Note*, int, int, int) 
+    
+    virtual void addArpeggioNotes(std::vector<mu::engraving::Note*>, int, int, int) 
     {
 
     }
     virtual void updateArpeggioDuration(int) 
     {
         
-    }
-    virtual void addArpeggioNote(mu::engraving::Note*, int) 
-    {
-
     }
     virtual int arpeggioNoteTicks() const 
     {
@@ -294,6 +274,19 @@ public:
     {
         return muse::async::Notification();
     }
+
+    virtual bool islastMeasure() const 
+    {
+        return false;
+    }
+    virtual void lastMeasure(bool) 
+    {
+        
+    }
+    virtual muse::async::Notification lastMeasureChanged() 
+    {
+        return muse::async::Notification();
+    }
     
     virtual void notifyClefKeySigsKeysChanged() 
     {
@@ -303,15 +296,12 @@ public:
     {
         return muse::async::Notification();
     }
-    virtual void clearClefKeySigsKeys() 
-    {
-        
-    }
+    
     virtual std::set<uint> clefKeySigsKeys() const 
     {
         return {};
     }
-    virtual void addClefKeySigsKeys(uint) 
+    virtual void addClefKeySigsKeysSet(std::set<uint>) 
     {
 
     }
