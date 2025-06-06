@@ -30,6 +30,7 @@
 #include "src/engraving/dom/ottava.h"
 #include "src/engraving/dom/spanner.h"
 #include "src/engraving/dom/rest.h"
+#include "src/engraving/dom/mmrest.h"
 #include "src/engraving/dom/notedot.h"
 #include "src/engraving/dom/accidental.h"
 #include "src/engraving/dom/stem.h"
@@ -1400,6 +1401,9 @@ muse::RectF PlaybackCursor::resolveCursorRectByTick(muse::midi::tick_t _tick, bo
                                 }
                             }
                         }
+                        if (item->type() == mu::engraving::ElementType::ARPEGGIO) {
+                            item->setColor(muse::draw::Color::BLACK);
+                        }
                     }
                 } else {
                     engravingItem->setColor(muse::draw::Color::RED);
@@ -1738,6 +1742,10 @@ muse::RectF PlaybackCursor::resolveCursorRectByTick(muse::midi::tick_t _tick, bo
                                 }
                             }
                         } 
+
+                        if (item->type() == mu::engraving::ElementType::ARPEGGIO) {
+                            item->setColor(muse::draw::Color::RED);
+                        }
                     }
 
                     if (s->tick().ticks() != curr_seg_ticks) {
@@ -1836,6 +1844,9 @@ muse::RectF PlaybackCursor::resolveCursorRectByTick(muse::midi::tick_t _tick, bo
                                 }
                             }
                         }
+                        if (item->type() == mu::engraving::ElementType::ARPEGGIO) {
+                            item->setColor(muse::draw::Color::BLACK);
+                        }
                     }
                 }
 
@@ -1892,6 +1903,9 @@ muse::RectF PlaybackCursor::resolveCursorRectByTick(muse::midi::tick_t _tick, bo
                                         _hook->setColor(muse::draw::Color::BLACK);
                                     }
                                 }
+                            }
+                            if (item->type() == mu::engraving::ElementType::ARPEGGIO) {
+                                item->setColor(muse::draw::Color::BLACK);
                             }
                         }
                     }
