@@ -35,6 +35,7 @@
 #include "src/engraving/dom/accidental.h"
 #include "src/engraving/dom/stem.h"
 #include "src/engraving/dom/hook.h"
+#include "src/engraving/dom/beam.h"
 
 using namespace mu::notation;
 using namespace muse;
@@ -671,7 +672,6 @@ void PlaybackCursor::processOttavaAsync(mu::engraving::Score* score) {
                                 if (___item->type() == mu::engraving::ElementType::FERMATA) {
                                     isFermataTag = true;
                                     chordrest_fermata_map[engravingItem] = ___item;
-                                    break;
                                 }
                             }
 
@@ -1415,6 +1415,10 @@ muse::RectF PlaybackCursor::resolveCursorRectByTick(muse::midi::tick_t _tick, bo
                                 if (_hook) {
                                     _hook->setColor(muse::draw::Color::BLACK);
                                 }
+                                Beam* _beam = _pre_note->chord()->beam();
+                                if (_beam) {
+                                    _beam->setColor(muse::draw::Color::BLACK);
+                                }
                             }
                         }
                         if (item->type() == mu::engraving::ElementType::ARPEGGIO) {
@@ -1537,6 +1541,10 @@ muse::RectF PlaybackCursor::resolveCursorRectByTick(muse::midi::tick_t _tick, bo
                                                     if (_hook) {
                                                         _hook->setColor(muse::draw::Color::RED);
                                                     }
+                                                    Beam* _beam = graceChords[grace_i]->beam();
+                                                    if (_beam) {
+                                                        _beam->setColor(muse::draw::Color::RED);
+                                                    }
                                                     std::vector<Note*> _notesList = graceChords[grace_i]->notes();
                                                     for (Note* __note__ : _notesList) {
                                                         int __note__ottavaType = ottava_map[__note__];
@@ -1556,6 +1564,10 @@ muse::RectF PlaybackCursor::resolveCursorRectByTick(muse::midi::tick_t _tick, bo
                                                     Hook* _hook = graceChords[grace_i]->hook();
                                                     if (_hook) {
                                                         _hook->setColor(muse::draw::Color::BLACK);
+                                                    }
+                                                    Beam* _beam = graceChords[grace_i]->beam();
+                                                    if (_beam) {
+                                                        _beam->setColor(muse::draw::Color::BLACK);
                                                     }
                                                 }
                                             }
@@ -1581,6 +1593,10 @@ muse::RectF PlaybackCursor::resolveCursorRectByTick(muse::midi::tick_t _tick, bo
                                                 if (_hook) {
                                                     _hook->setColor(muse::draw::Color::BLACK);
                                                 }
+                                                Beam* _beam = _pre_note->chord()->beam();
+                                                if (_beam) {
+                                                    _beam->setColor(muse::draw::Color::BLACK);
+                                                }
                                             }
                                         } else {
                                             for (Chord *_chord : _graceChords) {
@@ -1597,6 +1613,10 @@ muse::RectF PlaybackCursor::resolveCursorRectByTick(muse::midi::tick_t _tick, bo
                                                 Hook* _hook = _chord->hook();
                                                 if (_hook) {
                                                     _hook->setColor(muse::draw::Color::BLACK);
+                                                }
+                                                Beam* _beam = _chord->beam();
+                                                if (_beam) {
+                                                    _beam->setColor(muse::draw::Color::BLACK);
                                                 }
                                             }
                                             _pre_note->setColor(muse::draw::Color::RED);
@@ -1622,6 +1642,10 @@ muse::RectF PlaybackCursor::resolveCursorRectByTick(muse::midi::tick_t _tick, bo
                                                 if (_hook) {
                                                     _hook->setColor(muse::draw::Color::RED);
                                                 }
+                                                Beam* _beam = _pre_note->chord()->beam();
+                                                if (_beam) {
+                                                    _beam->setColor(muse::draw::Color::RED);
+                                                }
                                             }
                                             m_notation->interaction()->addPlaybackNote(_pre_note, _pre_note_ottavaType, note_hit_ts);
                                         }
@@ -1644,6 +1668,10 @@ muse::RectF PlaybackCursor::resolveCursorRectByTick(muse::midi::tick_t _tick, bo
                                                     if (_hook) {
                                                         _hook->setColor(muse::draw::Color::RED);
                                                     }
+                                                    Beam* _beam = graceChords[grace_i]->beam();
+                                                    if (_beam) {
+                                                        _beam->setColor(muse::draw::Color::RED);
+                                                    }
                                                     for (Note* _note_item : graceChords[grace_i]->notes()) {
                                                         int _note_item_ottavaType = ottava_map[_note_item];
                                                         m_notation->interaction()->addPlaybackNote(_note_item, _note_item_ottavaType, false);
@@ -1662,6 +1690,10 @@ muse::RectF PlaybackCursor::resolveCursorRectByTick(muse::midi::tick_t _tick, bo
                                                     Hook* _hook = graceChords[grace_i]->hook();
                                                     if (_hook) {
                                                         _hook->setColor(muse::draw::Color::BLACK);
+                                                    }
+                                                    Beam* _beam = graceChords[grace_i]->beam();
+                                                    if (_beam) {
+                                                        _beam->setColor(muse::draw::Color::BLACK);
                                                     }
                                                 }
                                             }
@@ -1686,6 +1718,10 @@ muse::RectF PlaybackCursor::resolveCursorRectByTick(muse::midi::tick_t _tick, bo
                                                     if (_hook) {
                                                         _hook->setColor(muse::draw::Color::BLACK);
                                                     }
+                                                    Beam* _beam = _pre_note->chord()->beam();
+                                                    if (_beam) {
+                                                        _beam->setColor(muse::draw::Color::BLACK);
+                                                    }
                                                 }
                                             }
                                         } else {
@@ -1703,6 +1739,10 @@ muse::RectF PlaybackCursor::resolveCursorRectByTick(muse::midi::tick_t _tick, bo
                                                 Hook* _hook = _chord->hook();
                                                 if (_hook) {
                                                     _hook->setColor(muse::draw::Color::BLACK);
+                                                }
+                                                Beam* _beam = _chord->beam();
+                                                if (_beam) {
+                                                    _beam->setColor(muse::draw::Color::BLACK);
                                                 }
                                             }
                                             _pre_note->setColor(muse::draw::Color::RED);
@@ -1727,6 +1767,10 @@ muse::RectF PlaybackCursor::resolveCursorRectByTick(muse::midi::tick_t _tick, bo
                                                 Hook* _hook = _pre_note->chord()->hook();
                                                 if (_hook) {
                                                     _hook->setColor(muse::draw::Color::RED);
+                                                }
+                                                Beam* _beam = _pre_note->chord()->beam();
+                                                if (_beam) {
+                                                    _beam->setColor(muse::draw::Color::RED);
                                                 }
                                             }
                                             m_notation->interaction()->addPlaybackNote(_pre_note, _pre_note_ottavaType, note_hit_ts);
@@ -1755,6 +1799,11 @@ muse::RectF PlaybackCursor::resolveCursorRectByTick(muse::midi::tick_t _tick, bo
                                         Hook* _hook = _pre_note->chord()->hook();
                                         if (_hook) {
                                             _hook->setColor(muse::draw::Color::RED);
+                                        }
+
+                                        Beam* _beam = _pre_note->chord()->beam();
+                                        if (_beam) {
+                                            _beam->setColor(muse::draw::Color::RED);
                                         }
                                     }
                                     m_notation->interaction()->addPlaybackNote(_pre_note, ottava_map[_pre_note], note_hit_ts);
@@ -1864,6 +1913,10 @@ muse::RectF PlaybackCursor::resolveCursorRectByTick(muse::midi::tick_t _tick, bo
                                 if (_hook) {
                                     _hook->setColor(muse::draw::Color::BLACK);
                                 }
+                                Beam* _beam = _pre_note->chord()->beam();
+                                if (_beam) {
+                                    _beam->setColor(muse::draw::Color::BLACK);
+                                }
                             }
                         }
                         if (item->type() == mu::engraving::ElementType::ARPEGGIO) {
@@ -1926,6 +1979,10 @@ muse::RectF PlaybackCursor::resolveCursorRectByTick(muse::midi::tick_t _tick, bo
                                     Hook* _hook = _pre_note->chord()->hook();
                                     if (_hook) {
                                         _hook->setColor(muse::draw::Color::BLACK);
+                                    }
+                                    Beam* _beam = _pre_note->chord()->beam();
+                                    if (_beam) {
+                                        _beam->setColor(muse::draw::Color::BLACK);
                                     }
                                 }
                             }
