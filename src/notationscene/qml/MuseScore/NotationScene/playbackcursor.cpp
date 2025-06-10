@@ -1517,16 +1517,16 @@ void PlaybackCursor::processCursorSpannerRenderStatusAsync(Measure* measure, Fra
     }
 }
 
-void PlaybackCursor::processCursorNoteRenderStatus(Measure* measure) {
+void PlaybackCursor::processCursorNoteRenderStatus(Measure* measure, int curr_ticks) {
     if (m_cursorNoteRenderStatusProcessFuture.valid()) {
         m_cursorNoteRenderStatusProcessFuture.wait();
     }
-    m_cursorNoteRenderStatusProcessFuture = std::async(std::launch::async, [this, measure]() {
-        processCursorNoteRenderStatusAsync(measure);
+    m_cursorNoteRenderStatusProcessFuture = std::async(std::launch::async, [this, measure, curr_ticks]() {
+        processCursorNoteRenderStatusAsync(measure, curr_ticks);
     });
 }
 
-void PlaybackCursor::processCursorNoteRenderStatusAsync(Measure* measure) {
+void PlaybackCursor::processCursorNoteRenderStatusAsync(Measure* measure, int curr_ticks) {
     for (mu::engraving::Segment* segment = measure->first(mu::engraving::SegmentType::ChordRest); segment;) {
         std::vector<EngravingItem*> engravingItemListOfPrevMeasure = segment->elist();
         size_t prev_len = engravingItemListOfPrevMeasure.size();
@@ -1576,7 +1576,9 @@ void PlaybackCursor::processCursorNoteRenderStatusAsync(Measure* measure) {
                         }
                         Beam* _beam = _pre_note->chord()->beam();
                         if (_beam) {
-                            _beam->setColor(muse::draw::Color::BLACK);
+                            if (curr_ticks < _beam->tick().ticks() || curr_ticks > _beam->tick().ticks() + _beam->ticks().ticks()) {
+                                _beam->setColor(muse::draw::Color::BLACK);
+                            }
                         }
                     }
                 }
@@ -1594,16 +1596,16 @@ void PlaybackCursor::processCursorNoteRenderStatusAsync(Measure* measure) {
     }
 }
 
-void PlaybackCursor::processCursorNoteRenderRecover(EngravingItem* engravingItem) {
+void PlaybackCursor::processCursorNoteRenderRecover(EngravingItem* engravingItem, int curr_ticks) {
     if (m_cursorNoteRenderRecoverFuture.valid()) {
         m_cursorNoteRenderRecoverFuture.wait();
     }
-    m_cursorNoteRenderRecoverFuture = std::async(std::launch::async, [this, engravingItem]() {
-        processCursorNoteRenderRecoverAsync(engravingItem);
+    m_cursorNoteRenderRecoverFuture = std::async(std::launch::async, [this, engravingItem, curr_ticks]() {
+        processCursorNoteRenderRecoverAsync(engravingItem, curr_ticks);
     });
 }
 
-void PlaybackCursor::processCursorNoteRenderRecoverAsync(EngravingItem* engravingItem) {
+void PlaybackCursor::processCursorNoteRenderRecoverAsync(EngravingItem* engravingItem, int curr_ticks) {
     if (chordrest_fermata_map.find(engravingItem) != chordrest_fermata_map.end()) {
         chordrest_fermata_map[engravingItem]->setColor(muse::draw::Color::BLACK);
     }
@@ -1650,7 +1652,9 @@ void PlaybackCursor::processCursorNoteRenderRecoverAsync(EngravingItem* engravin
                 }
                 Beam* _beam = _pre_note->chord()->beam();
                 if (_beam) {
-                    _beam->setColor(muse::draw::Color::BLACK);
+                    if (curr_ticks < _beam->tick().ticks() || curr_ticks > _beam->tick().ticks() + _beam->ticks().ticks()) {
+                        _beam->setColor(muse::draw::Color::BLACK);
+                    }
                 }
             }
         }
@@ -1708,7 +1712,7 @@ muse::RectF PlaybackCursor::resolveCursorRectByTick(muse::midi::tick_t _tick, bo
                 int duration_ticks = chordRest->durationTypeTicks().ticks();
                 // LOGALEX() << "curr_ticks: " << tick.ticks() << ", note ticks: " << t1.ticks() << ", duration_ticks: " << duration_ticks;
                 if (t1.ticks() + duration_ticks < tick.ticks()) {
-                    processCursorNoteRenderRecover(engravingItem);
+                    processCursorNoteRenderRecover(engravingItem, tick.ticks());
                 } else {
                     if (s->tick().ticks() != curr_seg_ticks) {
                         curr_seg_ticks = s->tick().ticks();
@@ -1860,7 +1864,9 @@ muse::RectF PlaybackCursor::resolveCursorRectByTick(muse::midi::tick_t _tick, bo
                                                     }
                                                     Beam* _beam = graceChords[grace_i]->beam();
                                                     if (_beam) {
-                                                        _beam->setColor(muse::draw::Color::BLACK);
+                                                        if (tick.ticks() < _beam->tick().ticks() || tick.ticks() > _beam->tick().ticks() + _beam->ticks().ticks()) {
+                                                            _beam->setColor(muse::draw::Color::BLACK);
+                                                        }
                                                     }
                                                 }
                                             }
@@ -1888,7 +1894,9 @@ muse::RectF PlaybackCursor::resolveCursorRectByTick(muse::midi::tick_t _tick, bo
                                                 }
                                                 Beam* _beam = _pre_note->chord()->beam();
                                                 if (_beam) {
-                                                    _beam->setColor(muse::draw::Color::BLACK);
+                                                    if (tick.ticks() < _beam->tick().ticks() || tick.ticks() > _beam->tick().ticks() + _beam->ticks().ticks()) {
+                                                        _beam->setColor(muse::draw::Color::BLACK);
+                                                    }
                                                 }
                                             }
                                         } else {
@@ -1909,7 +1917,9 @@ muse::RectF PlaybackCursor::resolveCursorRectByTick(muse::midi::tick_t _tick, bo
                                                 }
                                                 Beam* _beam = _chord->beam();
                                                 if (_beam) {
-                                                    _beam->setColor(muse::draw::Color::BLACK);
+                                                    if (tick.ticks() < _beam->tick().ticks() || tick.ticks() > _beam->tick().ticks() + _beam->ticks().ticks()) {
+                                                        _beam->setColor(muse::draw::Color::BLACK);
+                                                    }
                                                 }
                                             }
                                             _pre_note->setColor(muse::draw::Color::RED);
@@ -1986,7 +1996,9 @@ muse::RectF PlaybackCursor::resolveCursorRectByTick(muse::midi::tick_t _tick, bo
                                                     }
                                                     Beam* _beam = graceChords[grace_i]->beam();
                                                     if (_beam) {
-                                                        _beam->setColor(muse::draw::Color::BLACK);
+                                                        if (tick.ticks() < _beam->tick().ticks() || tick.ticks() > _beam->tick().ticks() + _beam->ticks().ticks()) {
+                                                            _beam->setColor(muse::draw::Color::BLACK);
+                                                        }
                                                     }
                                                 }
                                             }
@@ -2013,7 +2025,9 @@ muse::RectF PlaybackCursor::resolveCursorRectByTick(muse::midi::tick_t _tick, bo
                                                     }
                                                     Beam* _beam = _pre_note->chord()->beam();
                                                     if (_beam) {
-                                                        _beam->setColor(muse::draw::Color::BLACK);
+                                                        if (tick.ticks() < _beam->tick().ticks() || tick.ticks() > _beam->tick().ticks() + _beam->ticks().ticks()) {
+                                                            _beam->setColor(muse::draw::Color::BLACK);
+                                                        }
                                                     }
                                                 }
                                             }
@@ -2035,7 +2049,9 @@ muse::RectF PlaybackCursor::resolveCursorRectByTick(muse::midi::tick_t _tick, bo
                                                 }
                                                 Beam* _beam = _chord->beam();
                                                 if (_beam) {
-                                                    _beam->setColor(muse::draw::Color::BLACK);
+                                                    if (tick.ticks() < _beam->tick().ticks() || tick.ticks() > _beam->tick().ticks() + _beam->ticks().ticks()) {
+                                                        _beam->setColor(muse::draw::Color::BLACK);
+                                                    }
                                                 }
                                             }
                                             _pre_note->setColor(muse::draw::Color::RED);
@@ -2150,9 +2166,9 @@ muse::RectF PlaybackCursor::resolveCursorRectByTick(muse::midi::tick_t _tick, bo
     if (hit_measure_no() != measureNo || hit_measure() != measure) {
         Measure* prevMeasure = measure->prevMeasure();
         if (prevMeasure) {
-            processCursorNoteRenderStatus(prevMeasure);
+            processCursorNoteRenderStatus(prevMeasure, tick.ticks());
             if (hit_measure() != nullptr && prevMeasure != hit_measure()) {
-                processCursorNoteRenderStatus(hit_measure());
+                processCursorNoteRenderStatus(hit_measure(), tick.ticks());
                 processCursorSpannerRenderStatus(hit_measure(), tick, false, isPlaying);
             }
         }
@@ -2212,7 +2228,9 @@ muse::RectF PlaybackCursor::resolveCursorRectByTick(muse::midi::tick_t _tick, bo
                             }
                             Beam* _beam = _pre_note->chord()->beam();
                             if (_beam) {
-                                _beam->setColor(muse::draw::Color::BLACK);
+                                if (tick.ticks() < _beam->tick().ticks() || tick.ticks() > _beam->tick().ticks() + _beam->ticks().ticks()) {
+                                    _beam->setColor(muse::draw::Color::BLACK);
+                                }
                             }
                         }
                     }
