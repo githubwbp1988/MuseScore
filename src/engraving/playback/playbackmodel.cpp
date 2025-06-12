@@ -270,6 +270,7 @@ void PlaybackModel::triggerEventsForItems(const std::vector<const EngravingItem*
                           result);
     }
 
+    std::cout << "**** playbackmodel --- triggering events for items  ****" << std::endl;
     PlaybackParamList params = ctx->playbackParams(playableItems.front()->track(), minTick);
     trackPlaybackData.offStream.send(std::move(result), std::move(params));
 }
