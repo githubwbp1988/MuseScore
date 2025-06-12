@@ -65,6 +65,7 @@ const muse::mpe::PlaybackData& NotationPlaybackStub::trackPlaybackData(const eng
 
 void NotationPlaybackStub::triggerEventsForItems(const std::vector<const EngravingItem*>&)
 {
+    std::cout << "***** NotationPlaybackStub::triggerEventsForItems() *****" << std::endl;
 }
 
 void NotationPlaybackStub::triggerMetronome(muse::midi::tick_t)
