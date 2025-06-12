@@ -140,6 +140,7 @@ const muse::mpe::PlaybackData& NotationPlayback::trackPlaybackData(const engravi
 
 void NotationPlayback::triggerEventsForItems(const std::vector<const EngravingItem*>& items)
 {
+    std::cout << "***** NotationPlayback::triggerEventsForItems() *****" << std::endl;
     m_playbackModel.triggerEventsForItems(items);
 }
 
