@@ -25,8 +25,6 @@
 using namespace muse::ui;
 using namespace muse::async;
 
-class QColor;
-
 void StubPlatformTheme::startListening()
 {
 }
@@ -59,10 +57,6 @@ void StubPlatformTheme::applyPlatformStyleOnAppForTheme(const ThemeCode&)
 {
 }
 
-void StubPlatformTheme::applyPlatformStyleOnWindowForTheme(QWindow* window, const ThemeCode&)
+void StubPlatformTheme::applyPlatformStyleOnWindowForTheme(QWindow*, const ThemeCode&)
 {
-    if (!window) {
-        return;
-    }
-    window->setColor(QColor(50, 50, 50));
 }
