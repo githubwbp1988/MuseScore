@@ -319,13 +319,16 @@ void PlaybackController::setTrackSoloMuteState(const InstrumentTrackId& trackId,
 
 void PlaybackController::playElements(const std::vector<const notation::EngravingItem*>& elements, bool isMidi)
 {
+    std::cout << "**** PlaybackController::playElements 1 ****" << std::endl;
     IF_ASSERT_FAILED(notationPlayback()) {
         return;
     }
+    std::cout << "**** PlaybackController::playElements 2 ****" << std::endl;
 
     if ((!configuration()->playNotesWhenEditing()) || (isMidi && !configuration()->playNotesOnMidiInput())) {
         return;
     }
+    std::cout << "**** PlaybackController::playElements 3 ****" << std::endl;
 
     if (m_measureInputLag) {
         START_INPUT_LAG_TIMER;
