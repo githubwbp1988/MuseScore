@@ -352,6 +352,18 @@ void PlaybackController::playElements(const std::vector<const notation::Engravin
         elementsForPlaying.push_back(element);
     }
 
+    if (m_masterNotation) {
+        std::cout << "**** m_masterNotation not null ****" << std::endl;
+    } else {
+        std::cout << "**** m_masterNotation null ****" << std::endl;
+    }
+
+    if (notationPlayback()) {
+        std::cout << "**** notationPlayback() not null ****" << std::endl;
+    } else {
+        std::cout << "**** notationPlayback() null ****" << std::endl;
+    }
+
     notationPlayback()->triggerEventsForItems(elementsForPlaying);
 }
 

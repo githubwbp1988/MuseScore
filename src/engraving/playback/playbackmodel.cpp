@@ -223,26 +223,20 @@ const PlaybackData& PlaybackModel::resolveTrackPlaybackData(const ID& partId, co
 
 void PlaybackModel::triggerEventsForItems(const std::vector<const EngravingItem*>& items)
 {
-    std::cout << "***** PlaybackModel::triggerEventsForItems() *****" << std::endl;
     std::vector<const EngravingItem*> playableItems = filterPlayableItems(items);
     if (playableItems.empty()) {
         return;
     }
-    std::cout << "***** PlaybackModel::triggerEventsForItems() *****1 -- " << std::endl;
 
     InstrumentTrackId trackId = idKey(playableItems);
     if (!trackId.isValid()) {
         return;
     }
 
-    std::cout << "***** PlaybackModel::triggerEventsForItems() *****2 -- " << std::endl;
-
     auto trackPlaybackDataIt = m_playbackDataMap.find(trackId);
     if (trackPlaybackDataIt == m_playbackDataMap.cend()) {
         return;
     }
-
-    std::cout << "***** PlaybackModel::triggerEventsForItems() *****3 -- " << std::endl;
 
     PlaybackData& trackPlaybackData = trackPlaybackDataIt->second;
     ArticulationsProfilePtr profile = profilesRepository()->defaultProfile(trackPlaybackData.setupData.category);
@@ -250,8 +244,6 @@ void PlaybackModel::triggerEventsForItems(const std::vector<const EngravingItem*
         LOGE() << "unsupported instrument family: " << trackId.partId.toUint64();
         return;
     }
-
-    std::cout << "***** PlaybackModel::triggerEventsForItems() *****4 -- " << std::endl;
 
     PlaybackEventsMap result;
 
@@ -278,8 +270,6 @@ void PlaybackModel::triggerEventsForItems(const std::vector<const EngravingItem*
                           result);
     }
 
-    std::cout << "***** PlaybackModel::triggerEventsForItems() *****5 -- " << std::endl;
-    
     PlaybackParamList params = ctx->playbackParams(playableItems.front()->track(), minTick);
     trackPlaybackData.offStream.send(std::move(result), std::move(params));
 }
