@@ -847,8 +847,6 @@ void NotationViewInputController::handleLeftClick(const ClickContext& ctx)
     }
 
     if (ctx.hitElement->isPlayable()) {
-        std::cout << "**** NotationViewInputController::handleLeftClick *** " << std::endl;
-        
         playbackController()->playElements({ ctx.hitElement });
     }
 
