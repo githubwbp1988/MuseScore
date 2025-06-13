@@ -319,16 +319,13 @@ void PlaybackController::setTrackSoloMuteState(const InstrumentTrackId& trackId,
 
 void PlaybackController::playElements(const std::vector<const notation::EngravingItem*>& elements, bool isMidi)
 {
-    std::cout << "**** PlaybackController::playElements 1 ****" << std::endl;
     IF_ASSERT_FAILED(notationPlayback()) {
         return;
     }
-    std::cout << "**** PlaybackController::playElements 2 ****" << std::endl;
 
     if ((!configuration()->playNotesWhenEditing()) || (isMidi && !configuration()->playNotesOnMidiInput())) {
         return;
     }
-    std::cout << "**** PlaybackController::playElements 3 ****" << std::endl;
 
     if (m_measureInputLag) {
         START_INPUT_LAG_TIMER;
@@ -353,18 +350,6 @@ void PlaybackController::playElements(const std::vector<const notation::Engravin
         }
 
         elementsForPlaying.push_back(element);
-    }
-
-    if (m_masterNotation) {
-        std::cout << "**** m_masterNotation not null ****" << std::endl;
-    } else {
-        std::cout << "**** m_masterNotation null ****" << std::endl;
-    }
-
-    if (notationPlayback()) {
-        std::cout << "**** notationPlayback() not null ****" << std::endl;
-    } else {
-        std::cout << "**** notationPlayback() null ****" << std::endl;
     }
 
     notationPlayback()->triggerEventsForItems(elementsForPlaying);
