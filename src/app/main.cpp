@@ -36,8 +36,6 @@
 
 #include "log.h"
 
-extern "C" int main(int argc, char** argv);
-
 #if (defined (_MSCVER) || defined (_MSC_VER))
 #include <vector>
 #include <algorithm>
