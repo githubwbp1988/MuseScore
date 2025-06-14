@@ -93,6 +93,6 @@ void MidiModule::onInit(const IApplication::RunMode& mode)
 
 void MidiModule::onDeinit()
 {
-    m_midiOutPort->deinit();
-    m_midiInPort->deinit();
+    // m_midiOutPort->deinit();
+    // m_midiInPort->deinit();
 }
