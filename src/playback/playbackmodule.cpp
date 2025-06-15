@@ -126,5 +126,5 @@ void PlaybackModule::onAllInited(const IApplication::RunMode& mode)
         return;
     }
 
-    m_soundProfileRepo->refresh();
+    // m_soundProfileRepo->refresh();
 }
