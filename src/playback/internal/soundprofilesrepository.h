@@ -24,7 +24,6 @@
 #define MU_PLAYBACK_SOUNDPROFILESREPOSITORY_H
 
 #include <map>
-#include <emscripten.h>
 
 #include "audio/iplayback.h"
 #include "async/asyncable.h"
@@ -43,19 +42,13 @@ public:
 
     void init();
 
-    EMSCRIPTEN_KEEPALIVE
     void refresh() override;
 
-    EMSCRIPTEN_KEEPALIVE
     const SoundProfile& profile(const SoundProfileName& name) const override;
-    EMSCRIPTEN_KEEPALIVE
     bool containsProfile(const SoundProfileName& name) const override;
-    EMSCRIPTEN_KEEPALIVE
     const SoundProfilesMap& availableProfiles() const override;
 
-    EMSCRIPTEN_KEEPALIVE
     void addProfile(const SoundProfile& profile) override;
-    EMSCRIPTEN_KEEPALIVE
     void removeProfile(const SoundProfileName& name) override;
 
 private:
