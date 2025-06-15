@@ -25,13 +25,10 @@
 #include "audio/itracks.h"
 #include "log.h"
 
-#include <emscripten.h>
-
 using namespace mu::playback;
 using namespace muse;
 using namespace muse::audio;
 
-EMSCRIPTEN_KEEPALIVE
 void SoundProfilesRepository::init()
 {
     SoundProfile basicProfile;
@@ -45,7 +42,6 @@ void SoundProfilesRepository::init()
     m_profilesMap.emplace(museProfile.name, std::move(museProfile));
 }
 
-EMSCRIPTEN_KEEPALIVE
 void SoundProfilesRepository::refresh()
 {
     playback()->tracks()->availableInputResources()
@@ -76,7 +72,6 @@ void SoundProfilesRepository::refresh()
     });
 }
 
-EMSCRIPTEN_KEEPALIVE
 const SoundProfile& SoundProfilesRepository::profile(const SoundProfileName& name) const
 {
     auto search = m_profilesMap.find(name);
@@ -88,25 +83,21 @@ const SoundProfile& SoundProfilesRepository::profile(const SoundProfileName& nam
     return search->second;
 }
 
-EMSCRIPTEN_KEEPALIVE
 bool SoundProfilesRepository::containsProfile(const SoundProfileName& name) const
 {
     return muse::contains(m_profilesMap, name);
 }
 
-EMSCRIPTEN_KEEPALIVE
 const SoundProfilesMap& SoundProfilesRepository::availableProfiles() const
 {
     return m_profilesMap;
 }
 
-EMSCRIPTEN_KEEPALIVE
 void SoundProfilesRepository::addProfile(const SoundProfile& profile)
 {
     m_profilesMap[profile.name] = profile;
 }
 
-EMSCRIPTEN_KEEPALIVE
 void SoundProfilesRepository::removeProfile(const SoundProfileName& name)
 {
     m_profilesMap.erase(name);
