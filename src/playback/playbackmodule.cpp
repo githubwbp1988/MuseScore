@@ -21,7 +21,6 @@
  */
 #include "playbackmodule.h"
 
-#include <emscripten.h>
 #include <QQmlEngine>
 
 #include "modularity/ioc.h"
@@ -53,26 +52,24 @@ static void playback_init_qrc()
     Q_INIT_RESOURCE(playback);
 }
 
-EMSCRIPTEN_KEEPALIVE
 std::string PlaybackModule::moduleName() const
 {
     return "playback";
 }
 
-EMSCRIPTEN_KEEPALIVE
 void PlaybackModule::registerExports()
 {
     m_configuration = std::make_shared<PlaybackConfiguration>();
     m_playbackController = std::make_shared<PlaybackController>();
     m_playbackUiActions = std::make_shared<PlaybackUiActions>(m_playbackController);
     m_soundProfileRepo = std::make_shared<SoundProfilesRepository>();
-    
+
+    std::cout << "PlaybackModule::registerExports --- " << std::endl;
     ioc()->registerExport<IPlaybackController>(moduleName(), m_playbackController);
     ioc()->registerExport<IPlaybackConfiguration>(moduleName(), m_configuration);
     ioc()->registerExport<ISoundProfilesRepository>(moduleName(), m_soundProfileRepo);
 }
 
-EMSCRIPTEN_KEEPALIVE
 void PlaybackModule::resolveImports()
 {
     auto ar = ioc()->resolve<IUiActionsRegister>(moduleName());
@@ -87,13 +84,11 @@ void PlaybackModule::resolveImports()
     }
 }
 
-EMSCRIPTEN_KEEPALIVE
 void PlaybackModule::registerResources()
 {
     playback_init_qrc();
 }
 
-EMSCRIPTEN_KEEPALIVE
 void PlaybackModule::registerUiTypes()
 {
     qmlRegisterType<PlaybackToolBarModel>("MuseScore.Playback", 1, 0, "PlaybackToolBarModel");
@@ -109,7 +104,6 @@ void PlaybackModule::registerUiTypes()
     ioc()->resolve<IUiEngine>(moduleName())->addSourceImportPath(playback_QML_IMPORT);
 }
 
-EMSCRIPTEN_KEEPALIVE
 void PlaybackModule::onInit(const IApplication::RunMode& mode)
 {
     if (mode == IApplication::RunMode::AudioPluginRegistration) {
@@ -127,7 +121,6 @@ void PlaybackModule::onInit(const IApplication::RunMode& mode)
     m_playbackUiActions->init();
 }
 
-EMSCRIPTEN_KEEPALIVE
 void PlaybackModule::onAllInited(const IApplication::RunMode& mode)
 {
     if (mode == IApplication::RunMode::AudioPluginRegistration) {
