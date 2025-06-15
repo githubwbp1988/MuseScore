@@ -16,9 +16,6 @@ elseif (OS_IS_WASM)
     
     if(NOT TARGET sndfile)
         declare_thirdparty_module(sndfile)
-        if(NOT TARGET SndFile::sndfile)
-            add_library(SndFile::sndfile ALIAS sndfile)
-        endif()
     endif()
 
     set(MODULE_SRC
@@ -72,6 +69,10 @@ elseif (OS_IS_WASM)
         )
 
     setup_module()
+
+    if(NOT TARGET SndFile::sndfile)
+        add_library(SndFile::sndfile ALIAS sndfile)
+    endif()
 
 else()
     find_package(SndFile)
