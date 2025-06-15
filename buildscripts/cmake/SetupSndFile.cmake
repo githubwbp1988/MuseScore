@@ -14,9 +14,9 @@ elseif (OS_IS_WASM)
     set(LIBVORBIS_PATH "" CACHE PATH "Path to libogg sources")
     set(SNDFILE_INCDIR LIBSND_PATH)
     
-    if(NOT TARGET sndfile)
-        declare_thirdparty_module(sndfile)
-    endif()
+    # if(NOT TARGET sndfile)
+    #     declare_thirdparty_module(sndfile)
+    # endif()
 
     set(MODULE_SRC
         ${LIBSND_PATH}/sndfile.c
@@ -69,10 +69,6 @@ elseif (OS_IS_WASM)
         )
 
     setup_module()
-
-    if(NOT TARGET SndFile::sndfile)
-        add_library(SndFile::sndfile ALIAS sndfile)
-    endif()
 
 else()
     find_package(SndFile)
