@@ -31,7 +31,6 @@ using namespace muse::audio::synth;
 
 #include <emscripten.h>
 
-EMSCRIPTEN_KEEPALIVE
 AbstractSynthesizer::AbstractSynthesizer(const AudioInputParams& params, const modularity::ContextPtr& iocCtx)
     : Injectable(iocCtx), m_params(params)
 {
@@ -46,7 +45,6 @@ AbstractSynthesizer::~AbstractSynthesizer() {
     
 }
 
-EMSCRIPTEN_KEEPALIVE
 const AudioInputParams& AbstractSynthesizer::params() const
 {
     ONLY_AUDIO_WORKER_THREAD;
@@ -54,7 +52,6 @@ const AudioInputParams& AbstractSynthesizer::params() const
     return m_params;
 }
 
-EMSCRIPTEN_KEEPALIVE
 async::Channel<AudioInputParams> AbstractSynthesizer::paramsChanged() const
 {
     ONLY_AUDIO_WORKER_THREAD;
@@ -62,7 +59,6 @@ async::Channel<AudioInputParams> AbstractSynthesizer::paramsChanged() const
     return m_paramsChanges;
 }
 
-EMSCRIPTEN_KEEPALIVE
 void AbstractSynthesizer::setup(const mpe::PlaybackData& playbackData)
 {
     ONLY_AUDIO_WORKER_THREAD;
@@ -102,7 +98,6 @@ void AbstractSynthesizer::updateRenderingMode(const RenderMode /*mode*/)
     ONLY_AUDIO_WORKER_THREAD;
 }
 
-EMSCRIPTEN_KEEPALIVE
 RenderMode AbstractSynthesizer::currentRenderMode() const
 {
     ONLY_AUDIO_WORKER_THREAD;
@@ -110,13 +105,11 @@ RenderMode AbstractSynthesizer::currentRenderMode() const
     return audioEngine()->mode();
 }
 
-EMSCRIPTEN_KEEPALIVE
 muse::audio::msecs_t AbstractSynthesizer::samplesToMsecs(const samples_t samplesPerChannel, const samples_t sampleRate) const
 {
     return samplesPerChannel * 1000000 / sampleRate;
 }
 
-EMSCRIPTEN_KEEPALIVE
 samples_t AbstractSynthesizer::microSecsToSamples(const msecs_t msec, const samples_t sampleRate) const
 {
     return (msec / 1000000.f) * sampleRate;
