@@ -81,7 +81,11 @@ jobs:
         [ -d libvorbis ] || git clone https://github.com/xiph/vorbis.git libvorbis
         echo "test libsndfile:"
         cd libsndfile
-        ls -l 
+        ls -l
+        echo "test libsndfile/include:" 
+        cd include
+        ls -l
+        cd ..
         cd ..
         echo "test libogg:"
         cd libogg
