@@ -72,16 +72,13 @@ jobs:
 
     - name: Download the source code of third-party libraries required by FluidSynth, including libsndfile, libogg, and libvorbis
       run: |
+        echo "GITHUB_WORKSPACE: $GITHUB_WORKSPACE"
         echo "github.workspace: ${{ github.workspace }}"
         mkdir -p wasm-thirdparty-src
         cd wasm-thirdparty-src
         [ -d libsndfile ] || git clone --depth=1 https://github.com/libsndfile/libsndfile.git
         [ -d libogg ] || git clone --depth=1 https://github.com/xiph/ogg.git libogg
         [ -d libvorbis ] || git clone --depth=1 https://github.com/xiph/vorbis.git libvorbis
-        echo "curr working dir: "
-        pwd
-        echo "--- ls -al: "
-        ls -al
         cd ..
 
     - name: Install Qt
