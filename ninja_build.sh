@@ -103,6 +103,9 @@ function do_build() {
         -DMUSE_MODULE_NETWORK_WEBSOCKET="${MUSESCORE_BUILD_WEBSOCKET}" \
         -DCMAKE_SKIP_RPATH="${MUSESCORE_NO_RPATH}" \
         -DMUSE_COMPILE_USE_UNITY="${MUSESCORE_COMPILE_USE_UNITY}" \
+        -DLIBSND_PATH=${GITHUB_WORKSPACE}/wasm-thirdparty-src/libsndfile \
+        -DLIBOGG_PATH=${GITHUB_WORKSPACE}/wasm-thirdparty-src/libogg \
+        -DLIBVORBIS_PATH=${GITHUB_WORKSPACE}/wasm-thirdparty-src/libvorbis \
         -DCMAKE_CXX_FLAGS="-g -gsource-map" \
         -DCMAKE_C_FLAGS="-g -gsource-map"
 
