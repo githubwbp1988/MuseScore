@@ -113,9 +113,9 @@ macro(setup_module)
         endif()
     else()
         # STATIC/SHARED based on BUILD_SHARED_LIBS, which is set in SetupBuildEnvironment.cmake
-        if("${MODULE}" STREQUAL "sndfile")
-            message(STATUS "MODULE=${MODULE} SRC=${MODULE_SRC}")
-        endif()
+        # if("${MODULE}" STREQUAL "sndfile")
+        #     message(STATUS "MODULE=${MODULE} SRC=${MODULE_SRC}")
+        # endif()
         add_library(${MODULE} ${MODULE_SRC})
     endif()
 
@@ -173,6 +173,10 @@ macro(setup_module)
 
     target_include_directories(${MODULE} PUBLIC
         ${MODULE_INCLUDE}
+
+        # sndfile
+        ${GITHUB_WORKSPACE}/wasm-thirdparty-src/libsndfile/src
+        # end sndfile
     )
 
     target_include_directories(${MODULE} PRIVATE
@@ -181,10 +185,6 @@ macro(setup_module)
         ${MODULE_ROOT}
 
         ${PROJECT_SOURCE_DIR}/src
-
-        # sendfile
-        ${GITHUB_WORKSPACE}/wasm-thirdparty-src/libsndfile/src
-        # end sendfile
 
         ${MUSE_FRAMEWORK_PATH}
         ${MUSE_FRAMEWORK_PATH}/framework
