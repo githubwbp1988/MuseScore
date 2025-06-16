@@ -80,7 +80,7 @@ jobs:
         [ -d libogg ] || git clone https://github.com/xiph/ogg.git libogg
         [ -d libvorbis ] || git clone https://github.com/xiph/vorbis.git libvorbis
         echo "libsndfile build ... "
-        sudo apt install autoconf autogen automake build-essential libasound2-dev libflac-dev libogg-dev libtool libvorbis-dev libopus-dev libmp3lame-dev libmpg123-dev pkg-config python
+        sudo apt install autoconf autogen automake build-essential libasound2-dev libflac-dev libogg-dev libtool libvorbis-dev libopus-dev libmp3lame-dev libmpg123-dev pkg-config
         cd libsndfile
         autoreconf -vif
         ./configure --enable-werror
