@@ -311,10 +311,7 @@ if (OS_IS_WIN)
 endif()
 
 message(STATUS "setup_module() before: MODULE_ROOT=${MODULE_ROOT} CMAKE_CURRENT_LIST_DIR=${CMAKE_CURRENT_LIST_DIR}")
-message(STATUS "LIBSND_PATH=${LIBSND_PATH}")
-message(STATUS "LIBOGG_PATH=${LIBOGG_PATH}")
-message(STATUS "LIBVORBIS_PATH=${LIBVORBIS_PATH}")
-setup_module()
+# setup_module()
 
 if (MUSE_MODULE_AUDIO_TESTS)
     #add_subdirectory(tests) no tests
