@@ -27,7 +27,8 @@
 #include "fluid_sys.h"
 
 #if LIBSNDFILE_SUPPORT
-#include <sndfile.h>
+// #include <sndfile.h>
+#include "../../../../../../../../wasm-thirdparty-src/libsndfile/src/sndfile.h"
 #endif
 
 #if LIBINSTPATCH_SUPPORT

@@ -2,8 +2,6 @@ declare_thirdparty_module(fluidsynth)
 
 include(${CMAKE_CURRENT_LIST_DIR}/fluidsynth.cmake)
 
-target_include_directories(sndfile PUBLIC ${GITHUB_WORKSPACE}/wasm-thirdparty-src/libsndfile/src)
-
 set(MODULE_SRC
     ${FLUIDSYNTH_SRC}
     )
