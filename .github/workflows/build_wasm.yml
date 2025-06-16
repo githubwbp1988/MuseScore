@@ -76,9 +76,9 @@ jobs:
         echo "github.workspace: ${{ github.workspace }}"
         mkdir -p wasm-thirdparty-src
         cd wasm-thirdparty-src
-        [ -d libsndfile ] || git clone --depth=1 https://github.com/libsndfile/libsndfile.git
-        [ -d libogg ] || git clone --depth=1 https://github.com/xiph/ogg.git libogg
-        [ -d libvorbis ] || git clone --depth=1 https://github.com/xiph/vorbis.git libvorbis
+        [ -d libsndfile ] || git clone https://github.com/libsndfile/libsndfile.git
+        [ -d libogg ] || git clone https://github.com/xiph/ogg.git libogg
+        [ -d libvorbis ] || git clone https://github.com/xiph/vorbis.git libvorbis
         echo "test libsndfile/include/sndfile.c:"
         ls -l libsndfile/include/sndfile.c
         cd ..
