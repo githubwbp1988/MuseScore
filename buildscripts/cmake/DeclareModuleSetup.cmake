@@ -113,6 +113,9 @@ macro(setup_module)
         endif()
     else()
         # STATIC/SHARED based on BUILD_SHARED_LIBS, which is set in SetupBuildEnvironment.cmake
+        if("${MODULE}" STREQUAL "sndfile")
+            message(STATUS "MODULE=${MODULE} SRC=${MODULE_SRC}")
+        endif()
         add_library(${MODULE} ${MODULE_SRC})
     endif()
 
