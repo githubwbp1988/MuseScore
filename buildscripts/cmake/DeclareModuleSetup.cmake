@@ -182,6 +182,10 @@ macro(setup_module)
 
         ${PROJECT_SOURCE_DIR}/src
 
+        # sendfile
+        ${GITHUB_WORKSPACE}/wasm-thirdparty-src/libsndfile/src
+        # end sendfile
+
         ${MUSE_FRAMEWORK_PATH}
         ${MUSE_FRAMEWORK_PATH}/framework
         ${MUSE_FRAMEWORK_PATH}/framework/global
