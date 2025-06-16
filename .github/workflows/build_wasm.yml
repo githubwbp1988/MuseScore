@@ -94,6 +94,8 @@ jobs:
         cd ..
         echo "copy libsndfile/CMakeBuild/src/config.h libsndfile/src/config.h to libsndfile/src/config.h"
         cp libsndfile/CMakeBuild/src/config.h libsndfile/src/config.h
+        cp libsndfile/include/sndfile.h libsndfile/src/sndfile.h
+        cp libsndfile/include/sndfile.hh libsndfile/src/sndfile.hh
         echo "libogg build ..."
         cd libogg
         ./autogen.sh
