@@ -67,6 +67,9 @@ elseif (OS_IS_WASM)
         )
 
     message(STATUS "setup_module() before: MODULE_ROOT=${MODULE_ROOT} CMAKE_CURRENT_LIST_DIR=${CMAKE_CURRENT_LIST_DIR}")
+    message(STATUS "LIBSND_PATH=${LIBSND_PATH}")
+    message(STATUS "LIBOGG_PATH=${LIBOGG_PATH}")
+    message(STATUS "LIBVORBIS_PATH=${LIBVORBIS_PATH}")
     setup_module()
 
 else()
