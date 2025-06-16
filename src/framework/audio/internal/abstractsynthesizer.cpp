@@ -39,6 +39,10 @@ AbstractSynthesizer::AbstractSynthesizer(const AudioInputParams& params, const m
     });
 }
 
+AbstractSynthesizer::~AbstractSynthesizer() {
+    
+}
+
 const AudioInputParams& AbstractSynthesizer::params() const
 {
     ONLY_AUDIO_WORKER_THREAD;
