@@ -66,6 +66,7 @@ elseif (OS_IS_WASM)
         ${LIBVORBIS_PATH}/lib
         )
 
+    message(STATUS "setup_module() before: MODULE_ROOT=${MODULE_ROOT} CMAKE_CURRENT_LIST_DIR=${CMAKE_CURRENT_LIST_DIR}")
     setup_module()
 
 else()
