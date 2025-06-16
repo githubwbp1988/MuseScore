@@ -89,7 +89,7 @@ jobs:
         mkdir -p CMakeBuild
         cd CMakeBuild
         cmake ..
-        make & make install
+        make
         cd ..
         cd ..
         echo "copy libsndfile/CMakeBuild/src/config.h to libsndfile/src/config.h"
@@ -98,8 +98,8 @@ jobs:
         cp libsndfile/include/sndfile.h libsndfile/src/sndfile.h
         echo "copy libsndfile/include/sndfile.hh to libsndfile/src/sndfile.hh"
         cp libsndfile/include/sndfile.hh libsndfile/src/sndfile.hh
-        # echo 'replace #include <config.h> with #include "config.h"'
-        # find libsndfile/src -type f -name '*.c' -exec sed -i 's|#include <config.h>|#include "config.h"|' {} \;
+        echo 'replace #include <config.h> with #include "config.h"'
+        find libsndfile/src -type f -name '*.c' -exec sed -i 's|#include <config.h>|#include "config.h"|' {} \;
         echo "libogg build ..."
         cd libogg
         ./autogen.sh
@@ -109,7 +109,7 @@ jobs:
         mkdir -p build
         cd build
         cmake ..
-        make & make install
+        make
         cd ..
         cd ..
         echo "copy libogg/build/include/ogg/config_types.h to libogg/include/ogg/config.h"
@@ -120,7 +120,7 @@ jobs:
         ./configure
         make
         cmake .
-        make & make install
+        make
         cd ..
         cd ..
 
