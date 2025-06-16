@@ -27,7 +27,8 @@
 #include "fluid_settings.h"
 
 #if LIBSNDFILE_SUPPORT
-#include <sndfile.h>
+// #include <sndfile.h>
+#include "../../../../../../../../wasm-thirdparty-src/libsndfile/src/sndfile.h"
 #endif
 
 struct _fluid_file_renderer_t

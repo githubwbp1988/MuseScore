@@ -107,8 +107,6 @@ set(FLUIDSYNTH_SRC
     ${FLUIDSYNTH_DIR}/src/drivers/fluid_mdriver.c
     )
 
-target_link_libraries(fluidsynth PRIVATE sndfile)
-
 if (NOT MSVC)
    if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND CMAKE_CXX_COMPILER_VERSION VERSION_GREATER 9.0)
       set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated-copy")
