@@ -48,6 +48,8 @@
 
 #include "log.h"
 
+#include <emscripten.h>
+
 using namespace muse;
 using namespace muse::modularity;
 using namespace muse::audio;
@@ -96,6 +98,7 @@ static void audio_init_qrc()
     Q_INIT_RESOURCE(audio);
 }
 
+EMSCRIPTEN_KEEPALIVE
 AudioModule::AudioModule()
 {
     AudioSanitizer::setupMainThread();
