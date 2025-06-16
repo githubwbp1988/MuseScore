@@ -8,7 +8,7 @@ if (OS_IS_WIN AND (NOT MINGW))
     find_library(SNDFILE_DLL NAMES sndfile libsndfile-1 PATHS ${DEPENDENCIES_LIB_DIR} NO_DEFAULT_PATH)
     message(STATUS "Found sndfile DLL: ${SNDFILE_DLL}")
 
-elseif (OS_IS_WASM1)
+elseif (OS_IS_WASM)
     set(LIBSND_PATH "" CACHE PATH "Path to libsnd sources")
     set(LIBOGG_PATH "" CACHE PATH "Path to libogg sources")
     set(LIBVORBIS_PATH "" CACHE PATH "Path to libogg sources")
@@ -17,16 +17,16 @@ elseif (OS_IS_WASM1)
     declare_thirdparty_module(sndfile)
 
     set(MODULE_SRC
-        ${LIBSND_PATH}/sndfile.c
-        ${LIBSND_PATH}/sndfile.hh
-        ${LIBSND_PATH}/command.c
-        ${LIBSND_PATH}/common.c
-        ${LIBSND_PATH}/common.h
-        ${LIBSND_PATH}/au.c
-        ${LIBSND_PATH}/caf.c
-        ${LIBSND_PATH}/file_io.c
-        ${LIBSND_PATH}/ogg.c
-        ${LIBSND_PATH}/ogg_vorbis.c
+        ${LIBSND_PATH}/include/sndfile.c
+        ${LIBSND_PATH}/include/sndfile.hh
+        ${LIBSND_PATH}/src/command.c
+        ${LIBSND_PATH}/src/common.c
+        ${LIBSND_PATH}/src/common.h
+        ${LIBSND_PATH}/src/au.c
+        ${LIBSND_PATH}/src/caf.c
+        ${LIBSND_PATH}/src/file_io.c
+        ${LIBSND_PATH}/src/ogg.c
+        ${LIBSND_PATH}/src/ogg_vorbis.c
 
         #ogg
         ${LIBOGG_PATH}/include/ogg/ogg.h
