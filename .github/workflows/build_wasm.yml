@@ -79,6 +79,8 @@ jobs:
         [ -d libsndfile ] || git clone --depth=1 https://github.com/libsndfile/libsndfile.git
         [ -d libogg ] || git clone --depth=1 https://github.com/xiph/ogg.git libogg
         [ -d libvorbis ] || git clone --depth=1 https://github.com/xiph/vorbis.git libvorbis
+        pwd
+        ls -al
         cd ..
 
     - name: Install Qt
