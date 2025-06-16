@@ -79,8 +79,18 @@ jobs:
         [ -d libsndfile ] || git clone https://github.com/libsndfile/libsndfile.git
         [ -d libogg ] || git clone https://github.com/xiph/ogg.git libogg
         [ -d libvorbis ] || git clone https://github.com/xiph/vorbis.git libvorbis
-        echo "test libsndfile/include/sndfile.c:"
-        ls -l libsndfile/include/sndfile.c
+        echo "test libsndfile:"
+        cd libsndfile
+        ls -l 
+        cd ..
+        echo "test libogg:"
+        cd libogg
+        ls -l 
+        cd ..
+        echo "test libvorbis:"
+        cd libvorbis
+        ls -l 
+        cd ..
         cd ..
 
     - name: Install Qt
