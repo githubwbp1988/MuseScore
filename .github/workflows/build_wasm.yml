@@ -79,21 +79,42 @@ jobs:
         [ -d libsndfile ] || git clone https://github.com/libsndfile/libsndfile.git
         [ -d libogg ] || git clone https://github.com/xiph/ogg.git libogg
         [ -d libvorbis ] || git clone https://github.com/xiph/vorbis.git libvorbis
-        echo "test libsndfile:"
+        echo "libsndfile build ... "
+        sudo apt install autoconf autogen automake build-essential libasound2-dev libflac-dev libogg-dev libtool libvorbis-dev libopus-dev libmp3lame-dev libmpg123-dev pkg-config python
         cd libsndfile
-        ls -l
-        echo "test libsndfile/include:" 
-        cd include
-        ls -l
+        autoreconf -vif
+        ./configure --enable-werror
+        make
+        make check
+        mkdir -p CMakeBuild
+        cd CMakeBuild
+        cmake ..
+        make
         cd ..
         cd ..
-        echo "test libogg:"
+        echo "copy libsndfile/CMakeBuild/src/config.h libsndfile/src/config.h to libsndfile/src/config.h"
+        cp libsndfile/CMakeBuild/src/config.h libsndfile/src/config.h
+        echo "libogg build ..."
         cd libogg
-        ls -l 
+        ./autogen.sh
+        ./configure
+        make
+        make check
+        mkdir -p build
+        cd build
+        cmake ..
+        make
         cd ..
-        echo "test libvorbis:"
+        cd ..
+        echo "copy libogg/build/include/ogg/config_types.h to libogg/include/ogg/config.h"
+        cp libogg/build/include/ogg/config_types.h libogg/include/ogg/config.h
+        echo "libvorbis build ..."
         cd libvorbis
-        ls -l 
+        ./autogen.sh
+        ./configure
+        make
+        cmake .
+        make
         cd ..
         cd ..
 
