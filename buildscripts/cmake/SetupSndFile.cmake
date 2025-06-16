@@ -8,7 +8,7 @@ if (OS_IS_WIN AND (NOT MINGW))
     find_library(SNDFILE_DLL NAMES sndfile libsndfile-1 PATHS ${DEPENDENCIES_LIB_DIR} NO_DEFAULT_PATH)
     message(STATUS "Found sndfile DLL: ${SNDFILE_DLL}")
 
-elseif (OS_IS_WASM)
+elseif (OS_IS_WASM1)
     set(LIBSND_PATH "" CACHE PATH "Path to libsnd sources")
     set(LIBOGG_PATH "" CACHE PATH "Path to libogg sources")
     set(LIBVORBIS_PATH "" CACHE PATH "Path to libogg sources")
