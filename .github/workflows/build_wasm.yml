@@ -63,6 +63,22 @@ jobs:
     - name: Register gcc problem matcher
       run: echo "::add-matcher::.github/problem_matchers/gcc.json"
 
+    - name: Restore thirdparty sources
+      uses: actions/cache@v4
+      with:
+        path: wasm-thirdparty-src
+        key: wasm-thirdparty-src-${{ hashFiles('build_wasm.yml') }}
+        restore-keys: wasm-thirdparty-src-
+
+    - name: Download the source code of third-party libraries required by FluidSynth, including libsndfile, libogg, and libvorbis
+      run: |
+        mkdir -p wasm-thirdparty-src
+        cd wasm-thirdparty-src
+        [ -d libsndfile ] || git clone --depth=1 https://github.com/libsndfile/libsndfile.git
+        [ -d libogg ] || git clone --depth=1 https://github.com/xiph/ogg.git libogg
+        [ -d libvorbis ] || git clone --depth=1 https://github.com/xiph/vorbis.git libvorbis
+        cd ..
+
     - name: Install Qt
       uses: jurplel/install-qt-action@v4 
       with:
