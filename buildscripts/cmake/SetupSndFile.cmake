@@ -13,10 +13,8 @@ elseif (OS_IS_WASM)
     set(LIBOGG_PATH "" CACHE PATH "Path to libogg sources")
     set(LIBVORBIS_PATH "" CACHE PATH "Path to libogg sources")
     set(SNDFILE_INCDIR LIBSND_PATH)
-    
-    # if(NOT TARGET sndfile)
-    #     declare_thirdparty_module(sndfile)
-    # endif()
+
+    declare_thirdparty_module(sndfile)
 
     set(MODULE_SRC
         ${LIBSND_PATH}/sndfile.c
