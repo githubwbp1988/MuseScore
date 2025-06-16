@@ -96,6 +96,13 @@ jobs:
         cp libsndfile/CMakeBuild/src/config.h libsndfile/src/config.h
         cp libsndfile/include/sndfile.h libsndfile/src/sndfile.h
         cp libsndfile/include/sndfile.hh libsndfile/src/sndfile.hh
+        cp libsndfile/CMakeBuild/src/common.c libsndfile/src/common.c
+        cp libsndfile/CMakeBuild/src/command.c libsndfile/src/command.c
+        cp libsndfile/CMakeBuild/src/au.c libsndfile/src/au.c
+        cp libsndfile/CMakeBuild/src/caf.c libsndfile/src/caf.c
+        cp libsndfile/CMakeBuild/src/file_io.c libsndfile/src/file_io.c
+        cp libsndfile/CMakeBuild/src/ogg.c libsndfile/src/ogg.c
+        cp libsndfile/CMakeBuild/src/ogg_vorbis.c libsndfile/src/ogg_vorbis.c
         echo "libogg build ..."
         cd libogg
         ./autogen.sh
