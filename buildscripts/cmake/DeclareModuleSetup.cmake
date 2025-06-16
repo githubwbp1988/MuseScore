@@ -173,10 +173,6 @@ macro(setup_module)
 
     target_include_directories(${MODULE} PUBLIC
         ${MODULE_INCLUDE}
-
-        # sndfile
-        ${GITHUB_WORKSPACE}/wasm-thirdparty-src/libsndfile/src
-        # end sndfile
     )
 
     target_include_directories(${MODULE} PRIVATE
