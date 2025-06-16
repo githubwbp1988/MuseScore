@@ -216,9 +216,6 @@ set(MODULE_SRC
 # fluidsynth dependency
 include(SetupSndFile)
 
-declare_module(muse_audio)
-set(MODULE_ALIAS muse::audio)
-
 add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/thirdparty/fluidsynth fluidsynth)
 
 set(MODULE_LINK
@@ -313,8 +310,8 @@ if (OS_IS_WIN)
     )
 endif()
 
-message(STATUS "setup_module() before: MODULE_ROOT=${MODULE_ROOT} CMAKE_CURRENT_LIST_DIR=${CMAKE_CURRENT_LIST_DIR}")
-setup_module()
+# message(STATUS "setup_module() before: MODULE_ROOT=${MODULE_ROOT} CMAKE_CURRENT_LIST_DIR=${CMAKE_CURRENT_LIST_DIR}")
+# setup_module()
 
 if (MUSE_MODULE_AUDIO_TESTS)
     #add_subdirectory(tests) no tests
