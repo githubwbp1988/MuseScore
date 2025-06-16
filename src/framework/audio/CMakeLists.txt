@@ -216,6 +216,9 @@ set(MODULE_SRC
 # fluidsynth dependency
 include(SetupSndFile)
 
+declare_module(muse_audio)
+set(MODULE_ALIAS muse::audio)
+
 add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/thirdparty/fluidsynth fluidsynth)
 
 set(MODULE_LINK
