@@ -310,8 +310,8 @@ if (OS_IS_WIN)
     )
 endif()
 
-# message(STATUS "setup_module() before: MODULE_ROOT=${MODULE_ROOT} CMAKE_CURRENT_LIST_DIR=${CMAKE_CURRENT_LIST_DIR}")
-# setup_module()
+message(STATUS "setup_module() before: MODULE_ROOT=${MODULE_ROOT} CMAKE_CURRENT_LIST_DIR=${CMAKE_CURRENT_LIST_DIR}")
+setup_module()
 
 if (MUSE_MODULE_AUDIO_TESTS)
     #add_subdirectory(tests) no tests
