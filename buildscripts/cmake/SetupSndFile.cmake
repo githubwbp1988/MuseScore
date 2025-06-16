@@ -17,7 +17,7 @@ elseif (OS_IS_WASM)
     declare_thirdparty_module(sndfile)
 
     set(MODULE_SRC
-        ${LIBSND_PATH}/include/sndfile.c
+        ${LIBSND_PATH}/src/sndfile.c
         ${LIBSND_PATH}/include/sndfile.hh
         ${LIBSND_PATH}/src/command.c
         ${LIBSND_PATH}/src/common.c
