@@ -233,17 +233,22 @@ extern "C" {
     void force_audio_symbols() {
         static volatile int dummy = 0;
         if (dummy) {
-            auto* module = new muse::audio::AudioModule::AudioModule();
+            auto* module = new muse::audio::AudioModule();
             delete module;
 
-            const AudioInputParams& params;
-            const modularity::ContextPtr& iocCtx = nullptr;
-            auto* synthesizerModule = new muse::audio::synth::AbstractSynthesizer::AbstractSynthesizer(params, iocCtx);
+            const muse::modularity::ContextPtr& iocCtx = muse::modularity::globalCtx();
+            
+            std::shared_ptr<muse::audio::AudioConfiguration> m_configuration = std::make_shared<muse::audio::AudioConfiguration>(iocCtx);
+            const muse::audio::AudioInputParams& params = m_configuration->defaultAudioInputParams();
+            
+            auto* synthesizerModule = new muse::audio::synth::AbstractSynthesizer(params, iocCtx);
             synthesizerModule->currentRenderMode();
             synthesizerModule->samplesToMsecs(0, 0);
             synthesizerModule->microSecsToSamples(0, 0);
 
-            const muse::mpe::PlaybackData& playbackData; 
+            PlaybackModel m_model(iocCtx);
+            const muse::mpe::PlaybackData& playbackDatat = m_model.resolveTrackPlaybackData("", "");
+
             synthesizerModule->setup(playbackData);
             synthesizerModule->params();
             synthesizerModule->paramsChanged();
