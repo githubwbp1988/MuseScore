@@ -228,45 +228,8 @@
 using namespace muse;
 using namespace mu::app;
 
-#ifdef __EMSCRIPTEN__
-extern "C" {
-    void force_audio_symbols() {
-        static volatile int dummy = 0;
-        if (dummy) {
-            auto* module = new muse::audio::AudioModule();
-            delete module;
-
-            const muse::modularity::ContextPtr& iocCtx = muse::modularity::globalCtx();
-            
-            const muse::audio::AudioInputParams params;
-            params.resourceMeta = DEFAULT_AUDIO_RESOURCE_META;
-            
-            auto* synthesizerModule = new muse::audio::synth::FluidSynth(params, iocCtx);
-            synthesizerModule->currentRenderMode();
-            synthesizerModule->samplesToMsecs(0, 0);
-            synthesizerModule->microSecsToSamples(0, 0);
-
-            auto* m_model = new mu::engraving::PlaybackModel(iocCtx);
-            const auto* _id = new muse:ID();
-            const muse::mpe::PlaybackData& playbackData = m_model->resolveTrackPlaybackData(_id, "");
-
-            synthesizerModule->setup(playbackData);
-            synthesizerModule->params();
-            synthesizerModule->paramsChanged();
-            delete _id;
-            delete synthesizerModule;
-        }
-    }
-}
-
-static void init_forced_symbols() {
-    force_audio_symbols();
-}
-#endif
-
 std::shared_ptr<muse::IApplication> AppFactory::newApp(const CmdOptions& options) const
 {
-    init_forced_symbols();
     if (options.runMode == IApplication::RunMode::GuiApp) {
         return newGuiApp(options);
     } else {
