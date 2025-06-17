@@ -53,9 +53,15 @@ public:
 
 protected:
 
-    virtual void setupSound(const mpe::PlaybackSetupData& setupData) = 0;
-    virtual void setupEvents(const mpe::PlaybackData& playbackData) = 0;
-    virtual void updateRenderingMode(const RenderMode mode);
+    virtual void setupSound(const mpe::PlaybackSetupData& setupData) {
+
+    }
+    virtual void setupEvents(const mpe::PlaybackData& playbackData) {
+
+    }
+    virtual void updateRenderingMode(const RenderMode mode) {
+        
+    }
 
     audio::RenderMode currentRenderMode() const;
 
