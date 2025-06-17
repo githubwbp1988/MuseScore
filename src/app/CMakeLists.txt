@@ -305,12 +305,6 @@ if (CC_IS_EMCC)
     target_link_options(MuseScoreStudio PRIVATE 
         ${EMCC_LINKER_FLAGS}
         ${EXPORTED_FUNCTIONS}
-        "-pthread"                  # Enable pthread support
-        "-sPTHREAD_POOL_SIZE=8"     # threads pool size
-        "-sUSE_PTHREADS=1"          # enable pthreads
-    )
-    target_compile_options(MuseScoreStudio PRIVATE 
-        "-pthread"
     )
 endif()
 

@@ -130,7 +130,7 @@ jobs:
         version: '6.9.1'
         host: all_os
         target: 'wasm'
-        arch: wasm_multithread
+        arch: wasm_singlethread
         modules: 'qt5compat qtscxml qtshadertools' 
 
     - name: Setup environment
