@@ -31,6 +31,10 @@
 #include <emscripten/threading.h>
 
 namespace muse::audio {
+
+static std::atomic<int> s_nextThreadId{100};
+static thread_local int s_currentThreadId{0};
+
 class AudioSanitizer
 {
 public:
@@ -67,9 +71,6 @@ public:
     static thread_id_type workerThread();
     static bool isWorkerThread();
 };
-
-static std::atomic<int> s_nextThreadId{100};
-static thread_local int s_currentThreadId{0};
 
 }
 
