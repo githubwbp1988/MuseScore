@@ -39,6 +39,11 @@
 
 using namespace muse::audio;
 
+std::atomic<int> AudioThread::next_id{0};
+thread_local int AudioThread::current_thread_id{0};
+
+AudioThread::ID = AudioThread::get_current_id();
+
 static uint64_t toWinTime(const msecs_t msecs)
 {
     return msecs * 10000;
@@ -70,10 +75,15 @@ void AudioThread::run(const Runnable& onStart, const Runnable& loopBody, const m
         LOGE() << "Unable to change audio thread priority";
     }
 #else
-    emscripten_set_timeout_loop([](double, void* userData) -> EM_BOOL {
-        reinterpret_cast<AudioThread*>(userData)->loopBody();
-        return EM_TRUE;
-    }, 2, this);
+    // emscripten_set_timeout_loop([](double, void* userData) -> EM_BOOL {
+    //     reinterpret_cast<AudioThread*>(userData)->loopBody();
+    //     return EM_TRUE;
+    // }, 2, this);
+
+    emscripten_async_call([](void* userData) {
+        auto* self = static_cast<AudioThread*>(userData);
+        self->main();
+    }, this, 0);
 #endif
 }
 
@@ -89,9 +99,9 @@ void AudioThread::stop(const Runnable& onFinished)
 {
     m_onFinished = onFinished;
     m_running = false;
-    if (m_thread) {
-        m_thread->join();
-    }
+    // if (m_thread) {
+    //     m_thread->join();
+    // }
 }
 
 bool AudioThread::isRunning() const
@@ -129,7 +139,8 @@ void AudioThread::main()
             std::this_thread::sleep_for(std::chrono::milliseconds(m_intervalMsecs));
         }
 #else
-        std::this_thread::sleep_for(std::chrono::milliseconds(m_intervalMsecs));
+        // std::this_thread::sleep_for(std::chrono::milliseconds(m_intervalMsecs));
+        emscripten_sleep(m_intervalMsecs);
 #endif
     }
 

@@ -28,20 +28,49 @@
 #include <set>
 #include <thread>
 
+#include <emscripten/threading.h>
+
 namespace muse::audio {
 class AudioSanitizer
 {
 public:
+    enum ThreadType {
+        THREAD_UNKNOWN = 0,
+        THREAD_MAIN = 1,
+        THREAD_WORKER = 2,
+        THREAD_MIXER = 3
+    };
+
+    using thread_id_type = int;
+
+    static thread_id_type getCurrentThreadId() {
+        if (s_currentThreadId == 0) {
+            if (emscripten_is_main_browser_thread()) {
+                s_currentThreadId = THREAD_MAIN;
+            } else {
+                // Allocate an ID for the worker thread
+                s_currentThreadId = s_nextThreadId.fetch_add(1) + 10; // Start from 10 to avoid conflicts
+            }
+        }
+        return s_currentThreadId;
+    }
 
     static void setupMainThread();
-    static std::thread::id mainThread();
+    // static std::thread::id mainThread();
+    static thread_id_type mainThread();
     static bool isMainThread();
 
     static void setupWorkerThread();
-    static void setMixerThreads(const std::set<std::thread::id>& threadIdSet);
-    static std::thread::id workerThread();
+    // static void setMixerThreads(const std::set<std::thread::id>& threadIdSet);
+    static void setMixerThreads(const std::set<thread_id_type>& threadIdSet);
+    // static std::thread::id workerThread();
+    static thread_id_type workerThread();
     static bool isWorkerThread();
 };
+
+static std::atomic<int> s_nextThreadId{100};
+static thread_local int s_currentThreadId{0};
+
 }
 
 #define ONLY_AUDIO_WORKER_THREAD assert(muse::audio::AudioSanitizer::isWorkerThread())

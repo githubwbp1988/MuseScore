@@ -29,6 +29,7 @@
 #include <functional>
 
 #include "audiotypes.h"
+#include <emscripten/threading.h>
 
 namespace muse::audio {
 class AudioThread
@@ -37,7 +38,18 @@ public:
     AudioThread() = default;
     ~AudioThread();
 
-    static std::thread::id ID;
+    // static std::thread::id ID;
+
+    using ID_Type = int;
+
+    static inline ID_Type ID;
+
+    static ID_Type get_current_id() {
+        if (current_thread_id == 0) {
+            current_thread_id = next_id.fetch_add(1) + 1;
+        }
+        return current_thread_id;
+    }
 
     using Runnable = std::function<void ()>;
 
@@ -48,6 +60,9 @@ public:
 
 private:
     void main();
+
+    static std::atomic<int> next_id;
+    static thread_local int current_thread_id;
 
     Runnable m_onStart = nullptr;
     Runnable m_mainLoopBody = nullptr;

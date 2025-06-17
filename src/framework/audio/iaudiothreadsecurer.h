@@ -27,6 +27,7 @@
 #include <thread>
 
 #include "global/modularity/ioc.h"
+#include "internal/audiosanitizer.h"
 
 namespace muse::audio {
 class IAudioThreadSecurer : MODULE_EXPORT_INTERFACE
@@ -35,9 +36,11 @@ class IAudioThreadSecurer : MODULE_EXPORT_INTERFACE
 public:
     virtual ~IAudioThreadSecurer() = default;
     virtual bool isMainThread() const = 0;
-    virtual std::thread::id mainThreadId() const = 0;
+    // virtual std::thread::id mainThreadId() const = 0;
+    virtual AudioSanitizer::thread_id_type mainThreadId() const = 0;
     virtual bool isAudioWorkerThread() const = 0;
-    virtual std::thread::id workerThreadId() const = 0;
+    // virtual std::thread::id workerThreadId() const = 0;
+    virtual AudioSanitizer::thread_id_type workerThreadId() const = 0;
 };
 }
 

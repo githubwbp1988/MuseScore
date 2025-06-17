@@ -22,7 +22,7 @@
 
 #include "audiothreadsecurer.h"
 
-#include "audiosanitizer.h"
+// #include "audiosanitizer.h"
 
 using namespace muse::audio;
 
@@ -31,7 +31,8 @@ bool AudioThreadSecurer::isMainThread() const
     return AudioSanitizer::isMainThread();
 }
 
-std::thread::id AudioThreadSecurer::mainThreadId() const
+// std::thread::id AudioThreadSecurer::mainThreadId() const
+AudioSanitizer::thread_id_type AudioThreadSecurer::mainThreadId() const
 {
     return AudioSanitizer::mainThread();
 }
@@ -41,7 +42,8 @@ bool AudioThreadSecurer::isAudioWorkerThread() const
     return AudioSanitizer::isWorkerThread();
 }
 
-std::thread::id AudioThreadSecurer::workerThreadId() const
+// std::thread::id AudioThreadSecurer::workerThreadId() const
+AudioSanitizer::thread_id_type AudioThreadSecurer::workerThreadId() const
 {
     return AudioSanitizer::workerThread();
 }

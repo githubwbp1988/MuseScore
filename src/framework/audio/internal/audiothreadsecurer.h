@@ -30,9 +30,11 @@ class AudioThreadSecurer : public IAudioThreadSecurer
 {
 public:
     bool isMainThread() const override;
-    std::thread::id mainThreadId() const override;
+    // std::thread::id mainThreadId() const override;
+    AudioSanitizer::thread_id_type mainThreadId() const override;
     bool isAudioWorkerThread() const override;
-    std::thread::id workerThreadId() const override;
+    // std::thread::id workerThreadId() const override;
+    AudioSanitizer::thread_id_type workerThreadId() const override;
 };
 }
 
