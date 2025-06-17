@@ -29,8 +29,6 @@ using namespace muse::mpe;
 using namespace muse::audio;
 using namespace muse::audio::synth;
 
-#include <emscripten.h>
-
 AbstractSynthesizer::AbstractSynthesizer(const AudioInputParams& params, const modularity::ContextPtr& iocCtx)
     : Injectable(iocCtx), m_params(params)
 {
