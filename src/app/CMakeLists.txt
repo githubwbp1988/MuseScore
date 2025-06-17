@@ -423,9 +423,6 @@ elseif(OS_IS_WASM)
         COMMENT "Install js api..."
     )
 
-    set(MODULE_LINK
-        muse::audio
-    )
 
 else()
     message(FATAL_ERROR "Unsupported Platform: ${CMAKE_HOST_SYSTEM_NAME}")

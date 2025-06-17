@@ -120,6 +120,9 @@ set(MODULE_SRC
     ${CMAKE_CURRENT_LIST_DIR}/internal/abstractsynthesizer.h
     ${CMAKE_CURRENT_LIST_DIR}/internal/abstracteventsequencer.h
 
+    # Driver
+    ${DRIVER_SRC}
+
     # Worker
     ${CMAKE_CURRENT_LIST_DIR}/internal/worker/playback.cpp
     ${CMAKE_CURRENT_LIST_DIR}/internal/worker/playback.h
@@ -208,16 +211,15 @@ set(MODULE_SRC
     ${CMAKE_CURRENT_LIST_DIR}/internal/synthesizers/fluidsynth/fluidsoundfontparser.cpp
     ${CMAKE_CURRENT_LIST_DIR}/internal/synthesizers/synthresolver.cpp
     ${CMAKE_CURRENT_LIST_DIR}/internal/synthesizers/synthresolver.h
-
-    # Driver
-    ${DRIVER_SRC}
     )
 
 # fluidsynth dependency
 include(SetupSndFile)
 
-declare_module(muse_audio)
-set(MODULE_ALIAS muse::audio)
+if (OS_IS_WASM)
+    declare_module(muse_audio)
+    set(MODULE_ALIAS muse::audio)
+endif()
 
 add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/thirdparty/fluidsynth fluidsynth)
 
