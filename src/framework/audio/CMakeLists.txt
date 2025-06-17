@@ -120,9 +120,6 @@ set(MODULE_SRC
     ${CMAKE_CURRENT_LIST_DIR}/internal/abstractsynthesizer.h
     ${CMAKE_CURRENT_LIST_DIR}/internal/abstracteventsequencer.h
 
-    # Driver
-    ${DRIVER_SRC}
-
     # Worker
     ${CMAKE_CURRENT_LIST_DIR}/internal/worker/playback.cpp
     ${CMAKE_CURRENT_LIST_DIR}/internal/worker/playback.h
@@ -211,6 +208,9 @@ set(MODULE_SRC
     ${CMAKE_CURRENT_LIST_DIR}/internal/synthesizers/fluidsynth/fluidsoundfontparser.cpp
     ${CMAKE_CURRENT_LIST_DIR}/internal/synthesizers/synthresolver.cpp
     ${CMAKE_CURRENT_LIST_DIR}/internal/synthesizers/synthresolver.h
+
+    # Driver
+    ${DRIVER_SRC}
     )
 
 # fluidsynth dependency
