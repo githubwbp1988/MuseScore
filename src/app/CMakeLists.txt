@@ -305,9 +305,6 @@ if (CC_IS_EMCC)
     target_link_options(MuseScoreStudio PRIVATE 
         ${EMCC_LINKER_FLAGS}
         ${EXPORTED_FUNCTIONS}
-        "-sERROR_ON_UNDEFINED_SYMBOLS=0"  # 允许未定义符号
-        "-sALLOW_UNDEFINED"               # 允许未定义
-        "--whole-archive"                 # 包含所有符号
     )
 endif()
 
