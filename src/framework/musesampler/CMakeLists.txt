@@ -45,8 +45,4 @@ set(MODULE_SRC
     ${CMAKE_CURRENT_LIST_DIR}/internal/musesampleractioncontroller.h
     )
 
-set(MODULE_LINK
-    muse::audio
-)
-
 setup_module()
