@@ -106,8 +106,6 @@ function do_build() {
         -DLIBSND_PATH=${GITHUB_WORKSPACE}/wasm-thirdparty-src/libsndfile \
         -DLIBOGG_PATH=${GITHUB_WORKSPACE}/wasm-thirdparty-src/libogg \
         -DLIBVORBIS_PATH=${GITHUB_WORKSPACE}/wasm-thirdparty-src/libvorbis \
-        -DCMAKE_CXX_FLAGS="-pthread -s USE_PTHREADS=1" \
-        -DCMAKE_EXE_LINKER_FLAGS="-pthread -s USE_PTHREADS=1 -s PTHREAD_POOL_SIZE=5 -s ALLOW_MEMORY_GROWTH=1" \
         -DCMAKE_CXX_FLAGS="-g -gsource-map" \
         -DCMAKE_C_FLAGS="-g -gsource-map"
 
