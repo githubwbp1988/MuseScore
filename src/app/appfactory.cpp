@@ -238,22 +238,23 @@ extern "C" {
 
             const muse::modularity::ContextPtr& iocCtx = muse::modularity::globalCtx();
             
-            std::shared_ptr<muse::audio::AudioConfiguration> m_configuration = std::make_shared<muse::audio::AudioConfiguration>(iocCtx);
-            const muse::audio::AudioInputParams& params = m_configuration->defaultAudioInputParams();
+            const muse::audio::AudioInputParams params;
+            params.resourceMeta = DEFAULT_AUDIO_RESOURCE_META;
             
-            auto* synthesizerModule = new muse::audio::synth::AbstractSynthesizer(params, iocCtx);
+            auto* synthesizerModule = new muse::audio::synth::FluidSynth(params, iocCtx);
             synthesizerModule->currentRenderMode();
             synthesizerModule->samplesToMsecs(0, 0);
             synthesizerModule->microSecsToSamples(0, 0);
 
-            PlaybackModel m_model(iocCtx);
-            const muse::mpe::PlaybackData& playbackDatat = m_model.resolveTrackPlaybackData("", "");
+            auto* m_model = new mu::engraving::PlaybackModel(iocCtx);
+            const auto* _id = new muse:ID();
+            const muse::mpe::PlaybackData& playbackData = m_model->resolveTrackPlaybackData(_id, "");
 
             synthesizerModule->setup(playbackData);
             synthesizerModule->params();
             synthesizerModule->paramsChanged();
+            delete _id;
             delete synthesizerModule;
-
         }
     }
 }
