@@ -39,8 +39,6 @@ set(MODULE_SRC
     ${CMAKE_CURRENT_LIST_DIR}/internal/startupscenario.h
     ${CMAKE_CURRENT_LIST_DIR}/view/appmenumodel.cpp
     ${CMAKE_CURRENT_LIST_DIR}/view/appmenumodel.h
-    ${CMAKE_CURRENT_LIST_DIR}/view/mainwindowtitleprovider.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/view/mainwindowtitleprovider.h
     ${CMAKE_CURRENT_LIST_DIR}/view/notationpagemodel.cpp
     ${CMAKE_CURRENT_LIST_DIR}/view/notationpagemodel.h
     ${CMAKE_CURRENT_LIST_DIR}/view/notationstatusbarmodel.cpp
