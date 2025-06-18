@@ -8,23 +8,23 @@
 #include "muse_framework_config.h"
 #include "app_config.h"
 
-// #ifdef MUSE_MODULE_ACCESSIBILITY
+#ifdef MUSE_MODULE_ACCESSIBILITY
 #include "framework/accessibility/accessibilitymodule.h"
-// #else
-// #include "framework/stubs/accessibility/accessibilitystubmodule.h"
-// #endif
+#else
+#include "framework/stubs/accessibility/accessibilitystubmodule.h"
+#endif
 
 #include "framework/actions/actionsmodule.h"
 
-// #ifdef MUSE_MODULE_AUDIO
+#ifdef MUSE_MODULE_AUDIO
 #include "framework/audio/audiomodule.h"
-// #else
-// #include "framework/stubs/audio/audiostubmodule.h"
-// #endif
+#else
+#include "framework/stubs/audio/audiostubmodule.h"
+#endif
 
-// #ifdef MUSE_MODULE_AUDIOPLUGINS
+#ifdef MUSE_MODULE_AUDIOPLUGINS
 #include "framework/audioplugins/audiopluginsmodule.h"
-// #endif
+#endif
 
 #ifdef MUSE_MODULE_CLOUD
 #include "framework/cloud/cloudmodule.h"
@@ -52,11 +52,11 @@
 #include "framework/stubs/midi/midistubmodule.h"
 #endif
 
-// #ifdef MUSE_MODULE_MPE
+#ifdef MUSE_MODULE_MPE
 #include "framework/mpe/mpemodule.h"
-// #else
-// #include "framework/stubs/mpe/mpestubmodule.h"
-// #endif
+#else
+#include "framework/stubs/mpe/mpestubmodule.h"
+#endif
 
 #ifdef MUSE_MODULE_MULTIINSTANCES
 #include "framework/multiinstances/multiinstancesmodule.h"
@@ -64,15 +64,15 @@
 #include "framework/stubs/multiinstances/multiinstancesstubmodule.h"
 #endif
 
-// #ifdef MUSE_MODULE_MUSESAMPLER
+#ifdef MUSE_MODULE_MUSESAMPLER
 #include "framework/musesampler/musesamplermodule.h"
-// #endif
+#endif
 
-// #ifdef MUSE_MODULE_NETWORK
+#ifdef MUSE_MODULE_NETWORK
 #include "framework/network/networkmodule.h"
-// #else
-// #include "framework/stubs/network/networkstubmodule.h"
-// #endif
+#else
+#include "framework/stubs/network/networkstubmodule.h"
+#endif
 
 #ifdef MUSE_MODULE_SHORTCUTS
 #include "framework/shortcuts/shortcutsmodule.h"
@@ -254,26 +254,26 @@ std::shared_ptr<muse::IApplication> AppFactory::newGuiApp(const CmdOptions& opti
     app->addModule(new muse::accessibility::AccessibilityModule());
     app->addModule(new muse::actions::ActionsModule());
     app->addModule(new muse::audio::AudioModule());
-// #ifdef MUSE_MODULE_AUDIOPLUGINS
+#ifdef MUSE_MODULE_AUDIOPLUGINS
     app->addModule(new muse::audioplugins::AudioPluginsModule());
-// #endif
+#endif
     app->addModule(new muse::draw::DrawModule());
     app->addModule(new muse::midi::MidiModule());
     app->addModule(new muse::mpe::MpeModule());
 
-// #ifdef MUSE_MODULE_MUSESAMPLER
+#ifdef MUSE_MODULE_MUSESAMPLER
     bool shouldAddMuseSamplerModule = true;
-// #ifndef MUSE_MODULE_MUSESAMPLER_LOAD_IN_DEBUG
-//     if (runtime::isDebug()) {
-//         shouldAddMuseSamplerModule = false;
-//         LOGI() << "Not adding MuseSampler module in a debug build";
-//     }
-// #endif
+#ifndef MUSE_MODULE_MUSESAMPLER_LOAD_IN_DEBUG
+    if (runtime::isDebug()) {
+        shouldAddMuseSamplerModule = false;
+        LOGI() << "Not adding MuseSampler module in a debug build";
+    }
+#endif
 
     if (shouldAddMuseSamplerModule) {
         app->addModule(new muse::musesampler::MuseSamplerModule());
     }
-// #endif
+#endif
 
     app->addModule(new muse::network::NetworkModule());
     app->addModule(new muse::shortcuts::ShortcutsModule());
