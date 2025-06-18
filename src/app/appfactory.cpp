@@ -273,7 +273,7 @@ std::shared_ptr<muse::IApplication> AppFactory::newGuiApp(const CmdOptions& opti
     if (shouldAddMuseSamplerModule) {
         app->addModule(new muse::musesampler::MuseSamplerModule());
     }
-#endif
+// #endif
 
     app->addModule(new muse::network::NetworkModule());
     app->addModule(new muse::shortcuts::ShortcutsModule());
