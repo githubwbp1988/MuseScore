@@ -38,8 +38,8 @@ static std::set<AudioSanitizer::thread_id_type> s_mixerThreadIdSet;
 void AudioSanitizer::setupMainThread()
 {
     // s_as_mainThreadID = std::this_thread::get_id();
-    s_as_mainThreadID = THREAD_MAIN;
-    s_currentThreadId = THREAD_MAIN; // Ensure the current thread is marked as the main thread
+    s_as_mainThreadID = AudioSanitizer::THREAD_MAIN;
+    s_currentThreadId = AudioSanitizer::THREAD_MAIN; // Ensure the current thread is marked as the main thread
 }
 
 // std::thread::id AudioSanitizer::mainThread()
