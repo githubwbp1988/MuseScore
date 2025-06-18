@@ -109,6 +109,7 @@ function do_build() {
         -DCMAKE_CXX_FLAGS="-g -gsource-map" \
         -DCMAKE_C_FLAGS="-g -gsource-map" \
         -DCMAKE_CXX_FLAGS="-pthread -s USE_PTHREADS=1 -s PROXY_TO_PTHREAD=1 -fexceptions" \
+        -DCMAKE_C_FLAGS="-sALLOW_UNDEFINED" \
         -DCMAKE_EXE_LINKER_FLAGS="-pthread -s USE_PTHREADS=1 -s PROXY_TO_PTHREAD=1 -s PTHREAD_POOL_SIZE=4 -s ALLOW_MEMORY_GROWTH=1 -s DISABLE_EXCEPTION_CATCHING=0"
 
     ninja -j $JOBS
