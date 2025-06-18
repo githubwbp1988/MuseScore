@@ -298,8 +298,6 @@ else ()
         find_package(ALSA REQUIRED)
         set(MODULE_INCLUDE_PRIVATE ${MODULE_INCLUDE_PRIVATE} ${ALSA_INCLUDE_DIRS} )
         set(MODULE_LINK ${MODULE_LINK} ${ALSA_LIBRARIES} pthread )
-    elseif (OS_IS_WASM)
-        set(MODULE_LINK ${MODULE_LINK} pthread )
     endif()
 endif()
 
