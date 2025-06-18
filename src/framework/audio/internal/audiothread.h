@@ -68,7 +68,7 @@ private:
     Runnable m_mainLoopBody = nullptr;
     Runnable m_onFinished = nullptr;
     msecs_t m_intervalMsecs = 0;
-    uint64_t m_intervalInWinTime = 0;
+    // uint64_t m_intervalInWinTime = 0;
 
     std::unique_ptr<std::thread> m_thread = nullptr;
     std::atomic<bool> m_running = false;
