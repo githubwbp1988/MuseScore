@@ -108,7 +108,6 @@ std::string AudioModule::moduleName() const
 
 void AudioModule::registerExports()
 {
-    return;
     m_configuration = std::make_shared<AudioConfiguration>(iocContext());
     m_audioEngine = std::make_shared<AudioEngine>(iocContext());
     m_audioWorker = std::make_shared<AudioThread>();
@@ -201,8 +200,6 @@ void AudioModule::onInit(const IApplication::RunMode& mode)
         in fact, it knows nothing about the data consumer, about the audio driver.
 
     **/
-
-    return;
 
     // Init configuration
     m_configuration->init();
