@@ -61,8 +61,4 @@ void StubPlatformTheme::applyPlatformStyleOnAppForTheme(const ThemeCode&)
 
 void StubPlatformTheme::applyPlatformStyleOnWindowForTheme(QWindow* window, const ThemeCode&)
 {
-    if (!window) {
-        return;
-    }
-    window->setColor(QColor(50, 50, 50));
 }
