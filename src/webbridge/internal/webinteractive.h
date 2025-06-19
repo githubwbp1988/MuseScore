@@ -80,7 +80,7 @@ public:
                                                 const muse::io::paths_t& selectedDirectories) override;
 
     // color
-    QColor selectColor(const QColor& color = Qt::white, const std::string& title = "") override;
+    async::Promise<Color> selectColor(const QColor& color = Qt::white, const std::string& title = "") override;
     bool isSelectColorOpened() const override;
 
     // custom
