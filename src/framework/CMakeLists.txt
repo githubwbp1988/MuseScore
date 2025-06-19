@@ -32,7 +32,7 @@ if (MUSE_MODULE_ACTIONS)
 endif()
 
 if (MUSE_MODULE_AUDIO)
-    add_subdirectory(audio)
+    #add_subdirectory(audio)
 endif()
 
 if (MUSE_MODULE_AUDIOPLUGINS)
