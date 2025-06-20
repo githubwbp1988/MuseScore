@@ -98,7 +98,7 @@ static void audio_init_qrc()
 
 AudioModule::AudioModule()
 {
-    // AudioSanitizer::setupMainThread();
+    AudioSanitizer::setupMainThread();
 }
 
 std::string AudioModule::moduleName() const
