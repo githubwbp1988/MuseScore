@@ -96,10 +96,10 @@ static void audio_init_qrc()
     Q_INIT_RESOURCE(audio);
 }
 
-// AudioModule::AudioModule()
-// {
-//     AudioSanitizer::setupMainThread();
-// }
+AudioModule::AudioModule()
+{
+    AudioSanitizer::setupMainThread();
+}
 
 std::string AudioModule::moduleName() const
 {
@@ -118,29 +118,29 @@ void AudioModule::registerExports()
     m_playbackFacade = std::make_shared<Playback>(iocContext());
     m_soundFontRepository = std::make_shared<SoundFontRepository>(iocContext());
 
-#if defined(MUSE_MODULE_AUDIO_JACK)
-    m_audioDriver = std::shared_ptr<IAudioDriver>(new JackAudioDriver());
-#else
+// #if defined(MUSE_MODULE_AUDIO_JACK)
+//     m_audioDriver = std::shared_ptr<IAudioDriver>(new JackAudioDriver());
+// #else
 
-#if defined(Q_OS_LINUX) || defined(Q_OS_FREEBSD)
-    m_audioDriver = std::shared_ptr<IAudioDriver>(new LinuxAudioDriver());
-#endif
+// #if defined(Q_OS_LINUX) || defined(Q_OS_FREEBSD)
+//     m_audioDriver = std::shared_ptr<IAudioDriver>(new LinuxAudioDriver());
+// #endif
 
-#ifdef Q_OS_WIN
-    //m_audioDriver = std::shared_ptr<IAudioDriver>(new WinmmDriver());
-    //m_audioDriver = std::shared_ptr<IAudioDriver>(new CoreAudioDriver());
-    m_audioDriver = std::shared_ptr<IAudioDriver>(new WasapiAudioDriver());
-#endif
+// #ifdef Q_OS_WIN
+//     //m_audioDriver = std::shared_ptr<IAudioDriver>(new WinmmDriver());
+//     //m_audioDriver = std::shared_ptr<IAudioDriver>(new CoreAudioDriver());
+//     m_audioDriver = std::shared_ptr<IAudioDriver>(new WasapiAudioDriver());
+// #endif
 
-#ifdef Q_OS_MACOS
-    m_audioDriver = std::shared_ptr<IAudioDriver>(new OSXAudioDriver());
-#endif
+// #ifdef Q_OS_MACOS
+//     m_audioDriver = std::shared_ptr<IAudioDriver>(new OSXAudioDriver());
+// #endif
 
-#ifdef Q_OS_WASM
+// #ifdef Q_OS_WASM
     m_audioDriver = std::shared_ptr<IAudioDriver>(new WebAudioDriver());
-#endif
+// #endif
 
-#endif // MUSE_MODULE_AUDIO_JACK
+// #endif // MUSE_MODULE_AUDIO_JACK
 
     ioc()->registerExport<IAudioConfiguration>(moduleName(), m_configuration);
     ioc()->registerExport<IAudioEngine>(moduleName(), m_audioEngine);
