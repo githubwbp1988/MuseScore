@@ -81,24 +81,24 @@ using namespace muse::audio::fx;
 
 static void measureInputLag(const float* buf, const size_t size)
 {
-    if (INPUT_LAG_TIMER_STARTED) {
-        for (size_t i = 0; i < size; ++i) {
-            if (!RealIsNull(buf[i])) {
-                STOP_INPUT_LAG_TIMER;
-                return;
-            }
-        }
-    }
+    // if (INPUT_LAG_TIMER_STARTED) {
+    //     for (size_t i = 0; i < size; ++i) {
+    //         if (!RealIsNull(buf[i])) {
+    //             STOP_INPUT_LAG_TIMER;
+    //             return;
+    //         }
+    //     }
+    // }
 }
 
 static void audio_init_qrc()
 {
-    Q_INIT_RESOURCE(audio);
+    // Q_INIT_RESOURCE(audio);
 }
 
 AudioModule::AudioModule()
 {
-    AudioSanitizer::setupMainThread();
+    // AudioSanitizer::setupMainThread();
 }
 
 std::string AudioModule::moduleName() const
@@ -229,22 +229,22 @@ void AudioModule::onInit(const IApplication::RunMode& mode)
 
 void AudioModule::onDeinit()
 {
-    if (m_audioDriver->isOpened()) {
-        m_audioDriver->close();
-    }
+    // if (m_audioDriver->isOpened()) {
+    //     m_audioDriver->close();
+    // }
 }
 
 void AudioModule::onDestroy()
 {
-    //! NOTE During deinitialization, objects that process events are destroyed,
-    //! it is better to destroy them on onDestroy, when no events should come anymore
-    if (m_audioWorker->isRunning()) {
-        m_audioWorker->stop([this]() {
-            ONLY_AUDIO_WORKER_THREAD;
-            m_playbackFacade->deinit();
-            m_audioEngine->deinit();
-        });
-    }
+    // //! NOTE During deinitialization, objects that process events are destroyed,
+    // //! it is better to destroy them on onDestroy, when no events should come anymore
+    // if (m_audioWorker->isRunning()) {
+    //     m_audioWorker->stop([this]() {
+    //         ONLY_AUDIO_WORKER_THREAD;
+    //         m_playbackFacade->deinit();
+    //         m_audioEngine->deinit();
+    //     });
+    // }
 }
 
 void AudioModule::setupAudioDriver(const IApplication::RunMode& mode)
