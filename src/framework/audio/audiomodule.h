@@ -47,10 +47,10 @@ class Playback;
 class SoundFontRepository;
 class KnownAudioPluginsRegister;
 class RegisterAudioPluginsScenario;
-class __attribute__((visibility("default"))) AudioModule : public modularity::IModuleSetup, public async::Asyncable
+class AudioModule : public modularity::IModuleSetup, public async::Asyncable
 {
 public:
-    __attribute__((visibility("default"))) AudioModule();
+    AudioModule();
 
     std::string moduleName() const override;
 
