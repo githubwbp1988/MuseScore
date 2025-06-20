@@ -108,65 +108,65 @@ std::string AudioModule::moduleName() const
 
 void AudioModule::registerExports()
 {
-    m_configuration = std::make_shared<AudioConfiguration>(iocContext());
-    m_audioEngine = std::make_shared<AudioEngine>(iocContext());
-    m_audioWorker = std::make_shared<AudioThread>();
-    m_audioBuffer = std::make_shared<AudioBuffer>();
-    m_audioOutputController = std::make_shared<AudioOutputDeviceController>(iocContext());
-    m_fxResolver = std::make_shared<FxResolver>();
-    m_synthResolver = std::make_shared<SynthResolver>();
-    m_playbackFacade = std::make_shared<Playback>(iocContext());
-    m_soundFontRepository = std::make_shared<SoundFontRepository>(iocContext());
+//     m_configuration = std::make_shared<AudioConfiguration>(iocContext());
+//     m_audioEngine = std::make_shared<AudioEngine>(iocContext());
+//     m_audioWorker = std::make_shared<AudioThread>();
+//     m_audioBuffer = std::make_shared<AudioBuffer>();
+//     m_audioOutputController = std::make_shared<AudioOutputDeviceController>(iocContext());
+//     m_fxResolver = std::make_shared<FxResolver>();
+//     m_synthResolver = std::make_shared<SynthResolver>();
+//     m_playbackFacade = std::make_shared<Playback>(iocContext());
+//     m_soundFontRepository = std::make_shared<SoundFontRepository>(iocContext());
 
-// #if defined(MUSE_MODULE_AUDIO_JACK)
-//     m_audioDriver = std::shared_ptr<IAudioDriver>(new JackAudioDriver());
-// #else
+// // #if defined(MUSE_MODULE_AUDIO_JACK)
+// //     m_audioDriver = std::shared_ptr<IAudioDriver>(new JackAudioDriver());
+// // #else
 
-// #if defined(Q_OS_LINUX) || defined(Q_OS_FREEBSD)
-//     m_audioDriver = std::shared_ptr<IAudioDriver>(new LinuxAudioDriver());
-// #endif
+// // #if defined(Q_OS_LINUX) || defined(Q_OS_FREEBSD)
+// //     m_audioDriver = std::shared_ptr<IAudioDriver>(new LinuxAudioDriver());
+// // #endif
 
-// #ifdef Q_OS_WIN
-//     //m_audioDriver = std::shared_ptr<IAudioDriver>(new WinmmDriver());
-//     //m_audioDriver = std::shared_ptr<IAudioDriver>(new CoreAudioDriver());
-//     m_audioDriver = std::shared_ptr<IAudioDriver>(new WasapiAudioDriver());
-// #endif
+// // #ifdef Q_OS_WIN
+// //     //m_audioDriver = std::shared_ptr<IAudioDriver>(new WinmmDriver());
+// //     //m_audioDriver = std::shared_ptr<IAudioDriver>(new CoreAudioDriver());
+// //     m_audioDriver = std::shared_ptr<IAudioDriver>(new WasapiAudioDriver());
+// // #endif
 
-// #ifdef Q_OS_MACOS
-//     m_audioDriver = std::shared_ptr<IAudioDriver>(new OSXAudioDriver());
-// #endif
+// // #ifdef Q_OS_MACOS
+// //     m_audioDriver = std::shared_ptr<IAudioDriver>(new OSXAudioDriver());
+// // #endif
 
-// #ifdef Q_OS_WASM
-    m_audioDriver = std::shared_ptr<IAudioDriver>(new WebAudioDriver());
-// #endif
+// // #ifdef Q_OS_WASM
+//     m_audioDriver = std::shared_ptr<IAudioDriver>(new WebAudioDriver());
+// // #endif
 
-// #endif // MUSE_MODULE_AUDIO_JACK
+// // #endif // MUSE_MODULE_AUDIO_JACK
 
-    ioc()->registerExport<IAudioConfiguration>(moduleName(), m_configuration);
-    ioc()->registerExport<IAudioEngine>(moduleName(), m_audioEngine);
-    ioc()->registerExport<IAudioThreadSecurer>(moduleName(), std::make_shared<AudioThreadSecurer>());
-    ioc()->registerExport<IAudioDriver>(moduleName(), m_audioDriver);
-    ioc()->registerExport<IPlayback>(moduleName(), m_playbackFacade);
+//     ioc()->registerExport<IAudioConfiguration>(moduleName(), m_configuration);
+//     ioc()->registerExport<IAudioEngine>(moduleName(), m_audioEngine);
+//     ioc()->registerExport<IAudioThreadSecurer>(moduleName(), std::make_shared<AudioThreadSecurer>());
+//     ioc()->registerExport<IAudioDriver>(moduleName(), m_audioDriver);
+//     ioc()->registerExport<IPlayback>(moduleName(), m_playbackFacade);
 
-    ioc()->registerExport<ISynthResolver>(moduleName(), m_synthResolver);
-    ioc()->registerExport<IFxResolver>(moduleName(), m_fxResolver);
+//     ioc()->registerExport<ISynthResolver>(moduleName(), m_synthResolver);
+//     ioc()->registerExport<IFxResolver>(moduleName(), m_fxResolver);
 
-    ioc()->registerExport<ISoundFontRepository>(moduleName(), m_soundFontRepository);
+//     ioc()->registerExport<ISoundFontRepository>(moduleName(), m_soundFontRepository);
 }
 
 void AudioModule::registerResources()
 {
-    audio_init_qrc();
+    // audio_init_qrc();
 }
 
 void AudioModule::registerUiTypes()
 {
-    ioc()->resolve<ui::IUiEngine>(moduleName())->addSourceImportPath(muse_audio_QML_IMPORT);
+    // ioc()->resolve<ui::IUiEngine>(moduleName())->addSourceImportPath(muse_audio_QML_IMPORT);
 }
 
 void AudioModule::resolveImports()
 {
-    m_fxResolver->registerResolver(AudioFxType::MuseFx, std::make_shared<MuseFxResolver>());
+    // m_fxResolver->registerResolver(AudioFxType::MuseFx, std::make_shared<MuseFxResolver>());
 }
 
 void AudioModule::onInit(const IApplication::RunMode& mode)
@@ -201,30 +201,30 @@ void AudioModule::onInit(const IApplication::RunMode& mode)
 
     **/
 
-    // Init configuration
-    m_configuration->init();
+    // // Init configuration
+    // m_configuration->init();
 
-    if (mode == IApplication::RunMode::AudioPluginRegistration) {
-        return;
-    }
+    // if (mode == IApplication::RunMode::AudioPluginRegistration) {
+    //     return;
+    // }
 
-    m_soundFontRepository->init();
+    // m_soundFontRepository->init();
 
-    m_audioBuffer->init(m_configuration->audioChannelsCount());
+    // m_audioBuffer->init(m_configuration->audioChannelsCount());
 
-    m_audioOutputController->init();
+    // m_audioOutputController->init();
 
-    // Setup audio driver
-    setupAudioDriver(mode);
+    // // Setup audio driver
+    // setupAudioDriver(mode);
 
-    //! --- Diagnostics ---
-    auto pr = ioc()->resolve<muse::diagnostics::IDiagnosticsPathsRegister>(moduleName());
-    if (pr) {
-        std::vector<io::path_t> paths = m_configuration->soundFontDirectories();
-        for (const io::path_t& p : paths) {
-            pr->reg("soundfonts", p);
-        }
-    }
+    // //! --- Diagnostics ---
+    // auto pr = ioc()->resolve<muse::diagnostics::IDiagnosticsPathsRegister>(moduleName());
+    // if (pr) {
+    //     std::vector<io::path_t> paths = m_configuration->soundFontDirectories();
+    //     for (const io::path_t& p : paths) {
+    //         pr->reg("soundfonts", p);
+    //     }
+    // }
 }
 
 void AudioModule::onDeinit()
