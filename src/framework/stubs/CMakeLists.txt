@@ -22,9 +22,9 @@ if (NOT MUSE_MODULE_ACCESSIBILITY)
     add_subdirectory(accessibility)
 endif()
 
-# if (NOT MUSE_MODULE_AUDIO)
-#    add_subdirectory(audio)
-# endif()
+if (NOT MUSE_MODULE_AUDIO)
+    add_subdirectory(audio)
+endif()
 
 if (NOT MUSE_MODULE_CLOUD)
     add_subdirectory(cloud)

@@ -305,6 +305,8 @@ if (CC_IS_EMCC)
     target_link_options(MuseScoreStudio PRIVATE 
         ${EMCC_LINKER_FLAGS}
         ${EXPORTED_FUNCTIONS}
+        "-O1"
+        "-g4"
     )
 endif()
 
