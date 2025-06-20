@@ -225,7 +225,7 @@ public:
                                                   const io::paths_t& selectedDirectories) = 0;
 
     // color
-    virtual async::Promise<muse::Color> selectColor(const Color& color = Color::WHITE, const std::string& title = "") {}
+    virtual async::Promise<muse::Color> selectColor(const Color& color = Color::WHITE, const std::string& title = "") = 0;
     virtual bool isSelectColorOpened() const = 0;
 
     // custom
