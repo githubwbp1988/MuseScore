@@ -16,11 +16,11 @@
 
 #include "framework/actions/actionsmodule.h"
 
-#ifdef MUSE_MODULE_AUDIO
+// #ifdef MUSE_MODULE_AUDIO
 #include "framework/audio/audiomodule.h"
-#else
-#include "framework/stubs/audio/audiostubmodule.h"
-#endif
+// #else
+// #include "framework/stubs/audio/audiostubmodule.h"
+// #endif
 
 #ifdef MUSE_MODULE_AUDIOPLUGINS
 #include "framework/audioplugins/audiopluginsmodule.h"
