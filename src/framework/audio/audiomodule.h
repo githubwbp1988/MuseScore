@@ -47,7 +47,8 @@ class Playback;
 class SoundFontRepository;
 class KnownAudioPluginsRegister;
 class RegisterAudioPluginsScenario;
-class AudioModule : public modularity::IModuleSetup, public async::Asyncable
+// class AudioModule : public modularity::IModuleSetup, public async::Asyncable
+class AudioModule : public modularity::IModuleSetup
 {
 public:
     AudioModule();
