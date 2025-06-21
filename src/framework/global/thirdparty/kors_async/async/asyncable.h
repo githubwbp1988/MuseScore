@@ -37,6 +37,8 @@ public:
         AsyncSetRepeat
     };
 
+    Asyncable() {}
+
     virtual ~Asyncable()
     {
         disconnectAll();
