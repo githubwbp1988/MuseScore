@@ -96,7 +96,7 @@ static void audio_init_qrc()
     Q_INIT_RESOURCE(audio);
 }
 
-AudioModule::AudioModule() : modularity::IModuleSetup(), async::Asyncable()
+AudioModule::AudioModule()
 {
     AudioSanitizer::setupMainThread();
 }
