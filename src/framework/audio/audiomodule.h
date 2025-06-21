@@ -50,7 +50,7 @@ class RegisterAudioPluginsScenario;
 class AudioModule : public modularity::IModuleSetup, public async::Asyncable
 {
 public:
-    AudioModule() override;
+    AudioModule();
 
     std::string moduleName() const override;
 
