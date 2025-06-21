@@ -29,7 +29,6 @@ namespace muse::audio {
 class AudioModule : public modularity::IModuleSetup, public async::Asyncable
 {
 public:
-    AudioModule();
     std::string moduleName() const override;
 
     void registerExports() override;
