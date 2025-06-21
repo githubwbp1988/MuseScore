@@ -31,7 +31,7 @@ namespace muse::modularity {
 class IModuleSetup
 {
 public:
-    virtual IModuleSetup() {}
+    IModuleSetup() {}
     virtual ~IModuleSetup() {}
 
     virtual std::string moduleName() const = 0;
