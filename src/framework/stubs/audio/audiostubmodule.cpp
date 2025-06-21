@@ -39,10 +39,6 @@ static void audio_init_qrc()
     Q_INIT_RESOURCE(audio);
 }
 
-AudioModule::AudioModule() {
-    
-}
-
 std::string AudioModule::moduleName() const
 {
     return "audio_engine_stub";
