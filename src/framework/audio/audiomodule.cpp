@@ -54,30 +54,30 @@ using namespace muse::audio;
 using namespace muse::audio::synth;
 using namespace muse::audio::fx;
 
-// #ifdef MUSE_MODULE_AUDIO_JACK
-// #include "internal/platform/jack/jackaudiodriver.h"
-// #endif
+#ifdef MUSE_MODULE_AUDIO_JACK
+#include "internal/platform/jack/jackaudiodriver.h"
+#endif
 
-// #ifdef Q_OS_LINUX
-// #include "internal/platform/lin/linuxaudiodriver.h"
-// #endif
+#ifdef Q_OS_LINUX
+#include "internal/platform/lin/linuxaudiodriver.h"
+#endif
 
-// #ifdef Q_OS_FREEBSD
-// #include "internal/platform/lin/linuxaudiodriver.h"
-// #endif
-// #ifdef Q_OS_WIN
-// //#include "internal/platform/win/winmmdriver.h"
-// //#include "internal/platform/win/wincoreaudiodriver.h"
-// #include "internal/platform/win/wasapiaudiodriver.h"
-// #endif
+#ifdef Q_OS_FREEBSD
+#include "internal/platform/lin/linuxaudiodriver.h"
+#endif
+#ifdef Q_OS_WIN
+//#include "internal/platform/win/winmmdriver.h"
+//#include "internal/platform/win/wincoreaudiodriver.h"
+#include "internal/platform/win/wasapiaudiodriver.h"
+#endif
 
-// #ifdef Q_OS_MACOS
-// #include "internal/platform/osx/osxaudiodriver.h"
-// #endif
+#ifdef Q_OS_MACOS
+#include "internal/platform/osx/osxaudiodriver.h"
+#endif
 
-// #ifdef Q_OS_WASM
+#ifdef Q_OS_WASM
 #include "internal/platform/web/webaudiodriver.h"
-// #endif
+#endif
 
 static void measureInputLag(const float* buf, const size_t size)
 {
@@ -118,29 +118,29 @@ void AudioModule::registerExports()
     m_playbackFacade = std::make_shared<Playback>(iocContext());
     m_soundFontRepository = std::make_shared<SoundFontRepository>(iocContext());
 
-// #if defined(MUSE_MODULE_AUDIO_JACK)
-//     m_audioDriver = std::shared_ptr<IAudioDriver>(new JackAudioDriver());
-// #else
+#if defined(MUSE_MODULE_AUDIO_JACK)
+    m_audioDriver = std::shared_ptr<IAudioDriver>(new JackAudioDriver());
+#else
 
-// #if defined(Q_OS_LINUX) || defined(Q_OS_FREEBSD)
-//     m_audioDriver = std::shared_ptr<IAudioDriver>(new LinuxAudioDriver());
-// #endif
+#if defined(Q_OS_LINUX) || defined(Q_OS_FREEBSD)
+    m_audioDriver = std::shared_ptr<IAudioDriver>(new LinuxAudioDriver());
+#endif
 
-// #ifdef Q_OS_WIN
-//     //m_audioDriver = std::shared_ptr<IAudioDriver>(new WinmmDriver());
-//     //m_audioDriver = std::shared_ptr<IAudioDriver>(new CoreAudioDriver());
-//     m_audioDriver = std::shared_ptr<IAudioDriver>(new WasapiAudioDriver());
-// #endif
+#ifdef Q_OS_WIN
+    //m_audioDriver = std::shared_ptr<IAudioDriver>(new WinmmDriver());
+    //m_audioDriver = std::shared_ptr<IAudioDriver>(new CoreAudioDriver());
+    m_audioDriver = std::shared_ptr<IAudioDriver>(new WasapiAudioDriver());
+#endif
 
-// #ifdef Q_OS_MACOS
-//     m_audioDriver = std::shared_ptr<IAudioDriver>(new OSXAudioDriver());
-// #endif
+#ifdef Q_OS_MACOS
+    m_audioDriver = std::shared_ptr<IAudioDriver>(new OSXAudioDriver());
+#endif
 
-// #ifdef Q_OS_WASM
+#ifdef Q_OS_WASM
     m_audioDriver = std::shared_ptr<IAudioDriver>(new WebAudioDriver());
-// #endif
+#endif
 
-// #endif // MUSE_MODULE_AUDIO_JACK
+#endif // MUSE_MODULE_AUDIO_JACK
 
     ioc()->registerExport<IAudioConfiguration>(moduleName(), m_configuration);
     ioc()->registerExport<IAudioEngine>(moduleName(), m_audioEngine);
