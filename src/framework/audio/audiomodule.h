@@ -25,7 +25,7 @@
 #include <memory>
 
 #include "modularity/imodulesetup.h"
-#include "global/async/asyncable.h"
+// #include "global/async/asyncable.h"
 
 #include "iaudiodriver.h"
 
@@ -47,7 +47,7 @@ namespace muse::audio {
 // class SoundFontRepository;
 // class KnownAudioPluginsRegister;
 // class RegisterAudioPluginsScenario;
-class AudioModule : public modularity::IModuleSetup, public async::Asyncable
+class AudioModule : public muse::modularity::IModuleSetup/*, public async::Asyncable*/
 {
 public:
     AudioModule();
