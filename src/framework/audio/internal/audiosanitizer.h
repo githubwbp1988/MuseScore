@@ -28,19 +28,60 @@
 #include <set>
 #include <thread>
 
+#include "containers.h"
+
+static std::thread::id s_as_mainThreadID;
+static std::thread::id s_as_workerThreadID;
+static std::set<std::thread::id> s_mixerThreadIdSet;
+
 namespace muse::audio {
 class AudioSanitizer
 {
 public:
 
-    static void setupMainThread();
-    static std::thread::id mainThread();
-    static bool isMainThread();
+    // static void setupMainThread();
+    // static std::thread::id mainThread();
+    // static bool isMainThread();
 
-    static void setupWorkerThread();
-    static void setMixerThreads(const std::set<std::thread::id>& threadIdSet);
-    static std::thread::id workerThread();
-    static bool isWorkerThread();
+    // static void setupWorkerThread();
+    // static void setMixerThreads(const std::set<std::thread::id>& threadIdSet);
+    // static std::thread::id workerThread();
+    // static bool isWorkerThread();
+
+    static void setupMainThread() {
+        s_as_mainThreadID = std::this_thread::get_id();
+    }
+    std::thread::id mainThread()
+    {
+        return s_as_mainThreadID;
+    }
+
+    bool isMainThread()
+    {
+        return std::this_thread::get_id() == s_as_mainThreadID;
+    }
+
+    void setupWorkerThread()
+    {
+        s_as_workerThreadID = std::this_thread::get_id();
+    }
+
+    void setMixerThreads(const std::set<std::thread::id>& threadIdSet)
+    {
+        s_mixerThreadIdSet = threadIdSet;
+    }
+
+    std::thread::id workerThread()
+    {
+        return s_as_workerThreadID;
+    }
+
+    bool isWorkerThread()
+    {
+        std::thread::id id = std::this_thread::get_id();
+
+        return id == s_as_workerThreadID || muse::contains(s_mixerThreadIdSet, id);
+    }
 };
 }
 

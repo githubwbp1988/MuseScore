@@ -96,15 +96,14 @@ static void audio_init_qrc()
     Q_INIT_RESOURCE(audio);
 }
 
-// AudioModule::AudioModule()
-// {
+// AudioModule::AudioModule() {
 //     AudioSanitizer::setupMainThread();
 // }
 
-std::string AudioModule::moduleName() const
-{
-    return "audio_engine";
-}
+// std::string AudioModule::moduleName() const
+// {
+//     return "audio_engine";
+// }
 
 void AudioModule::registerExports()
 {

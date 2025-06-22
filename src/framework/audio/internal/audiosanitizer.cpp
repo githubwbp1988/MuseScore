@@ -21,49 +21,49 @@
  */
 #include "audiosanitizer.h"
 
-#include <thread>
+// #include <thread>
 
-#include "containers.h"
+// #include "containers.h"
 
-using namespace muse::audio;
+// using namespace muse::audio;
 
-static std::thread::id s_as_mainThreadID;
-static std::thread::id s_as_workerThreadID;
-static std::set<std::thread::id> s_mixerThreadIdSet;
+// static std::thread::id s_as_mainThreadID;
+// static std::thread::id s_as_workerThreadID;
+// static std::set<std::thread::id> s_mixerThreadIdSet;
 
-void AudioSanitizer::setupMainThread()
-{
-    s_as_mainThreadID = std::this_thread::get_id();
-}
+// void AudioSanitizer::setupMainThread()
+// {
+//     s_as_mainThreadID = std::this_thread::get_id();
+// }
 
-std::thread::id AudioSanitizer::mainThread()
-{
-    return s_as_mainThreadID;
-}
+// std::thread::id AudioSanitizer::mainThread()
+// {
+//     return s_as_mainThreadID;
+// }
 
-bool AudioSanitizer::isMainThread()
-{
-    return std::this_thread::get_id() == s_as_mainThreadID;
-}
+// bool AudioSanitizer::isMainThread()
+// {
+//     return std::this_thread::get_id() == s_as_mainThreadID;
+// }
 
-void AudioSanitizer::setupWorkerThread()
-{
-    s_as_workerThreadID = std::this_thread::get_id();
-}
+// void AudioSanitizer::setupWorkerThread()
+// {
+//     s_as_workerThreadID = std::this_thread::get_id();
+// }
 
-void AudioSanitizer::setMixerThreads(const std::set<std::thread::id>& threadIdSet)
-{
-    s_mixerThreadIdSet = threadIdSet;
-}
+// void AudioSanitizer::setMixerThreads(const std::set<std::thread::id>& threadIdSet)
+// {
+//     s_mixerThreadIdSet = threadIdSet;
+// }
 
-std::thread::id AudioSanitizer::workerThread()
-{
-    return s_as_workerThreadID;
-}
+// std::thread::id AudioSanitizer::workerThread()
+// {
+//     return s_as_workerThreadID;
+// }
 
-bool AudioSanitizer::isWorkerThread()
-{
-    std::thread::id id = std::this_thread::get_id();
+// bool AudioSanitizer::isWorkerThread()
+// {
+//     std::thread::id id = std::this_thread::get_id();
 
-    return id == s_as_workerThreadID || muse::contains(s_mixerThreadIdSet, id);
-}
+//     return id == s_as_workerThreadID || muse::contains(s_mixerThreadIdSet, id);
+// }
