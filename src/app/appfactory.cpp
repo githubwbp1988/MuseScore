@@ -253,7 +253,6 @@ std::shared_ptr<muse::IApplication> AppFactory::newGuiApp(const CmdOptions& opti
     // framework
     app->addModule(new muse::accessibility::AccessibilityModule());
     app->addModule(new muse::actions::ActionsModule());
-    force_link_AudioModule();
     app->addModule(new muse::audio::AudioModule());
 #ifdef MUSE_MODULE_AUDIOPLUGINS
     app->addModule(new muse::audioplugins::AudioPluginsModule());

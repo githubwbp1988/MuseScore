@@ -79,10 +79,6 @@ using namespace muse::audio::fx;
 #include "internal/platform/web/webaudiodriver.h"
 #endif
 
-extern "C" void force_link_AudioModule() {
-    new muse::audio::AudioModule();
-}
-
 static void measureInputLag(const float* buf, const size_t size)
 {
     if (INPUT_LAG_TIMER_STARTED) {
