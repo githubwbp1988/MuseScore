@@ -105,7 +105,7 @@ static void audio_init_qrc()
 //     return "audio_engine";
 // }
 
-inline void AudioModule::registerExports()
+void AudioModule::registerExports()
 {
     m_configuration = std::make_shared<AudioConfiguration>(iocContext());
     m_audioEngine = std::make_shared<AudioEngine>(iocContext());
@@ -153,22 +153,22 @@ inline void AudioModule::registerExports()
     ioc()->registerExport<ISoundFontRepository>(moduleName(), m_soundFontRepository);
 }
 
-inline void AudioModule::registerResources()
+void AudioModule::registerResources()
 {
     audio_init_qrc();
 }
 
-inline void AudioModule::registerUiTypes()
+void AudioModule::registerUiTypes()
 {
     ioc()->resolve<ui::IUiEngine>(moduleName())->addSourceImportPath(muse_audio_QML_IMPORT);
 }
 
-inline void AudioModule::resolveImports()
+void AudioModule::resolveImports()
 {
     m_fxResolver->registerResolver(AudioFxType::MuseFx, std::make_shared<MuseFxResolver>());
 }
 
-inline void AudioModule::onInit(const IApplication::RunMode& mode)
+void AudioModule::onInit(const IApplication::RunMode& mode)
 {
     /** We have three layers
         ------------------------
@@ -226,14 +226,14 @@ inline void AudioModule::onInit(const IApplication::RunMode& mode)
     }
 }
 
-inline void AudioModule::onDeinit()
+void AudioModule::onDeinit()
 {
     if (m_audioDriver->isOpened()) {
         m_audioDriver->close();
     }
 }
 
-inline void AudioModule::onDestroy()
+void AudioModule::onDestroy()
 {
     //! NOTE During deinitialization, objects that process events are destroyed,
     //! it is better to destroy them on onDestroy, when no events should come anymore
