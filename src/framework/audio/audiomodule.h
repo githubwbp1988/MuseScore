@@ -27,6 +27,8 @@
 #include "modularity/imodulesetup.h"
 #include "global/async/asyncable.h"
 
+#include "internal/audiosanitizer.h"
+
 #include "iaudiodriver.h"
 
 namespace muse::audio::fx {
@@ -50,7 +52,9 @@ class RegisterAudioPluginsScenario;
 class AudioModule : public muse::modularity::IModuleSetup, public async::Asyncable
 {
 public:
-    AudioModule();
+    AudioModule() {
+        AudioSanitizer::setupMainThread();
+    }
 
     std::string moduleName() const override;
 
