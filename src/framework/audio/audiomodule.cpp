@@ -96,7 +96,7 @@ static void audio_init_qrc()
     Q_INIT_RESOURCE(audio);
 }
 
-muse::audio::AudioModule::AudioModule()
+AudioModule::AudioModule()
 {
     AudioSanitizer::setupMainThread();
 }
