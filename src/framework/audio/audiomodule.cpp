@@ -105,6 +105,10 @@ static void audio_init_qrc()
 //     return "audio_engine";
 // }
 
+AudioModule::~AudioModule() {
+    
+}
+
 void AudioModule::registerExports()
 {
     m_configuration = std::make_shared<AudioConfiguration>(iocContext());

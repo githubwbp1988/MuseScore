@@ -56,6 +56,8 @@ public:
         AudioSanitizer::setupMainThread();
     }
 
+    ~AudioModule();
+
     std::string moduleName() const override {
         return "audio_engine";
     }
