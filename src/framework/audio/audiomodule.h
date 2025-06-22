@@ -58,7 +58,7 @@ public:
 
     std::string moduleName() const override {
         return "audio_engine";
-    };
+    }
 
     void registerExports() override;
     void registerResources() override;

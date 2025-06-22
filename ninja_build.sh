@@ -106,8 +106,6 @@ function do_build() {
         -DLIBSND_PATH=${GITHUB_WORKSPACE}/wasm-thirdparty-src/libsndfile \
         -DLIBOGG_PATH=${GITHUB_WORKSPACE}/wasm-thirdparty-src/libogg \
         -DLIBVORBIS_PATH=${GITHUB_WORKSPACE}/wasm-thirdparty-src/libvorbis \
-        -DCMAKE_CXX_FLAGS="-fvisibility=default -fno-rtti-data" \
-        -DCMAKE_C_FLAGS="-fvisibility=default" \
         -DCMAKE_CXX_FLAGS="-g -gsource-map" \
         -DCMAKE_C_FLAGS="-g -gsource-map" 
 
