@@ -22,38 +22,38 @@
 #ifndef MUSE_AUDIO_AUDIOMODULE_H
 #define MUSE_AUDIO_AUDIOMODULE_H
 
-// #include <memory>
+#include <memory>
 
 #include "modularity/imodulesetup.h"
 #include "global/async/asyncable.h"
 
-// #include "internal/audiosanitizer.h"
+#include "internal/audiosanitizer.h"
 
-// #include "iaudiodriver.h"
+#include "iaudiodriver.h"
 
-// namespace muse::audio::fx {
-// class FxResolver;
-// }
+namespace muse::audio::fx {
+class FxResolver;
+}
 
-// namespace muse::audio::synth  {
-// class SynthResolver;
-// }
+namespace muse::audio::synth  {
+class SynthResolver;
+}
 
 namespace muse::audio {
-// class AudioConfiguration;
-// class AudioEngine;
-// class AudioThread;
-// class AudioBuffer;
-// class AudioOutputDeviceController;
-// class Playback;
-// class SoundFontRepository;
-// class KnownAudioPluginsRegister;
-// class RegisterAudioPluginsScenario;
-class AudioModule : public muse::modularity::IModuleSetup/*, public async::Asyncable*/
+class AudioConfiguration;
+class AudioEngine;
+class AudioThread;
+class AudioBuffer;
+class AudioOutputDeviceController;
+class Playback;
+class SoundFontRepository;
+class KnownAudioPluginsRegister;
+class RegisterAudioPluginsScenario;
+class AudioModule : public muse::modularity::IModuleSetup, public async::Asyncable
 {
 public:
     AudioModule() {
-        // AudioSanitizer::setupMainThread();
+        AudioSanitizer::setupMainThread();
     }
 
     ~AudioModule();
@@ -71,23 +71,23 @@ public:
     void onDestroy() override;
 
 private:
-    // void setupAudioDriver(const IApplication::RunMode& mode);
-    // void setupAudioWorker(const IAudioDriver::Spec& activeSpec);
+    void setupAudioDriver(const IApplication::RunMode& mode);
+    void setupAudioWorker(const IAudioDriver::Spec& activeSpec);
 
-    // std::shared_ptr<AudioConfiguration> m_configuration;
-    // std::shared_ptr<AudioEngine> m_audioEngine;
-    // std::shared_ptr<AudioThread> m_audioWorker;
-    // std::shared_ptr<AudioBuffer> m_audioBuffer;
-    // std::shared_ptr<AudioOutputDeviceController> m_audioOutputController;
+    std::shared_ptr<AudioConfiguration> m_configuration;
+    std::shared_ptr<AudioEngine> m_audioEngine;
+    std::shared_ptr<AudioThread> m_audioWorker;
+    std::shared_ptr<AudioBuffer> m_audioBuffer;
+    std::shared_ptr<AudioOutputDeviceController> m_audioOutputController;
 
-    // std::shared_ptr<fx::FxResolver> m_fxResolver;
-    // std::shared_ptr<synth::SynthResolver> m_synthResolver;
+    std::shared_ptr<fx::FxResolver> m_fxResolver;
+    std::shared_ptr<synth::SynthResolver> m_synthResolver;
 
-    // std::shared_ptr<Playback> m_playbackFacade;
+    std::shared_ptr<Playback> m_playbackFacade;
 
-    // std::shared_ptr<SoundFontRepository> m_soundFontRepository;
+    std::shared_ptr<SoundFontRepository> m_soundFontRepository;
 
-    // std::shared_ptr<IAudioDriver> m_audioDriver;
+    std::shared_ptr<IAudioDriver> m_audioDriver;
 };
 }
 
