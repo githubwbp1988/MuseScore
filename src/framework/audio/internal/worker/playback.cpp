@@ -33,7 +33,7 @@
 #include "internal/worker/audiooutputhandler.h"
 #include "internal/worker/tracksequence.h"
 
-#include "audioerrors.h"
+#include "../../audioerrors.h"
 
 #include "log.h"
 

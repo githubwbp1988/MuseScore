@@ -23,7 +23,7 @@
 #ifndef MUSE_AUDIO_AUDIOTHREADSECURER_H
 #define MUSE_AUDIO_AUDIOTHREADSECURER_H
 
-#include "iaudiothreadsecurer.h"
+#include "../iaudiothreadsecurer.h"
 
 namespace muse::audio {
 class AudioThreadSecurer : public IAudioThreadSecurer

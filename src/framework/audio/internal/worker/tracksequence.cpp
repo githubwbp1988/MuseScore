@@ -27,7 +27,7 @@
 #include "eventaudiosource.h"
 #include "sequenceplayer.h"
 #include "sequenceio.h"
-#include "audioerrors.h"
+#include "../../audioerrors.h"
 
 #include "log.h"
 

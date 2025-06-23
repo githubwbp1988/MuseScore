@@ -26,7 +26,7 @@
 #include "global/async/channel.h"
 
 #include "track.h"
-#include "audiotypes.h"
+#include "../../audiotypes.h"
 
 namespace muse::audio {
 class IGetTracks

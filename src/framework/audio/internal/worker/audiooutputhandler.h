@@ -26,8 +26,8 @@
 #include "global/modularity/ioc.h"
 #include "global/async/asyncable.h"
 
-#include "ifxresolver.h"
-#include "iaudiooutput.h"
+#include "../../ifxresolver.h"
+#include "../../iaudiooutput.h"
 #include "igettracksequence.h"
 #include "iaudioengine.h"
 

@@ -27,7 +27,7 @@
 
 #include "isequenceio.h"
 #include "igettracks.h"
-#include "audiotypes.h"
+#include "../../audiotypes.h"
 
 namespace muse::audio {
 class SequenceIO : public ISequenceIO, public async::Asyncable

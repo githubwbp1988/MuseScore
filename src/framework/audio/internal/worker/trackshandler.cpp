@@ -26,7 +26,7 @@
 
 #include "internal/audiothread.h"
 #include "internal/audiosanitizer.h"
-#include "audioerrors.h"
+#include "../../audioerrors.h"
 
 #include "log.h"
 

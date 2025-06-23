@@ -23,7 +23,7 @@
 #ifndef MUSE_AUDIO_PLAYER_H
 #define MUSE_AUDIO_PLAYER_H
 
-#include "iplayer.h"
+#include "../../iplayer.h"
 #include "global/async/asyncable.h"
 
 #include "igettracksequence.h"

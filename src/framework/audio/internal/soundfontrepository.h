@@ -27,8 +27,8 @@
 #include "global/io/ifilesystem.h"
 #include "global/async/asyncable.h"
 
-#include "isoundfontrepository.h"
-#include "iaudioconfiguration.h"
+#include "../isoundfontrepository.h"
+#include "../iaudioconfiguration.h"
 
 namespace muse::audio {
 class SoundFontRepository : public ISoundFontRepository, public Injectable, public async::Asyncable

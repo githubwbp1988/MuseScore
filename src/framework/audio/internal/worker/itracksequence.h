@@ -29,7 +29,7 @@
 
 #include "isequenceplayer.h"
 #include "isequenceio.h"
-#include "audiotypes.h"
+#include "../../audiotypes.h"
 
 namespace muse::audio {
 class ITrackSequence

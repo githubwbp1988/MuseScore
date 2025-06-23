@@ -27,7 +27,7 @@
 
 #include "global/types/retval.h"
 
-#include "audiotypes.h"
+#include "../../audiotypes.h"
 
 namespace muse::audio {
 class ISequenceIO

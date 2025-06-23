@@ -30,7 +30,7 @@
 #include "internal/encoders/flacencoder.h"
 #include "internal/encoders/wavencoder.h"
 
-#include "audioerrors.h"
+#include "../../audioerrors.h"
 
 #include "log.h"
 

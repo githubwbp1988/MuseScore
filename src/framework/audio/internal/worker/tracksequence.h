@@ -31,7 +31,7 @@
 #include "igettracks.h"
 #include "iclock.h"
 #include "track.h"
-#include "audiotypes.h"
+#include "../../audiotypes.h"
 
 namespace muse::audio {
 class Mixer;

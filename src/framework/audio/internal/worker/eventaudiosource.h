@@ -27,8 +27,8 @@
 #include "global/modularity/ioc.h"
 #include "mpe/events.h"
 
-#include "audiotypes.h"
-#include "isynthresolver.h"
+#include "../../audiotypes.h"
+#include "../../isynthresolver.h"
 #include "track.h"
 
 namespace muse::audio {

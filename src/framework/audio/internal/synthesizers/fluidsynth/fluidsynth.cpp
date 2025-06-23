@@ -25,8 +25,8 @@
 #include <fluidsynth.h>
 
 #include "sfcachedloader.h"
-#include "audioerrors.h"
-#include "audiotypes.h"
+#include "../../../audioerrors.h"
+#include "../../../audiotypes.h"
 
 #include "log.h"
 

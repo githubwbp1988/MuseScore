@@ -23,7 +23,7 @@
 #ifndef MUSE_AUDIO_MUSEFXRESOLVER_H
 #define MUSE_AUDIO_MUSEFXRESOLVER_H
 
-#include "abstractfxresolver.h"
+#include "../../abstractfxresolver.h"
 
 namespace muse::audio::fx {
 class MuseFxResolver : public AbstractFxResolver

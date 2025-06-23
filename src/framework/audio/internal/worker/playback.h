@@ -27,11 +27,11 @@
 #include "modularity/ioc.h"
 #include "global/async/asyncable.h"
 
-#include "iplayer.h"
-#include "itracks.h"
-#include "iaudiooutput.h"
+#include "../../iplayer.h"
+#include "../../itracks.h"
+#include "../../iaudiooutput.h"
 #include "igettracksequence.h"
-#include "iplayback.h"
+#include "../../iplayback.h"
 
 namespace muse::audio {
 class Playback : public IPlayback, public IGetTrackSequence, public Injectable, public async::Asyncable

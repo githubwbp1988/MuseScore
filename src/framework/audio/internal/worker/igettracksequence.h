@@ -24,7 +24,7 @@
 #define MUSE_AUDIO_IGETTRACKSEQUENCE_H
 
 #include "itracksequence.h"
-#include "audiotypes.h"
+#include "../../audiotypes.h"
 
 namespace muse::audio {
 class IGetTrackSequence

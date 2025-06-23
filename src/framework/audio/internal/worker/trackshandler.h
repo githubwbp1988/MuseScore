@@ -26,8 +26,8 @@
 #include "global/modularity/ioc.h"
 #include "global/async/asyncable.h"
 
-#include "isynthresolver.h"
-#include "itracks.h"
+#include "../../isynthresolver.h"
+#include "../../itracks.h"
 #include "igettracksequence.h"
 
 namespace muse::audio {

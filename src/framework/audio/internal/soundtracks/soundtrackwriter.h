@@ -28,8 +28,8 @@
 #include "global/async/asyncable.h"
 #include "global/modularity/ioc.h"
 
-#include "audiotypes.h"
-#include "iaudiosource.h"
+#include "../../audiotypes.h"
+#include "../../iaudiosource.h"
 #include "../worker/iaudioengine.h"
 #include "../encoders/abstractaudioencoder.h"
 

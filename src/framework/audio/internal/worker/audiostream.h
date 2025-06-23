@@ -24,7 +24,7 @@
 
 #include <vector>
 
-#include "iaudiostream.h"
+#include "../../iaudiostream.h"
 #include "samplerateconvertor.h"
 
 namespace muse::audio {
