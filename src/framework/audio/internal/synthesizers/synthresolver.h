@@ -28,7 +28,7 @@
 
 #include "../../isynthresolver.h"
 
-#include "internal/audiosanitizer.h"
+#include "../audiosanitizer.h"
 
 #include "log.h"
 

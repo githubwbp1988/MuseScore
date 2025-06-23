@@ -25,14 +25,14 @@
 #include "global/async/async.h"
 #include "global/containers.h"
 
-#include "internal/audiosanitizer.h"
-#include "internal/audiothread.h"
-#include "internal/worker/audioengine.h"
-#include "audioerrors.h"
+#include "../audiosanitizer.h"
+#include "../audiothread.h"
+#include "audioengine.h"
+#include "../../audioerrors.h"
 
 #include "muse_framework_config.h"
 #ifdef MUSE_MODULE_AUDIO_EXPORT
-#include "internal/soundtracks/soundtrackwriter.h"
+#include "../soundtracks/soundtrackwriter.h"
 #endif
 
 #include "log.h"

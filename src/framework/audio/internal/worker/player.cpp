@@ -23,8 +23,8 @@
 
 #include "global/async/async.h"
 
-#include "internal/audiosanitizer.h"
-#include "internal/audiothread.h"
+#include "../audiosanitizer.h"
+#include "../audiothread.h"
 #include "../../audioerrors.h"
 
 #include "log.h"

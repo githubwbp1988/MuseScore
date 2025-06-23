@@ -24,11 +24,11 @@
 
 #include "global/defer.h"
 
-#include "internal/worker/audioengine.h"
-#include "internal/encoders/mp3encoder.h"
-#include "internal/encoders/oggencoder.h"
-#include "internal/encoders/flacencoder.h"
-#include "internal/encoders/wavencoder.h"
+#include "../worker/audioengine.h"
+#include "../encoders/mp3encoder.h"
+#include "../encoders/oggencoder.h"
+#include "../encoders/flacencoder.h"
+#include "../encoders/wavencoder.h"
 
 #include "../../audioerrors.h"
 

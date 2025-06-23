@@ -22,7 +22,7 @@
 
 #include "abstractsynthesizer.h"
 
-#include "internal/audiosanitizer.h"
+#include "audiosanitizer.h"
 
 using namespace muse;
 using namespace muse::mpe;

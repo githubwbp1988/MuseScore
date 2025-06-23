@@ -37,13 +37,13 @@
 
 #include "global/async/async.h"
 
-#include "internal/audiothread.h"
-#include "internal/audiosanitizer.h"
+#include "../audiothread.h"
+#include "../audiosanitizer.h"
 
-#include "internal/worker/player.h"
-#include "internal/worker/trackshandler.h"
-#include "internal/worker/audiooutputhandler.h"
-#include "internal/worker/tracksequence.h"
+#include "player.h"
+#include "trackshandler.h"
+#include "audiooutputhandler.h"
+#include "tracksequence.h"
 
 #include "../../audioerrors.h"
 
