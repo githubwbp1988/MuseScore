@@ -22,117 +22,117 @@
 
 #include "synthresolver.h"
 
-#include "internal/audiosanitizer.h"
+// #include "internal/audiosanitizer.h"
 
-#include "log.h"
+// #include "log.h"
 
-using namespace muse::async;
-using namespace muse::audio;
-using namespace muse::audio::synth;
+// using namespace muse::async;
+// using namespace muse::audio;
+// using namespace muse::audio::synth;
 
-void SynthResolver::init(const AudioInputParams& defaultInputParams)
-{
-    ONLY_AUDIO_WORKER_THREAD;
+// void SynthResolver::init(const AudioInputParams& defaultInputParams)
+// {
+//     ONLY_AUDIO_WORKER_THREAD;
 
-    IF_ASSERT_FAILED(defaultInputParams.isValid()) {
-        return;
-    }
+//     IF_ASSERT_FAILED(defaultInputParams.isValid()) {
+//         return;
+//     }
 
-    m_defaultInputParams = defaultInputParams;
-}
+//     m_defaultInputParams = defaultInputParams;
+// }
 
-ISynthesizerPtr SynthResolver::resolveSynth(const TrackId trackId, const AudioInputParams& params, const PlaybackSetupData& setupData) const
-{
-    ONLY_AUDIO_WORKER_THREAD;
+// ISynthesizerPtr SynthResolver::resolveSynth(const TrackId trackId, const AudioInputParams& params, const PlaybackSetupData& setupData) const
+// {
+//     ONLY_AUDIO_WORKER_THREAD;
 
-    TRACEFUNC;
+//     TRACEFUNC;
 
-    if (!params.isValid()) {
-        LOGE() << "invalid audio source params for trackId: " << trackId;
-        return nullptr;
-    }
+//     if (!params.isValid()) {
+//         LOGE() << "invalid audio source params for trackId: " << trackId;
+//         return nullptr;
+//     }
 
-    std::lock_guard lock(m_mutex);
+//     std::lock_guard lock(m_mutex);
 
-    auto search = m_resolvers.find(params.type());
+//     auto search = m_resolvers.find(params.type());
 
-    if (search == m_resolvers.end()) {
-        return nullptr;
-    }
+//     if (search == m_resolvers.end()) {
+//         return nullptr;
+//     }
 
-    const IResolverPtr& resolver = search->second;
+//     const IResolverPtr& resolver = search->second;
 
-    if (!resolver->hasCompatibleResources(setupData)) {
-        return nullptr;
-    }
+//     if (!resolver->hasCompatibleResources(setupData)) {
+//         return nullptr;
+//     }
 
-    return resolver->resolveSynth(trackId, params);
-}
+//     return resolver->resolveSynth(trackId, params);
+// }
 
-ISynthesizerPtr SynthResolver::resolveDefaultSynth(const TrackId trackId) const
-{
-    ONLY_AUDIO_WORKER_THREAD;
+// ISynthesizerPtr SynthResolver::resolveDefaultSynth(const TrackId trackId) const
+// {
+//     ONLY_AUDIO_WORKER_THREAD;
 
-    return resolveSynth(trackId, m_defaultInputParams, {});
-}
+//     return resolveSynth(trackId, m_defaultInputParams, {});
+// }
 
-AudioInputParams SynthResolver::resolveDefaultInputParams() const
-{
-    ONLY_AUDIO_WORKER_THREAD;
+// AudioInputParams SynthResolver::resolveDefaultInputParams() const
+// {
+//     ONLY_AUDIO_WORKER_THREAD;
 
-    return m_defaultInputParams;
-}
+//     return m_defaultInputParams;
+// }
 
-AudioResourceMetaList SynthResolver::resolveAvailableResources() const
-{
-    ONLY_AUDIO_WORKER_THREAD;
+// AudioResourceMetaList SynthResolver::resolveAvailableResources() const
+// {
+//     ONLY_AUDIO_WORKER_THREAD;
 
-    TRACEFUNC;
+//     TRACEFUNC;
 
-    std::lock_guard lock(m_mutex);
+//     std::lock_guard lock(m_mutex);
 
-    AudioResourceMetaList result;
+//     AudioResourceMetaList result;
 
-    for (const auto& pair : m_resolvers) {
-        const AudioResourceMetaList& resolvedResources = pair.second->resolveResources();
-        result.insert(result.end(), resolvedResources.begin(), resolvedResources.end());
-    }
+//     for (const auto& pair : m_resolvers) {
+//         const AudioResourceMetaList& resolvedResources = pair.second->resolveResources();
+//         result.insert(result.end(), resolvedResources.begin(), resolvedResources.end());
+//     }
 
-    return result;
-}
+//     return result;
+// }
 
-SoundPresetList SynthResolver::resolveAvailableSoundPresets(const AudioResourceMeta& resourceMeta) const
-{
-    ONLY_AUDIO_WORKER_THREAD;
+// SoundPresetList SynthResolver::resolveAvailableSoundPresets(const AudioResourceMeta& resourceMeta) const
+// {
+//     ONLY_AUDIO_WORKER_THREAD;
 
-    TRACEFUNC;
+//     TRACEFUNC;
 
-    std::lock_guard lock(m_mutex);
+//     std::lock_guard lock(m_mutex);
 
-    auto search = m_resolvers.find(audio::sourceTypeFromResourceType(resourceMeta.type));
-    if (search == m_resolvers.end()) {
-        return SoundPresetList();
-    }
+//     auto search = m_resolvers.find(audio::sourceTypeFromResourceType(resourceMeta.type));
+//     if (search == m_resolvers.end()) {
+//         return SoundPresetList();
+//     }
 
-    return search->second->resolveSoundPresets(resourceMeta);
-}
+//     return search->second->resolveSoundPresets(resourceMeta);
+// }
 
-void SynthResolver::registerResolver(const AudioSourceType type, IResolverPtr resolver)
-{
-    ONLY_AUDIO_MAIN_OR_WORKER_THREAD;
+// void SynthResolver::registerResolver(const AudioSourceType type, IResolverPtr resolver)
+// {
+//     ONLY_AUDIO_MAIN_OR_WORKER_THREAD;
 
-    std::lock_guard lock(m_mutex);
+//     std::lock_guard lock(m_mutex);
 
-    m_resolvers.insert_or_assign(type, std::move(resolver));
-}
+//     m_resolvers.insert_or_assign(type, std::move(resolver));
+// }
 
-void SynthResolver::clearSources()
-{
-    ONLY_AUDIO_MAIN_THREAD;
+// void SynthResolver::clearSources()
+// {
+//     ONLY_AUDIO_MAIN_THREAD;
 
-    std::lock_guard lock(m_mutex);
+//     std::lock_guard lock(m_mutex);
 
-    for (auto it = m_resolvers.begin(); it != m_resolvers.end(); ++it) {
-        it->second->clearSources();
-    }
-}
+//     for (auto it = m_resolvers.begin(); it != m_resolvers.end(); ++it) {
+//         it->second->clearSources();
+//     }
+// }

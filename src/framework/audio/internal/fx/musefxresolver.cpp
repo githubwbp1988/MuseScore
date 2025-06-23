@@ -22,38 +22,38 @@
 
 #include "musefxresolver.h"
 
-#include "reverb/reverbprocessor.h"
+// #include "reverb/reverbprocessor.h"
 
-#include "../../audioutils.h"
+// #include "../../audioutils.h"
 
-using namespace muse::audio;
-using namespace muse::audio::fx;
+// using namespace muse::audio;
+// using namespace muse::audio::fx;
 
-namespace muse::audio::fx {
-IFxProcessorPtr createFxProcessor(const AudioFxParams& fxParams)
-{
-    if (fxParams.resourceMeta.id == MUSE_REVERB_ID) {
-        return std::make_shared<ReverbProcessor>(fxParams);
-    }
+// namespace muse::audio::fx {
+// IFxProcessorPtr createFxProcessor(const AudioFxParams& fxParams)
+// {
+//     if (fxParams.resourceMeta.id == MUSE_REVERB_ID) {
+//         return std::make_shared<ReverbProcessor>(fxParams);
+//     }
 
-    return nullptr;
-}
-}
+//     return nullptr;
+// }
+// }
 
-AudioResourceMetaList MuseFxResolver::resolveResources() const
-{
-    AudioResourceMetaList result;
-    result.emplace_back(makeReverbMeta());
+// AudioResourceMetaList MuseFxResolver::resolveResources() const
+// {
+//     AudioResourceMetaList result;
+//     result.emplace_back(makeReverbMeta());
 
-    return result;
-}
+//     return result;
+// }
 
-IFxProcessorPtr MuseFxResolver::createMasterFx(const AudioFxParams& fxParams) const
-{
-    return createFxProcessor(fxParams);
-}
+// IFxProcessorPtr MuseFxResolver::createMasterFx(const AudioFxParams& fxParams) const
+// {
+//     return createFxProcessor(fxParams);
+// }
 
-IFxProcessorPtr MuseFxResolver::createTrackFx(const TrackId, const AudioFxParams& fxParams) const
-{
-    return createFxProcessor(fxParams);
-}
+// IFxProcessorPtr MuseFxResolver::createTrackFx(const TrackId, const AudioFxParams& fxParams) const
+// {
+//     return createFxProcessor(fxParams);
+// }

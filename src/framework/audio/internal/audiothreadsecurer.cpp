@@ -22,26 +22,26 @@
 
 #include "audiothreadsecurer.h"
 
-#include "audiosanitizer.h"
+// #include "audiosanitizer.h"
 
-using namespace muse::audio;
+// using namespace muse::audio;
 
-bool AudioThreadSecurer::isMainThread() const
-{
-    return AudioSanitizer::isMainThread();
-}
+// bool AudioThreadSecurer::isMainThread() const
+// {
+//     return AudioSanitizer::isMainThread();
+// }
 
-std::thread::id AudioThreadSecurer::mainThreadId() const
-{
-    return AudioSanitizer::mainThread();
-}
+// std::thread::id AudioThreadSecurer::mainThreadId() const
+// {
+//     return AudioSanitizer::mainThread();
+// }
 
-bool AudioThreadSecurer::isAudioWorkerThread() const
-{
-    return AudioSanitizer::isWorkerThread();
-}
+// bool AudioThreadSecurer::isAudioWorkerThread() const
+// {
+//     return AudioSanitizer::isWorkerThread();
+// }
 
-std::thread::id AudioThreadSecurer::workerThreadId() const
-{
-    return AudioSanitizer::workerThread();
-}
+// std::thread::id AudioThreadSecurer::workerThreadId() const
+// {
+//     return AudioSanitizer::workerThread();
+// }

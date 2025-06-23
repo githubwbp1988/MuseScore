@@ -25,15 +25,49 @@
 
 #include "../../abstractfxresolver.h"
 
+#include "reverb/reverbprocessor.h"
+
+#include "../../audioutils.h"
+
+using namespace muse::audio;
+
 namespace muse::audio::fx {
+
+IFxProcessorPtr createFxProcessor(const AudioFxParams& fxParams)
+{
+    if (fxParams.resourceMeta.id == MUSE_REVERB_ID) {
+        return std::make_shared<ReverbProcessor>(fxParams);
+    }
+
+    return nullptr;
+}
+
 class MuseFxResolver : public AbstractFxResolver
 {
 public:
-    AudioResourceMetaList resolveResources() const override;
+    // AudioResourceMetaList resolveResources() const override;
+
+    AudioResourceMetaList resolveResources() const override
+    {
+        AudioResourceMetaList result;
+        result.emplace_back(makeReverbMeta());
+
+        return result;
+    }
 
 private:
-    IFxProcessorPtr createMasterFx(const AudioFxParams& fxParams) const override;
-    IFxProcessorPtr createTrackFx(const TrackId trackId, const AudioFxParams& fxParams) const override;
+    // IFxProcessorPtr createMasterFx(const AudioFxParams& fxParams) const override;
+    // IFxProcessorPtr createTrackFx(const TrackId trackId, const AudioFxParams& fxParams) const override;
+
+    IFxProcessorPtr createMasterFx(const AudioFxParams& fxParams) const override
+    {
+        return createFxProcessor(fxParams);
+    }
+
+    IFxProcessorPtr createTrackFx(const TrackId, const AudioFxParams& fxParams) const override
+    {
+        return createFxProcessor(fxParams);
+    }
 };
 }
 

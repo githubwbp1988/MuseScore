@@ -22,108 +22,108 @@
 
 #include "fxresolver.h"
 
-#include "internal/audiosanitizer.h"
+// #include "internal/audiosanitizer.h"
 
-#include "log.h"
+// #include "log.h"
 
-using namespace muse::async;
-using namespace muse::audio;
-using namespace muse::audio::fx;
+// using namespace muse::async;
+// using namespace muse::audio;
+// using namespace muse::audio::fx;
 
-std::vector<IFxProcessorPtr> FxResolver::resolveMasterFxList(const AudioFxChain& fxChain)
-{
-    ONLY_AUDIO_WORKER_THREAD;
+// std::vector<IFxProcessorPtr> FxResolver::resolveMasterFxList(const AudioFxChain& fxChain)
+// {
+//     ONLY_AUDIO_WORKER_THREAD;
 
-    TRACEFUNC;
+//     TRACEFUNC;
 
-    std::lock_guard lock(m_mutex);
+//     std::lock_guard lock(m_mutex);
 
-    std::vector<IFxProcessorPtr> result;
+//     std::vector<IFxProcessorPtr> result;
 
-    for (const auto& resolver : m_resolvers) {
-        AudioFxChain fxChainByType;
+//     for (const auto& resolver : m_resolvers) {
+//         AudioFxChain fxChainByType;
 
-        for (const auto& fx : fxChain) {
-            if (resolver.first == fx.second.type() || fx.second.type() == AudioFxType::Undefined) {
-                fxChainByType.insert(fx);
-            }
-        }
+//         for (const auto& fx : fxChain) {
+//             if (resolver.first == fx.second.type() || fx.second.type() == AudioFxType::Undefined) {
+//                 fxChainByType.insert(fx);
+//             }
+//         }
 
-        if (fxChainByType.empty()) {
-            continue;
-        }
+//         if (fxChainByType.empty()) {
+//             continue;
+//         }
 
-        std::vector<IFxProcessorPtr> fxList = resolver.second->resolveMasterFxList(std::move(fxChainByType));
-        result.insert(result.end(), fxList.begin(), fxList.end());
-    }
+//         std::vector<IFxProcessorPtr> fxList = resolver.second->resolveMasterFxList(std::move(fxChainByType));
+//         result.insert(result.end(), fxList.begin(), fxList.end());
+//     }
 
-    return result;
-}
+//     return result;
+// }
 
-std::vector<IFxProcessorPtr> FxResolver::resolveFxList(const TrackId trackId, const AudioFxChain& fxChain)
-{
-    ONLY_AUDIO_WORKER_THREAD;
+// std::vector<IFxProcessorPtr> FxResolver::resolveFxList(const TrackId trackId, const AudioFxChain& fxChain)
+// {
+//     ONLY_AUDIO_WORKER_THREAD;
 
-    TRACEFUNC;
+//     TRACEFUNC;
 
-    std::lock_guard lock(m_mutex);
+//     std::lock_guard lock(m_mutex);
 
-    std::vector<IFxProcessorPtr> result;
+//     std::vector<IFxProcessorPtr> result;
 
-    for (const auto& resolver : m_resolvers) {
-        AudioFxChain fxChainByType;
+//     for (const auto& resolver : m_resolvers) {
+//         AudioFxChain fxChainByType;
 
-        for (const auto& fx : fxChain) {
-            if (resolver.first == fx.second.type() || fx.second.type() == AudioFxType::Undefined) {
-                fxChainByType.insert(fx);
-            }
-        }
+//         for (const auto& fx : fxChain) {
+//             if (resolver.first == fx.second.type() || fx.second.type() == AudioFxType::Undefined) {
+//                 fxChainByType.insert(fx);
+//             }
+//         }
 
-        if (fxChainByType.empty()) {
-            continue;
-        }
+//         if (fxChainByType.empty()) {
+//             continue;
+//         }
 
-        std::vector<IFxProcessorPtr> fxList = resolver.second->resolveFxList(trackId, std::move(fxChainByType));
-        result.insert(result.end(), fxList.begin(), fxList.end());
-    }
+//         std::vector<IFxProcessorPtr> fxList = resolver.second->resolveFxList(trackId, std::move(fxChainByType));
+//         result.insert(result.end(), fxList.begin(), fxList.end());
+//     }
 
-    return result;
-}
+//     return result;
+// }
 
-AudioResourceMetaList FxResolver::resolveAvailableResources() const
-{
-    ONLY_AUDIO_WORKER_THREAD;
+// AudioResourceMetaList FxResolver::resolveAvailableResources() const
+// {
+//     ONLY_AUDIO_WORKER_THREAD;
 
-    TRACEFUNC;
+//     TRACEFUNC;
 
-    std::lock_guard lock(m_mutex);
+//     std::lock_guard lock(m_mutex);
 
-    AudioResourceMetaList result;
+//     AudioResourceMetaList result;
 
-    for (const auto& pair : m_resolvers) {
-        const AudioResourceMetaList& resolvedResources = pair.second->resolveResources();
-        result.insert(result.end(), resolvedResources.begin(), resolvedResources.end());
-    }
+//     for (const auto& pair : m_resolvers) {
+//         const AudioResourceMetaList& resolvedResources = pair.second->resolveResources();
+//         result.insert(result.end(), resolvedResources.begin(), resolvedResources.end());
+//     }
 
-    return result;
-}
+//     return result;
+// }
 
-void FxResolver::registerResolver(const AudioFxType type, IResolverPtr resolver)
-{
-    ONLY_AUDIO_MAIN_OR_WORKER_THREAD;
+// void FxResolver::registerResolver(const AudioFxType type, IResolverPtr resolver)
+// {
+//     ONLY_AUDIO_MAIN_OR_WORKER_THREAD;
 
-    std::lock_guard lock(m_mutex);
+//     std::lock_guard lock(m_mutex);
 
-    m_resolvers.insert_or_assign(type, std::move(resolver));
-}
+//     m_resolvers.insert_or_assign(type, std::move(resolver));
+// }
 
-void FxResolver::clearAllFx()
-{
-    ONLY_AUDIO_MAIN_THREAD;
+// void FxResolver::clearAllFx()
+// {
+//     ONLY_AUDIO_MAIN_THREAD;
 
-    std::lock_guard lock(m_mutex);
+//     std::lock_guard lock(m_mutex);
 
-    for (auto it = m_resolvers.begin(); it != m_resolvers.end(); ++it) {
-        it->second->clearAllFx();
-    }
-}
+//     for (auto it = m_resolvers.begin(); it != m_resolvers.end(); ++it) {
+//         it->second->clearAllFx();
+//     }
+// }

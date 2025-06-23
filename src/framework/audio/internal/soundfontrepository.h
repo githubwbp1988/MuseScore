@@ -30,6 +30,16 @@
 #include "../isoundfontrepository.h"
 #include "../iaudioconfiguration.h"
 
+#include "global/translation.h"
+
+#include "synthesizers/fluidsynth/fluidsoundfontparser.h"
+
+#include "log.h"
+
+using namespace muse;
+using namespace muse::audio::synth;
+using namespace muse::async;
+
 namespace muse::audio {
 class SoundFontRepository : public ISoundFontRepository, public Injectable, public async::Asyncable
 {
@@ -41,22 +51,167 @@ public:
     SoundFontRepository(const modularity::ContextPtr& iocCtx)
         : Injectable(iocCtx) {}
 
-    void init();
+    // void init();
 
-    const synth::SoundFontPaths& soundFontPaths() const override;
-    const synth::SoundFontsMap& soundFonts() const override;
-    async::Notification soundFontsChanged() const override;
+    // const synth::SoundFontPaths& soundFontPaths() const override;
+    // const synth::SoundFontsMap& soundFonts() const override;
+    // async::Notification soundFontsChanged() const override;
 
-    void addSoundFont(const synth::SoundFontPath& path) override;
+    // void addSoundFont(const synth::SoundFontPath& path) override;
+
+    void init()
+    {
+        loadSoundFonts();
+        configuration()->soundFontDirectoriesChanged().onReceive(this, [this](const io::paths_t&) {
+            loadSoundFonts();
+        });
+    }
+
+    const SoundFontPaths& soundFontPaths() const override
+    {
+        return m_soundFontPaths;
+    }
+
+    const SoundFontsMap& soundFonts() const override
+    {
+        return m_soundFonts;
+    }
+
+    Notification soundFontsChanged() const override
+    {
+        return m_soundFontsChanged;
+    }
+
+    void addSoundFont(const muse::audio::synth::SoundFontPath& path) override
+    {
+        std::string title = muse::qtrc("audio", "Do you want to add the SoundFont: %1?")
+                            .arg(io::filename(path).toQString()).toStdString();
+
+        interactive()->question(title, "", {
+            IInteractive::Button::No,
+            IInteractive::Button::Yes
+        })
+        .onResolve(this, [this, path](const IInteractive::Result& res) {
+            if (res.isButton(IInteractive::Button::No)) {
+                LOGI() << "soundfont addition cancelled";
+                return;
+            }
+
+            RetVal<SoundFontPath> newPath = resolveInstallationPath(path);
+            if (!newPath.ret) {
+                LOGE() << "failed resolve path, err: " << newPath.ret.toString();
+                return;
+            }
+
+            if (fileSystem()->exists(newPath.val)) {
+                std::string title = muse::trc("audio", "File already exists. Do you want to overwrite it?");
+
+                std::string body = muse::qtrc("audio", "File path: %1")
+                                .arg(newPath.val.toQString()).toStdString();
+
+                interactive()->question(title, body, {
+                    IInteractive::Button::No,
+                    IInteractive::Button::Yes
+                }, IInteractive::Button::Yes, IInteractive::WithIcon)
+                .onResolve(this, [this, path, newPath](const IInteractive::Result& res) {
+                    if (res.isButton(IInteractive::Button::No)) {
+                        LOGI() << "soundfont replacement cancelled";
+                        return;
+                    }
+
+                    Ret ret = doAddSoundFont(path, newPath.val);
+                    if (ret) {
+                        interactive()->info(muse::trc("audio", "SoundFont installed"),
+                                            muse::trc("audio", "You can assign soundfonts to instruments using the mixer panel."),
+                                            {}, 0, IInteractive::Option::WithIcon);
+                    } else {
+                        LOGE() << "failed add soundfont, err: " << ret.toString();
+                    }
+                });
+            }
+        });
+    }
 
 private:
 
-    Ret doAddSoundFont(const synth::SoundFontPath& src, const synth::SoundFontPath& dst);
+    // Ret doAddSoundFont(const synth::SoundFontPath& src, const synth::SoundFontPath& dst);
 
-    void loadSoundFonts();
-    void loadSoundFont(const synth::SoundFontPath& path, const synth::SoundFontsMap& oldSoundFonts = {});
+    // void loadSoundFonts();
+    // void loadSoundFont(const synth::SoundFontPath& path, const synth::SoundFontsMap& oldSoundFonts = {});
 
-    RetVal<synth::SoundFontPath> resolveInstallationPath(const synth::SoundFontPath& path) const;
+    // RetVal<synth::SoundFontPath> resolveInstallationPath(const synth::SoundFontPath& path) const;
+
+    Ret doAddSoundFont(const muse::audio::synth::SoundFontPath& src, const muse::audio::synth::SoundFontPath& dst)
+    {
+        Ret ret = fileSystem()->copy(src, dst, true /* replace */);
+
+        if (ret) {
+            loadSoundFont(dst);
+            m_soundFontsChanged.notify();
+        }
+
+        return ret;
+    }
+
+    void loadSoundFonts()
+    {
+        TRACEFUNC;
+
+        m_soundFontPaths.clear();
+
+        SoundFontsMap oldSoundFonts;
+        m_soundFonts.swap(oldSoundFonts);
+
+        static const std::vector<std::string> filters = { "*.sf2",  "*.sf3" };
+        io::paths_t dirs = configuration()->soundFontDirectories();
+
+        for (const io::path_t& dir : dirs) {
+            RetVal<io::paths_t> soundFonts = fileSystem()->scanFiles(dir, filters);
+            if (!soundFonts.ret) {
+                LOGE() << soundFonts.ret.toString();
+                continue;
+            }
+
+            for (const SoundFontPath& soundFont : soundFonts.val) {
+                loadSoundFont(soundFont, oldSoundFonts);
+            }
+        }
+    }
+
+    void loadSoundFont(const muse::audio::synth::SoundFontPath& path, const muse::audio::synth::SoundFontsMap& oldSoundFonts = {})
+    {
+        m_soundFontPaths.push_back(path);
+
+        auto it = oldSoundFonts.find(path);
+        if (it != oldSoundFonts.cend()) {
+            m_soundFonts.insert(*it);
+            return;
+        }
+
+        RetVal<SoundFontMeta> meta = FluidSoundFontParser::parseSoundFont(path);
+
+        if (!meta.ret) {
+            LOGE() << "Failed parse SoundFont presets for " << path << ": " << meta.ret.toString();
+            return;
+        }
+
+        m_soundFonts.insert_or_assign(path, std::move(meta.val));
+    }
+
+    RetVal<SoundFontPath> resolveInstallationPath(const muse::audio::synth::SoundFontPath& path) const
+    {
+        io::paths_t dirs = configuration()->userSoundFontDirectories();
+
+        for (const io::path_t& dir : dirs) {
+            if (fileSystem()->isWritable(dir)) {
+                SoundFontPath newPath = dir + "/" + io::filename(path);
+                return RetVal<SoundFontPath>::make_ok(newPath);
+            }
+        }
+
+        return RetVal<SoundFontPath>(make_ret(Ret::Code::UnknownError));
+    }
+
 
     synth::SoundFontPaths m_soundFontPaths;
     synth::SoundFontsMap m_soundFonts;

@@ -25,14 +25,36 @@
 
 #include "../iaudiothreadsecurer.h"
 
+#include "audiosanitizer.h"
+
 namespace muse::audio {
 class AudioThreadSecurer : public IAudioThreadSecurer
 {
 public:
-    bool isMainThread() const override;
-    std::thread::id mainThreadId() const override;
-    bool isAudioWorkerThread() const override;
-    std::thread::id workerThreadId() const override;
+    // bool isMainThread() const override;
+    // std::thread::id mainThreadId() const override;
+    // bool isAudioWorkerThread() const override;
+    // std::thread::id workerThreadId() const override;
+
+    bool isMainThread() const override
+    {
+        return AudioSanitizer::isMainThread();
+    }
+
+    std::thread::id mainThreadId() const override
+    {
+        return AudioSanitizer::mainThread();
+    }
+
+    bool isAudioWorkerThread() const override
+    {
+        return AudioSanitizer::isWorkerThread();
+    }
+
+    std::thread::id workerThreadId() const override
+    {
+        return AudioSanitizer::workerThread();
+    }
 };
 }
 
