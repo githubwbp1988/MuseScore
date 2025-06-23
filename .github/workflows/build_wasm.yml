@@ -70,6 +70,16 @@ jobs:
         key: wasm-thirdparty-src-${{ hashFiles('build_wasm.yml') }}
         restore-keys: wasm-thirdparty-src-
 
+    - name: Download and extract GLib
+      run: |
+        echo "GITHUB_WORKSPACE: $GITHUB_WORKSPACE"
+        mkdir -p wasm-thirdparty-src
+        cd wasm-thirdparty-src
+        wget https://download.gnome.org/sources/glib/2.74/glib-2.74.0.tar.xz
+        tar -xf glib-2.74.0.tar.xz
+        ls -la glib-2.74.0/
+        cd ..
+
     - name: Download the source code of third-party libraries required by FluidSynth, including libsndfile, libogg, and libvorbis
       run: |
         echo "GITHUB_WORKSPACE: $GITHUB_WORKSPACE"

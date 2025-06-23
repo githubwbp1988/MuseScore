@@ -33,7 +33,13 @@
 #include "../external/fluidsynthconfig.h"
 
 #ifndef NO_GLIB
-#include <glib.h>
+// #include <glib.h>
+#ifdef GLIB_PATH
+    #include TOSTRING(GLIB_PATH/glib/glib.h)
+#else
+    #include "../../../../../../../../wasm-thirdparty-src/glib-2.74.0/glib/glib.h"
+#endif
+-DLIBOGG_PATH=${GITHUB_WORKSPACE}/wasm-thirdparty-src/libogg \
 #endif
 
 #if HAVE_MATH_H
