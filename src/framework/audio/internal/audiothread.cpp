@@ -39,7 +39,7 @@
 
 // using namespace muse::audio;
 
-// static uint64_t toWinTime(const msecs_t msecs)
+// static uint64_t toWinTime(const muse::audio::msecs_t msecs)
 // {
 //     return msecs * 10000;
 // }
@@ -53,7 +53,7 @@
 //     }
 // }
 
-// void AudioThread::run(const Runnable& onStart, const Runnable& loopBody, const msecs_t interval)
+// void AudioThread::run(const Runnable& onStart, const Runnable& loopBody, const muse::audio::msecs_t interval)
 // {
 //     m_onStart = onStart;
 //     m_mainLoopBody = loopBody;
@@ -77,7 +77,7 @@
 // #endif
 // }
 
-// void AudioThread::setInterval(const msecs_t interval)
+// void AudioThread::setInterval(const muse::audio::msecs_t interval)
 // {
 //     ONLY_AUDIO_WORKER_THREAD;
 

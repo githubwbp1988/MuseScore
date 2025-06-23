@@ -40,7 +40,7 @@
 
 #include "log.h"
 
-static uint64_t toWinTime(const msecs_t msecs)
+static uint64_t toWinTime(const muse::audio::msecs_t msecs)
 {
     return msecs * 10000;
 }
@@ -68,19 +68,29 @@ public:
         }
     }
 
-    void run(const Runnable& onStart, const Runnable& loopBody, const msecs_t interval = 1)
+    void run(const Runnable& onStart, const Runnable& loopBody, const muse::audio::msecs_t interval = 1)
     {
         m_onStart = onStart;
         m_mainLoopBody = loopBody;
         m_intervalMsecs = interval;
         m_intervalInWinTime = toWinTime(interval);
-        emscripten_set_timeout_loop([](double, void* userData) -> EM_BOOL {
-            reinterpret_cast<AudioThread*>(userData)->loopBody();
-            return EM_TRUE;
-        }, 2, this);
+        
+        // emscripten_set_timeout_loop([](double, void* userData) -> EM_BOOL {
+        //     reinterpret_cast<AudioThread*>(userData)->loopBody();
+        //     return EM_TRUE;
+        // }, 2, this);
+
+        m_running = true;
+        m_thread = std::make_unique<std::thread>([this]() {
+            main();
+        });
+
+        if (!muse::setThreadPriority(*m_thread, ThreadPriority::High)) {
+            LOGE() << "Unable to change audio thread priority";
+        }
     }
 
-    void setInterval(const msecs_t interval)
+    void setInterval(const muse::audio::msecs_t interval)
     {
         ONLY_AUDIO_WORKER_THREAD;
 
@@ -131,7 +141,7 @@ private:
     Runnable m_onStart = nullptr;
     Runnable m_mainLoopBody = nullptr;
     Runnable m_onFinished = nullptr;
-    msecs_t m_intervalMsecs = 0;
+    muse::audio::msecs_t m_intervalMsecs = 0;
     uint64_t m_intervalInWinTime = 0;
 
     std::unique_ptr<std::thread> m_thread = nullptr;

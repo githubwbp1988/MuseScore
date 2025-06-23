@@ -22,7 +22,7 @@
 
 #include "tracksequence.h"
 
-// #include "internal/audiosanitizer.h"
+// #include "../audiosanitizer.h"
 // #include "clock.h"
 // #include "eventaudiosource.h"
 // #include "sequenceplayer.h"
