@@ -51,32 +51,32 @@ public:
     static void setupMainThread() {
         s_as_mainThreadID = std::this_thread::get_id();
     }
-    std::thread::id mainThread()
+    static std::thread::id mainThread()
     {
         return s_as_mainThreadID;
     }
 
-    bool isMainThread()
+    static bool isMainThread()
     {
         return std::this_thread::get_id() == s_as_mainThreadID;
     }
 
-    void setupWorkerThread()
+    static void setupWorkerThread()
     {
         s_as_workerThreadID = std::this_thread::get_id();
     }
 
-    void setMixerThreads(const std::set<std::thread::id>& threadIdSet)
+    static void setMixerThreads(const std::set<std::thread::id>& threadIdSet)
     {
         s_mixerThreadIdSet = threadIdSet;
     }
 
-    std::thread::id workerThread()
+    static std::thread::id workerThread()
     {
         return s_as_workerThreadID;
     }
 
-    bool isWorkerThread()
+    static bool isWorkerThread()
     {
         std::thread::id id = std::this_thread::get_id();
 

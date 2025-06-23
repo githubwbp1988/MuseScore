@@ -37,10 +37,30 @@ public:
     void resume() override;
     void suspend() override;
 
-    std::string outputDevice() const override;
+    // std::string outputDevice() const override;
+    muse::audio::AudioDeviceID outputDevice() const override;
     bool selectOutputDevice(const std::string& name) override;
-    std::vector<std::string> availableOutputDevices() const override;
+    // std::vector<std::string> availableOutputDevices() const override;
+    AudioDeviceList availableOutputDevices() const override;
     async::Notification availableOutputDevicesChanged() const override;
+
+
+    void init() override;
+    const muse::audio::WebAudioDriver::Spec& activeSpec() const override;
+    bool resetToDefaultOutputDevice() override;
+    async::Notification outputDeviceChanged() const override;
+
+    unsigned int outputDeviceBufferSize() const override;
+    bool setOutputDeviceBufferSize(unsigned int bufferSize) override;
+    async::Notification outputDeviceBufferSizeChanged() const override;
+
+    std::vector<unsigned int> availableOutputDeviceBufferSizes() const override;
+
+    unsigned int outputDeviceSampleRate() const override;
+    bool setOutputDeviceSampleRate(unsigned int sampleRate) override;
+    async::Notification outputDeviceSampleRateChanged() const override;
+
+    std::vector<unsigned int> availableOutputDeviceSampleRates() const override;
 
 private:
     bool m_opened = false;

@@ -86,7 +86,7 @@ static void measureInputLag(const float* buf, const size_t size)
 {
     if (INPUT_LAG_TIMER_STARTED) {
         for (size_t i = 0; i < size; ++i) {
-            if (!RealIsNull(buf[i])) {
+            if (!muse::RealIsNull(buf[i])) {
                 STOP_INPUT_LAG_TIMER;
                 return;
             }
@@ -143,8 +143,8 @@ public:
         m_audioWorker = std::make_shared<AudioThread>();
         m_audioBuffer = std::make_shared<AudioBuffer>();
         m_audioOutputController = std::make_shared<AudioOutputDeviceController>(iocContext());
-        m_fxResolver = std::make_shared<FxResolver>();
-        m_synthResolver = std::make_shared<SynthResolver>();
+        m_fxResolver = std::make_shared<muse::audio::fx::FxResolver>();
+        m_synthResolver = std::make_shared<muse::audio::synth::SynthResolver>();
         m_playbackFacade = std::make_shared<Playback>(iocContext());
         m_soundFontRepository = std::make_shared<SoundFontRepository>(iocContext());
 
@@ -172,14 +172,14 @@ public:
 
     #endif // MUSE_MODULE_AUDIO_JACK
 
-        ioc()->registerExport<IAudioConfiguration>(moduleName(), m_configuration);
-        ioc()->registerExport<IAudioEngine>(moduleName(), m_audioEngine);
-        ioc()->registerExport<IAudioThreadSecurer>(moduleName(), std::make_shared<AudioThreadSecurer>());
-        ioc()->registerExport<IAudioDriver>(moduleName(), m_audioDriver);
-        ioc()->registerExport<IPlayback>(moduleName(), m_playbackFacade);
+        ioc()->registerExport<muse::audio::IAudioConfiguration>(moduleName(), m_configuration);
+        ioc()->registerExport<muse::audio::IAudioEngine>(moduleName(), m_audioEngine);
+        ioc()->registerExport<muse::audio::IAudioThreadSecurer>(moduleName(), std::make_shared<AudioThreadSecurer>());
+        ioc()->registerExport<muse::audio::IAudioDriver>(moduleName(), m_audioDriver);
+        ioc()->registerExport<muse::audio::IPlayback>(moduleName(), m_playbackFacade);
 
-        ioc()->registerExport<ISynthResolver>(moduleName(), m_synthResolver);
-        ioc()->registerExport<IFxResolver>(moduleName(), m_fxResolver);
+        ioc()->registerExport<muse::audio::synth::ISynthResolver>(moduleName(), m_synthResolver);
+        ioc()->registerExport<muse::audio::fx::IFxResolver>(moduleName(), m_fxResolver);
 
         ioc()->registerExport<ISoundFontRepository>(moduleName(), m_soundFontRepository);
     }
@@ -196,7 +196,7 @@ public:
 
     void resolveImports() override
     {
-        m_fxResolver->registerResolver(AudioFxType::MuseFx, std::make_shared<MuseFxResolver>());
+        m_fxResolver->registerResolver(AudioFxType::MuseFx, std::make_shared<muse::audio::fx::MuseFxResolver>());
     }
 
     void onInit(const IApplication::RunMode& mode) override
@@ -339,8 +339,8 @@ private:
                 m_audioWorker->setInterval(interval);
             });
 
-            auto fluidResolver = std::make_shared<FluidResolver>(iocContext());
-            m_synthResolver->registerResolver(AudioSourceType::Fluid, fluidResolver);
+            std::shared_ptr<muse::audio::synth::FluidResolver> fluidResolver = std::make_shared<muse::audio::synth::FluidResolver>(iocContext());
+            m_synthResolver->registerResolver(muse::audio::AudioSourceType::Fluid, fluidResolver);
             m_synthResolver->init(m_configuration->defaultAudioInputParams());
 
             // Initialize IPlayback facade and make sure that it's initialized after the audio-engine

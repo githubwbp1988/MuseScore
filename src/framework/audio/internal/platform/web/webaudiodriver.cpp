@@ -125,10 +125,11 @@ bool WebAudioDriver::isOpened() const
     return m_opened;
 }
 
-std::string WebAudioDriver::outputDevice() const
+// std::string WebAudioDriver::outputDevice() const
+muse::audio::AudioDeviceID WebAudioDriver::outputDevice() const
 {
     NOT_SUPPORTED;
-    return "default";
+    return { "default", muse::trc("audio", "System default") };
 }
 
 bool WebAudioDriver::selectOutputDevice(const std::string& name)
@@ -137,10 +138,14 @@ bool WebAudioDriver::selectOutputDevice(const std::string& name)
     return false;
 }
 
-std::vector<std::string> WebAudioDriver::availableOutputDevices() const
+// std::vector<std::string> WebAudioDriver::availableOutputDevices() const
+AudioDeviceList WebAudioDriver::availableOutputDevices() const
 {
     NOT_SUPPORTED;
-    return { "default" };
+    // return { "default" };
+    AudioDeviceList deviceList;
+    deviceList.push_back({ "default", muse::trc("audio", "System default") });
+    return deviceList;
 }
 
 async::Notification WebAudioDriver::availableOutputDevicesChanged() const
@@ -158,3 +163,70 @@ void WebAudioDriver::suspend()
 {
     web::context.call<val>("suspend");
 }
+
+///////////////////////////////////////////////////
+void WebAudioDriver::init()
+{
+}
+
+const muse::audio::WebAudioDriver::Spec& WebAudioDriver::activeSpec() const
+{
+    struct muse::audio::WebAudioDriver::Spec spec;
+    return spec;
+}
+
+unsigned int WebAudioDriver::outputDeviceBufferSize() const
+{
+    if (!isOpened()) {
+        return 0;
+    }
+
+    return 0;
+}
+
+bool WebAudioDriver::setOutputDeviceBufferSize(unsigned int bufferSize)
+{
+    return false;
+}
+
+async::Notification WebAudioDriver::outputDeviceBufferSizeChanged() const
+{
+    return async::Notification();
+}
+
+std::vector<unsigned int> WebAudioDriver::availableOutputDeviceBufferSizes() const
+{
+    std::vector<unsigned int> result;
+
+    return result;
+}
+
+unsigned int WebAudioDriver::outputDeviceSampleRate() const
+{
+    if (!isOpened()) {
+        return 0;
+    }
+
+    return 0;
+}
+
+bool WebAudioDriver::setOutputDeviceSampleRate(unsigned int sampleRate)
+{
+    return false;
+}
+
+async::Notification WebAudioDriver::outputDeviceSampleRateChanged() const
+{
+    return async::Notification();
+}
+
+std::vector<unsigned int> WebAudioDriver::availableOutputDeviceSampleRates() const
+{
+    return {
+        44100,
+        48000,
+        88200,
+        96000,
+    };
+}
+///////////////////////////////////////////////////
