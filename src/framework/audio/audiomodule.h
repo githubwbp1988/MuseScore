@@ -128,15 +128,15 @@ public:
         return "audio_engine";
     }
 
-    void registerExports() override;
-    void registerResources() override;
-    void registerUiTypes() override;
-    void resolveImports() override;
-    void onInit(const IApplication::RunMode& mode) override;
-    void onDeinit() override;
-    void onDestroy() override;
+    // void registerExports() override;
+    // void registerResources() override;
+    // void registerUiTypes() override;
+    // void resolveImports() override;
+    // void onInit(const IApplication::RunMode& mode) override;
+    // void onDeinit() override;
+    // void onDestroy() override;
 
-    void registerExports()
+    void registerExports() override
     {
         m_configuration = std::make_shared<AudioConfiguration>(iocContext());
         m_audioEngine = std::make_shared<AudioEngine>(iocContext());
@@ -184,22 +184,22 @@ public:
         ioc()->registerExport<ISoundFontRepository>(moduleName(), m_soundFontRepository);
     }
 
-    void registerResources()
+    void registerResources() override
     {
         audio_init_qrc();
     }
 
-    void registerUiTypes()
+    void registerUiTypes() override
     {
         ioc()->resolve<ui::IUiEngine>(moduleName())->addSourceImportPath(muse_audio_QML_IMPORT);
     }
 
-    void resolveImports()
+    void resolveImports() override
     {
         m_fxResolver->registerResolver(AudioFxType::MuseFx, std::make_shared<MuseFxResolver>());
     }
 
-    void onInit(const IApplication::RunMode& mode)
+    void onInit(const IApplication::RunMode& mode) override
     {
         /** We have three layers
             ------------------------
@@ -257,14 +257,14 @@ public:
         }
     }
 
-    void onDeinit()
+    void onDeinit() override
     {
         if (m_audioDriver->isOpened()) {
             m_audioDriver->close();
         }
     }
 
-    void onDestroy()
+    void onDestroy() override
     {
         //! NOTE During deinitialization, objects that process events are destroyed,
         //! it is better to destroy them on onDestroy, when no events should come anymore

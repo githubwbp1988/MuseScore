@@ -28,7 +28,7 @@
 #include <atomic>
 #include <functional>
 
-#include "audiotypes.h"
+#include "../audiotypes.h"
 
 namespace muse::audio {
 class AudioThread
