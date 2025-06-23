@@ -40,25 +40,25 @@ using namespace muse;
 // using namespace muse::audio;
 using namespace muse::audio::synth;
 
-static const audioch_t AUDIO_CHANNELS = 2;
+static const muse::audio::audioch_t AUDIO_CHANNELS = 2;
 
 //TODO: add other setting: audio device etc
-static const Settings::Key AUDIO_API_KEY("audio", "io/audioApi");
-static const Settings::Key AUDIO_OUTPUT_DEVICE_ID_KEY("audio", "io/outputDevice");
-static const Settings::Key AUDIO_BUFFER_SIZE_KEY("audio", "io/bufferSize");
-static const Settings::Key AUDIO_SAMPLE_RATE_KEY("audio", "io/sampleRate");
-static const Settings::Key AUDIO_MEASURE_INPUT_LAG("audio", "io/measureInputLag");
-static const Settings::Key AUDIO_DESIRED_THREAD_NUMBER_KEY("audio", "io/audioThreads");
+static const muse::Settings::Key AUDIO_API_KEY("audio", "io/audioApi");
+static const muse::Settings::Key AUDIO_OUTPUT_DEVICE_ID_KEY("audio", "io/outputDevice");
+static const muse::Settings::Key AUDIO_BUFFER_SIZE_KEY("audio", "io/bufferSize");
+static const muse::Settings::Key AUDIO_SAMPLE_RATE_KEY("audio", "io/sampleRate");
+static const muse::Settings::Key AUDIO_MEASURE_INPUT_LAG("audio", "io/measureInputLag");
+static const muse::Settings::Key AUDIO_DESIRED_THREAD_NUMBER_KEY("audio", "io/audioThreads");
 
-static const Settings::Key USER_SOUNDFONTS_PATHS("midi", "application/paths/mySoundfonts");
+static const muse::Settings::Key USER_SOUNDFONTS_PATHS("midi", "application/paths/mySoundfonts");
 
-static const AudioResourceId DEFAULT_SOUND_FONT_NAME = "MS Basic";
-static const AudioResourceAttributes DEFAULT_AUDIO_RESOURCE_ATTRIBUTES = {
-    { PLAYBACK_SETUP_DATA_ATTRIBUTE, muse::mpe::GENERIC_SETUP_DATA_STRING },
-    { SOUNDFONT_NAME_ATTRIBUTE, String::fromStdString(DEFAULT_SOUND_FONT_NAME) } };
+static const muse::audio::AudioResourceId DEFAULT_SOUND_FONT_NAME = "MS Basic";
+static const muse::audio::AudioResourceAttributes DEFAULT_AUDIO_RESOURCE_ATTRIBUTES = {
+    { muse::audio::PLAYBACK_SETUP_DATA_ATTRIBUTE, muse::mpe::GENERIC_SETUP_DATA_STRING },
+    { muse::audio::synth::SOUNDFONT_NAME_ATTRIBUTE, String::fromStdString(DEFAULT_SOUND_FONT_NAME) } };
 
-static const AudioResourceMeta DEFAULT_AUDIO_RESOURCE_META
-    = { DEFAULT_SOUND_FONT_NAME, AudioResourceType::FluidSoundfont, "Fluid", DEFAULT_AUDIO_RESOURCE_ATTRIBUTES, false /*hasNativeEditor*/ };
+static const muse::audio::AudioResourceMeta DEFAULT_AUDIO_RESOURCE_META
+    = { DEFAULT_SOUND_FONT_NAME, muse::audio::AudioResourceType::FluidSoundfont, "Fluid", DEFAULT_AUDIO_RESOURCE_ATTRIBUTES, false /*hasNativeEditor*/ };
 
 namespace muse::audio {
 class AudioConfiguration : public IAudioConfiguration, public Injectable

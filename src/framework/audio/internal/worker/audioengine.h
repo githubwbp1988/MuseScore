@@ -31,8 +31,8 @@
 #include "iaudioengine.h"
 #include "mixer.h"
 
-#include "internal/audiobuffer.h"
-#include "internal/audiosanitizer.h"
+#include "../audiobuffer.h"
+#include "../audiosanitizer.h"
 
 #include "log.h"
 
