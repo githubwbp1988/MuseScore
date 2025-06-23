@@ -52,8 +52,6 @@ class RegisterAudioPluginsScenario;
 class AudioModule : public muse::modularity::IModuleSetup, public async::Asyncable
 {
 public:
-    virtual ~AudioModule();
-    virtual void funcForWasmBuild();
     AudioModule() {
         AudioSanitizer::setupMainThread();
     }
