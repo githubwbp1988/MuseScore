@@ -21,119 +21,119 @@
  */
 #include "audiothread.h"
 
-#include "global/runtime.h"
-#include "global/threadutils.h"
-#include "global/async/processevents.h"
+// #include "global/runtime.h"
+// #include "global/threadutils.h"
+// #include "global/async/processevents.h"
 
-#include "audiosanitizer.h"
+// #include "audiosanitizer.h"
 
-#ifdef Q_OS_WASM
-#include <emscripten/html5.h>
-#endif
+// #ifdef Q_OS_WASM
+// #include <emscripten/html5.h>
+// #endif
 
-#ifdef Q_OS_WIN
-#include "global/platform/win/waitabletimer.h"
-#endif
+// #ifdef Q_OS_WIN
+// #include "global/platform/win/waitabletimer.h"
+// #endif
 
-#include "log.h"
+// #include "log.h"
 
-using namespace muse::audio;
+// using namespace muse::audio;
 
-static uint64_t toWinTime(const msecs_t msecs)
-{
-    return msecs * 10000;
-}
+// static uint64_t toWinTime(const msecs_t msecs)
+// {
+//     return msecs * 10000;
+// }
 
-std::thread::id AudioThread::ID;
+// std::thread::id AudioThread::ID;
 
-AudioThread::~AudioThread()
-{
-    if (m_running) {
-        stop();
-    }
-}
+// AudioThread::~AudioThread()
+// {
+//     if (m_running) {
+//         stop();
+//     }
+// }
 
-void AudioThread::run(const Runnable& onStart, const Runnable& loopBody, const msecs_t interval)
-{
-    m_onStart = onStart;
-    m_mainLoopBody = loopBody;
-    m_intervalMsecs = interval;
-    m_intervalInWinTime = toWinTime(interval);
+// void AudioThread::run(const Runnable& onStart, const Runnable& loopBody, const msecs_t interval)
+// {
+//     m_onStart = onStart;
+//     m_mainLoopBody = loopBody;
+//     m_intervalMsecs = interval;
+//     m_intervalInWinTime = toWinTime(interval);
 
-#ifndef Q_OS_WASM
-    m_running = true;
-    m_thread = std::make_unique<std::thread>([this]() {
-        main();
-    });
+// #ifndef Q_OS_WASM
+//     m_running = true;
+//     m_thread = std::make_unique<std::thread>([this]() {
+//         main();
+//     });
 
-    if (!muse::setThreadPriority(*m_thread, ThreadPriority::High)) {
-        LOGE() << "Unable to change audio thread priority";
-    }
-#else
-    emscripten_set_timeout_loop([](double, void* userData) -> EM_BOOL {
-        reinterpret_cast<AudioThread*>(userData)->loopBody();
-        return EM_TRUE;
-    }, 2, this);
-#endif
-}
+//     if (!muse::setThreadPriority(*m_thread, ThreadPriority::High)) {
+//         LOGE() << "Unable to change audio thread priority";
+//     }
+// #else
+//     emscripten_set_timeout_loop([](double, void* userData) -> EM_BOOL {
+//         reinterpret_cast<AudioThread*>(userData)->loopBody();
+//         return EM_TRUE;
+//     }, 2, this);
+// #endif
+// }
 
-void AudioThread::setInterval(const msecs_t interval)
-{
-    ONLY_AUDIO_WORKER_THREAD;
+// void AudioThread::setInterval(const msecs_t interval)
+// {
+//     ONLY_AUDIO_WORKER_THREAD;
 
-    m_intervalMsecs = interval;
-    m_intervalInWinTime = toWinTime(interval);
-}
+//     m_intervalMsecs = interval;
+//     m_intervalInWinTime = toWinTime(interval);
+// }
 
-void AudioThread::stop(const Runnable& onFinished)
-{
-    m_onFinished = onFinished;
-    m_running = false;
-    if (m_thread) {
-        m_thread->join();
-    }
-}
+// void AudioThread::stop(const Runnable& onFinished)
+// {
+//     m_onFinished = onFinished;
+//     m_running = false;
+//     if (m_thread) {
+//         m_thread->join();
+//     }
+// }
 
-bool AudioThread::isRunning() const
-{
-    return m_running;
-}
+// bool AudioThread::isRunning() const
+// {
+//     return m_running;
+// }
 
-void AudioThread::main()
-{
-    runtime::setThreadName("audio_worker");
+// void AudioThread::main()
+// {
+//     runtime::setThreadName("audio_worker");
 
-    AudioThread::ID = std::this_thread::get_id();
+//     AudioThread::ID = std::this_thread::get_id();
 
-    if (m_onStart) {
-        m_onStart();
-    }
+//     if (m_onStart) {
+//         m_onStart();
+//     }
 
-#ifdef Q_OS_WIN
-    WaitableTimer timer;
-    bool timerValid = timer.init();
-    if (timerValid) {
-        LOGI() << "Waitable timer successfully created, interval: " << m_intervalMsecs << " ms";
-    }
-#endif
+// #ifdef Q_OS_WIN
+//     WaitableTimer timer;
+//     bool timerValid = timer.init();
+//     if (timerValid) {
+//         LOGI() << "Waitable timer successfully created, interval: " << m_intervalMsecs << " ms";
+//     }
+// #endif
 
-    while (m_running) {
-        async::processEvents();
+//     while (m_running) {
+//         async::processEvents();
 
-        if (m_mainLoopBody) {
-            m_mainLoopBody();
-        }
+//         if (m_mainLoopBody) {
+//             m_mainLoopBody();
+//         }
 
-#ifdef Q_OS_WIN
-        if (!timerValid || !timer.setAndWait(m_intervalInWinTime)) {
-            std::this_thread::sleep_for(std::chrono::milliseconds(m_intervalMsecs));
-        }
-#else
-        std::this_thread::sleep_for(std::chrono::milliseconds(m_intervalMsecs));
-#endif
-    }
+// #ifdef Q_OS_WIN
+//         if (!timerValid || !timer.setAndWait(m_intervalInWinTime)) {
+//             std::this_thread::sleep_for(std::chrono::milliseconds(m_intervalMsecs));
+//         }
+// #else
+//         std::this_thread::sleep_for(std::chrono::milliseconds(m_intervalMsecs));
+// #endif
+//     }
 
-    if (m_onFinished) {
-        m_onFinished();
-    }
-}
+//     if (m_onFinished) {
+//         m_onFinished();
+//     }
+// }

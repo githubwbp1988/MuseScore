@@ -27,11 +27,75 @@
 
 #include "../../../soundfonttypes.h"
 
+#include <fluidsynth.h>
+#include <sfloader/fluid_sfont.h>
+#include <sfloader/fluid_defsfont.h>
+
+#include "global/defer.h"
+
+using namespace muse;
+
 namespace muse::audio::synth {
 class FluidSoundFontParser
 {
 public:
-    static RetVal<SoundFontMeta> parseSoundFont(const SoundFontPath& path);
+    // static RetVal<SoundFontMeta> parseSoundFont(const SoundFontPath& path);
+
+    static RetVal<SoundFontMeta> parseSoundFont(const SoundFontPath& path)
+    {
+        fluid_settings_t* settings = nullptr;
+        fluid_sfloader_t* loader = nullptr;
+        fluid_sfont_t* sfont = nullptr;
+
+        DEFER {
+            if (sfont) {
+                fluid_defsfont_sfont_delete(sfont);
+            }
+            if (loader) {
+                delete_fluid_sfloader(loader);
+            }
+            if (settings) {
+                delete_fluid_settings(settings);
+            }
+        };
+
+        settings = new_fluid_settings();
+        if (!settings) {
+            return make_ret(Ret::Code::UnknownError);
+        }
+
+        fluid_settings_setint(settings, "synth.dynamic-sample-loading", 1);
+
+        loader = new_fluid_defsfloader(settings);
+        if (!loader) {
+            return make_ret(Ret::Code::UnknownError);
+        }
+
+        sfont = fluid_defsfloader_load(loader, path.c_str());
+        if (!sfont) {
+            return make_ret(Ret::Code::UnknownError);
+        }
+
+        SoundFontMeta meta;
+        meta.path = path;
+
+        fluid_defsfont_sfont_iteration_start(sfont);
+
+        fluid_preset_t* fluid_preset;
+        while ((fluid_preset = fluid_defsfont_sfont_iteration_next(sfont))) {
+            int bank = fluid_defpreset_preset_get_banknum(fluid_preset);
+            int program = fluid_defpreset_preset_get_num(fluid_preset);
+            const char* name = fluid_defpreset_preset_get_name(fluid_preset);
+
+            SoundFontPreset preset;
+            preset.program = midi::Program(bank, program);
+            preset.name = name;
+            meta.presets.emplace_back(std::move(preset));
+        }
+
+        return RetVal<SoundFontMeta>::make_ok(meta);
+    }
+
 };
 }
 

@@ -30,24 +30,103 @@
 
 #include "../audiotypes.h"
 
+#include "global/runtime.h"
+#include "global/threadutils.h"
+#include "global/async/processevents.h"
+
+#include "audiosanitizer.h"
+
+#include <emscripten/html5.h>
+
+#include "log.h"
+
+static uint64_t toWinTime(const msecs_t msecs)
+{
+    return msecs * 10000;
+}
+
 namespace muse::audio {
 class AudioThread
 {
 public:
     AudioThread() = default;
-    ~AudioThread();
+    // ~AudioThread();
 
     static std::thread::id ID;
 
     using Runnable = std::function<void ()>;
 
-    void run(const Runnable& onStart, const Runnable& loopBody, const msecs_t interval = 1);
-    void setInterval(const msecs_t interval);
-    void stop(const Runnable& onFinished = nullptr);
-    bool isRunning() const;
+    // void run(const Runnable& onStart, const Runnable& loopBody, const msecs_t interval = 1);
+    // void setInterval(const msecs_t interval);
+    // void stop(const Runnable& onFinished = nullptr);
+    // bool isRunning() const;
+
+    ~AudioThread()
+    {
+        if (m_running) {
+            stop();
+        }
+    }
+
+    void run(const Runnable& onStart, const Runnable& loopBody, const msecs_t interval = 1)
+    {
+        m_onStart = onStart;
+        m_mainLoopBody = loopBody;
+        m_intervalMsecs = interval;
+        m_intervalInWinTime = toWinTime(interval);
+        emscripten_set_timeout_loop([](double, void* userData) -> EM_BOOL {
+            reinterpret_cast<AudioThread*>(userData)->loopBody();
+            return EM_TRUE;
+        }, 2, this);
+    }
+
+    void setInterval(const msecs_t interval)
+    {
+        ONLY_AUDIO_WORKER_THREAD;
+
+        m_intervalMsecs = interval;
+        m_intervalInWinTime = toWinTime(interval);
+    }
+
+    void stop(const Runnable& onFinished = nullptr)
+    {
+        m_onFinished = onFinished;
+        m_running = false;
+        if (m_thread) {
+            m_thread->join();
+        }
+    }
+
+    bool isRunning() const
+    {
+        return m_running;
+    }
 
 private:
-    void main();
+    // void main();
+    void main()
+    {
+        runtime::setThreadName("audio_worker");
+
+        ID = std::this_thread::get_id();
+
+        if (m_onStart) {
+            m_onStart();
+        }
+
+        while (m_running) {
+            muse::async::processEvents();
+
+            if (m_mainLoopBody) {
+                m_mainLoopBody();
+            }
+            std::this_thread::sleep_for(std::chrono::milliseconds(m_intervalMsecs));
+        }
+
+        if (m_onFinished) {
+            m_onFinished();
+        }
+    }
 
     Runnable m_onStart = nullptr;
     Runnable m_mainLoopBody = nullptr;
