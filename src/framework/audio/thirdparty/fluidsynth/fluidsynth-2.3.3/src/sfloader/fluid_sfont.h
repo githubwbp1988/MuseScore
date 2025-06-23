@@ -22,7 +22,8 @@
 #ifndef _PRIV_FLUID_SFONT_H
 #define _PRIV_FLUID_SFONT_H
 
-#include "fluidsynth.h"
+// #include "fluidsynth.h"
+#include "../../include/fluidsynth.h"
 
 #ifdef __cplusplus
 extern "C" {
