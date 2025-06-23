@@ -25,7 +25,7 @@
 #include "global/modularity/ioc.h"
 
 #include "internal/audioconfiguration.h"
-// #include "internal/audiosanitizer.h"
+#include "internal/audiosanitizer.h"
 #include "internal/audiothread.h"
 #include "internal/audiobuffer.h"
 #include "internal/audiothreadsecurer.h"
@@ -96,9 +96,9 @@ static void audio_init_qrc()
     Q_INIT_RESOURCE(audio);
 }
 
-// AudioModule::AudioModule() {
-//     AudioSanitizer::setupMainThread();
-// }
+AudioModule::AudioModule() {
+    AudioSanitizer::setupMainThread();
+}
 
 // std::string AudioModule::moduleName() const
 // {

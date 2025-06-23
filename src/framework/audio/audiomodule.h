@@ -27,7 +27,7 @@
 #include "modularity/imodulesetup.h"
 #include "global/async/asyncable.h"
 
-#include "internal/audiosanitizer.h"
+// #include "internal/audiosanitizer.h"
 
 #include "iaudiodriver.h"
 
@@ -52,9 +52,7 @@ class RegisterAudioPluginsScenario;
 class AudioModule : public muse::modularity::IModuleSetup, public async::Asyncable
 {
 public:
-    AudioModule() {
-        AudioSanitizer::setupMainThread();
-    }
+    AudioModule();
 
     std::string moduleName() const override {
         return "audio_engine";
