@@ -60,11 +60,11 @@ public:
     RegisterAudioPluginsScenario(const modularity::ContextPtr& iocCtx)
         : Injectable(iocCtx) {}
 
-    void init();
+    // void init();
 
-    Ret registerNewPlugins() override;
-    Ret registerPlugin(const io::path_t& pluginPath) override;
-    Ret registerFailedPlugin(const io::path_t& pluginPath, int failCode) override;
+    // Ret registerNewPlugins() override;
+    // Ret registerPlugin(const io::path_t& pluginPath) override;
+    // Ret registerFailedPlugin(const io::path_t& pluginPath, int failCode) override;
 
     void init()
     {
