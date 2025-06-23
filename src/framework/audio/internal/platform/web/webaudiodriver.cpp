@@ -129,7 +129,7 @@
 // muse::audio::AudioDeviceID WebAudioDriver::outputDevice() const
 // {
 //     NOT_SUPPORTED;
-//     return { "default", muse::trc("audio", "System default") };
+//     return "default";
 // }
 
 // bool WebAudioDriver::selectOutputDevice(const std::string& name)
@@ -173,6 +173,14 @@
 // {
 //     struct muse::audio::WebAudioDriver::Spec spec;
 //     return spec;
+// }
+
+// bool muse::audio::WebAudioDriver::resetToDefaultOutputDevice() {
+//     return false;
+// }
+
+// async::Notification muse::audio::WebAudioDriver::outputDeviceChanged() const {
+//     return async::Notification();
 // }
 
 // unsigned int WebAudioDriver::outputDeviceBufferSize() const

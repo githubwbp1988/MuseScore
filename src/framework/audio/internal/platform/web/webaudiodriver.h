@@ -169,7 +169,7 @@ public:
     muse::audio::AudioDeviceID outputDevice() const override
     {
         NOT_SUPPORTED;
-        return { "default", muse::trc("audio", "System default") };
+        return "default";
     }
 
     bool selectOutputDevice(const std::string& name) override
@@ -211,6 +211,13 @@ public:
     {
         struct muse::audio::WebAudioDriver::Spec spec;
         return spec;
+    }
+
+    bool resetToDefaultOutputDevice() override {
+        return false;
+    }
+    async::Notification outputDeviceChanged() const override {
+        return async::Notification();
     }
 
     unsigned int outputDeviceBufferSize() const override
