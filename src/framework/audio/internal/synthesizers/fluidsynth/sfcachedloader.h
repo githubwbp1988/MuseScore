@@ -25,8 +25,11 @@
 
 #include <cstdio>
 
-#include <sfloader/fluid_sfont.h>
-#include <sfloader/fluid_defsfont.h>
+// #include <sfloader/fluid_sfont.h>
+// #include <sfloader/fluid_defsfont.h>
+
+#include "../../../thirdparty/fluidsynth/fluidsynth-2.3.3/src/sfloader/fluid_sfont.h"
+#include "../../../thirdparty/fluidsynth/fluidsynth-2.3.3/src/sfloader/fluid_defsfont.h"
 
 namespace muse::audio::synth {
 struct SoundFontData
