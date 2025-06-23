@@ -19,9 +19,11 @@
  * 02110-1301, USA
  */
 
-#include "fluid_synth.h"
+// #include "fluid_synth.h"
 #include "fluid_adriver.h"
-#include "fluid_settings.h"
+// #include "fluid_settings.h"
+#include "../synth/fluid_synth.h"
+#include "../utils/fluid_settings.h"
 
 #if WAVEOUT_SUPPORT
 

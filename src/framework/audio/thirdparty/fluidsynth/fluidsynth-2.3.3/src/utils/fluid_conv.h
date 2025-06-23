@@ -22,7 +22,8 @@
 #define _FLUID_CONV_H
 
 #include "fluidsynth_priv.h"
-#include "utils/fluid_conv_tables.h"
+// #include "utils/fluid_conv_tables.h"
+#include "fluid_conv_tables.h"
 
 fluid_real_t fluid_ct2hz_real(fluid_real_t cents);
 fluid_real_t fluid_ct2hz(fluid_real_t cents);

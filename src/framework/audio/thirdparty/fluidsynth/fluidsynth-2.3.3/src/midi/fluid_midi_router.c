@@ -26,7 +26,8 @@
 
 #include "fluid_midi_router.h"
 #include "fluid_midi.h"
-#include "fluid_synth.h"
+// #include "fluid_synth.h"
+#include "../synth/fluid_synth.h"
 
 /*
  * fluid_midi_router

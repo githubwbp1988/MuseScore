@@ -22,7 +22,8 @@
 #ifndef _FLUID_GEN_H
 #define _FLUID_GEN_H
 
-#include "fluidsynth_priv.h"
+// #include "fluidsynth_priv.h"
+#include "../utils/fluidsynth_priv.h"
 
 typedef struct _fluid_gen_info_t
 {

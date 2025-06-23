@@ -21,7 +21,8 @@
 #ifndef _FLUID_AUDRIVER_H
 #define _FLUID_AUDRIVER_H
 
-#include "fluidsynth_priv.h"
+// #include "fluidsynth_priv.h"
+#include "../utils/fluidsynth_priv.h"
 
 #ifdef __cplusplus
 extern "C" {

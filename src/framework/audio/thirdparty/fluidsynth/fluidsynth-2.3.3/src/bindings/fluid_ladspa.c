@@ -26,7 +26,8 @@
  */
 
 #include "fluid_ladspa.h"
-#include "fluid_list.h"
+// #include "fluid_list.h"
+#include "../utils/fluid_list.h"
 
 #if defined(LADSPA) || defined(__DOXYGEN__)
 

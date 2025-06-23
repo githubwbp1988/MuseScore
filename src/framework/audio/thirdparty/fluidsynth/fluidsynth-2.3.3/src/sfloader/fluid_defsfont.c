@@ -24,10 +24,13 @@
 
 #include "fluid_defsfont.h"
 #include "fluid_sfont.h"
-#include "fluid_sys.h"
-#include "fluid_synth.h"
+// #include "fluid_sys.h"
+#include "../utils/fluid_sys.h"
+// #include "fluid_synth.h"
+#include "../synth/fluid_synth.h"
 #include "fluid_samplecache.h"
-#include "fluid_chan.h"
+// #include "fluid_chan.h"
+#include "../synth/fluid_chan.h"
 
 /* EMU8k/10k hardware applies this factor to initial attenuation generator values set at preset and
  * instrument level in a soundfont. We apply this factor when loading the generator values to stay

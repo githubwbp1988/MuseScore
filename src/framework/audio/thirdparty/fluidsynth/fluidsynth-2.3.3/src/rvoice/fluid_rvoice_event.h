@@ -22,9 +22,11 @@
 #ifndef _FLUID_RVOICE_EVENT_H
 #define _FLUID_RVOICE_EVENT_H
 
-#include "fluidsynth_priv.h"
+// #include "fluidsynth_priv.h"
+#include "../utils/fluidsynth_priv.h"
 #include "fluid_rvoice_mixer.h"
-#include "fluid_ringbuffer.h"
+// #include "fluid_ringbuffer.h"
+#include "../utils/fluid_ringbuffer.h"
 
 typedef struct _fluid_rvoice_event_t fluid_rvoice_event_t;
 

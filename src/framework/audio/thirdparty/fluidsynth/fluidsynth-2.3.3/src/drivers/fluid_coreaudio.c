@@ -25,7 +25,8 @@
  */
 
 #include "fluid_adriver.h"
-#include "fluid_settings.h"
+// #include "fluid_settings.h"
+#include "../utils/fluid_settings.h"
 
 /*
  * !!! Make sure that no include above includes <netinet/tcp.h> !!!

@@ -34,7 +34,8 @@
 
 #if MIDISHARE_SUPPORT
 
-#include "fluid_midi.h"
+// #include "fluid_midi.h"
+#include "../midi/fluid_midi.h"
 #include "fluid_mdriver.h"
 #include <MidiShare.h>
 

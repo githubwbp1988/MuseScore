@@ -21,7 +21,8 @@
 #ifndef _FLUID_CMD_H
 #define _FLUID_CMD_H
 
-#include "fluid_sys.h"
+// #include "fluid_sys.h"
+#include "../utils/fluid_sys.h"
 
 
 void fluid_shell_settings(fluid_settings_t *settings);

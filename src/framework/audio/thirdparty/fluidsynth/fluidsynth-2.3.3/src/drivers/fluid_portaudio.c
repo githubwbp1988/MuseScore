@@ -30,8 +30,10 @@
  * 2009-01-28 Overhauled for PortAudio 19 API and current FluidSynth API (was broken)
  */
 
-#include "fluid_synth.h"
-#include "fluid_settings.h"
+// #include "fluid_synth.h"
+#include "../synth/fluid_synth.h"
+// #include "fluid_settings.h"
+#include "../utils/fluid_settings.h"
 #include "fluid_adriver.h"
 
 #if PORTAUDIO_SUPPORT

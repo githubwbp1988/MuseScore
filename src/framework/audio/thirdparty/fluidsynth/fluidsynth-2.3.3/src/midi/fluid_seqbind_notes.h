@@ -21,8 +21,10 @@
 #ifndef _FLUID_SEQBIND_NOTE_H
 #define _FLUID_SEQBIND_NOTE_H
 
-#include "fluidsynth.h"
-#include "fluid_event.h"
+// #include "fluidsynth.h"
+#include "../../include/fluidsynth.h"
+// #include "fluid_event.h"
+#include "../synth/fluid_event.h"
 
 #ifdef __cplusplus
 extern "C" {

@@ -22,9 +22,12 @@
  * Low-level routines for file output.
  */
 
-#include "fluid_sys.h"
-#include "fluid_synth.h"
-#include "fluid_settings.h"
+// #include "fluid_sys.h"
+// #include "fluid_synth.h"
+// #include "fluid_settings.h"
+#include "../utils/fluid_sys.h"
+#include "../synth/fluid_synth.h"
+#include "../utils/fluid_settings.h"
 
 #if LIBSNDFILE_SUPPORT
 // #include <sndfile.h>

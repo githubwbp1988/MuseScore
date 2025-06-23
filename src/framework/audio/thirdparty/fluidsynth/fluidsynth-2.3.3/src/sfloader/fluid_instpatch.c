@@ -1,8 +1,10 @@
 
 #include "fluid_instpatch.h"
-#include "fluid_list.h"
+// #include "fluid_list.h"
+#include "../utils/fluid_list.h"
 #include "fluid_sfont.h"
-#include "fluid_sys.h"
+// #include "fluid_sys.h"
+#include "../utils/fluid_sys.h"
 
 #include <libinstpatch/libinstpatch.h>
 

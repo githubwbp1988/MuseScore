@@ -30,7 +30,8 @@
 #define _GNU_SOURCE
 #endif
 
-#include "fluid_sys.h"
+// #include "fluid_sys.h"
+#include "../utils/fluid_sys.h"
 
 #ifdef DBUS_SUPPORT
 

@@ -21,8 +21,10 @@
 #ifndef _FLUID_MOD_H
 #define _FLUID_MOD_H
 
-#include "fluidsynth_priv.h"
-#include "fluid_conv.h"
+// #include "fluidsynth_priv.h"
+#include "../utils/fluidsynth_priv.h"
+// #include "fluid_conv.h"
+#include "../utils/fluid_conv.h"
 
 /*
  * Modulator structure.  See SoundFont 2.04 PDF section 8.2.

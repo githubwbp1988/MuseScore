@@ -24,7 +24,8 @@
 
 #include "fluid_sffile.h"
 #include "fluid_sfont.h"
-#include "fluid_sys.h"
+// #include "fluid_sys.h"
+#include "../utils/fluid_sys.h"
 
 #if LIBSNDFILE_SUPPORT
 // #include <sndfile.h>

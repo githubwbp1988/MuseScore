@@ -167,7 +167,8 @@
  * problems.
  */
 #include "fluid_rev.h"
-#include "fluid_sys.h"
+// #include "fluid_sys.h"
+#include "../utils/fluid_sys.h"
 
 /*----------------------------------------------------------------------------
                         Configuration macros at compiler time.

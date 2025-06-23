@@ -29,7 +29,8 @@
 #ifndef _FLUIDSYNTH_PRIV_H
 #define _FLUIDSYNTH_PRIV_H
 
-#include "fluidsynthconfig.h"
+// #include "fluidsynthconfig.h"
+#include "../external/fluidsynthconfig.h"
 
 #ifndef NO_GLIB
 #include <glib.h>

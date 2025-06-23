@@ -19,7 +19,8 @@
  */
 
 #include "fluid_sfont.h"
-#include "fluid_sys.h"
+// #include "fluid_sys.h"
+#include "../utils/fluid_sys.h"
 
 
 void *default_fopen(const char *path)

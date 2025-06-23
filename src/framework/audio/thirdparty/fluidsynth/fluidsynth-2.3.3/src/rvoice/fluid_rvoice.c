@@ -19,8 +19,10 @@
  */
 
 #include "fluid_rvoice.h"
-#include "fluid_conv.h"
-#include "fluid_sys.h"
+// #include "fluid_conv.h"
+#include "../utils/fluid_conv.h"
+// #include "fluid_sys.h"
+#include "../utils/fluid_sys.h"
 
 
 static void fluid_rvoice_noteoff_LOCAL(fluid_rvoice_t *voice, unsigned int min_ticks);

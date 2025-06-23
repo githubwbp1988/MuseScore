@@ -20,12 +20,17 @@
 
 #include "fluid_sys.h"
 #include "fluid_hash.h"
-#include "fluid_synth.h"
-#include "fluid_cmd.h"
-#include "fluid_adriver.h"
-#include "fluid_mdriver.h"
+// #include "fluid_synth.h"
+#include "../synth/fluid_synth.h"
+// #include "fluid_cmd.h"
+#include "../bindings/fluid_cmd.h"
+// #include "fluid_adriver.h"
+#include "../drivers/fluid_adriver.h"
+// #include "fluid_mdriver.h"
+#include "../drivers/fluid_mdriver.h"
 #include "fluid_settings.h"
-#include "fluid_midi.h"
+// #include "fluid_midi.h"
+#include "../midi/fluid_midi.h"
 
 /* maximum allowed components of a settings variable (separated by '.') */
 #define MAX_SETTINGS_TOKENS 8	/* currently only a max of 3 are used */

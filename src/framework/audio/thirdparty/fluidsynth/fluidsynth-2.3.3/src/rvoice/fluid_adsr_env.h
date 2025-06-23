@@ -21,8 +21,10 @@
 #ifndef _FLUID_ADSR_ENVELOPE_H
 #define _FLUID_ADSR_ENVELOPE_H
 
-#include "fluidsynth_priv.h"
-#include "fluid_sys.h"
+// #include "fluidsynth_priv.h"
+#include "../utils/fluidsynth_priv.h"
+// #include "fluid_sys.h"
+#include "../utils/fluid_sys.h"
 
 /*
  * envelope data

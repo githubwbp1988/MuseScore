@@ -25,11 +25,16 @@
 #define _FLUID_SFFILE_H
 
 
-#include "fluid_gen.h"
-#include "fluid_list.h"
-#include "fluid_mod.h"
-#include "fluidsynth.h"
-#include "fluid_sys.h"
+// #include "fluid_gen.h"
+#include "../synth/fluid_gen.h"
+// #include "fluid_list.h"
+#include "../utils/fluid_list.h"
+// #include "fluid_mod.h"
+#include "../synth/fluid_mod.h"
+// #include "fluidsynth.h"
+#include "../../include/fluidsynth.h"
+// #include "fluid_sys.h"
+#include "../utils/fluid_sys.h"
 
 
 /* Sound Font structure defines */

@@ -24,7 +24,8 @@
  * Pedro Lopez-Cabanillas, Jan 2009
  */
 
-#include "fluidsynth_priv.h"
+// #include "fluidsynth_priv.h"
+#include "../utils/fluidsynth_priv.h"
 
 #if COREMIDI_SUPPORT
 

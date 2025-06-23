@@ -19,8 +19,10 @@
  */
 
 #include "fluid_iir_filter.h"
-#include "fluid_sys.h"
-#include "fluid_conv.h"
+// #include "fluid_sys.h"
+#include "../utils/fluid_sys.h"
+// #include "fluid_conv.h"
+#include "../utils/fluid_conv.h"
 
 /**
  * Applies a low- or high-pass filter with variable cutoff frequency and quality factor

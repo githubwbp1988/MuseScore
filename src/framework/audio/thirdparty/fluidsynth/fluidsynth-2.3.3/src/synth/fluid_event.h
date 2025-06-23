@@ -22,7 +22,8 @@
 #ifndef _FLUID_EVENT_PRIV_H
 #define _FLUID_EVENT_PRIV_H
 
-#include "fluidsynth.h"
+// #include "fluidsynth.h"
+#include "../../include/fluidsynth.h"
 
 #ifdef __cplusplus
 extern "C" {

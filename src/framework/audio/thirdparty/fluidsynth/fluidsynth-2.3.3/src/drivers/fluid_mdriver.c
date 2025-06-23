@@ -19,7 +19,8 @@
  */
 
 #include "fluid_mdriver.h"
-#include "fluid_settings.h"
+// #include "fluid_settings.h"
+#include "../utils/fluid_settings.h"
 
 
 /*

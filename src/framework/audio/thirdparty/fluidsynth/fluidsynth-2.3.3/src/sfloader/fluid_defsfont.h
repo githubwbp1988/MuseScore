@@ -25,12 +25,17 @@
 #define _FLUID_DEFSFONT_H
 
 
-#include "fluidsynth.h"
-#include "fluidsynth_priv.h"
+// #include "fluidsynth.h"
+#include "../../include/fluidsynth.h"
+// #include "fluidsynth_priv.h"
+#include "../utils/fluidsynth_priv.h"
 #include "fluid_sffile.h"
-#include "fluid_list.h"
-#include "fluid_mod.h"
-#include "fluid_gen.h"
+// #include "fluid_list.h"
+#include "../utils/fluid_list.h"
+// #include "fluid_mod.h"
+#include "../synth/fluid_mod.h"
+// #include "fluid_gen.h"
+#include "../synth/fluid_gen.h"
 
 #ifdef __cplusplus
 extern "C" {

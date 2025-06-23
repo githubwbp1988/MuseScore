@@ -29,8 +29,10 @@
 
 
 #include "fluid_event.h"
-#include "fluidsynth_priv.h"
-#include "fluid_midi.h"
+// #include "fluidsynth_priv.h"
+#include "../utils/fluidsynth_priv.h"
+// #include "fluid_midi.h"
+#include "../midi/fluid_midi.h"
 
 /***************************************************************
  *

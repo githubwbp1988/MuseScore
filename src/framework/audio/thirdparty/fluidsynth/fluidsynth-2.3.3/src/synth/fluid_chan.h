@@ -21,8 +21,10 @@
 #ifndef _FLUID_CHAN_H
 #define _FLUID_CHAN_H
 
-#include "fluidsynth_priv.h"
-#include "fluid_midi.h"
+// #include "fluidsynth_priv.h"
+#include "../utils/fluidsynth_priv.h"
+// #include "fluid_midi.h"
+#include "../midi/fluid_midi.h"
 #include "fluid_tuning.h"
 
 /* The mononophonic list is part of the legato detector for monophonic mode */

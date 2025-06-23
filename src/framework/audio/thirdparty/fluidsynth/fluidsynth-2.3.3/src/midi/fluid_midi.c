@@ -19,9 +19,12 @@
  */
 
 #include "fluid_midi.h"
-#include "fluid_sys.h"
-#include "fluid_synth.h"
-#include "fluid_settings.h"
+// #include "fluid_sys.h"
+#include "../utils/fluid_sys.h"
+// #include "fluid_synth.h"
+#include "../synth/fluid_synth.h"
+// #include "fluid_settings.h"
+#include "../utils/fluid_settings.h"
 
 
 static int fluid_midi_event_length(unsigned char event);

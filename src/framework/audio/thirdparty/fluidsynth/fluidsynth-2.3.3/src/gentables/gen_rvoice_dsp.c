@@ -1,5 +1,6 @@
 
-#include "rvoice/fluid_rvoice_dsp_tables.h"
+// #include "rvoice/fluid_rvoice_dsp_tables.h"
+#include "../rvoice/fluid_rvoice_dsp_tables.h"
 #include "make_tables.h"
 
 /* Linear interpolation table (2 coefficients centered on 1st) */

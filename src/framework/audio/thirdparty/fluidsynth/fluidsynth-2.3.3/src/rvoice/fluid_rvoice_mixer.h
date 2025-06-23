@@ -22,9 +22,11 @@
 #ifndef _FLUID_RVOICE_MIXER_H
 #define _FLUID_RVOICE_MIXER_H
 
-#include "fluidsynth_priv.h"
+// #include "fluidsynth_priv.h"
+#include "../utils/fluidsynth_priv.h"
 #include "fluid_rvoice.h"
-#include "fluid_ladspa.h"
+// #include "fluid_ladspa.h"
+#include "../bindings/fluid_ladspa.h"
 
 typedef struct _fluid_rvoice_mixer_t fluid_rvoice_mixer_t;
 

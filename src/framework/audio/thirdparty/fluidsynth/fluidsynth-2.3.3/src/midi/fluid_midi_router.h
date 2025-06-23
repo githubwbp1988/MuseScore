@@ -24,9 +24,11 @@
 #ifndef _FLUID_MIDIROUTER_H
 #define _FLUID_MIDIROUTER_H
 
-#include "fluidsynth_priv.h"
+// #include "fluidsynth_priv.h"
+#include "../utils/fluidsynth_priv.h"
 #include "fluid_midi.h"
-#include "fluid_sys.h"
+// #include "fluid_sys.h"
+#include "../utils/fluid_sys.h"
 
 
 #endif

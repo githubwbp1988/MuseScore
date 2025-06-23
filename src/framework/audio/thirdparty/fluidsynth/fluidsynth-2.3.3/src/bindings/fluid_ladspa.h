@@ -21,7 +21,8 @@
 #ifndef _FLUID_LADSPA_H
 #define _FLUID_LADSPA_H
 
-#include "fluid_sys.h"
+// #include "fluid_sys.h"
+#include "../utils/fluid_sys.h"
 
 fluid_ladspa_fx_t *new_fluid_ladspa_fx(fluid_real_t sample_rate, int buffer_size);
 void delete_fluid_ladspa_fx(fluid_ladspa_fx_t *fx);

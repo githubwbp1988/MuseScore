@@ -88,7 +88,8 @@
  */
 
 #include "fluid_chorus.h"
-#include "fluid_sys.h"
+// #include "fluid_sys.h"
+#include "../utils/fluid_sys.h"
 
 
 /*-------------------------------------------------------------------------------------

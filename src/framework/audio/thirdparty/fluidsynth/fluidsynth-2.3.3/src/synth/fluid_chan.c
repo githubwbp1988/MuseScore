@@ -21,7 +21,8 @@
 #include "fluid_chan.h"
 #include "fluid_mod.h"
 #include "fluid_synth.h"
-#include "fluid_sfont.h"
+// #include "fluid_sfont.h"
+#include "../sfloader/fluid_sfont.h"
 
 /* Field shift amounts for sfont_bank_prog bit field integer */
 #define PROG_SHIFTVAL   0

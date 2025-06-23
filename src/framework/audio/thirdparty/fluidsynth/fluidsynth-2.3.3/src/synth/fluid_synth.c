@@ -19,13 +19,18 @@
  */
 
 #include "fluid_synth.h"
-#include "fluid_sys.h"
+// #include "fluid_sys.h"
+#include "../utils/fluid_sys.h"
 #include "fluid_chan.h"
 #include "fluid_tuning.h"
-#include "fluid_settings.h"
-#include "fluid_sfont.h"
-#include "fluid_defsfont.h"
-#include "fluid_instpatch.h"
+// #include "fluid_settings.h"
+#include "../utils/fluid_settings.h"
+// #include "fluid_sfont.h"
+#include "../sfloader/fluid_sfont.h"
+// #include "fluid_defsfont.h"
+#include "../sfloader/fluid_defsfont.h"
+// #include "fluid_instpatch.h"
+#include "../sfloader/fluid_instpatch.h"
 
 #ifdef TRAP_ON_FPE
 #define _GNU_SOURCE

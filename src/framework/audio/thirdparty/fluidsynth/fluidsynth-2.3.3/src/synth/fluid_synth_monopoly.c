@@ -20,7 +20,8 @@
 
 #include "fluid_synth.h"
 #include "fluid_chan.h"
-#include "fluid_defsfont.h"
+// #include "fluid_defsfont.h"
+#include "../sfloader/fluid_defsfont.h"
 
 
 /******************************************************************************

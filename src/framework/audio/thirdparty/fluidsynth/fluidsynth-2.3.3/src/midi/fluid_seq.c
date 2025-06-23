@@ -27,9 +27,12 @@
   http://www.infiniteCD.org/
 */
 
-#include "fluid_event.h"
-#include "fluid_sys.h"	// timer, threads, etc...
-#include "fluid_list.h"
+// #include "fluid_event.h"
+#include "../synth/fluid_event.h"
+// #include "fluid_sys.h"	// timer, threads, etc...
+#include "../utils/fluid_sys.h"
+// #include "fluid_list.h"
+#include "../utils/fluid_list.h"
 #include "fluid_seq_queue.h"
 
 /***************************************************************

@@ -28,14 +28,21 @@
  *                         INCLUDES
  */
 
-#include "fluid_sys.h"
-#include "fluid_list.h"
-#include "fluid_rev.h"
+// #include "fluid_sys.h"
+// #include "fluid_list.h"
+#include "../utils/fluid_sys.h"
+#include "../utils/fluid_list.h"
+// #include "fluid_rev.h"
+#include "../rvoice/fluid_rev.h"
 #include "fluid_voice.h"
-#include "fluid_chorus.h"
-#include "fluid_ladspa.h"
-#include "fluid_midi_router.h"
-#include "fluid_rvoice_event.h"
+// #include "fluid_chorus.h"
+#include "../rvoice/fluid_chorus.h"
+// #include "fluid_ladspa.h"
+#include "../bindings/fluid_ladspa.h"
+// #include "fluid_midi_router.h"
+#include "../midi/fluid_midi_router.h"
+// #include "fluid_rvoice_event.h"
+#include "../rvoice/fluid_rvoice_event.h"
 
 /***************************************************************
  *

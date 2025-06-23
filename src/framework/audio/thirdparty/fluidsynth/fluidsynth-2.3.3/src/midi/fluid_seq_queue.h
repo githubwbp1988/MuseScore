@@ -21,7 +21,8 @@
 #ifndef _FLUID_SEQ_QUE_H
 #define _FLUID_SEQ_QUE_H
 
-#include "fluidsynth.h"
+// #include "fluidsynth.h"
+#include "../../include/fluidsynth.h"
 
 #ifdef __cplusplus
 extern "C" {

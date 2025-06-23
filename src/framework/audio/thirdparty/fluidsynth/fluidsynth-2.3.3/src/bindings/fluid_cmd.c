@@ -19,12 +19,18 @@
  */
 
 #include "fluid_cmd.h"
-#include "fluid_synth.h"
-#include "fluid_settings.h"
-#include "fluid_hash.h"
-#include "fluid_midi_router.h"
-#include "fluid_sfont.h"
-#include "fluid_chan.h"
+// #include "fluid_synth.h"
+#include "../synth/fluid_synth.h"
+// #include "fluid_settings.h"
+#include "../utils/fluid_settings.h"
+// #include "fluid_hash.h"
+#include "../utils/fluid_hash.h"
+// #include "fluid_midi_router.h"
+#include "../midi/fluid_midi_router.h"
+// #include "fluid_sfont.h"
+#include "../sfloader/fluid_sfont.h"
+// #include "fluid_chan.h"
+#include "../synth/fluid_chan.h"
 
 /* FIXME: LADSPA used to need a lot of parameters on a single line. This is not
  * necessary anymore, so the limits below could probably be reduced */

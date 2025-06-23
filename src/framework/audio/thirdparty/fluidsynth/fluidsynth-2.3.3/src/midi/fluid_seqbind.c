@@ -27,10 +27,13 @@
                http://www.infiniteCD.org/
 */
 
-#include "fluidsynth_priv.h"
-#include "fluid_synth.h"
+// #include "fluidsynth_priv.h"
+#include "../utils/fluidsynth_priv.h"
+// #include "fluid_synth.h"
+#include "../synth/fluid_synth.h"
 #include "fluid_midi.h"
-#include "fluid_event.h"
+// #include "fluid_event.h"
+#include "../synth/fluid_event.h"
 #include "fluid_seqbind_notes.h"
 
 /***************************************************************

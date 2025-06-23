@@ -22,12 +22,14 @@
 #ifndef _FLUID_RVOICE_H
 #define _FLUID_RVOICE_H
 
-#include "fluidsynth_priv.h"
+// #include "fluidsynth_priv.h"
+#include "../utils/fluidsynth_priv.h"
 #include "fluid_iir_filter.h"
 #include "fluid_adsr_env.h"
 #include "fluid_lfo.h"
 #include "fluid_phase.h"
-#include "fluid_sfont.h"
+// #include "fluid_sfont.h"
+#include "../sfloader/fluid_sfont.h"
 
 typedef struct _fluid_rvoice_envlfo_t fluid_rvoice_envlfo_t;
 typedef struct _fluid_rvoice_dsp_t fluid_rvoice_dsp_t;

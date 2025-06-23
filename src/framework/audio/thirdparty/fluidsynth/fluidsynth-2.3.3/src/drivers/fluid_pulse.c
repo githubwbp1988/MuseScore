@@ -24,9 +24,11 @@
  *
  */
 
-#include "fluid_synth.h"
+// #include "fluid_synth.h"
+#include "../synth/fluid_synth.h"
 #include "fluid_adriver.h"
-#include "fluid_settings.h"
+// #include "fluid_settings.h"
+#include "../utils/fluid_settings.h"
 
 #if PULSE_SUPPORT
 

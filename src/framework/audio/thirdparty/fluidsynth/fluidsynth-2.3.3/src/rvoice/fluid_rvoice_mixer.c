@@ -20,11 +20,14 @@
 
 #include "fluid_rvoice_mixer.h"
 #include "fluid_rvoice.h"
-#include "fluid_sys.h"
+// #include "fluid_sys.h"
+#include "../utils/fluid_sys.h"
 #include "fluid_rev.h"
 #include "fluid_chorus.h"
-#include "fluid_ladspa.h"
-#include "fluid_synth.h"
+// #include "fluid_ladspa.h"
+#include "../bindings/fluid_ladspa.h"
+// #include "fluid_synth.h"
+#include "../synth/fluid_synth.h"
 
 // If less than x voices, the thread overhead is larger than the gain,
 // so don't activate the thread(s).

@@ -24,7 +24,8 @@
 
 #ifdef HAVE_LASH
 
-#include "fluid_synth.h"
+// #include "fluid_synth.h"
+#include "../synth/fluid_synth.h"
 
 #include <lash/lash.h>
 extern lash_client_t *fluid_lash_client;

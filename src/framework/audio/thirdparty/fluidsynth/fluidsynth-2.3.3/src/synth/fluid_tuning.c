@@ -20,7 +20,8 @@
 
 
 #include "fluid_tuning.h"
-#include "fluid_sys.h"
+// #include "fluid_sys.h"
+#include "../utils/fluid_sys.h"
 
 
 fluid_tuning_t *new_fluid_tuning(const char *name, int bank, int prog)

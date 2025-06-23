@@ -22,14 +22,20 @@
 #ifndef _FLUID_VOICE_H
 #define _FLUID_VOICE_H
 
-#include "fluid_phase.h"
+// #include "fluid_phase.h"
+#include "../rvoice/fluid_phase.h"
 #include "fluid_gen.h"
 #include "fluid_mod.h"
-#include "fluid_iir_filter.h"
-#include "fluid_adsr_env.h"
-#include "fluid_lfo.h"
-#include "fluid_rvoice.h"
-#include "fluid_rvoice_event.h"
+// #include "fluid_iir_filter.h"
+#include "../rvoice/fluid_iir_filter.h"
+// #include "fluid_adsr_env.h"
+#include "../rvoice/fluid_adsr_env.h"
+// #include "fluid_lfo.h"
+#include "../rvoice/fluid_lfo.h"
+// #include "fluid_rvoice.h"
+#include "../rvoice/fluid_rvoice.h"
+// #include "fluid_rvoice_event.h"
+#include "../rvoice/fluid_rvoice_event.h"
 
 #define NO_CHANNEL             0xff
 
