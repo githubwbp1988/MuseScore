@@ -58,17 +58,17 @@ public:
     using OnReadBufferChanged = std::function<void (const samples_t, const sample_rate_t)>;
     // void setOnReadBufferChanged(const OnReadBufferChanged func);
 
-    sample_rate_t sampleRate() const override;
+    // sample_rate_t sampleRate() const override;
 
-    void setSampleRate(const sample_rate_t sampleRate) override;
-    void setReadBufferSize(const uint16_t readBufferSize) override;
-    void setAudioChannelsCount(const audioch_t count) override;
+    // void setSampleRate(const sample_rate_t sampleRate) override;
+    // void setReadBufferSize(const uint16_t readBufferSize) override;
+    // void setAudioChannelsCount(const audioch_t count) override;
 
-    RenderMode mode() const override;
-    void setMode(const RenderMode newMode) override;
-    async::Notification modeChanged() const override;
+    // RenderMode mode() const override;
+    // void setMode(const RenderMode newMode) override;
+    // async::Notification modeChanged() const override;
 
-    MixerPtr mixer() const override;
+    // MixerPtr mixer() const override;
 
     ~AudioEngine()
     {
