@@ -96,6 +96,14 @@ static void audio_init_qrc()
     Q_INIT_RESOURCE(audio);
 }
 
+AudioModule::~AudioModule() {
+
+}
+
+void AudioModule::funcForWasmBuild() {
+    
+}
+
 // AudioModule::AudioModule() {
 //     AudioSanitizer::setupMainThread();
 // }
@@ -104,10 +112,6 @@ static void audio_init_qrc()
 // {
 //     return "audio_engine";
 // }
-
-AudioModule::~AudioModule() {
-    
-}
 
 void AudioModule::registerExports()
 {
