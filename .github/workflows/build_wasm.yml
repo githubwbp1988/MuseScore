@@ -152,14 +152,6 @@ jobs:
       run: |
         bash ./buildscripts/ci/linux/setup.sh --arch wasm
 
-    - name: pre Build
-      env:
-        CMAKE_PREFIX_PATH: ${{env.QT_ROOT_DIR}}
-      run: |
-        bash ./buildscripts/ci/wasm/build.sh -n ${{ env.BUILD_NUMBER }}
-        # echo "============== ccache ==============="
-        # ccache -sv
-
     - name: Download and extract GLib
       run: |
         echo "GITHUB_WORKSPACE: $GITHUB_WORKSPACE"
@@ -173,18 +165,25 @@ jobs:
         
         cd ..
 
+        $BUILD_TOOLS/emsdk
+
     - name: Create WASM cross-compilation file
       run: |
         cat > ${GITHUB_WORKSPACE}/wasm-cross.txt << 'EOF'
         [binaries]
-        c = 'emcc'
-        cpp = 'em++'
-        ar = 'emar'
-        strip = 'emstrip'
+        # c = 'emcc'
+        # cpp = 'em++'
+        # ar = 'emar'
+        # strip = 'emstrip'
+        c = '${BUILD_TOOLS}/emsdk/upstream/emscripten/emcc'
+        cpp = '${BUILD_TOOLS}/emsdk/upstream/emscripten/em++'
+        ar = '${BUILD_TOOLS}/emsdk/upstream/emscripten/emar'
+        strip = '${BUILD_TOOLS}/emsdk/upstream/emscripten/emstrip'
         pkg-config = 'pkg-config'
 
         [host_machine]
-        system = 'emscripten'
+        # system = 'emscripten'
+        system = '${BUILD_TOOLS}/emsdk/upstream/emscripten'
         cpu_family = 'wasm32'
         cpu = 'wasm32'
         endian = 'little'
@@ -270,8 +269,8 @@ jobs:
       env:
         CMAKE_PREFIX_PATH: ${{env.QT_ROOT_DIR}}
       run: |
-        bash ./buildscripts/ci/wasm/build1.sh
-        echo "============== ccache 1 ==============="
+        bash ./buildscripts/ci/wasm/build.sh -n ${{ env.BUILD_NUMBER }}
+        echo "============== ccache ==============="
         ccache -sv
     - name: Package
       run: |
