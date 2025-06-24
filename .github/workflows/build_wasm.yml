@@ -169,10 +169,6 @@ jobs:
       run: |
         cat > ${GITHUB_WORKSPACE}/wasm-cross.txt << EOF
         [binaries]
-        # c = 'emcc'
-        # cpp = 'em++'
-        # ar = 'emar'
-        # strip = 'emstrip'
         c = '${HOME}/build_tools/emsdk/upstream/emscripten/emcc'
         cpp = '${HOME}/build_tools/emsdk/upstream/emscripten/em++'
         ar = '${HOME}/build_tools/emsdk/upstream/emscripten/emar'
@@ -180,17 +176,16 @@ jobs:
         pkg-config = 'pkg-config'
 
         [host_machine]
-        # system = 'emscripten'
         system = '${HOME}/build_tools/emsdk/upstream/emscripten'
         cpu_family = 'wasm32'
         cpu = 'wasm32'
         endian = 'little'
 
         [built-in options]
-        c_args = ['-s', 'WASM=1', '-O2', '-DEMSCRIPTEN']
-        cpp_args = ['-s', 'WASM=1', '-O2', '-DEMSCRIPTEN']
-        c_link_args = ['-s', 'WASM=1']
-        cpp_link_args = ['-s', 'WASM=1']
+        c_args = ['-O2', '-DEMSCRIPTEN']
+        cpp_args = ['-O2', '-DEMSCRIPTEN']
+        c_link_args = ['-s', 'WASM=1', '-O2']
+        cpp_link_args = ['-s', 'WASM=1', '-O2']
         default_library = 'static'
 
         [properties]
