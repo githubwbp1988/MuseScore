@@ -461,8 +461,6 @@ target_include_directories ( fluidsynth PRIVATE
     ${FluidSynth_SOURCE_DIR}/src/utils
     ${FluidSynth_SOURCE_DIR}/src/
     ${FluidSynth_SOURCE_DIR}/include
-    ${GLIB_PATH}
-    ${GLIB_PATH}/glib
 )
 
 target_link_libraries ( fluidsynth PRIVATE
