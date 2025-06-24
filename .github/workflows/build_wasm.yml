@@ -183,18 +183,8 @@ jobs:
         endian = 'little'
 
         [built-in options]
-        # c_args = ['-O2', '-DEMSCRIPTEN', '-DNO_GLIB']
-        # cpp_args = ['-O2', '-DEMSCRIPTEN', '-DNO_GLIB']
-        c_args = [
-          '-O2', '-DEMSCRIPTEN', '-DNO_GLIB',
-          '-UG_IO_MODULES_ENABLED',
-          '-UG_THREADS_ENABLED'
-        ]
-        cpp_args = [
-          '-O2', '-DEMSCRIPTEN', '-DNO_GLIB',
-          '-UG_IO_MODULES_ENABLED',
-          '-UG_THREADS_ENABLED'
-        ]
+        c_args = ['-O2', '-DEMSCRIPTEN', '-DNO_GLIB']
+        cpp_args = ['-O2', '-DEMSCRIPTEN', '-DNO_GLIB']
         c_link_args = ['-s', 'WASM=1', '-O2']
         cpp_link_args = ['-s', 'WASM=1', '-O2']
         default_library = 'static'
