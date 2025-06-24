@@ -30,7 +30,7 @@ PACKARCH="x86_64" # x86_64, armv7l, aarch64, wasm
 COMPILER="gcc" # gcc, clang
 EMSDK_VERSION="3.1.70" # for Qt 6.9
 
-ceho "****BUILD_TOOLS: ${BUILD_TOOLS}"
+echo "****BUILD_TOOLS: ${BUILD_TOOLS}"
 
 while [[ "$#" -gt 0 ]]; do
     case $1 in
