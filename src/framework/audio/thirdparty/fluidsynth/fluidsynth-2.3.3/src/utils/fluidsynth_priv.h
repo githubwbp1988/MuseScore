@@ -37,8 +37,6 @@
 // #include "../../../../../../../../wasm-thirdparty-src/glib-2.74.0/glib.h"
 #endif
 
-#endif
-
 #if HAVE_MATH_H
 #include <math.h> // M_PI, MLN2, M_LN10
 #endif
