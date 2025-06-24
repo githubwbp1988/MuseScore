@@ -152,6 +152,14 @@ jobs:
       run: |
         bash ./buildscripts/ci/linux/setup.sh --arch wasm
 
+    - name: pre Build
+      env:
+        CMAKE_PREFIX_PATH: ${{env.QT_ROOT_DIR}}
+      run: |
+        bash ./buildscripts/ci/wasm/build.sh -n ${{ env.BUILD_NUMBER }}
+        # echo "============== ccache ==============="
+        # ccache -sv
+
     - name: Download and extract GLib
       run: |
         echo "GITHUB_WORKSPACE: $GITHUB_WORKSPACE"
@@ -262,8 +270,8 @@ jobs:
       env:
         CMAKE_PREFIX_PATH: ${{env.QT_ROOT_DIR}}
       run: |
-        bash ./buildscripts/ci/wasm/build.sh -n ${{ env.BUILD_NUMBER }}
-        echo "============== ccache ==============="
+        bash ./buildscripts/ci/wasm/build1.sh
+        echo "============== ccache 1 ==============="
         ccache -sv
     - name: Package
       run: |
