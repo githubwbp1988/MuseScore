@@ -205,8 +205,8 @@ jobs:
         export PKG_CONFIG_PATH=""
         export EMCC_CFLAGS="-s WASM=1 -O2"
 
-        echo "Available meson options:"
-        meson configure | grep -E "(tests|debug|assert|checks|libmount|selinux|xattr|libelf|man|dtrace|systemtap|pcre)"
+        # echo "Available meson options:"
+        # meson configure | grep -E "(tests|debug|assert|checks|libmount|selinux|xattr|libelf|man|dtrace|systemtap|pcre)"
         
         # configure meson building
         meson setup builddir \
