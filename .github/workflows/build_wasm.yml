@@ -133,6 +133,21 @@ jobs:
         arch: wasm_singlethread
         modules: 'qt5compat qtscxml qtshadertools' 
 
+    - name: Install build dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y \
+          python3-pip \
+          ninja-build \
+          pkg-config \
+          gettext \
+          libffi-dev \
+          libmount-dev \
+          libpcre2-dev
+        
+        # install meson
+        pip3 install meson
+
     - name: Setup environment
       run: |
         bash ./buildscripts/ci/linux/setup.sh --arch wasm
@@ -141,17 +156,105 @@ jobs:
       run: |
         echo "GITHUB_WORKSPACE: $GITHUB_WORKSPACE"
         mkdir -p wasm-thirdparty-src
+        mkdir -p wasm-thirdparty-built
         cd wasm-thirdparty-src
         echo "glib-2.74.0 downloading ... "
         wget https://download.gnome.org/sources/glib/2.74/glib-2.74.0.tar.xz
         tar -xf glib-2.74.0.tar.xz
         ls -la glib-2.74.0/
-        cd glib-2.74.0
-
-        cp glib/glib.h .
         
         cd ..
-        cd ..
+
+    - name: Create WASM cross-compilation file
+      run: |
+        cat > ${GITHUB_WORKSPACE}/wasm-cross.txt << 'EOF'
+        [binaries]
+        c = 'emcc'
+        cpp = 'em++'
+        ar = 'emar'
+        strip = 'emstrip'
+        pkg-config = 'pkg-config'
+
+        [host_machine]
+        system = 'emscripten'
+        cpu_family = 'wasm32'
+        cpu = 'wasm32'
+        endian = 'little'
+
+        [built-in options]
+        c_args = ['-s', 'WASM=1', '-O2', '-DEMSCRIPTEN']
+        cpp_args = ['-s', 'WASM=1', '-O2', '-DEMSCRIPTEN']
+        c_link_args = ['-s', 'WASM=1']
+        cpp_link_args = ['-s', 'WASM=1']
+        default_library = 'static'
+
+        [properties]
+        needs_exe_wrapper = true
+        EOF
+
+    - name: Build glib for WASM
+      run: |
+        cd ${GITHUB_WORKSPACE}/wasm-thirdparty-src/glib-2.74.0
+        
+        # set env variables
+        export PKG_CONFIG_PATH=""
+        export EMCC_CFLAGS="-s WASM=1 -O2"
+        
+        # configure meson building
+        meson setup builddir \
+          --cross-file=${GITHUB_WORKSPACE}/wasm-cross.txt \
+          --prefix=${GITHUB_WORKSPACE}/wasm-thirdparty-built/glib \
+          --libdir=lib \
+          --default-library=static \
+          --buildtype=release \
+          -Dtests=false \
+          -Dglib_debug=disabled \
+          -Dglib_assert=false \
+          -Dglib_checks=false \
+          -Dlibmount=disabled \
+          -Dselinux=disabled \
+          -Dxattr=false \
+          -Dlibelf=disabled \
+          -Dman=false \
+          -Ddtrace=false \
+          -Dsystemtap=false \
+          -Dinternal_pcre=true
+        
+        cd ../..
+
+    - name: Compile glib
+      run: |
+        cd ${GITHUB_WORKSPACE}/wasm-thirdparty-src/glib-2.74.0
+        
+        # build
+        meson compile -C builddir
+        
+        # install to the specified directory
+        meson install -C builddir
+
+        cd ../..
+
+    - name: Verify glib build
+      run: |
+        echo "----- Checking glib build results:"
+        ls -la ${GITHUB_WORKSPACE}/wasm-thirdparty-built/glib/
+        ls -la ${GITHUB_WORKSPACE}/wasm-thirdparty-built/glib/include/
+        ls -la ${GITHUB_WORKSPACE}/wasm-thirdparty-built/glib/lib/
+        
+        # check key file
+        if [ -f "${GITHUB_WORKSPACE}/wasm-thirdparty-built/glib/include/glib-2.0/glib.h" ]; then
+          echo "✓ glib.h found"
+        else
+          echo "✗ glib.h not found"
+          exit 1
+        fi
+        
+        if [ -f "${GITHUB_WORKSPACE}/wasm-thirdparty-built/glib/lib/glib-2.0/include/glibconfig.h" ]; then
+          echo "✓ glibconfig.h found"
+        else
+          echo "✗ glibconfig.h not found"
+          exit 1
+        fi
 
     - name: Build
       env:

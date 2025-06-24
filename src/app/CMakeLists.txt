@@ -290,9 +290,6 @@ target_include_directories(MuseScoreStudio PRIVATE
     ${MUSE_FRAMEWORK_PATH}/src/framework
     ${MUSE_FRAMEWORK_PATH}/src/framework/global
     # end compat
-
-    ${GLIB_PATH}
-    ${GLIB_PATH}/glib
 )
 
 ###########################################

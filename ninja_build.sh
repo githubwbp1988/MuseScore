@@ -106,7 +106,7 @@ function do_build() {
         -DLIBSND_PATH=${GITHUB_WORKSPACE}/wasm-thirdparty-src/libsndfile \
         -DLIBOGG_PATH=${GITHUB_WORKSPACE}/wasm-thirdparty-src/libogg \
         -DLIBVORBIS_PATH=${GITHUB_WORKSPACE}/wasm-thirdparty-src/libvorbis \
-        -DGLIB_PATH=${GITHUB_WORKSPACE}/wasm-thirdparty-src/glib-2.74.0 \
+        -DGLIB_PATH=${GITHUB_WORKSPACE}/wasm-thirdparty-built/glib \
         -DCMAKE_CXX_FLAGS="-g -gsource-map" \
         -DCMAKE_C_FLAGS="-g -gsource-map" 
 

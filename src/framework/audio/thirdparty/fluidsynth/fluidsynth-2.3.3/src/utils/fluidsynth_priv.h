@@ -34,7 +34,6 @@
 
 #ifndef NO_GLIB
 #include <glib.h>
-// #include "../../../../../../../../wasm-thirdparty-src/glib-2.74.0/glib.h"
 #endif
 
 #if HAVE_MATH_H
