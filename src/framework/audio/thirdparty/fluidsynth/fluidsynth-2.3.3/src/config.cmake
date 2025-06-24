@@ -268,4 +268,19 @@
 /* Define to 1 if you have the socklen_t type. */
 #cmakedefine HAVE_SOCKLEN_T @HAVE_SOCKLEN_T@
 
+message(STATUS "+++++GLIB_PATH: ${GLIB_PATH}")
+message(STATUS "~~~~~Checking if glib.h exists at: ${GLIB_PATH}/glib.h")
+
+if(EXISTS "${GLIB_PATH}/glib.h")
+    message(STATUS "✓ Found glib.h at ${GLIB_PATH}/glib.h")
+else()
+    message(WARNING "✗ glib.h NOT found at ${GLIB_PATH}/glib.h")
+endif()
+
+if(EXISTS "${GLIB_PATH}/glib/glib.h")
+    message(STATUS "✓ Found glib.h at ${GLIB_PATH}/glib/glib.h")
+else()
+    message(WARNING "✗ glib.h NOT found at ${GLIB_PATH}/glib/glib.h")
+endif()
+
 #endif /* CONFIG_H */
