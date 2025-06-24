@@ -177,8 +177,7 @@ jobs:
         pkg-config = 'pkg-config'
 
         [host_machine]
-        # system = '${HOME}/build_tools/emsdk/upstream/emscripten'
-        system = 'linux'
+        system = 'emscripten'
         cpu_family = 'wasm32'
         cpu = 'wasm32'
         endian = 'little'
@@ -216,12 +215,16 @@ jobs:
           --libdir=lib \
           --default-library=static \
           --buildtype=release \
-          -Dtests=false \
+          -Ddefault_library=static \
           -Dglib_debug=disabled \
+          -Dselinux=disabled \
+          -Dlibmount=disabled \
+          -Diconv=auto \
+          -Dtests=false \
+          -Dinstalled_tests=false \
+          -Dplatform=emscripten \
           -Dglib_assert=false \
           -Dglib_checks=false \
-          -Dlibmount=disabled \
-          -Dselinux=disabled \
           -Dxattr=false \
           -Dlibelf=disabled \
           -Dman=false \
