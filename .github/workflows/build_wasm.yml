@@ -173,23 +173,29 @@ jobs:
         cpp = '${HOME}/build_tools/emsdk/upstream/emscripten/em++'
         ar = '${HOME}/build_tools/emsdk/upstream/emscripten/emar'
         strip = '${HOME}/build_tools/emsdk/upstream/emscripten/emstrip'
+        ranlib = '${BUILD_TOOLS}/emsdk/upstream/emscripten/emranlib'
         pkg-config = 'pkg-config'
 
         [host_machine]
-        system = '${HOME}/build_tools/emsdk/upstream/emscripten'
+        # system = '${HOME}/build_tools/emsdk/upstream/emscripten'
+        system = 'linux'
         cpu_family = 'wasm32'
         cpu = 'wasm32'
         endian = 'little'
 
         [built-in options]
-        c_args = ['-O2', '-DEMSCRIPTEN', '-Wno-unused-command-line-argument']
-        cpp_args = ['-O2', '-DEMSCRIPTEN', '-Wno-unused-command-line-argument']
+        c_args = ['-O2', '-DEMSCRIPTEN', '-DNO_GLIB']
+        cpp_args = ['-O2', '-DEMSCRIPTEN', '-DNO_GLIB']
         c_link_args = ['-s', 'WASM=1', '-O2']
         cpp_link_args = ['-s', 'WASM=1', '-O2']
         default_library = 'static'
 
         [properties]
         needs_exe_wrapper = true
+        sizeof_int = 4
+        sizeof_void_p = 4
+        sizeof_long = 4
+        sizeof_size_t = 4
         EOF
 
     - name: Build glib for WASM
