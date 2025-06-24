@@ -167,7 +167,7 @@ jobs:
 
     - name: Create WASM cross-compilation file
       run: |
-        cat > ${GITHUB_WORKSPACE}/wasm-cross.txt << 'EOF'
+        cat > ${GITHUB_WORKSPACE}/wasm-cross.txt << EOF
         [binaries]
         # c = 'emcc'
         # cpp = 'em++'
