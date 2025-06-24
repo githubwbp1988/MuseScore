@@ -158,11 +158,8 @@ jobs:
         mkdir -p wasm-thirdparty-src
         mkdir -p wasm-thirdparty-built
         cd wasm-thirdparty-src
-        echo "glib-2.78 downloading ... "
-        wget https://download.gnome.org/sources/glib/2.78/glib-2.78.0.tar.xz
-        tar -xf glib-2.78.0.tar.xz
-        ls -la glib-2.78.0/
-        
+        [ -d glib-emscripten ] || git clone https://github.com/udevbe/glib-emscripten.git
+        cd glib-emscripten
         cd ..
 
     - name: Create WASM cross-compilation file
@@ -191,15 +188,11 @@ jobs:
 
         [properties]
         needs_exe_wrapper = true
-        sizeof_int = 4
-        sizeof_void_p = 4
-        sizeof_long = 4
-        sizeof_size_t = 4
         EOF
 
     - name: Build glib for WASM
       run: |
-        cd ${GITHUB_WORKSPACE}/wasm-thirdparty-src/glib-2.78.0
+        cd ${GITHUB_WORKSPACE}/wasm-thirdparty-src/glib-emscripten
         
         # set env variables
         export PKG_CONFIG_PATH=""
@@ -232,7 +225,7 @@ jobs:
 
     - name: Compile glib
       run: |
-        cd ${GITHUB_WORKSPACE}/wasm-thirdparty-src/glib-2.78.0
+        cd ${GITHUB_WORKSPACE}/wasm-thirdparty-src/glib-emscripten
         
         # build
         meson compile -C builddir
@@ -250,14 +243,14 @@ jobs:
         ls -la ${GITHUB_WORKSPACE}/wasm-thirdparty-built/glib/lib/
         
         # check key file
-        if [ -f "${GITHUB_WORKSPACE}/wasm-thirdparty-built/glib/include/glib-2.0/glib.h" ]; then
+        if find ${GITHUB_WORKSPACE}/wasm-thirdparty-built/glib/include/ -name 'glib.h' | grep -q .; then
           echo "✓ glib.h found"
         else
           echo "✗ glib.h not found"
           exit 1
         fi
-        
-        if [ -f "${GITHUB_WORKSPACE}/wasm-thirdparty-built/glib/lib/glib-2.0/include/glibconfig.h" ]; then
+
+        if find ${GITHUB_WORKSPACE}/wasm-thirdparty-built/glib/lib/ -name 'glibconfig.h' | grep -q .; then
           echo "✓ glibconfig.h found"
         else
           echo "✗ glibconfig.h not found"
