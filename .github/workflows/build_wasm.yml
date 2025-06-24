@@ -133,20 +133,20 @@ jobs:
         arch: wasm_singlethread
         modules: 'qt5compat qtscxml qtshadertools' 
 
-    - name: Install build dependencies
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y \
-          python3-pip \
-          ninja-build \
-          pkg-config \
-          gettext \
-          libffi-dev \
-          libmount-dev \
-          libpcre2-dev
+    # - name: Install build dependencies
+    #   run: |
+    #     sudo apt-get update
+    #     sudo apt-get install -y \
+    #       python3-pip \
+    #       ninja-build \
+    #       pkg-config \
+    #       gettext \
+    #       libffi-dev \
+    #       libmount-dev \
+    #       libpcre2-dev
         
-        # install meson
-        pip3 install meson
+    #     # install meson
+    #     pip3 install meson
 
     - name: Setup environment
       run: |
@@ -162,100 +162,100 @@ jobs:
         cd glib-emscripten
         cd ..
 
-    - name: Create WASM cross-compilation file
-      run: |
-        cat > ${GITHUB_WORKSPACE}/wasm-cross.txt << EOF
-        [binaries]
-        c = '${HOME}/build_tools/emsdk/upstream/emscripten/emcc'
-        cpp = '${HOME}/build_tools/emsdk/upstream/emscripten/em++'
-        ar = '${HOME}/build_tools/emsdk/upstream/emscripten/emar'
-        strip = '${HOME}/build_tools/emsdk/upstream/emscripten/emstrip'
-        ranlib = '${BUILD_TOOLS}/emsdk/upstream/emscripten/emranlib'
-        pkg-config = 'pkg-config'
+    # - name: Create WASM cross-compilation file
+    #   run: |
+    #     cat > ${GITHUB_WORKSPACE}/wasm-cross.txt << EOF
+    #     [binaries]
+    #     c = '${HOME}/build_tools/emsdk/upstream/emscripten/emcc'
+    #     cpp = '${HOME}/build_tools/emsdk/upstream/emscripten/em++'
+    #     ar = '${HOME}/build_tools/emsdk/upstream/emscripten/emar'
+    #     strip = '${HOME}/build_tools/emsdk/upstream/emscripten/emstrip'
+    #     ranlib = '${BUILD_TOOLS}/emsdk/upstream/emscripten/emranlib'
+    #     pkg-config = 'pkg-config'
 
-        [host_machine]
-        system = 'emscripten'
-        cpu_family = 'wasm32'
-        cpu = 'wasm32'
-        endian = 'little'
+    #     [host_machine]
+    #     system = 'emscripten'
+    #     cpu_family = 'wasm32'
+    #     cpu = 'wasm32'
+    #     endian = 'little'
 
-        [built-in options]
-        c_args = ['-O2', '-DEMSCRIPTEN', '-DNO_GLIB']
-        cpp_args = ['-O2', '-DEMSCRIPTEN', '-DNO_GLIB']
-        c_link_args = ['-s', 'WASM=1', '-O2']
-        cpp_link_args = ['-s', 'WASM=1', '-O2']
-        default_library = 'static'
+    #     [built-in options]
+    #     c_args = ['-O2', '-DEMSCRIPTEN', '-DNO_GLIB']
+    #     cpp_args = ['-O2', '-DEMSCRIPTEN', '-DNO_GLIB']
+    #     c_link_args = ['-s', 'WASM=1', '-O2']
+    #     cpp_link_args = ['-s', 'WASM=1', '-O2']
+    #     default_library = 'static'
 
-        [properties]
-        needs_exe_wrapper = true
-        EOF
+    #     [properties]
+    #     needs_exe_wrapper = true
+    #     EOF
 
-    - name: Build glib for WASM
-      run: |
-        cd ${GITHUB_WORKSPACE}/wasm-thirdparty-src/glib-emscripten
+    # - name: Build glib for WASM
+    #   run: |
+    #     cd ${GITHUB_WORKSPACE}/wasm-thirdparty-src/glib-emscripten
         
-        # set env variables
-        export PKG_CONFIG_PATH=""
-        export EMCC_CFLAGS="-s WASM=1 -O2"
+    #     # set env variables
+    #     export PKG_CONFIG_PATH=""
+    #     export EMCC_CFLAGS="-s WASM=1 -O2"
 
-        # echo "Available meson options:"
-        # meson configure | grep -E "(tests|debug|assert|checks|libmount|selinux|xattr|libelf|man|dtrace|systemtap|pcre)"
+    #     # echo "Available meson options:"
+    #     # meson configure | grep -E "(tests|debug|assert|checks|libmount|selinux|xattr|libelf|man|dtrace|systemtap|pcre)"
         
-        # configure meson building
-        meson setup builddir \
-          --cross-file=${GITHUB_WORKSPACE}/wasm-cross.txt \
-          --prefix=${GITHUB_WORKSPACE}/wasm-thirdparty-built/glib \
-          --libdir=lib \
-          --default-library=static \
-          --buildtype=release \
-          -Dglib_debug=disabled \
-          -Dselinux=disabled \
-          -Dlibmount=disabled \
-          -Dtests=false \
-          -Dinstalled_tests=false \
-          -Dglib_assert=false \
-          -Dglib_checks=false \
-          -Dxattr=false \
-          -Dlibelf=disabled \
-          -Dman=false \
-          -Ddtrace=false \
-          -Dsystemtap=false 
+    #     # configure meson building
+    #     meson setup builddir \
+    #       --cross-file=${GITHUB_WORKSPACE}/wasm-cross.txt \
+    #       --prefix=${GITHUB_WORKSPACE}/wasm-thirdparty-built/glib \
+    #       --libdir=lib \
+    #       --default-library=static \
+    #       --buildtype=release \
+    #       -Dglib_debug=disabled \
+    #       -Dselinux=disabled \
+    #       -Dlibmount=disabled \
+    #       -Dtests=false \
+    #       -Dinstalled_tests=false \
+    #       -Dglib_assert=false \
+    #       -Dglib_checks=false \
+    #       -Dxattr=false \
+    #       -Dlibelf=disabled \
+    #       -Dman=false \
+    #       -Ddtrace=false \
+    #       -Dsystemtap=false 
         
-        cd ../..
+    #     cd ../..
 
-    - name: Compile glib
-      run: |
-        cd ${GITHUB_WORKSPACE}/wasm-thirdparty-src/glib-emscripten
+    # - name: Compile glib
+    #   run: |
+    #     cd ${GITHUB_WORKSPACE}/wasm-thirdparty-src/glib-emscripten
         
-        # build
-        meson compile -C builddir
+    #     # build
+    #     meson compile -C builddir
         
-        # install to the specified directory
-        meson install -C builddir
+    #     # install to the specified directory
+    #     meson install -C builddir
 
-        cd ../..
+    #     cd ../..
 
-    - name: Verify glib build
-      run: |
-        echo "----- Checking glib build results:"
-        ls -la ${GITHUB_WORKSPACE}/wasm-thirdparty-built/glib/
-        ls -la ${GITHUB_WORKSPACE}/wasm-thirdparty-built/glib/include/
-        ls -la ${GITHUB_WORKSPACE}/wasm-thirdparty-built/glib/lib/
+    # - name: Verify glib build
+    #   run: |
+    #     echo "----- Checking glib build results:"
+    #     ls -la ${GITHUB_WORKSPACE}/wasm-thirdparty-built/glib/
+    #     ls -la ${GITHUB_WORKSPACE}/wasm-thirdparty-built/glib/include/
+    #     ls -la ${GITHUB_WORKSPACE}/wasm-thirdparty-built/glib/lib/
         
-        # check key file
-        if find ${GITHUB_WORKSPACE}/wasm-thirdparty-built/glib/include/ -name 'glib.h' | grep -q .; then
-          echo "✓ glib.h found"
-        else
-          echo "✗ glib.h not found"
-          exit 1
-        fi
+    #     # check key file
+    #     if find ${GITHUB_WORKSPACE}/wasm-thirdparty-built/glib/include/ -name 'glib.h' | grep -q .; then
+    #       echo "✓ glib.h found"
+    #     else
+    #       echo "✗ glib.h not found"
+    #       exit 1
+    #     fi
 
-        if find ${GITHUB_WORKSPACE}/wasm-thirdparty-built/glib/lib/ -name 'glibconfig.h' | grep -q .; then
-          echo "✓ glibconfig.h found"
-        else
-          echo "✗ glibconfig.h not found"
-          exit 1
-        fi
+    #     if find ${GITHUB_WORKSPACE}/wasm-thirdparty-built/glib/lib/ -name 'glibconfig.h' | grep -q .; then
+    #       echo "✓ glibconfig.h found"
+    #     else
+    #       echo "✗ glibconfig.h not found"
+    #       exit 1
+    #     fi
 
     - name: Build
       env:
