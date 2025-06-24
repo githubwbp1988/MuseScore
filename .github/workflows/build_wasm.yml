@@ -221,14 +221,15 @@ jobs:
           -Diconv=auto \
           -Dtests=false \
           -Dinstalled_tests=false \
-          -Dplatform=emscripten \
           -Dglib_assert=false \
           -Dglib_checks=false \
           -Dxattr=false \
           -Dlibelf=disabled \
           -Dman=false \
           -Ddtrace=false \
-          -Dsystemtap=false 
+          -Dsystemtap=false \
+          -Dplatform=emscripten \
+          -Dgio=false
         
         cd ../..
 
