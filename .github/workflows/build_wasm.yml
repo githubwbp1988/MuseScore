@@ -165,8 +165,6 @@ jobs:
         
         cd ..
 
-        $BUILD_TOOLS/emsdk
-
     - name: Create WASM cross-compilation file
       run: |
         cat > ${GITHUB_WORKSPACE}/wasm-cross.txt << 'EOF'
