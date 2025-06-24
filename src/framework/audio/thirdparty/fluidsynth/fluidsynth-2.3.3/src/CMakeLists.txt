@@ -450,6 +450,21 @@ if ( FLUID_CPPFLAGS )
     PROPERTIES COMPILE_FLAGS ${FLUID_CPPFLAGS} )
 endif ( FLUID_CPPFLAGS )
 
+message(STATUS "+++++GLIB_PATH: ${GLIB_PATH}")
+message(STATUS "~~~~~Checking if glib.h exists at: ${GLIB_PATH}/glib.h")
+
+if(EXISTS "${GLIB_PATH}/glib.h")
+    message(STATUS "✓ Found glib.h at ${GLIB_PATH}/glib.h")
+else()
+    message(WARNING "✗ glib.h NOT found at ${GLIB_PATH}/glib.h")
+endif()
+
+if(EXISTS "${GLIB_PATH}/glib/glib.h")
+    message(STATUS "✓ Found glib.h at ${GLIB_PATH}/glib/glib.h")
+else()
+    message(WARNING "✗ glib.h NOT found at ${GLIB_PATH}/glib/glib.h")
+endif()
+
 target_include_directories ( fluidsynth PRIVATE
     ${FluidSynth_BINARY_DIR}
     ${FluidSynth_BINARY_DIR}/include
