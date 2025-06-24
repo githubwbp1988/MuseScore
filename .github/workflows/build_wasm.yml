@@ -215,7 +215,6 @@ jobs:
           --libdir=lib \
           --default-library=static \
           --buildtype=release \
-          -Ddefault_library=static \
           -Dglib_debug=disabled \
           -Dselinux=disabled \
           -Dlibmount=disabled \
