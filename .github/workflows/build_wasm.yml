@@ -159,9 +159,9 @@ jobs:
         mkdir -p wasm-thirdparty-built
         cd wasm-thirdparty-src
         echo "glib-2.9 downloading ... "
-        wget https://download.gnome.org/sources/glib/2.9/glib-2.9.0.tar.xz
-        tar -xf glib-2.9.0.tar.xz
-        ls -la glib-2.9.0/
+        wget https://download.gnome.org/sources/glib/2.9/glib-2.9.6.tar.gz
+        tar -xf glib-2.9.6.tar.gz
+        ls -la glib-2.9.6/
         
         cd ..
 
@@ -199,7 +199,7 @@ jobs:
 
     - name: Build glib for WASM
       run: |
-        cd ${GITHUB_WORKSPACE}/wasm-thirdparty-src/glib-2.9.0
+        cd ${GITHUB_WORKSPACE}/wasm-thirdparty-src/glib-2.9.6
         
         # set env variables
         export PKG_CONFIG_PATH=""
@@ -235,7 +235,7 @@ jobs:
 
     - name: Compile glib
       run: |
-        cd ${GITHUB_WORKSPACE}/wasm-thirdparty-src/glib-2.9.0
+        cd ${GITHUB_WORKSPACE}/wasm-thirdparty-src/glib-2.9.6
         
         # build
         meson compile -C builddir
