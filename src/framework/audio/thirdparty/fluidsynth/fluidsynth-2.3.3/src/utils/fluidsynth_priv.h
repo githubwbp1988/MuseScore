@@ -33,11 +33,8 @@
 #include "../external/fluidsynthconfig.h"
 
 #ifndef NO_GLIB
-// #include <glib.h>
-#ifdef GLIB_PATH
-    #include TOSTRING(GLIB_PATH/glib.h)
-#else
-    #include "../../../../../../../../wasm-thirdparty-src/glib-2.74.0/glib.h"
+#include <glib.h>
+// #include "../../../../../../../../wasm-thirdparty-src/glib-2.74.0/glib.h"
 #endif
 
 #endif
