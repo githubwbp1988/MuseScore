@@ -201,7 +201,7 @@ char* fluid_get_windows_error(void);
 
 // #else
 
-#include <portable_endian.h>
+#include "portable_endian.h"
 
 #define FLUID_POINTER_TO_UINT(p)  ((unsigned int)(uintptr_t)(p))
 #define FLUID_UINT_TO_POINTER(u)  ((void *)(uintptr_t)(u))
