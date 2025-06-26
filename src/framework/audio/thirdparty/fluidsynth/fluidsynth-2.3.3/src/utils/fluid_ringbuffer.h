@@ -58,8 +58,9 @@ void delete_fluid_ringbuffer(fluid_ringbuffer_t *queue);
 static FLUID_INLINE void *
 fluid_ringbuffer_get_inptr(fluid_ringbuffer_t *queue, int offset)
 {
-    return fluid_atomic_int_get(&queue->count) + offset >= queue->totalcount ? NULL
-           : queue->array + queue->elementsize * ((queue->in + offset) % queue->totalcount);
+    // return fluid_atomic_int_get(&queue->count) + offset >= queue->totalcount ? NULL
+    //        : queue->array + queue->elementsize * ((queue->in + offset) % queue->totalcount);
+    return NULL;
 }
 
 /**
@@ -73,7 +74,7 @@ fluid_ringbuffer_get_inptr(fluid_ringbuffer_t *queue, int offset)
 static FLUID_INLINE void
 fluid_ringbuffer_next_inptr(fluid_ringbuffer_t *queue, int count)
 {
-    fluid_atomic_int_add(&queue->count, count);
+    // fluid_atomic_int_add(&queue->count, count);
 
     queue->in += count;
 
@@ -91,7 +92,8 @@ fluid_ringbuffer_next_inptr(fluid_ringbuffer_t *queue, int count)
 static FLUID_INLINE int
 fluid_ringbuffer_get_count(fluid_ringbuffer_t *queue)
 {
-    return fluid_atomic_int_get(&queue->count);
+    // return fluid_atomic_int_get(&queue->count);
+    return 0;
 }
 
 
@@ -122,7 +124,7 @@ fluid_ringbuffer_get_outptr(fluid_ringbuffer_t *queue)
 static FLUID_INLINE void
 fluid_ringbuffer_next_outptr(fluid_ringbuffer_t *queue)
 {
-    fluid_atomic_int_add(&queue->count, -1);
+    // fluid_atomic_int_add(&queue->count, -1);
 
     if(++queue->out == queue->totalcount)
     {

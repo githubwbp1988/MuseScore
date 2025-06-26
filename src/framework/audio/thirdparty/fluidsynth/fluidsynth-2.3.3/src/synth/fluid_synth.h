@@ -108,7 +108,7 @@ enum fluid_synth_status
 
 struct _fluid_synth_t
 {
-    fluid_rec_mutex_t mutex;           /**< Lock for public API */
+    // fluid_rec_mutex_t mutex;           /**< Lock for public API */
     int use_mutex;                     /**< Use mutex for all public API functions? */
     int public_api_count;              /**< How many times the mutex is currently locked */
 
@@ -159,7 +159,7 @@ struct _fluid_synth_t
     fluid_atomic_float_t cpu_load;                    /**< CPU load in percent (CPU time required / audio synthesized time * 100) */
 
     fluid_tuning_t ***tuning;          /**< 128 banks of 128 programs for the tunings */
-    fluid_private_t tuning_iter;       /**< Tuning iterators per each thread */
+    // fluid_private_t tuning_iter;       /**< Tuning iterators per each thread */
 
     fluid_sample_timer_t *sample_timers; /**< List of timers triggered before a block is processed */
     unsigned int min_note_length_ticks; /**< If note-offs are triggered just after a note-on, they will be delayed */
