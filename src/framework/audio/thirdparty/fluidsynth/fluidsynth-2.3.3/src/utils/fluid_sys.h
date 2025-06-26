@@ -168,9 +168,9 @@ typedef gintptr  intptr_t;
 #include <gmodule.h>
 #endif
 
-#ifndef NO_GLIB
-#include <glib/gstdio.h>
-#endif
+// #ifndef NO_GLIB
+// #include <glib/gstdio.h>
+// #endif
 
 /**
  * Macro used for safely accessing a message from a GError and using a default
@@ -189,17 +189,17 @@ char* fluid_get_windows_error(void);
 #define FLUID_VERSION_CHECK(major, minor, patch) ((major<<16)|(minor<<8)|(patch))
 
 /* Integer<->pointer conversion */
-#ifndef NO_GLIB
-#define FLUID_POINTER_TO_UINT     GPOINTER_TO_UINT
-#define FLUID_UINT_TO_POINTER     GUINT_TO_POINTER
-#define FLUID_POINTER_TO_INT      GPOINTER_TO_INT
-#define FLUID_INT_TO_POINTER      GINT_TO_POINTER
-#define FLUID_IS_BIG_ENDIAN       (G_BYTE_ORDER == G_BIG_ENDIAN)
+// #ifndef NO_GLIB
+// #define FLUID_POINTER_TO_UINT     GPOINTER_TO_UINT
+// #define FLUID_UINT_TO_POINTER     GUINT_TO_POINTER
+// #define FLUID_POINTER_TO_INT      GPOINTER_TO_INT
+// #define FLUID_INT_TO_POINTER      GINT_TO_POINTER
+// #define FLUID_IS_BIG_ENDIAN       (G_BYTE_ORDER == G_BIG_ENDIAN)
 
-#define FLUID_LE32TOH(x)          GINT32_FROM_LE(x)
-#define FLUID_LE16TOH(x)          GINT16_FROM_LE(x)
+// #define FLUID_LE32TOH(x)          GINT32_FROM_LE(x)
+// #define FLUID_LE16TOH(x)          GINT16_FROM_LE(x)
 
-#else
+// #else
 
 #include <portable_endian.h>
 
@@ -212,7 +212,7 @@ char* fluid_get_windows_error(void);
 #define FLUID_LE32TOH(x) le32toh(x)
 #define FLUID_LE16TOH(x) le16toh(x)
 
-#endif
+// #endif
 
 #if FLUID_IS_BIG_ENDIAN
 #define FLUID_FOURCC(_a, _b, _c, _d) \
@@ -614,11 +614,11 @@ fluid_istream_t fluid_socket_get_istream(fluid_socket_t sock);
 fluid_ostream_t fluid_socket_get_ostream(fluid_socket_t sock);
 
 /* File access */
-#ifndef NO_GLIB
-#if !GLIB_CHECK_VERSION(2, 26, 0)
-#define HAVE_GSTAT
-#endif
-#endif
+// #ifndef NO_GLIB
+// #if !GLIB_CHECK_VERSION(2, 26, 0)
+// #define HAVE_GSTAT
+// #endif
+// #endif
 
 #ifndef HAVE_GSTAT
 /* GStatBuf has not been introduced yet, manually typedef to what they had at that time:
