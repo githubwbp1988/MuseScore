@@ -174,7 +174,8 @@ jobs:
         ar = '${HOME}/build_tools/emsdk/upstream/emscripten/emar'
         strip = '${HOME}/build_tools/emsdk/upstream/emscripten/emstrip'
         ranlib = '${BUILD_TOOLS}/emsdk/upstream/emscripten/emranlib'
-        pkg-config = 'pkg-config'
+        # pkg-config = 'pkg-config'
+        pkg-config = 'true'
 
         [host_machine]
         system = 'emscripten'
@@ -183,10 +184,10 @@ jobs:
         endian = 'little'
 
         [built-in options]
-        c_args = ['-O2', '-DEMSCRIPTEN', '-DNO_GLIB']
-        cpp_args = ['-O2', '-DEMSCRIPTEN', '-DNO_GLIB']
-        c_link_args = ['-s', 'WASM=1', '-O2']
-        cpp_link_args = ['-s', 'WASM=1', '-O2']
+        c_args = ['-O2', '-DEMSCRIPTEN', '-DNO_GLIB', '-D_POSIX_C_SOURCE=200809L']
+        cpp_args = ['-O2', '-DEMSCRIPTEN', '-DNO_GLIB', '-D_POSIX_C_SOURCE=200809L']
+        c_link_args = ['-s', 'WASM=1', '-O2', '--no-entry', '-s', 'EXPORTED_FUNCTIONS=[]', '-s', 'ERROR_ON_UNDEFINED_SYMBOLS=0']
+        cpp_link_args = ['-s', 'WASM=1', '-O2', '--no-entry', '-s', 'EXPORTED_FUNCTIONS=[]', '-s', 'ERROR_ON_UNDEFINED_SYMBOLS=0']
         default_library = 'static'
 
         [properties]
@@ -222,7 +223,12 @@ jobs:
           -Dlibelf=disabled \
           -Dman=false \
           -Ddtrace=false \
-          -Dsystemtap=false 
+          -Dsystemtap=false \
+          -Dforce_posix_threads=false \
+          -Diconv=stub \
+          -Dnls=disabled \
+          -Dgio=false \
+          -Dthreaded_resolver=false
         
         cd ../..
 
