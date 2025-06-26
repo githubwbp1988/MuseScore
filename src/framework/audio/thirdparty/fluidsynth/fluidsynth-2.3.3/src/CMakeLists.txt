@@ -21,29 +21,29 @@
 
 # ************ library ************
 
-set(GLIB_ROOT_DIR ${GLIB_PATH})
-set(GLIB_INCLUDE_DIRS
-    ${GLIB_ROOT_DIR}/include/glib-2.0
-    ${GLIB_ROOT_DIR}/lib/glib-2.0/include
-)
-set(GLIB_LIBRARIES
-    ${GLIB_ROOT_DIR}/lib/libglib-2.0.a
-    ${GLIB_ROOT_DIR}/lib/libgobject-2.0.a
-    ${GLIB_ROOT_DIR}/lib/libgio-2.0.a
-    ${GLIB_ROOT_DIR}/lib/libgmodule-2.0.a
-    ${GLIB_ROOT_DIR}/lib/libgthread-2.0.a
-)
+# set(GLIB_ROOT_DIR ${GLIB_PATH})
+# set(GLIB_INCLUDE_DIRS
+#     ${GLIB_ROOT_DIR}/include/glib-2.0
+#     ${GLIB_ROOT_DIR}/lib/glib-2.0/include
+# )
+# set(GLIB_LIBRARIES
+#     ${GLIB_ROOT_DIR}/lib/libglib-2.0.a
+#     ${GLIB_ROOT_DIR}/lib/libgobject-2.0.a
+#     ${GLIB_ROOT_DIR}/lib/libgio-2.0.a
+#     ${GLIB_ROOT_DIR}/lib/libgmodule-2.0.a
+#     ${GLIB_ROOT_DIR}/lib/libgthread-2.0.a
+# )
 
-message(STATUS "GLIB_ROOT_DIR: ${GLIB_ROOT_DIR}")
-message(STATUS "GLIB_INCLUDE_DIRS: ${GLIB_INCLUDE_DIRS}")
+# message(STATUS "GLIB_ROOT_DIR: ${GLIB_ROOT_DIR}")
+# message(STATUS "GLIB_INCLUDE_DIRS: ${GLIB_INCLUDE_DIRS}")
 
-foreach(inc_dir ${GLIB_INCLUDE_DIRS})
-    if(EXISTS "${inc_dir}")
-        message(STATUS "✓ Include directory exists: ${inc_dir}")
-    else()
-        message(WARNING "✗ Include directory missing: ${inc_dir}")
-    endif()
-endforeach()
+# foreach(inc_dir ${GLIB_INCLUDE_DIRS})
+#     if(EXISTS "${inc_dir}")
+#         message(STATUS "✓ Include directory exists: ${inc_dir}")
+#     else()
+#         message(WARNING "✗ Include directory missing: ${inc_dir}")
+#     endif()
+# endforeach()
 
 if ( PULSE_SUPPORT )
   set ( fluid_pulse_SOURCES drivers/fluid_pulse.c )
@@ -485,14 +485,16 @@ target_include_directories ( fluidsynth PRIVATE
     ${FluidSynth_SOURCE_DIR}/src/utils
     ${FluidSynth_SOURCE_DIR}/src/
     ${FluidSynth_SOURCE_DIR}/include
-    ${GLIB_INCLUDE_DIRS}
 )
+#     ${GLIB_INCLUDE_DIRS}
+# )
 
 target_link_libraries ( fluidsynth PRIVATE
     libfluidsynth
     ${FLUID_LIBS}
-    ${GLIB_LIBRARIES}
 )
+#     ${GLIB_LIBRARIES}
+# )
 
 if ( TARGET OpenMP::OpenMP_C AND HAVE_OPENMP )
     target_link_libraries ( fluidsynth PRIVATE OpenMP::OpenMP_C )

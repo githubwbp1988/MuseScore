@@ -32,9 +32,9 @@
 // #include "fluidsynthconfig.h"
 #include "../external/fluidsynthconfig.h"
 
-#ifndef NO_GLIB
-#include <glib.h>
-#endif
+// #ifndef NO_GLIB
+// #include <glib.h>
+// #endif
 
 #if HAVE_MATH_H
 #include <math.h> // M_PI, MLN2, M_LN10
@@ -91,7 +91,7 @@ typedef double fluid_real_t;
      _type _name[_len]
 #else
 
-#if defined(NO_GLIB)
+// #if defined(NO_GLIB)
 #include <stdlib.h>
 #ifdef _MSC_VER
 #  define FLUID_DECLARE_VLA(_type, _name, _len) \
@@ -101,10 +101,10 @@ typedef double fluid_real_t;
      _type* _name = alloca(_len*sizeof(_type))
 #endif
 
-#else // NO_GLIB
-#  define FLUID_DECLARE_VLA(_type, _name, _len) \
-     _type* _name = g_newa(_type, (_len))
-#endif //NO_GLIB
+// #else // NO_GLIB
+// #  define FLUID_DECLARE_VLA(_type, _name, _len) \
+//      _type* _name = g_newa(_type, (_len))
+// #endif //NO_GLIB
 
 #endif //SUPPORTS_VLA
 
@@ -321,11 +321,11 @@ do { strncpy(_dst,_src,_n-1); \
 #endif
 
 #ifndef NO_GLIB
-#ifdef DEBUG
-#define FLUID_ASSERT(a) g_assert(a)
-#else
+// #ifdef DEBUG
+// #define FLUID_ASSERT(a) g_assert(a)
+// #else
 #define FLUID_ASSERT(a)
-#endif
+// #endif
 
 #define FLUID_LIKELY G_LIKELY
 #define FLUID_UNLIKELY G_UNLIKELY
