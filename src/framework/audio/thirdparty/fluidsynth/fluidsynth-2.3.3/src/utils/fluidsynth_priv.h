@@ -56,7 +56,7 @@
 #include <strings.h>
 #endif
 
-#include "fluidsynth.h"
+#include "../../include/fluidsynth.h"
 
 #ifdef NO_GLIB
 #ifndef TRUE
