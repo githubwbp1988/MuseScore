@@ -46,6 +46,7 @@ public:
     void paint(muse::draw::Painter* painter);
 
     void setNotation(INotationPtr notation);
+    void enableHighlightCursorNote(bool highlight);
     void enableKeyboardPlay(bool enable);
     void move(muse::midi::tick_t tick, bool isPlaying = true);
 
@@ -73,7 +74,7 @@ signals:
 private:
     QColor color() const;
     muse::RectF resolveCursorRectByTick(muse::midi::tick_t tick) const;
-    muse::RectF resolveCursorRectByTick(muse::midi::tick_t tick, bool isPlaying = true);
+    muse::RectF resolveCursorRectByTick1(muse::midi::tick_t tick, bool isPlaying = true);
     void processOttava(mu::engraving::Score* score, bool isPlaying = true);
     void processOttavaAsync(mu::engraving::Score* score);
 
@@ -145,6 +146,8 @@ private:
     std::map<int, double> mnSpatiumMap;
 
     int curr_seg_ticks = 0;
+    int preProcessScore = false;
+    bool highlightCursorNote = true;
     bool pianoKeyboardPlaybackEnable = true;
 };
 }
