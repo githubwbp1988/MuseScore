@@ -815,6 +815,7 @@ void PlaybackCursor::processOttavaAsync(mu::engraving::Score* score) {
                             EngravingItem* arpeggio = item->parentItem();
                             // check Fermata
                             bool isFermataTag = false;
+                            double fermata_stretch = 1.0;
                             bool isFermataAtLastSegment = false;
                             EngravingItem* arpeggioParent = arpeggio->parentItem();
                             EngravingItemList ___itemList = arpeggioParent->childrenItems(false);
@@ -825,6 +826,8 @@ void PlaybackCursor::processOttavaAsync(mu::engraving::Score* score) {
                                 }
                                 if (___item->type() == mu::engraving::ElementType::FERMATA) {
                                     isFermataTag = true;
+                                    mu::engraving::Fermata *fermata = toFermata(___item);
+                                    fermata_stretch = fermata->timeStretch();
                                     if (___item->tick().ticks() >= measure->last(mu::engraving::SegmentType::ChordRest)->tick().ticks()) {
                                         isFermataAtLastSegment = true;
                                     }
@@ -865,21 +868,36 @@ void PlaybackCursor::processOttavaAsync(mu::engraving::Score* score) {
                                         arpeggio_duration_ticks /= 4;
                                     }
                                     if (isFermataTag) {
-                                        arpeggio_duration_ticks /= 8;
+                                        if (fermata_stretch > 1) {
+                                            arpeggio_duration_ticks /= fermata_stretch;
+                                        } else {
+                                            arpeggio_duration_ticks /= 8;
+                                        }
                                     } else {
                                         arpeggio_duration_ticks /= 2;
                                     }
                                 } else if (arpeggioChord->durationType().type() == mu::engraving::DurationType::V_QUARTER) {
                                     if (isFermataTag) {
-                                        arpeggio_duration_ticks /= 10;
+                                        if (fermata_stretch > 1) {
+                                            arpeggio_duration_ticks /= fermata_stretch;
+                                        } else {
+                                            arpeggio_duration_ticks /= 10;
+                                        }
                                     } else {
                                         arpeggio_duration_ticks /= 4;
                                     }
                                 } else if (arpeggioChord->durationType().type() == mu::engraving::DurationType::V_EIGHTH) {
                                     arpeggio_duration_ticks /= 2;
                                     
-                                    if (isFermataTag && isFermataAtLastSegment) {
-                                       arpeggio_duration_ticks /= 10;
+                                    // if (isFermataTag && isFermataAtLastSegment) {
+                                    //    arpeggio_duration_ticks /= 10;
+                                    // }
+                                    if (isFermataTag) {
+                                        if (fermata_stretch > 1) {
+                                            arpeggio_duration_ticks /= fermata_stretch;
+                                        } else if (isFermataAtLastSegment) {
+                                            arpeggio_duration_ticks /= 10;
+                                        }
                                     }
                                 }
                                 _arpeggio_duration_check = true;
@@ -915,20 +933,35 @@ void PlaybackCursor::processOttavaAsync(mu::engraving::Score* score) {
                                                         arpeggio_duration_ticks /= 4;
                                                     }
                                                     if (isFermataTag) {
-                                                        arpeggio_duration_ticks /= 8;
+                                                        if (fermata_stretch > 1) {
+                                                            arpeggio_duration_ticks /= fermata_stretch;
+                                                        } else {
+                                                            arpeggio_duration_ticks /= 8;
+                                                        }
                                                     } else {
                                                         arpeggio_duration_ticks /= 2;
                                                     }
                                                 } else if (arpeggioChord->durationType().type() == mu::engraving::DurationType::V_QUARTER) {
                                                     if (isFermataTag) {
-                                                        arpeggio_duration_ticks /= 10;
+                                                        if (fermata_stretch > 1) {
+                                                            arpeggio_duration_ticks /= fermata_stretch;
+                                                        } else {
+                                                            arpeggio_duration_ticks /= 10;
+                                                        }
                                                     } else {
                                                         arpeggio_duration_ticks /= 4;
                                                     }
                                                 } else if (arpeggioChord->durationType().type() == mu::engraving::DurationType::V_EIGHTH) {
                                                     arpeggio_duration_ticks /= 2;
-                                                    if (isFermataTag && isFermataAtLastSegment) {
-                                                        arpeggio_duration_ticks /= 10;
+                                                    // if (isFermataTag && isFermataAtLastSegment) {
+                                                    //     arpeggio_duration_ticks /= 10;
+                                                    // }
+                                                    if (isFermataTag) {
+                                                        if (fermata_stretch > 1) {
+                                                            arpeggio_duration_ticks /= fermata_stretch;
+                                                        } else if (isFermataAtLastSegment) {
+                                                            arpeggio_duration_ticks /= 10;
+                                                        }
                                                     }
                                                 }
                                                 for (Note* note_ : _note->chord()->notes()) {
@@ -1769,8 +1802,15 @@ void PlaybackCursor::processCursorNoteRenderRecover(EngravingItem* engravingItem
 }
 
 void PlaybackCursor::processCursorNoteRenderRecoverAsync(EngravingItem* engravingItem, int curr_ticks) {
+    ChordRest *chordRest = toChordRest(engravingItem);
+    int duration_ticks = chordRest->durationTypeTicks().ticks();
     if (chordrest_fermata_map.find(engravingItem) != chordrest_fermata_map.end()) {
-        chordrest_fermata_map[engravingItem]->setColor(muse::draw::Color::BLACK);
+        mu::engraving::Fermata *fermata = toFermata(chordrest_fermata_map[engravingItem]);
+        double stretch = fermata->timeStretch();
+        if (chordRest->tick().ticks() + duration_ticks * stretch > curr_ticks)
+        if (curr_ticks < chordRest->tick().ticks() || curr_ticks >= chordRest->tick().ticks() + duration_ticks * stretch) {
+            chordrest_fermata_map[engravingItem]->setColor(muse::draw::Color::BLACK);
+        }
     }
     engravingItem->setColor(muse::draw::Color::BLACK);
     EngravingItemList itemList = engravingItem->childrenItems(true);
