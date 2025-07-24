@@ -104,6 +104,7 @@ private:
     std::map<EngravingItem*, std::map<int, int>> spanner_ticks_map;
 
     std::map<EngravingItem*, Note*> score_trill_map;
+    std::map<EngravingItem*, int> score_trill_type_map;
     std::map<EngravingItem*, int> score_trill_st_map;
     std::map<EngravingItem*, int> score_trill_dt_map;
     std::map<EngravingItem*, int> score_trill_tdt_map;
@@ -111,6 +112,7 @@ private:
     std::map<EngravingItem*, int> score_trill_ot_map;
     std::map<Note*, bool> score_trill_tie_map;
     std::map<EngravingItem*, Note*> score_trill_map1;
+    std::map<EngravingItem*, int> score_trill_type_map1;
     std::map<EngravingItem*, int> score_trill_st_map1;
     std::map<EngravingItem*, int> score_trill_dt_map1;
     std::map<EngravingItem*, int> score_trill_tdt_map1;

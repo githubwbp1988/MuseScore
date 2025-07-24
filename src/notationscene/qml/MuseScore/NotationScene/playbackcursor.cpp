@@ -614,6 +614,7 @@ void PlaybackCursor::processOttavaAsync(mu::engraving::Score* score) {
 
     for (const Measure* measure = score->firstMeasure(); measure; measure = measure->nextMeasure()) {
         std::set<Note*> _measure_trill_notes;
+        std::map<Note*, int> _measure_trill_notes_trill_type_map;
         std::map<Note*, EngravingItem*> _measure_trill_notes_trill_map;
         std::map<Note*, int> _measure_tremolo_type_map;
         std::map<Note*, bool> _measure_tremolo_half_map;
@@ -622,7 +623,7 @@ void PlaybackCursor::processOttavaAsync(mu::engraving::Score* score) {
         for (size_t m_k = 0; m_k < measure_children.size(); m_k++) {
             EngravingItem* measure_item = measure_children.at(m_k);
             if (measure_item && measure_item->isOrnament()) {
-                Ornament* orn = toOrnament(measure_item); // subtype 2214(trill)
+                Ornament* orn = toOrnament(measure_item); // subtype 2214(trill). 2215(turn) 2216(Inverted turn)  2217(turn with slash)
                 Trill* _trill = toTrill(measure_item);
                 if (_trill) {
                     Note* note = orn->noteAbove();
@@ -633,6 +634,7 @@ void PlaybackCursor::processOttavaAsync(mu::engraving::Score* score) {
                     
                     if (note) {
                         _measure_trill_notes.insert(note);
+                        _measure_trill_notes_trill_type_map[note] = orn->subtype();
 
                         for (size_t m_k1 = 0; m_k1 < measure_children.size(); m_k1++) {
                             EngravingItem* measure_item1 = measure_children.at(m_k1);
@@ -759,9 +761,15 @@ void PlaybackCursor::processOttavaAsync(mu::engraving::Score* score) {
                                         } else if (tremoloType == TremoloType::BUZZ_ROLL) {
                                             logic_tremoloType = 50;
                                         }
-                                    } 
+                                    }
+
+                                    int trill_type = 0;
+                                    if (_measure_trill_notes_trill_type_map.find(mnote) != _measure_trill_notes_trill_type_map.end()) {
+                                        trill_type = _measure_trill_notes_trill_type_map[mnote];
+                                    }
                                     
                                     score_trill_map[engravingItem] = mnote;
+                                    score_trill_type_map[engravingItem] = trill_type;
                                     score_trill_st_map[engravingItem] = mnote->tick().ticks();
                                     score_trill_dt_map[engravingItem] = _duration_ticks;
                                     score_trill_tt_map[engravingItem] = logic_tremoloType;
@@ -794,9 +802,15 @@ void PlaybackCursor::processOttavaAsync(mu::engraving::Score* score) {
                                         } else if (tremoloType == TremoloType::BUZZ_ROLL) {
                                             logic_tremoloType = 50;
                                         }
-                                    } 
+                                    }
+
+                                    int trill_type = 0;
+                                    if (_measure_trill_notes_trill_type_map.find(mnote) != _measure_trill_notes_trill_type_map.end()) {
+                                        trill_type = _measure_trill_notes_trill_type_map[mnote];
+                                    }
 
                                     score_trill_map1[engravingItem] = mnote;
+                                    score_trill_type_map1[engravingItem] = trill_type;
                                     score_trill_st_map1[engravingItem] = mnote->tick().ticks();
                                     score_trill_dt_map1[engravingItem] = _duration_ticks;
                                     score_trill_tt_map1[engravingItem] = logic_tremoloType;
@@ -1955,13 +1969,13 @@ muse::RectF PlaybackCursor::resolveCursorRectByTick1(muse::midi::tick_t _tick, b
 
                     if (pianoKeyboardPlaybackEnable) {
                         if (score_trill_map[engravingItem]) {
-                            m_notation->interaction()->addTrillNote(score_trill_map[engravingItem], score_trill_st_map[engravingItem], 
+                            m_notation->interaction()->addTrillNote(score_trill_map[engravingItem], score_trill_type_map[engravingItem], score_trill_st_map[engravingItem], 
                                 score_trill_dt_map[engravingItem], score_trill_tdt_map[engravingItem], score_trill_tt_map[engravingItem], score_trill_ot_map[engravingItem], 
                                 score_trill_tie_map[score_trill_map[engravingItem]]);
                             m_notation->interaction()->trillNoteUpdate();
                         }
                         if (score_trill_map1[engravingItem]) {
-                            m_notation->interaction()->addTrillNote1(score_trill_map1[engravingItem], score_trill_st_map1[engravingItem], 
+                            m_notation->interaction()->addTrillNote1(score_trill_map1[engravingItem], score_trill_type_map1[engravingItem], score_trill_st_map1[engravingItem], 
                                 score_trill_dt_map1[engravingItem], score_trill_tdt_map1[engravingItem], score_trill_tt_map1[engravingItem], score_trill_ot_map1[engravingItem], 
                                 score_trill_tie_map1[score_trill_map1[engravingItem]]);
                             m_notation->interaction()->trillNoteUpdate1();
