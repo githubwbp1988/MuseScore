@@ -26,7 +26,7 @@ df -h .
 
 BUILD_TOOLS=$HOME/build_tools
 ENV_FILE=$BUILD_TOOLS/environment.sh
-PACKARCH="x86_64" # x86_64, armv7l, aarch64, aarch32, wasm
+PACKARCH="x86_64" # x86_64, armv7l, aarch64, armv7, wasm
 COMPILER="gcc" # gcc, clang
 EMSDK_VERSION="4.0.7" # for Qt 6.10
 BUILD_PIPEWIRE=false
