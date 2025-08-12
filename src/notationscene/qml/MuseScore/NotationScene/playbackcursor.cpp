@@ -38,6 +38,7 @@
 #include "src/engraving/dom/beam.h"
 #include "src/engraving/dom/dynamic.h"
 #include "src/engraving/dom/hairpin.h"
+#include "src/engraving/dom/glissando.h"
 
 using namespace mu::notation;
 using namespace muse;
@@ -1040,23 +1041,44 @@ void PlaybackCursor::processOttavaAsync(mu::engraving::Score* score) {
                                 score_glissando_dt_map[engravingItem] = duration_ticks;
                                 score_glissando_ot_map[engravingItem] = ottava_map[_note];
 
-                                EngravingItemList itemList__ = measure->childrenItems(true);
-                                if (score_glissando_endnotes_map.find(engravingItem) == score_glissando_endnotes_map.end()) {
-                                    score_glissando_endnotes_map[engravingItem] = {};
-                                }
-                                for (size_t __j = 0; __j < itemList__.size(); __j++) {
-                                    EngravingItem* __item__ = itemList__.at(__j);
-                                    if (__item__ == nullptr) {
-                                        continue;
-                                    }
-                                    if (__item__->type() == mu::engraving::ElementType::NOTE) {
-                                        if (__item__->tick().ticks() >= glissandoNote->tick().ticks() + duration_ticks / 10) {
-                                            Note* _note = toNote(__item__);
-                                            if (std::find(score_glissando_endnotes_map[engravingItem].begin(), score_glissando_endnotes_map[engravingItem].end(), _note) == score_glissando_endnotes_map[engravingItem].end()) {
-                                                score_glissando_endnotes_map[engravingItem].push_back(_note);
+                                bool _glissando_endnotes_checked = false;
+
+                                Glissando* _glissando = toGlissando(item);
+                                Note* _targetNote = _glissando->guessFinalNote(_note);
+                                if (_targetNote != nullptr) {
+                                    mu::engraving::Segment* _measurelastSeg = measure->last(mu::engraving::SegmentType::ChordRest);
+                                    if (measure->tick().ticks() + measure->ticks().ticks() > _glissando->tick().ticks() && measure->tick().ticks() + measure->ticks().ticks() <= _glissando->tick2().ticks()) {
+                                        if (measure->tick().ticks() + measure->ticks().ticks() <= _targetNote->tick().ticks()) {
+                                            if (score_glissando_endnotes_map.find(engravingItem) == score_glissando_endnotes_map.end()) {
+                                                score_glissando_endnotes_map[engravingItem] = {};
                                             }
+                                            score_glissando_endnotes_map[engravingItem].push_back(_targetNote);
+                                            _glissando_endnotes_checked = true;
                                         }
-                                    } 
+                                    }
+                                }
+
+                                if (!_glissando_endnotes_checked) {
+                                    EngravingItemList itemList__ = measure->childrenItems(true);
+                                    if (score_glissando_endnotes_map.find(engravingItem) == score_glissando_endnotes_map.end()) {
+                                        score_glissando_endnotes_map[engravingItem] = {};
+                                    }
+                                    
+                                    for (size_t __j = 0; __j < itemList__.size(); __j++) {
+                                        EngravingItem* __item__ = itemList__.at(__j);
+                                        if (__item__ == nullptr) {
+                                            continue;
+                                        }
+                                        if (__item__->type() == mu::engraving::ElementType::NOTE) {
+                                            if (__item__->tick().ticks() >= glissandoNote->tick().ticks() + duration_ticks / 10) {
+                                                Note* _note = toNote(__item__);
+                                                if (std::find(score_glissando_endnotes_map[engravingItem].begin(), score_glissando_endnotes_map[engravingItem].end(), _note) == score_glissando_endnotes_map[engravingItem].end()) {
+                                                    score_glissando_endnotes_map[engravingItem].push_back(_note);
+                                                    _glissando_endnotes_checked = true;
+                                                }
+                                            }
+                                        } 
+                                    }
                                 }
                             } 
                             _glissando_seg_checked = true;
@@ -2419,6 +2441,11 @@ muse::RectF PlaybackCursor::resolveCursorRectByTick1(muse::midi::tick_t _tick, b
         if (prevMeasure) {
             processCursorNoteRenderStatus(prevMeasure, tick.ticks());
             if (hit_measure() != nullptr && prevMeasure != hit_measure()) {
+                processCursorNoteRenderStatus(hit_measure(), tick.ticks());
+                processCursorSpannerRenderStatus(hit_measure(), tick, false, isPlaying);
+            }
+        } else {
+            if (hit_measure() != nullptr) {
                 processCursorNoteRenderStatus(hit_measure(), tick.ticks());
                 processCursorSpannerRenderStatus(hit_measure(), tick, false, isPlaying);
             }
