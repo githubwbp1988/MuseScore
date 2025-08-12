@@ -1046,9 +1046,17 @@ void PlaybackCursor::processOttavaAsync(mu::engraving::Score* score) {
                                 Glissando* _glissando = toGlissando(item);
                                 Note* _targetNote = _glissando->guessFinalNote(_note);
                                 if (_targetNote != nullptr) {
-                                    mu::engraving::Segment* _measurelastSeg = measure->last(mu::engraving::SegmentType::ChordRest);
                                     if (measure->tick().ticks() + measure->ticks().ticks() > _glissando->tick().ticks() && measure->tick().ticks() + measure->ticks().ticks() <= _glissando->tick2().ticks()) {
                                         if (measure->tick().ticks() + measure->ticks().ticks() <= _targetNote->tick().ticks()) {
+                                            if (score_glissando_endnotes_map.find(engravingItem) == score_glissando_endnotes_map.end()) {
+                                                score_glissando_endnotes_map[engravingItem] = {};
+                                            }
+                                            score_glissando_endnotes_map[engravingItem].push_back(_targetNote);
+                                            _glissando_endnotes_checked = true;
+                                        }
+                                    } else {
+                                        mu::engraving::Segment* _s = measure->last(mu::engraving::SegmentType::ChordRest);
+                                        if (_s && _s->tick().ticks() > _targetNote->tick().ticks()) {
                                             if (score_glissando_endnotes_map.find(engravingItem) == score_glissando_endnotes_map.end()) {
                                                 score_glissando_endnotes_map[engravingItem] = {};
                                             }
