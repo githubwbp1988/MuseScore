@@ -848,7 +848,6 @@ void PlaybackCursor::processOttavaAsync(mu::engraving::Score* score) {
                                     if (___item->tick().ticks() >= measure->last(mu::engraving::SegmentType::ChordRest)->tick().ticks()) {
                                         isFermataAtLastSegment = true;
                                     }
-                                    chordrest_fermata_map[engravingItem] = ___item;
                                 }
                             }
 
@@ -1853,7 +1852,6 @@ void PlaybackCursor::processCursorNoteRenderRecoverAsync(EngravingItem* engravin
     if (chordrest_fermata_map.find(engravingItem) != chordrest_fermata_map.end()) {
         mu::engraving::Fermata *fermata = toFermata(chordrest_fermata_map[engravingItem]);
         double stretch = fermata->timeStretch();
-        if (chordRest->tick().ticks() + duration_ticks * stretch > curr_ticks)
         if (curr_ticks < chordRest->tick().ticks() || curr_ticks >= chordRest->tick().ticks() + duration_ticks * stretch) {
             chordrest_fermata_map[engravingItem]->setColor(muse::draw::Color::BLACK);
         }
