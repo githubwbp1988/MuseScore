@@ -1850,11 +1850,11 @@ void PlaybackCursor::processCursorNoteRenderRecoverAsync(EngravingItem* engravin
     ChordRest *chordRest = toChordRest(engravingItem);
     int duration_ticks = chordRest->durationTypeTicks().ticks();
     if (chordrest_fermata_map.find(engravingItem) != chordrest_fermata_map.end()) {
-        mu::engraving::Fermata *fermata = toFermata(chordrest_fermata_map[engravingItem]);
-        double stretch = fermata->timeStretch();
-        if (curr_ticks < chordRest->tick().ticks() || curr_ticks >= chordRest->tick().ticks() + duration_ticks * stretch) {
-            chordrest_fermata_map[engravingItem]->setColor(muse::draw::Color::BLACK);
-        }
+        // mu::engraving::Fermata *fermata = toFermata(chordrest_fermata_map[engravingItem]);
+        // double stretch = fermata->timeStretch();
+        // if (curr_ticks < chordRest->tick().ticks() || curr_ticks >= chordRest->tick().ticks() + duration_ticks * stretch) {
+        chordrest_fermata_map[engravingItem]->setColor(muse::draw::Color::BLACK);
+        // }
     }
     engravingItem->setColor(muse::draw::Color::BLACK);
     EngravingItemList itemList = engravingItem->childrenItems(true);
