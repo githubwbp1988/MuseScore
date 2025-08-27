@@ -2446,7 +2446,7 @@ muse::RectF PlaybackCursor::resolveCursorRectByTick1(muse::midi::tick_t _tick, b
         Measure* prevMeasure = measure->prevMeasure();
         if (prevMeasure) {
             processCursorNoteRenderStatus(prevMeasure, tick.ticks());
-            if (hit_measure() != nullptr && prevMeasure != hit_measure()) {
+            if (hit_measure() != nullptr && measure != hit_measure()) {
                 processCursorNoteRenderStatus(hit_measure(), tick.ticks());
                 processCursorSpannerRenderStatus(hit_measure(), tick, false, isPlaying);
             }
