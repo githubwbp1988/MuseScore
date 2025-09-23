@@ -123,6 +123,7 @@ private:
     int m_trill_type1 = 0;
     int m_trill_ticks1;
     bool m_trill_note_hastie;
+    bool m_trill_note_fermatamark;
     bool m_trill_note1_hastie;
     int m_trill_duration_ticks1;
     int m_trill_trill_duration_ticks1;

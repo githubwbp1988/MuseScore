@@ -1326,11 +1326,12 @@ muse::async::Notification NotationInteraction::arpeggioTickChanged()
     return m_arpeggioTickChanged;
 }
 
-void NotationInteraction::addTrillNote(mu::engraving::Note* note, int _trill_type, int ticks, int duration_ticks, int _trill_duration_ticks, int tremolo_type, int ottavaType, bool hasTie) 
+void NotationInteraction::addTrillNote(mu::engraving::Note* note, int _trill_type, int ticks, int duration_ticks, int _trill_duration_ticks, int tremolo_type, int ottavaType, bool hasTie, bool isFermataMark) 
 {
     trill_note = note;
     trill_type = _trill_type;
     till_note_hastie = hasTie;
+    trill_note_fermatamark = isFermataMark;
     trill_ticks = ticks;
     trill_duration_ticks = duration_ticks;
     trill_trill_duration_ticks = _trill_duration_ticks;
@@ -1363,6 +1364,10 @@ int NotationInteraction::trillNoteTicks1() const
 bool NotationInteraction::trillNoteHasTie() const 
 {
     return till_note_hastie;
+}
+bool NotationInteraction::trillNoteFermataMark() const
+{
+    return trill_note_fermatamark;
 }
 bool NotationInteraction::trillNote1HasTie() const 
 {

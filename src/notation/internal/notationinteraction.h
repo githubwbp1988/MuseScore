@@ -130,11 +130,12 @@ public:
     void arpeggioTick(int) override;
     muse::async::Notification arpeggioTickChanged() override;
 
-    void addTrillNote(mu::engraving::Note*, int, int, int, int, int, int, bool) override;
+    void addTrillNote(mu::engraving::Note*, int, int, int, int, int, int, bool, bool) override;
     void addTrillNote1(mu::engraving::Note*, int, int, int, int, int, int, bool) override;
     int trillNoteTicks() const override;
     int trillNoteTicks1() const override;
     bool trillNoteHasTie() const override;
+    bool trillNoteFermataMark() const override;
     bool trillNote1HasTie() const override;
     int trillNoteDurationticks() const override;
     int trillNoteDurationticks1() const override;
@@ -626,6 +627,7 @@ private:
     Note* trill_note = nullptr;
     int trill_type = 0;
     bool till_note_hastie = false;
+    bool trill_note_fermatamark = false;
     int trill_ticks = 0;
     int trill_duration_ticks = 0;
     int trill_trill_duration_ticks = 0;

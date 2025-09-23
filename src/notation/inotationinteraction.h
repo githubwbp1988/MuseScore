@@ -198,7 +198,7 @@ public:
         return muse::async::Notification();
     }
 
-    virtual void addTrillNote(mu::engraving::Note*, int, int, int, int, int, int, bool) 
+    virtual void addTrillNote(mu::engraving::Note*, int, int, int, int, int, int, bool, bool) 
     {
         
     }
@@ -215,6 +215,10 @@ public:
         return 0;
     }
     virtual bool trillNoteHasTie() const
+    {
+        return false;
+    }
+    virtual bool trillNoteFermataMark() const
     {
         return false;
     }

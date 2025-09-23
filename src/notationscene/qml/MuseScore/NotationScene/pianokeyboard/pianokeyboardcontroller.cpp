@@ -67,7 +67,7 @@ KeyState PianoKeyboardController::playbackKeyState(piano_key_t key) const
         // the trill highlighting process will resolve this issue.
         if (m_trill_duration_ticks > 0) {
             int _m_trill_duration_ticks = m_trill_duration_ticks;
-            if (m_trill_note_hastie) {
+            if (m_trill_note_hastie && receive_note->chord()->durationType().type() <= mu::engraving::DurationType::V_QUARTER) {
                 _m_trill_duration_ticks = m_trill_duration_ticks * 2;
                 if (m_trill_trill_duration_ticks > m_trill_duration_ticks && m_trill_trill_duration_ticks < m_trill_duration_ticks * 2) {
                     _m_trill_duration_ticks = m_trill_trill_duration_ticks;
@@ -202,7 +202,7 @@ KeyState PianoKeyboardController::trillKeyState(piano_key_t key) const
     }
 
     int _m_trill_duration_ticks = m_trill_duration_ticks;
-    if (m_trill_note_hastie) {
+    if (m_trill_note_hastie && receive_note->chord()->durationType().type() <= mu::engraving::DurationType::V_QUARTER) {
         _m_trill_duration_ticks = m_trill_duration_ticks * 2;
         if (m_trill_trill_duration_ticks > m_trill_duration_ticks && m_trill_trill_duration_ticks < m_trill_duration_ticks * 2) {
             _m_trill_duration_ticks = m_trill_trill_duration_ticks;
@@ -215,83 +215,102 @@ KeyState PianoKeyboardController::trillKeyState(piano_key_t key) const
         int left_dis = m_trill_curr_ticks - m_trill_ticks;
         double ratio = left_dis / static_cast<double>(_m_trill_duration_ticks);
 
-        if (m_trill_tremolo_type > 0) {
-            if (receive_note) {
+        if (receive_note) {
+            if (m_trill_tremolo_type > 0) {
                 DurationType noteDurationtype = receive_note->chord()->durationType().type();
                 int frequency = m_trill_tremolo_type / 10;
                 if (noteDurationtype < mu::engraving::DurationType::V_WHOLE) {
+                    frequency *= 8;
+                } else if (noteDurationtype <= mu::engraving::DurationType::V_HALF) {
                     frequency *= 4;
-                } else if (noteDurationtype <= mu::engraving::DurationType::V_WHOLE) {
-                    frequency *= 2;
                 } 
                 int _ratio_count = static_cast<int>(frequency * ratio);
                 int _int_note_key = static_cast<int>(m_trill_note_key);
                 if (_ratio_count % 2 == 1) {
-                    _int_note_key += 1;
+                    _int_note_key -= 1;
                 } 
                 if (key == (piano_key_t)_int_note_key) {
                     return KeyState::Trill;
                 }
-            }
-        } else {
-            mu::engraving::DurationType _type = receive_note->chord()->durationType().type();
-            if (m_trill_note_hastie) {
-                _type = static_cast<DurationType>(static_cast<int>(_type) - 1);
-            }
-            if (receive_note && _type < mu::engraving::DurationType::V_QUARTER) {
-                int _ratio_count = static_cast<int>(48 * ratio);
-                int _int_note_key = static_cast<int>(m_trill_note_key);
-                if (_ratio_count % 2 == 0) {
-                    _int_note_key -= 1;
-                } else {
-                    _int_note_key -= 2;
-                }
-                if (key == (piano_key_t)_int_note_key) {
-                    return KeyState::Trill;
-                }
             } else {
-                int _int_note_key = static_cast<int>(m_trill_note_key);
-                if (m_trill_type == 2215) {
-                    if (ratio < 0.25) {
+                mu::engraving::DurationType _type = receive_note->chord()->durationType().type();
+                if (m_trill_note_fermatamark) {
+                    int _ratio_count = static_cast<int>(32 * ratio);
+                    if (_type <= mu::engraving::DurationType::V_HALF) {
+                        _ratio_count = static_cast<int>(64 * ratio);
+                    }
+                    if (_type > mu::engraving::DurationType::V_QUARTER) {
+                        _ratio_count = static_cast<int>(16 * ratio);
+                    }
+                    int _int_note_key = static_cast<int>(m_trill_note_key);
+                    if (_ratio_count % 2 == 0) {
+                        _int_note_key -= 1;
+                    } else {
+                        _int_note_key -= 2;
+                    }
+                    if (key == (piano_key_t)_int_note_key) {
+                        return KeyState::Trill;
+                    }
+                } else {
+                    if (m_trill_note_hastie && _type <= mu::engraving::DurationType::V_QUARTER) {
+                        _type = static_cast<DurationType>(static_cast<int>(_type) - 1);
+                    }
+                    if (_type < mu::engraving::DurationType::V_QUARTER) {
+                        int _ratio_count = static_cast<int>(48 * ratio);
+                        int _int_note_key = static_cast<int>(m_trill_note_key);
+                        if (_ratio_count % 2 == 0) {
+                            _int_note_key -= 1;
+                        } else {
+                            _int_note_key -= 2;
+                        }
+                        if (key == (piano_key_t)_int_note_key) {
+                            return KeyState::Trill;
+                        }
+                    } else {
+                        int _int_note_key = static_cast<int>(m_trill_note_key);
+                        if (m_trill_type == 2215) {
+                            if (ratio < 0.25) {
 
-                    } else if (ratio >= 0.25 && ratio < 0.5) {
-                        _int_note_key -= 1;
-                    } else if (ratio >= 0.5 && ratio < 0.75) {
-                        _int_note_key -= 2;
-                    } else {
-                        _int_note_key -= 1;
+                            } else if (ratio >= 0.25 && ratio < 0.5) {
+                                _int_note_key -= 1;
+                            } else if (ratio >= 0.5 && ratio < 0.75) {
+                                _int_note_key -= 2;
+                            } else {
+                                _int_note_key -= 1;
+                            }
+                        } else if (m_trill_type == 2216 || m_trill_type == 2217) {
+                            if (ratio < 0.25) {
+                                _int_note_key -= 1;
+                            } else if (ratio >= 0.25 && ratio < 0.5) {
+                                _int_note_key -= 2;
+                            } else if (ratio >= 0.5 && ratio < 0.75) {
+                                
+                            } else {
+                                _int_note_key -= 1;
+                            }
+                        } else if (m_trill_type == 2207) {
+                            if (ratio < 0.333 || ratio > 0.666) {
+                                _int_note_key -= 2;
+                            } else {
+                                _int_note_key -= 1;
+                            }
+                        } else if (m_trill_type == 2214) {
+                            if (ratio < 0.2) {
+                                _int_note_key -= 2;
+                            } else if (ratio >= 0.2 && ratio < 0.4) {
+                                _int_note_key -= 1;
+                            } else if (ratio >= 0.4 && ratio < 0.6) {
+                                _int_note_key -= 2;
+                            } else if (ratio >= 0.6 && ratio < 0.8) { 
+                                _int_note_key -= 1;
+                            } else {
+                                _int_note_key -= 2;
+                            }
+                        }
+                        if (key == (piano_key_t)_int_note_key) {
+                            return KeyState::Trill;
+                        }
                     }
-                } else if (m_trill_type == 2216 || m_trill_type == 2217) {
-                    if (ratio < 0.25) {
-                        _int_note_key -= 1;
-                    } else if (ratio >= 0.25 && ratio < 0.5) {
-                        _int_note_key -= 2;
-                    } else if (ratio >= 0.5 && ratio < 0.75) {
-                        
-                    } else {
-                        _int_note_key -= 1;
-                    }
-                } else if (m_trill_type == 2207) {
-                    if (ratio < 0.333 || ratio > 0.666) {
-                        _int_note_key -= 2;
-                    } else {
-                        _int_note_key -= 1;
-                    }
-                } else if (m_trill_type == 2214) {
-                    if (ratio < 0.2) {
-                        _int_note_key -= 2;
-                    } else if (ratio >= 0.2 && ratio < 0.4) {
-                        _int_note_key -= 1;
-                    } else if (ratio >= 0.4 && ratio < 0.6) {
-                        _int_note_key -= 2;
-                    } else if (ratio >= 0.6 && ratio < 0.8) { 
-                        _int_note_key -= 1;
-                    } else {
-                        _int_note_key -= 2;
-                    }
-                }
-                if (key == (piano_key_t)_int_note_key) {
-                    return KeyState::Trill;
                 }
             }
         }
@@ -304,7 +323,7 @@ KeyState PianoKeyboardController::trillKeyState1(piano_key_t key) const
         return KeyState::None;
     }
     int _m_trill_duration_ticks1 = m_trill_duration_ticks1;
-    if (m_trill_note1_hastie) {
+    if (m_trill_note1_hastie && receive_note->chord()->durationType().type() <= mu::engraving::DurationType::V_QUARTER) {
         _m_trill_duration_ticks1 = m_trill_duration_ticks1 * 2;
         if (m_trill_trill_duration_ticks1 > m_trill_duration_ticks1 && m_trill_trill_duration_ticks1 < m_trill_duration_ticks1 * 2) {
             _m_trill_duration_ticks1 = m_trill_trill_duration_ticks1;
@@ -316,83 +335,83 @@ KeyState PianoKeyboardController::trillKeyState1(piano_key_t key) const
         int left_dis = m_trill_curr_ticks1 - m_trill_ticks1;
         double ratio = left_dis / static_cast<double>(_m_trill_duration_ticks1);
 
-        if (m_trill_tremolo_type1 > 0) {
-            if (receive_note1) {
+        if (receive_note1) {
+            if (m_trill_tremolo_type1 > 0) {
                 DurationType noteDurationtype = receive_note1->chord()->durationType().type();
                 int frequency = m_trill_tremolo_type1 / 10;
-                if (noteDurationtype == mu::engraving::DurationType::V_WHOLE) {
+                if (noteDurationtype < mu::engraving::DurationType::V_WHOLE) {
+                    frequency *= 8;
+                } else if (noteDurationtype <= mu::engraving::DurationType::V_HALF) {
                     frequency *= 4;
-                } else if (noteDurationtype == mu::engraving::DurationType::V_HALF) {
-                    frequency *= 2;
                 } 
                 int _ratio_count = static_cast<int>(frequency * ratio);
                 int _int_note_key = static_cast<int>(m_trill_note_key1);
                 if (_ratio_count % 2 == 1) {
-                    _int_note_key += 1;
+                    _int_note_key -= 1;
                 } 
                 if (key == (piano_key_t)_int_note_key) {
                     return KeyState::Trill;
                 }
-            }
-        } else {
-            mu::engraving::DurationType _type = receive_note1->chord()->durationType().type();
-            if (m_trill_note1_hastie) {
-                _type = static_cast<DurationType>(static_cast<int>(_type) - 1);
-            }
-            if (receive_note1 && _type < mu::engraving::DurationType::V_QUARTER) {
-                int _ratio_count = static_cast<int>(48 * ratio);
-                int _int_note_key = static_cast<int>(m_trill_note_key1);
-                if (_ratio_count % 2 == 0) {
-                    _int_note_key -= 1;
-                } else {
-                    _int_note_key -= 2;
-                }
-                if (key == (piano_key_t)_int_note_key) {
-                    return KeyState::Trill;
-                }
             } else {
-                int _int_note_key = static_cast<int>(m_trill_note_key1);
-                if (m_trill_type1 == 2215) {
-                    if (ratio < 0.25) {
-
-                    } else if (ratio >= 0.25 && ratio < 0.5) {
-                        _int_note_key -= 1;
-                    } else if (ratio >= 0.5 && ratio < 0.75) {
-                        _int_note_key -= 2;
-                    } else {
-                        _int_note_key -= 1;
-                    }
-                } else if (m_trill_type1 == 2216 || m_trill_type1 == 2217) {
-                    if (ratio < 0.25) {
-                        _int_note_key -= 1;
-                    } else if (ratio >= 0.25 && ratio < 0.5) {
-                        _int_note_key -= 2;
-                    } else if (ratio >= 0.5 && ratio < 0.75) {
-                        
-                    } else {
-                        _int_note_key -= 1;
-                    }
-                } else if (m_trill_type == 2207) {
-                    if (ratio < 0.333 || ratio > 0.666) {
-                        _int_note_key -= 2;
-                    } else {
-                        _int_note_key -= 1;
-                    }
-                } else if (m_trill_type == 2214) {
-                    if (ratio < 0.2) {
-                        _int_note_key -= 2;
-                    } else if (ratio >= 0.2 && ratio < 0.4) {
-                        _int_note_key -= 1;
-                    } else if (ratio >= 0.4 && ratio < 0.6) {
-                        _int_note_key -= 2;
-                    } else if (ratio >= 0.6 && ratio < 0.8) { 
-                        _int_note_key -= 1;
-                    } else {
-                        _int_note_key -= 2;
-                    }
+                mu::engraving::DurationType _type = receive_note1->chord()->durationType().type();
+                if (m_trill_note1_hastie && _type <= mu::engraving::DurationType::V_QUARTER) {
+                    _type = static_cast<DurationType>(static_cast<int>(_type) - 1);
                 }
-                if (key == (piano_key_t)_int_note_key) {
-                    return KeyState::Trill;
+                if (_type < mu::engraving::DurationType::V_QUARTER) {
+                    int _ratio_count = static_cast<int>(48 * ratio);
+                    int _int_note_key = static_cast<int>(m_trill_note_key1);
+                    if (_ratio_count % 2 == 0) {
+                        _int_note_key -= 1;
+                    } else {
+                        _int_note_key -= 2;
+                    }
+                    if (key == (piano_key_t)_int_note_key) {
+                        return KeyState::Trill;
+                    }
+                } else {
+                    int _int_note_key = static_cast<int>(m_trill_note_key1);
+                    if (m_trill_type1 == 2215) {
+                        if (ratio < 0.25) {
+
+                        } else if (ratio >= 0.25 && ratio < 0.5) {
+                            _int_note_key -= 1;
+                        } else if (ratio >= 0.5 && ratio < 0.75) {
+                            _int_note_key -= 2;
+                        } else {
+                            _int_note_key -= 1;
+                        }
+                    } else if (m_trill_type1 == 2216 || m_trill_type1 == 2217) {
+                        if (ratio < 0.25) {
+                            _int_note_key -= 1;
+                        } else if (ratio >= 0.25 && ratio < 0.5) {
+                            _int_note_key -= 2;
+                        } else if (ratio >= 0.5 && ratio < 0.75) {
+                            
+                        } else {
+                            _int_note_key -= 1;
+                        }
+                    } else if (m_trill_type == 2207) {
+                        if (ratio < 0.333 || ratio > 0.666) {
+                            _int_note_key -= 2;
+                        } else {
+                            _int_note_key -= 1;
+                        }
+                    } else if (m_trill_type == 2214) {
+                        if (ratio < 0.2) {
+                            _int_note_key -= 2;
+                        } else if (ratio >= 0.2 && ratio < 0.4) {
+                            _int_note_key -= 1;
+                        } else if (ratio >= 0.4 && ratio < 0.6) {
+                            _int_note_key -= 2;
+                        } else if (ratio >= 0.6 && ratio < 0.8) { 
+                            _int_note_key -= 1;
+                        } else {
+                            _int_note_key -= 2;
+                        }
+                    }
+                    if (key == (piano_key_t)_int_note_key) {
+                        return KeyState::Trill;
+                    }
                 }
             }
         }
@@ -606,6 +625,7 @@ void PianoKeyboardController::onNotationChanged()
             }
             m_trill_ticks = notation->interaction()->trillNoteTicks();
             m_trill_note_hastie = notation->interaction()->trillNoteHasTie();
+            m_trill_note_fermatamark = notation->interaction()->trillNoteFermataMark();
             m_trill_duration_ticks = notation->interaction()->trillNoteDurationticks();
             m_trill_trill_duration_ticks = notation->interaction()->trillTrillNoteDurationticks();
             

@@ -111,6 +111,7 @@ private:
     std::map<EngravingItem*, int> score_trill_tt_map;
     std::map<EngravingItem*, int> score_trill_ot_map;
     std::map<Note*, bool> score_trill_tie_map;
+    std::map<Note*, bool> score_trill_fermata_map;
     std::map<EngravingItem*, Note*> score_trill_map1;
     std::map<EngravingItem*, int> score_trill_type_map1;
     std::map<EngravingItem*, int> score_trill_st_map1;

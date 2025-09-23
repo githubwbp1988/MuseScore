@@ -1092,6 +1092,30 @@ void PlaybackCursor::processOttavaAsync(mu::engraving::Score* score) {
                         }
                     } 
                 }
+                
+                bool fermata_trill_note_checked = false;
+                if (chordrest_fermata_map.find(engravingItem) != chordrest_fermata_map.end()) {
+                    for (size_t j = 0; j < itemList.size(); j++) {
+                        if (fermata_trill_note_checked) {
+                            break;
+                        }
+                        EngravingItem* item = itemList.at(j);
+                        if (item == nullptr) {
+                            continue;
+                        }
+
+                        if (item->type() == mu::engraving::ElementType::NOTE) {
+                            Note* _pre_note = toNote(item);
+                            for (Note* mnote : _measure_trill_notes) {
+                                if (mnote == _pre_note) {
+                                    fermata_trill_note_checked = true;
+                                    score_trill_fermata_map[mnote] = true;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
             }
             
             mu::engraving::Segment* ns = s->next(mu::engraving::SegmentType::ChordRest);
@@ -1999,7 +2023,7 @@ muse::RectF PlaybackCursor::resolveCursorRectByTick1(muse::midi::tick_t _tick, b
                         if (score_trill_map[engravingItem]) {
                             m_notation->interaction()->addTrillNote(score_trill_map[engravingItem], score_trill_type_map[engravingItem], score_trill_st_map[engravingItem], 
                                 score_trill_dt_map[engravingItem], score_trill_tdt_map[engravingItem], score_trill_tt_map[engravingItem], score_trill_ot_map[engravingItem], 
-                                score_trill_tie_map[score_trill_map[engravingItem]]);
+                                score_trill_tie_map[score_trill_map[engravingItem]], score_trill_fermata_map[score_trill_map[engravingItem]]);
                             m_notation->interaction()->trillNoteUpdate();
                         }
                         if (score_trill_map1[engravingItem]) {
