@@ -903,7 +903,7 @@ void PlaybackCursor::processOttavaAsync(mu::engraving::Score* score) {
                                         arpeggio_duration_ticks /= 4;
                                     }
                                 } else if (arpeggioChord->durationType().type() == mu::engraving::DurationType::V_EIGHTH) {
-                                    arpeggio_duration_ticks /= 2;
+                                    // arpeggio_duration_ticks /= 2;
                                     
                                     // if (isFermataTag && isFermataAtLastSegment) {
                                     //    arpeggio_duration_ticks /= 10;
@@ -968,7 +968,7 @@ void PlaybackCursor::processOttavaAsync(mu::engraving::Score* score) {
                                                         arpeggio_duration_ticks /= 4;
                                                     }
                                                 } else if (arpeggioChord->durationType().type() == mu::engraving::DurationType::V_EIGHTH) {
-                                                    arpeggio_duration_ticks /= 2;
+                                                    // arpeggio_duration_ticks /= 2;
                                                     // if (isFermataTag && isFermataAtLastSegment) {
                                                     //     arpeggio_duration_ticks /= 10;
                                                     // }
