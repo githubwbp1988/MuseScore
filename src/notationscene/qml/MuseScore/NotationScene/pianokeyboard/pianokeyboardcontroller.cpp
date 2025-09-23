@@ -62,6 +62,24 @@ muse::async::Notification PianoKeyboardController::keyStatesChanged() const
 KeyState PianoKeyboardController::playbackKeyState(piano_key_t key) const 
 {
     if (m_righthand_keys.find(key) != m_righthand_keys.cend()) {
+        // NOTE: Since the trill note key is offset two keys to the right, 
+        // any playback note key marked with a trill indicator should be removed from the set of playback note keys;
+        // the trill highlighting process will resolve this issue.
+        if (m_trill_duration_ticks > 0) {
+            int _m_trill_duration_ticks = m_trill_duration_ticks;
+            if (m_trill_note_hastie) {
+                _m_trill_duration_ticks = m_trill_duration_ticks * 2;
+                if (m_trill_trill_duration_ticks > m_trill_duration_ticks && m_trill_trill_duration_ticks < m_trill_duration_ticks * 2) {
+                    _m_trill_duration_ticks = m_trill_trill_duration_ticks;
+                }
+            }
+
+            if (m_trill_curr_ticks >= m_trill_ticks && m_trill_curr_ticks <= m_trill_ticks + _m_trill_duration_ticks) {
+                if (key == m_trill_note_key || key == m_trill_note_key1) {
+                    return KeyState::None;
+                }
+            }
+        }
         return KeyState::RightHand;
     }
 
@@ -220,7 +238,7 @@ KeyState PianoKeyboardController::trillKeyState(piano_key_t key) const
             if (m_trill_note_hastie) {
                 _type = static_cast<DurationType>(static_cast<int>(_type) - 1);
             }
-            if (receive_note && _type <= mu::engraving::DurationType::V_QUARTER) {
+            if (receive_note && _type < mu::engraving::DurationType::V_QUARTER) {
                 int _ratio_count = static_cast<int>(48 * ratio);
                 int _int_note_key = static_cast<int>(m_trill_note_key);
                 if (_ratio_count % 2 == 0) {
@@ -253,11 +271,23 @@ KeyState PianoKeyboardController::trillKeyState(piano_key_t key) const
                     } else {
                         _int_note_key -= 1;
                     }
-                } else {
+                } else if (m_trill_type == 2207) {
                     if (ratio < 0.333 || ratio > 0.666) {
                         _int_note_key -= 2;
                     } else {
                         _int_note_key -= 1;
+                    }
+                } else if (m_trill_type == 2214) {
+                    if (ratio < 0.2) {
+                        _int_note_key -= 2;
+                    } else if (ratio >= 0.2 && ratio < 0.4) {
+                        _int_note_key -= 1;
+                    } else if (ratio >= 0.4 && ratio < 0.6) {
+                        _int_note_key -= 2;
+                    } else if (ratio >= 0.6 && ratio < 0.8) { 
+                        _int_note_key -= 1;
+                    } else {
+                        _int_note_key -= 2;
                     }
                 }
                 if (key == (piano_key_t)_int_note_key) {
@@ -309,7 +339,7 @@ KeyState PianoKeyboardController::trillKeyState1(piano_key_t key) const
             if (m_trill_note1_hastie) {
                 _type = static_cast<DurationType>(static_cast<int>(_type) - 1);
             }
-            if (receive_note1 && _type <= mu::engraving::DurationType::V_QUARTER) {
+            if (receive_note1 && _type < mu::engraving::DurationType::V_QUARTER) {
                 int _ratio_count = static_cast<int>(48 * ratio);
                 int _int_note_key = static_cast<int>(m_trill_note_key1);
                 if (_ratio_count % 2 == 0) {
@@ -342,11 +372,23 @@ KeyState PianoKeyboardController::trillKeyState1(piano_key_t key) const
                     } else {
                         _int_note_key -= 1;
                     }
-                } else {
+                } else if (m_trill_type == 2207) {
                     if (ratio < 0.333 || ratio > 0.666) {
                         _int_note_key -= 2;
                     } else {
                         _int_note_key -= 1;
+                    }
+                } else if (m_trill_type == 2214) {
+                    if (ratio < 0.2) {
+                        _int_note_key -= 2;
+                    } else if (ratio >= 0.2 && ratio < 0.4) {
+                        _int_note_key -= 1;
+                    } else if (ratio >= 0.4 && ratio < 0.6) {
+                        _int_note_key -= 2;
+                    } else if (ratio >= 0.6 && ratio < 0.8) { 
+                        _int_note_key -= 1;
+                    } else {
+                        _int_note_key -= 2;
                     }
                 }
                 if (key == (piano_key_t)_int_note_key) {

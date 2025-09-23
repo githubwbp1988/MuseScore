@@ -885,7 +885,7 @@ void PlaybackCursor::processOttavaAsync(mu::engraving::Score* score) {
                                     }
                                     if (isFermataTag) {
                                         if (fermata_stretch > 1) {
-                                            arpeggio_duration_ticks /= fermata_stretch;
+                                            arpeggio_duration_ticks /= fermata_stretch * 2;
                                         } else {
                                             arpeggio_duration_ticks /= 8;
                                         }
@@ -895,7 +895,7 @@ void PlaybackCursor::processOttavaAsync(mu::engraving::Score* score) {
                                 } else if (arpeggioChord->durationType().type() == mu::engraving::DurationType::V_QUARTER) {
                                     if (isFermataTag) {
                                         if (fermata_stretch > 1) {
-                                            arpeggio_duration_ticks /= fermata_stretch;
+                                            arpeggio_duration_ticks /= fermata_stretch * 2;
                                         } else {
                                             arpeggio_duration_ticks /= 10;
                                         }
@@ -950,7 +950,7 @@ void PlaybackCursor::processOttavaAsync(mu::engraving::Score* score) {
                                                     }
                                                     if (isFermataTag) {
                                                         if (fermata_stretch > 1) {
-                                                            arpeggio_duration_ticks /= fermata_stretch;
+                                                            arpeggio_duration_ticks /= fermata_stretch * 2;
                                                         } else {
                                                             arpeggio_duration_ticks /= 8;
                                                         }
@@ -960,7 +960,7 @@ void PlaybackCursor::processOttavaAsync(mu::engraving::Score* score) {
                                                 } else if (arpeggioChord->durationType().type() == mu::engraving::DurationType::V_QUARTER) {
                                                     if (isFermataTag) {
                                                         if (fermata_stretch > 1) {
-                                                            arpeggio_duration_ticks /= fermata_stretch;
+                                                            arpeggio_duration_ticks /= fermata_stretch * 2;
                                                         } else {
                                                             arpeggio_duration_ticks /= 10;
                                                         }
