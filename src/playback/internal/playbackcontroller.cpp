@@ -58,6 +58,7 @@ static const ActionCode LOOP_CODE("loop");
 static const ActionCode LOOP_IN_CODE("loop-in");
 static const ActionCode LOOP_OUT_CODE("loop-out");
 static const ActionCode METRONOME_CODE("metronome");
+static const ActionCode AUDIO_CODE("audio");
 static const ActionCode MIDI_ON_CODE("midi-on");
 static const ActionCode INPUT_WRITTEN_PITCH("midi-input-written-pitch");
 static const ActionCode INPUT_SOUNDING_PITCH("midi-input-sounding-pitch");
@@ -116,6 +117,7 @@ void PlaybackController::init()
     dispatcher()->reg(this, PLAY_CHORD_SYMBOLS_CODE, this, &PlaybackController::togglePlayChordSymbols);
     dispatcher()->reg(this, PAN_CODE, this, &PlaybackController::toggleAutomaticallyPan);
     dispatcher()->reg(this, METRONOME_CODE, this, &PlaybackController::toggleMetronome);
+    dispatcher()->reg(this, AUDIO_CODE, this, &PlaybackController::toggleHearPlaybackWhenEditing);
     dispatcher()->reg(this, COUNT_IN_CODE, this, &PlaybackController::toggleCountIn);
     dispatcher()->reg(this, MIDI_ON_CODE, this, &PlaybackController::toggleMidiInput);
     dispatcher()->reg(this, INPUT_WRITTEN_PITCH, [this]() { PlaybackController::setMidiUseWrittenPitch(true); });
@@ -918,6 +920,7 @@ void PlaybackController::toggleHearPlaybackWhenEditing()
 {
     bool wasPlayNotesWhenEditing = configuration()->playNotesWhenEditing();
     configuration()->setPlayNotesWhenEditing(!wasPlayNotesWhenEditing);
+    notifyActionCheckedChanged(AUDIO_CODE);
 }
 
 void PlaybackController::reloadPlaybackCache()
@@ -1590,6 +1593,7 @@ bool PlaybackController::actionChecked(const ActionCode& actionCode) const
         { PLAY_CHORD_SYMBOLS_CODE, notationConfiguration()->isPlayChordSymbolsEnabled() },
         { PAN_CODE, notationConfiguration()->isAutomaticallyPanEnabled() },
         { METRONOME_CODE, notationConfiguration()->isMetronomeEnabled() },
+        { AUDIO_CODE, configuration()->playNotesWhenEditing() },
         { COUNT_IN_CODE, notationConfiguration()->isCountInEnabled() },
         { TOGGLE_HEAR_PLAYBACK_WHEN_EDITING_CODE, configuration()->playNotesWhenEditing() }
     };
