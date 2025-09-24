@@ -158,6 +158,9 @@ void PlaybackController::init()
 
     configuration()->playNotesWhenEditingChanged().onNotify(this, [this]() {
         notifyActionCheckedChanged(TOGGLE_HEAR_PLAYBACK_WHEN_EDITING_CODE);
+        // Since the button "Hear playback when editing" is reused to control whether the score plays back muted, 
+        // the mute control needs to monitor the state of this button in real time.
+        updateSoloMuteStates();
     });
 
     m_measureInputLag = configuration()->shouldMeasureInputLag();
@@ -1541,6 +1544,11 @@ void PlaybackController::updateSoloMuteStates()
 
         if (isRangePlaybackMode && !shouldForceMute) {
             shouldForceMute = !muse::contains(allowedInstrumentTrackIdSet, instrumentTrackId);
+        }
+
+        // Reuse the button "Hear playback when editing" to control whether the score plays back muted
+        if (!configuration()->playNotesWhenEditing()) {
+            shouldForceMute = true;
         }
 
         // 3. Update params for playback / mixer
