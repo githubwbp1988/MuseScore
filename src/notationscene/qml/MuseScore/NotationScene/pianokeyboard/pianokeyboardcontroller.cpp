@@ -286,13 +286,23 @@ KeyState PianoKeyboardController::trillKeyState(piano_key_t key) const
                             } else {
                                 _int_note_key -= 1;
                             }
-                        } else if (m_trill_type == 2216 || m_trill_type == 2217) {
+                        } else if (m_trill_type == 2216) {
                             if (ratio < 0.25) {
                                 _int_note_key -= 1;
                             } else if (ratio >= 0.25 && ratio < 0.5) {
                                 _int_note_key -= 2;
                             } else if (ratio >= 0.5 && ratio < 0.75) {
                                 
+                            } else {
+                                _int_note_key -= 1;
+                            }
+                        } else if (m_trill_type == 2217) {
+                            if (ratio < 0.25) {
+                                _int_note_key -= 1;
+                            } else if (ratio >= 0.25 && ratio < 0.5) {
+                                
+                            } else if (ratio >= 0.5 && ratio < 0.75) {
+                                _int_note_key -= 2;
                             } else {
                                 _int_note_key -= 1;
                             }
@@ -405,13 +415,23 @@ KeyState PianoKeyboardController::trillKeyState1(piano_key_t key) const
                         } else {
                             _int_note_key -= 1;
                         }
-                    } else if (m_trill_type1 == 2216 || m_trill_type1 == 2217) {
+                    } else if (m_trill_type1 == 2216) {
                         if (ratio < 0.25) {
                             _int_note_key -= 1;
                         } else if (ratio >= 0.25 && ratio < 0.5) {
                             _int_note_key -= 2;
                         } else if (ratio >= 0.5 && ratio < 0.75) {
                             
+                        } else {
+                            _int_note_key -= 1;
+                        }
+                    } else if (m_trill_type == 2217) {
+                        if (ratio < 0.25) {
+                            _int_note_key -= 1;
+                        } else if (ratio >= 0.25 && ratio < 0.5) {
+                            
+                        } else if (ratio >= 0.5 && ratio < 0.75) {
+                            _int_note_key -= 2;
                         } else {
                             _int_note_key -= 1;
                         }
