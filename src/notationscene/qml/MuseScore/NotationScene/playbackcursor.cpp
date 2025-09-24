@@ -2443,7 +2443,8 @@ muse::RectF PlaybackCursor::resolveCursorRectByTick1(muse::midi::tick_t _tick, b
         } else {
             t2 = measure->endTick();
             // measure->width is not good enough because of courtesy keysig, timesig
-            mu::engraving::Segment* seg = measure->findSegment(mu::engraving::SegmentType::EndBarLine, measure->tick() + measure->ticks());
+            // mu::engraving::Segment* seg = measure->findSegment(mu::engraving::SegmentType::EndBarLine, measure->tick() + measure->ticks());
+            mu::engraving::Segment* seg = measure->findSegment(mu::engraving::SegmentType::EndBarLine, measure->endTick());
             if (seg) {
                 x2 = seg->canvasPos().x();
             } else {
