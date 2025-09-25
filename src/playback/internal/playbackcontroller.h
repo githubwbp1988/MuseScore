@@ -71,6 +71,8 @@ public:
     bool isPlaying() const override;
     muse::async::Notification isPlayingChanged() const override;
 
+    muse::async::Notification isPlayingScorePartChanged() override;
+
     void reset() override;
 
     muse::async::Channel<muse::audio::secs_t, muse::midi::tick_t> currentPlaybackPositionChanged() const override;
@@ -244,6 +246,8 @@ private:
     muse::async::Notification m_currentTempoChanged;
     muse::async::Channel<muse::audio::secs_t, muse::midi::tick_t> m_currentPlaybackPositionChanged;
     muse::async::Channel<muse::actions::ActionCode> m_actionCheckedChanged;
+
+    muse::async::Notification m_isPlayingScorePartChanged;
 
     muse::audio::TrackSequenceId m_currentSequenceId = -1;
 

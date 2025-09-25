@@ -736,6 +736,10 @@ void AbstractNotationPaintView::onNotationSetup()
         onPlayingChanged();
     });
 
+    playbackController()->isPlayingScorePartChanged().onNotify(this, [this]() {
+        m_playbackCursor->playingScorePartChange();
+    });
+
     playbackController()->currentPlaybackPositionChanged().onReceive(this, [this](audio::secs_t, midi::tick_t tick) {
         // LOGALEX() << "tick: " << tick;
         movePlaybackCursor(tick);

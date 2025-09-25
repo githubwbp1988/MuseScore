@@ -231,6 +231,11 @@ Notification PlaybackController::isPlayingChanged() const
     return m_isPlayingChanged;
 }
 
+Notification PlaybackController::isPlayingScorePartChanged()
+{
+    return m_isPlayingScorePartChanged;
+}
+
 void PlaybackController::reset()
 {
     stop();
@@ -1766,6 +1771,8 @@ void PlaybackController::setNotation(notation::INotationPtr notation)
 
     partList.onItemChanged(this, [this](const Part* part) {
         onPartChanged(part);
+
+        m_isPlayingScorePartChanged.notify();
     });
 
     m_notation->interaction()->selectionChanged().onNotify(this, [this]() {
