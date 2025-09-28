@@ -1672,6 +1672,7 @@ void PlaybackCursor::processOttavaAsync(mu::engraving::Score* score, bool scoreP
                             clefKeySigsKeysMap[_ticks].insert(-1 * (int)key + 22 + 120 * 5);
                         }
                     }
+                    break;
                 }
             }
         }
