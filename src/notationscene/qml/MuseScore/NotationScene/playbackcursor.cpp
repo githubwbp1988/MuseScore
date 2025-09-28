@@ -1224,24 +1224,26 @@ void PlaybackCursor::processOttavaAsync(mu::engraving::Score* score, bool scoreP
                         || clefType == mu::engraving::ClefType::F_8VA || clefType == mu::engraving::ClefType::F8_VB) {
 
                         Staff* clefStaff = clef->staff();
-                        int clefStaffIndex = clefStaff->idx();
-                        if (clefStaffIndex + 1 > staff_count) {
-                            staff_count = clefStaffIndex + 1;
-                        }
+                        if (clefStaff->visible()) {
+                            int clefStaffIndex = clefStaff->idx();
+                            if (clefStaffIndex + 1 > staff_count) {
+                                staff_count = clefStaffIndex + 1;
+                            }
 
-                        if (_clef_staff_map.find(clefStaffIndex) == _clef_staff_map.end()) {
-                            _clef_staff_map[clefStaffIndex] = {};
-                        }
+                            if (_clef_staff_map.find(clefStaffIndex) == _clef_staff_map.end()) {
+                                _clef_staff_map[clefStaffIndex] = {};
+                            }
 
-                        if (_score_clef_index_map.find(clefStaffIndex) == _score_clef_index_map.end()) {
-                            _score_clef_index_map[clefStaffIndex] = {};
+                            if (_score_clef_index_map.find(clefStaffIndex) == _score_clef_index_map.end()) {
+                                _score_clef_index_map[clefStaffIndex] = {};
+                            }
+                            if (_score_clef_index_map[clefStaffIndex].size() == 0 
+                            || _score_clef_index_map[clefStaffIndex][_score_clef_index_map[clefStaffIndex].size() - 1] != measure->no()) {
+                                _score_clef_index_map[clefStaffIndex].push_back(measure->no());
+                                _clef_staff_map[clefStaffIndex].push_back({});
+                            }
+                            _clef_staff_map[clefStaffIndex][_clef_staff_map[clefStaffIndex].size() - 1].insert({ clef->tick().ticks(), clefType });
                         }
-                        if (_score_clef_index_map[clefStaffIndex].size() == 0 
-                        || _score_clef_index_map[clefStaffIndex][_score_clef_index_map[clefStaffIndex].size() - 1] != measure->no()) {
-                            _score_clef_index_map[clefStaffIndex].push_back(measure->no());
-                            _clef_staff_map[clefStaffIndex].push_back({});
-                        }
-                        _clef_staff_map[clefStaffIndex][_clef_staff_map[clefStaffIndex].size() - 1].insert({ clef->tick().ticks(), clefType });
                     }   
                 }
                 mu::engraving::Segment* next_segment = segment->next(mu::engraving::SegmentType::ClefType);
@@ -1260,106 +1262,36 @@ void PlaybackCursor::processOttavaAsync(mu::engraving::Score* score, bool scoreP
                         continue;
                     }
                     Staff* staff = item->staff();
-                    int staffIndex = staff->idx();
+                    if (staff->visible()) {
+                        int staffIndex = staff->idx();
 
-                    if (__index_map.find(staffIndex) == __index_map.end()) {
-                        __index_map[staffIndex] = 0;
-                    }
-
-                    int __index = __index_map[staffIndex];
-
-                    struct Lower {
-                        bool operator()(const int& a, const int& b) const {
-                            return a < b; 
-                        }
-                    };
-
-                    if (_score_clef_index_map.find(staffIndex) != _score_clef_index_map.end()) {
-                        if (_score_clef_index_map[staffIndex].size() <= __index) {
-                            if (traverse_measure_index_map.find(staffIndex) != traverse_measure_index_map.end()) {
-                                __index = traverse_measure_index_map[staffIndex];
-                            }
+                        if (__index_map.find(staffIndex) == __index_map.end()) {
+                            __index_map[staffIndex] = 0;
                         }
 
-                        if (_score_clef_index_map[staffIndex].size() > __index) {
-                            if (_clef_staff_map_extend.find(staffIndex) != _clef_staff_map_extend.end()) {
-                                std::map<int, ClefType> __extend_ts_clef_map = _clef_staff_map_extend[staffIndex][measure->no()];
-                                std::map<int, ClefType, Lower> _extend_ts_clef_map;
-                                _extend_ts_clef_map.insert(__extend_ts_clef_map.begin(), __extend_ts_clef_map.end());
+                        int __index = __index_map[staffIndex];
 
-                                ClefType ___clefType = ClefType::INVALID;
-                                for (const auto& [_ticks, _clefType] : _extend_ts_clef_map) {
-                                    if (segment->tick().ticks() >= _ticks) {
-                                        ___clefType = _clefType;
-                                    }
-                                }
-                                if (___clefType != ClefType::INVALID) {
-                                    if (_score_staff_clef_map.find(staffIndex) == _score_staff_clef_map.end()) {
-                                        _score_staff_clef_map[staffIndex] = {};
-                                    }
-                                    _score_staff_clef_map[staffIndex].insert({ segment->tick().ticks(), ___clefType });
+                        struct Lower {
+                            bool operator()(const int& a, const int& b) const {
+                                return a < b; 
+                            }
+                        };
+
+                        if (_score_clef_index_map.find(staffIndex) != _score_clef_index_map.end()) {
+                            if (_score_clef_index_map[staffIndex].size() <= __index) {
+                                if (traverse_measure_index_map.find(staffIndex) != traverse_measure_index_map.end()) {
+                                    __index = traverse_measure_index_map[staffIndex];
                                 }
                             }
-                            if (measure->no() == _score_clef_index_map[staffIndex][__index]) {
-                                int _no = _score_clef_index_map[staffIndex][__index];
-                                
-                                std::map<int, ClefType> __ts_clef_map = _clef_staff_map[staffIndex][__index];
-                                std::map<int, ClefType, Lower> _ts_clef_map;
-                                _ts_clef_map.insert(__ts_clef_map.begin(), __ts_clef_map.end());
 
-                                ClefType ___clefType = ClefType::INVALID;
-                                for (const auto& [_ticks, _clefType] : _ts_clef_map) {
-                                    if (segment->tick().ticks() >= _ticks) {
-                                        ___clefType = _clefType;
-                                    } else if (segment == measure->last(mu::engraving::SegmentType::ChordRest)) {
-                                        if (std::find(_score_clef_index_map[staffIndex].begin(), _score_clef_index_map[staffIndex].end(), _no + 1) == _score_clef_index_map[staffIndex].end()) {
-                                            if (_clef_staff_map_extend.find(staffIndex) == _clef_staff_map_extend.end()) {
-                                                _clef_staff_map_extend[staffIndex] = {};
-                                            }
-                                            if (_clef_staff_map_extend[staffIndex].find(_no + 1) == _clef_staff_map_extend[staffIndex].end()) {
-                                                _clef_staff_map_extend[staffIndex][_no + 1] = {};
-                                            }
-                                            _clef_staff_map_extend[staffIndex][_no + 1].insert({ _ticks, _clefType });
-                                        } else {
-                                            _clef_staff_map[staffIndex][__index + 1].insert({ _ticks, _clefType });
-                                        }
-                                    }
-                                }
-                                if (___clefType != ClefType::INVALID) {
-                                    if (_score_staff_clef_map.find(staffIndex) == _score_staff_clef_map.end()) {
-                                        _score_staff_clef_map[staffIndex] = {};
-                                    }
-                                    _score_staff_clef_map[staffIndex].insert({ segment->tick().ticks(), ___clefType });
-                                } else if (__index >= 1) {
-                                    int index__ = __index - 1;
-                                    std::map<int, ClefType> __ts_clef_map = _clef_staff_map[staffIndex][index__];
-                                    std::map<int, ClefType, Lower> _ts_clef_map;
-                                    _ts_clef_map.insert(__ts_clef_map.begin(), __ts_clef_map.end());
-
-                                    ClefType ___clefType___ = ClefType::INVALID;
-                                    for (const auto& [_ticks, _clefType] : _ts_clef_map) {
-                                        if (segment->tick().ticks() >= _ticks) {
-                                            ___clefType___ = _clefType;
-                                        }
-                                    }
-                                    if (___clefType___ != ClefType::INVALID) {
-                                        if (_score_staff_clef_map.find(staffIndex) == _score_staff_clef_map.end()) {
-                                            _score_staff_clef_map[staffIndex] = {};
-                                        }
-                                        _score_staff_clef_map[staffIndex].insert({ segment->tick().ticks(), ___clefType___ });
-                                    }
-                                }
-                            }
-                            if (measure->no() < _score_clef_index_map[staffIndex][__index] && __index >= 1) {
-                                if (_score_staff_clef_map.find(staffIndex) == _score_staff_clef_map.end() 
-                                || _score_staff_clef_map[staffIndex].find(segment->tick().ticks()) == _score_staff_clef_map[staffIndex].end()) {
-                                    int index__ = __index - 1;
-                                    std::map<int, ClefType> __ts_clef_map = _clef_staff_map[staffIndex][index__];
-                                    std::map<int, ClefType, Lower> _ts_clef_map;
-                                    _ts_clef_map.insert(__ts_clef_map.begin(), __ts_clef_map.end());
+                            if (_score_clef_index_map[staffIndex].size() > __index) {
+                                if (_clef_staff_map_extend.find(staffIndex) != _clef_staff_map_extend.end()) {
+                                    std::map<int, ClefType> __extend_ts_clef_map = _clef_staff_map_extend[staffIndex][measure->no()];
+                                    std::map<int, ClefType, Lower> _extend_ts_clef_map;
+                                    _extend_ts_clef_map.insert(__extend_ts_clef_map.begin(), __extend_ts_clef_map.end());
 
                                     ClefType ___clefType = ClefType::INVALID;
-                                    for (const auto& [_ticks, _clefType] : _ts_clef_map) {
+                                    for (const auto& [_ticks, _clefType] : _extend_ts_clef_map) {
                                         if (segment->tick().ticks() >= _ticks) {
                                             ___clefType = _clefType;
                                         }
@@ -1371,10 +1303,82 @@ void PlaybackCursor::processOttavaAsync(mu::engraving::Score* score, bool scoreP
                                         _score_staff_clef_map[staffIndex].insert({ segment->tick().ticks(), ___clefType });
                                     }
                                 }
-                            }
-                            if (measure->no() > _score_clef_index_map[staffIndex][__index]) {
-                                traverse_measure_index_map[staffIndex] = __index;
-                                __index_map[staffIndex] = __index + 1;
+                                if (measure->no() == _score_clef_index_map[staffIndex][__index]) {
+                                    int _no = _score_clef_index_map[staffIndex][__index];
+                                    
+                                    std::map<int, ClefType> __ts_clef_map = _clef_staff_map[staffIndex][__index];
+                                    std::map<int, ClefType, Lower> _ts_clef_map;
+                                    _ts_clef_map.insert(__ts_clef_map.begin(), __ts_clef_map.end());
+
+                                    ClefType ___clefType = ClefType::INVALID;
+                                    for (const auto& [_ticks, _clefType] : _ts_clef_map) {
+                                        if (segment->tick().ticks() >= _ticks) {
+                                            ___clefType = _clefType;
+                                        } else if (segment == measure->last(mu::engraving::SegmentType::ChordRest)) {
+                                            if (std::find(_score_clef_index_map[staffIndex].begin(), _score_clef_index_map[staffIndex].end(), _no + 1) == _score_clef_index_map[staffIndex].end()) {
+                                                if (_clef_staff_map_extend.find(staffIndex) == _clef_staff_map_extend.end()) {
+                                                    _clef_staff_map_extend[staffIndex] = {};
+                                                }
+                                                if (_clef_staff_map_extend[staffIndex].find(_no + 1) == _clef_staff_map_extend[staffIndex].end()) {
+                                                    _clef_staff_map_extend[staffIndex][_no + 1] = {};
+                                                }
+                                                _clef_staff_map_extend[staffIndex][_no + 1].insert({ _ticks, _clefType });
+                                            } else {
+                                                _clef_staff_map[staffIndex][__index + 1].insert({ _ticks, _clefType });
+                                            }
+                                        }
+                                    }
+                                    if (___clefType != ClefType::INVALID) {
+                                        if (_score_staff_clef_map.find(staffIndex) == _score_staff_clef_map.end()) {
+                                            _score_staff_clef_map[staffIndex] = {};
+                                        }
+                                        _score_staff_clef_map[staffIndex].insert({ segment->tick().ticks(), ___clefType });
+                                    } else if (__index >= 1) {
+                                        int index__ = __index - 1;
+                                        std::map<int, ClefType> __ts_clef_map = _clef_staff_map[staffIndex][index__];
+                                        std::map<int, ClefType, Lower> _ts_clef_map;
+                                        _ts_clef_map.insert(__ts_clef_map.begin(), __ts_clef_map.end());
+
+                                        ClefType ___clefType___ = ClefType::INVALID;
+                                        for (const auto& [_ticks, _clefType] : _ts_clef_map) {
+                                            if (segment->tick().ticks() >= _ticks) {
+                                                ___clefType___ = _clefType;
+                                            }
+                                        }
+                                        if (___clefType___ != ClefType::INVALID) {
+                                            if (_score_staff_clef_map.find(staffIndex) == _score_staff_clef_map.end()) {
+                                                _score_staff_clef_map[staffIndex] = {};
+                                            }
+                                            _score_staff_clef_map[staffIndex].insert({ segment->tick().ticks(), ___clefType___ });
+                                        }
+                                    }
+                                }
+                                if (measure->no() < _score_clef_index_map[staffIndex][__index] && __index >= 1) {
+                                    if (_score_staff_clef_map.find(staffIndex) == _score_staff_clef_map.end() 
+                                    || _score_staff_clef_map[staffIndex].find(segment->tick().ticks()) == _score_staff_clef_map[staffIndex].end()) {
+                                        int index__ = __index - 1;
+                                        std::map<int, ClefType> __ts_clef_map = _clef_staff_map[staffIndex][index__];
+                                        std::map<int, ClefType, Lower> _ts_clef_map;
+                                        _ts_clef_map.insert(__ts_clef_map.begin(), __ts_clef_map.end());
+
+                                        ClefType ___clefType = ClefType::INVALID;
+                                        for (const auto& [_ticks, _clefType] : _ts_clef_map) {
+                                            if (segment->tick().ticks() >= _ticks) {
+                                                ___clefType = _clefType;
+                                            }
+                                        }
+                                        if (___clefType != ClefType::INVALID) {
+                                            if (_score_staff_clef_map.find(staffIndex) == _score_staff_clef_map.end()) {
+                                                _score_staff_clef_map[staffIndex] = {};
+                                            }
+                                            _score_staff_clef_map[staffIndex].insert({ segment->tick().ticks(), ___clefType });
+                                        }
+                                    }
+                                }
+                                if (measure->no() > _score_clef_index_map[staffIndex][__index]) {
+                                    traverse_measure_index_map[staffIndex] = __index;
+                                    __index_map[staffIndex] = __index + 1;
+                                }
                             }
                         }
                     }
