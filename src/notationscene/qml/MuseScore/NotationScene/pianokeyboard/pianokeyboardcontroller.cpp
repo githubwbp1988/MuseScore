@@ -256,7 +256,7 @@ KeyState PianoKeyboardController::trillKeyState(piano_key_t key) const
                         _type = static_cast<DurationType>(static_cast<int>(_type) - 1);
                     }
                     if (_type <= mu::engraving::DurationType::V_QUARTER) {
-                        int _ratio_count = static_cast<int>(64 * ratio);
+                        int _ratio_count = static_cast<int>(80 * ratio);
                         int _int_note_key = static_cast<int>(m_trill_note_key);
                         if (_type == mu::engraving::DurationType::V_QUARTER && m_trill_type == 2207) {
                             if (ratio < 0.333 || ratio > 0.666) {
@@ -265,7 +265,7 @@ KeyState PianoKeyboardController::trillKeyState(piano_key_t key) const
                                 _int_note_key -= 1;
                             }
                         } else {
-                            if (_ratio_count % 2 == 0) {
+                            if (_ratio_count / 2 % 2 == 0) {
                                 _int_note_key -= 1;
                             } else {
                                 _int_note_key -= 2;
@@ -385,7 +385,7 @@ KeyState PianoKeyboardController::trillKeyState1(piano_key_t key) const
                     _type = static_cast<DurationType>(static_cast<int>(_type) - 1);
                 }
                 if (_type <= mu::engraving::DurationType::V_QUARTER) {
-                    int _ratio_count = static_cast<int>(64 * ratio);
+                    int _ratio_count = static_cast<int>(80 * ratio);
                     int _int_note_key = static_cast<int>(m_trill_note_key1);
                     if (_type == mu::engraving::DurationType::V_QUARTER && m_trill_type == 2207) {
                         if (ratio < 0.333 || ratio > 0.666) {
@@ -394,7 +394,7 @@ KeyState PianoKeyboardController::trillKeyState1(piano_key_t key) const
                             _int_note_key -= 1;
                         }
                     } else {
-                        if (_ratio_count % 2 == 0) {
+                        if (_ratio_count / 2 % 2 == 0) {
                             _int_note_key -= 1;
                         } else {
                             _int_note_key -= 2;
