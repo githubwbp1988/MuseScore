@@ -39,6 +39,8 @@
 #include "src/engraving/dom/dynamic.h"
 #include "src/engraving/dom/hairpin.h"
 #include "src/engraving/dom/glissando.h"
+#include "src/engraving/dom/keysig.h"
+#include "src/engraving/dom/tremolotwochord.h"
 
 using namespace mu::notation;
 using namespace muse;
