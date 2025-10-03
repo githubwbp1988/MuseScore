@@ -314,8 +314,8 @@ KeyState PianoKeyboardController::trillKeyState(piano_key_t key) const
                             }
                         } else if (m_trill_type == 2214) {
                             if (m_trill_note_hastie) {
-                                int _ratio_count = static_cast<int>(16 * ratio);
-                                if (_ratio_count % 2 == 0) {
+                                int _ratio_count = static_cast<int>(30 * ratio);
+                                if (_ratio_count / 2 % 2 == 0) {
                                     _int_note_key -= 1;
                                 } else {
                                     _int_note_key -= 2;
@@ -443,8 +443,8 @@ KeyState PianoKeyboardController::trillKeyState1(piano_key_t key) const
                         }
                     } else if (m_trill_type == 2214) {
                         if (m_trill_note1_hastie) {
-                            int _ratio_count = static_cast<int>(16 * ratio);
-                            if (_ratio_count % 2 == 0) {
+                            int _ratio_count = static_cast<int>(30 * ratio);
+                            if (_ratio_count / 2 % 2 == 0) {
                                 _int_note_key -= 1;
                             } else {
                                 _int_note_key -= 2;

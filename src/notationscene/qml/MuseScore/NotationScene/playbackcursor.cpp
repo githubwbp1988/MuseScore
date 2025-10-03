@@ -648,6 +648,7 @@ void PlaybackCursor::processOttavaAsync(mu::engraving::Score* score, bool scoreP
         std::map<Note*, EngravingItem*> _measure_trill_notes_trill_map;
         std::map<Note*, int> _measure_tremolo_type_map;
         std::map<Note*, bool> _measure_tremolo_half_map;
+        std::map<Note*, EngravingItem*> _measure_tremolo_map;
         EngravingItemList measure_children = measure->childrenItems(true);
         bool hasTremoloBar = false;
         for (size_t m_k = 0; m_k < measure_children.size(); m_k++) {
@@ -714,6 +715,9 @@ void PlaybackCursor::processOttavaAsync(mu::engraving::Score* score, bool scoreP
                         _measure_trill_notes.insert(rightNote);
                         _measure_tremolo_half_map[leftNote] = true;
                         _measure_tremolo_half_map[rightNote] = true;
+
+                        _measure_tremolo_map[leftNote] = (EngravingItem*)_tremoloTwoChord;
+                        _measure_tremolo_map[rightNote] = (EngravingItem*)_tremoloTwoChord;
                     }
                     if (_tremoloSingleChord) {
                         Chord* _chord = _tremoloNote->chord();
@@ -724,6 +728,7 @@ void PlaybackCursor::processOttavaAsync(mu::engraving::Score* score, bool scoreP
                             _note = _lastNote;
                         }
                         _measure_trill_notes.insert(_note); 
+                        _measure_tremolo_map[_note] = (EngravingItem*)_tremoloSingleChord;
                     }
                 }
             }
@@ -799,6 +804,10 @@ void PlaybackCursor::processOttavaAsync(mu::engraving::Score* score, bool scoreP
                                         }
                                         
                                         score_trill_map[engravingItem] = mnote;
+                                        EngravingItem* _tremolo_mark = _measure_tremolo_map[mnote];
+                                        if (_tremolo_mark) {
+                                            score_tremolo_map[engravingItem] = _tremolo_mark;
+                                        }
                                         score_trill_type_map[engravingItem] = trill_type;
                                         score_trill_st_map[engravingItem] = mnote->tick().ticks();
                                         score_trill_dt_map[engravingItem] = _duration_ticks;
@@ -849,6 +858,10 @@ void PlaybackCursor::processOttavaAsync(mu::engraving::Score* score, bool scoreP
                                         }
 
                                         score_trill_map1[engravingItem] = mnote;
+                                        EngravingItem* _tremolo_mark = _measure_tremolo_map[mnote];
+                                        if (_tremolo_mark) {
+                                            score_tremolo_map1[engravingItem] = _tremolo_mark;
+                                        }
                                         score_trill_type_map1[engravingItem] = trill_type;
                                         score_trill_st_map1[engravingItem] = mnote->tick().ticks();
                                         score_trill_dt_map1[engravingItem] = _duration_ticks;
@@ -1882,6 +1895,15 @@ void PlaybackCursor::processCursorNoteRenderStatusAsync(Measure* measure, int cu
             }
             engravingItem->setColor(muse::draw::Color::BLACK);
 
+            EngravingItem* _tremolo_mark = score_tremolo_map[engravingItem];
+            if (_tremolo_mark) {
+                _tremolo_mark->setColor(muse::draw::Color::BLACK);
+            }
+            EngravingItem* _tremolo_mark1 = score_tremolo_map1[engravingItem];
+            if (_tremolo_mark1) {
+                _tremolo_mark1->setColor(muse::draw::Color::BLACK);
+            }
+
             EngravingItemList itemList = engravingItem->childrenItems(true);
             for (size_t j = 0; j < itemList.size(); j++) {
                 EngravingItem* item = itemList.at(j);
@@ -2095,6 +2117,26 @@ muse::RectF PlaybackCursor::resolveCursorRectByTick1(muse::midi::tick_t _tick, b
                         chordrest_fermata_map[engravingItem]->setColor(muse::draw::Color::RED);
                     }
                     engravingItem->setColor(muse::draw::Color::RED);
+                    EngravingItem* _tremolo_mark = score_tremolo_map[engravingItem];
+                    if (_tremolo_mark) {
+                        if (score_trill_dt_map[engravingItem]) {
+                            if (score_trill_dt_map[engravingItem] > 0 && tick.ticks() >= score_trill_st_map[engravingItem] && tick.ticks() < score_trill_st_map[engravingItem] + score_trill_dt_map[engravingItem]) {
+                                _tremolo_mark->setColor(muse::draw::Color::RED);
+                            } else {
+                                _tremolo_mark->setColor(muse::draw::Color::BLACK);
+                            } 
+                        } 
+                    }
+                    EngravingItem* _tremolo_mark1 = score_tremolo_map1[engravingItem];
+                    if (_tremolo_mark1) {
+                        if (score_trill_dt_map1[engravingItem]) {
+                            if (score_trill_dt_map1[engravingItem] > 0 && tick.ticks() >= score_trill_st_map1[engravingItem] && tick.ticks() < score_trill_st_map1[engravingItem] + score_trill_dt_map1[engravingItem]) {
+                                _tremolo_mark1->setColor(muse::draw::Color::RED);
+                            } else {
+                                _tremolo_mark1->setColor(muse::draw::Color::BLACK);
+                            }
+                        }
+                    }
 
                     if (pianoKeyboardPlaybackEnable) {
                         if (score_trill_map_1[engravingItem]) {
@@ -2581,6 +2623,15 @@ muse::RectF PlaybackCursor::resolveCursorRectByTick1(muse::midi::tick_t _tick, b
                     chordrest_fermata_map[engravingItem]->setColor(muse::draw::Color::BLACK);
                 }
                 engravingItem->setColor(muse::draw::Color::BLACK);
+
+                EngravingItem* _tremolo_mark = score_tremolo_map[engravingItem];
+                if (_tremolo_mark) {
+                    _tremolo_mark->setColor(muse::draw::Color::BLACK);
+                }
+                EngravingItem* _tremolo_mark1 = score_tremolo_map1[engravingItem];
+                if (_tremolo_mark1) {
+                    _tremolo_mark1->setColor(muse::draw::Color::BLACK);
+                }
 
                 EngravingItemList itemList = engravingItem->childrenItems(true);
                 for (size_t j = 0; j < itemList.size(); j++) {
