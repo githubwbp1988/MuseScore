@@ -1128,6 +1128,47 @@ void PlaybackCursor::processOttavaAsync(mu::engraving::Score* score, bool scoreP
                                             }
                                             score_glissando_endnotes_map[engravingItem].push_back(_targetNote);
                                             _glissando_endnotes_checked = true;
+                                            Measure* _nextMeasure = measure->nextMeasure();
+                                            if (_nextMeasure) {
+                                                bool _nextMeasure_ending_glissando_checked = false;
+                                                mu::engraving::Segment* _nextMeasureFirstSeg = _nextMeasure->first(mu::engraving::SegmentType::ChordRest);
+                                                if (_nextMeasureFirstSeg) {
+                                                    std::vector<EngravingItem*> __engravingItemList = _nextMeasureFirstSeg->elist();
+                                                    for (size_t __i = 0; __i < __engravingItemList.size(); __i++) {
+                                                        if (_nextMeasure_ending_glissando_checked) {
+                                                            break;
+                                                        }
+                                                        EngravingItem* __engravingItem = __engravingItemList[__i];
+                                                        if (__engravingItem == nullptr) {
+                                                            continue;
+                                                        } 
+                                                        EngravingItemList __itemList = __engravingItem->childrenItems(false);
+                                                        for (size_t __j = 0; __j < __itemList.size(); __j++) {
+                                                            if (_nextMeasure_ending_glissando_checked) {
+                                                                break;
+                                                            }
+                                                            EngravingItem* __item_ = __itemList.at(__j);
+                                                            if (__item_ == nullptr) {
+                                                                continue;
+                                                            }
+                                                            if (__item_->type() == mu::engraving::ElementType::NOTE) {
+                                                                Note* __note_ = toNote(__item_);
+                                                                const std::set<Spanner*>& spanners = __note_->chord()->startingSpanners();
+                                                                for (const Spanner* sp : spanners) {
+                                                                    if (toGlissando(sp)) {
+                                                                        std::vector<Note*> _nextMeasure_ending_glissando_notes = __note_->chord()->notes();
+                                                                        for (Note* __note__ : _nextMeasure_ending_glissando_notes) {
+                                                                            score_glissando_endnotes_map[engravingItem].push_back(__note__);
+                                                                        }
+                                                                        _nextMeasure_ending_glissando_checked = true;
+                                                                        break;
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
                                         }
                                     } else {
                                         mu::engraving::Segment* _s = measure->last(mu::engraving::SegmentType::ChordRest);

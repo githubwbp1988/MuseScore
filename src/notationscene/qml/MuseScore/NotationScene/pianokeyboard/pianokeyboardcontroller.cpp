@@ -123,14 +123,20 @@ KeyState PianoKeyboardController::glissandoKeyState(piano_key_t key) const
         if (m_glissando_curr_ticks > m_glissando_ticks && m_glissando_curr_ticks < m_glissando_ticks + m_glissando_duration_ticks) {
             int left_dis = m_glissando_curr_ticks - m_glissando_ticks;
             double ratio = left_dis / static_cast<double>(m_glissando_duration_ticks);
-            if (m_glissando_note_key < m_glissando_endnote_min_key) {
+            if (m_glissando_note_key <= m_glissando_endnote_min_key) {
                 double _key = m_glissando_note_key + (m_glissando_endnote_min_key - m_glissando_note_key) * ratio;
+                if (m_glissando_note_key == m_glissando_endnote_min_key && m_glissando_endnote_min_key < m_glissando_endnote_max_key) {
+                    _key = m_glissando_note_key + (m_glissando_endnote_max_key - m_glissando_note_key) * ratio;
+                }
                 int __key = static_cast<int>(_key);
                 if (key == (piano_key_t)__key) {
                     return KeyState::Glissando;
                 }
-            } else if (m_glissando_note_key > m_glissando_endnote_max_key) {
+            } else if (m_glissando_note_key >= m_glissando_endnote_max_key) {
                 double _key = m_glissando_note_key - (m_glissando_note_key - m_glissando_endnote_max_key) * ratio;
+                if (m_glissando_note_key == m_glissando_endnote_max_key && m_glissando_endnote_min_key < m_glissando_endnote_max_key) {
+                    _key = m_glissando_note_key - (m_glissando_note_key - m_glissando_endnote_min_key) * ratio;
+                }
                 int __key = static_cast<int>(_key);
                 if (key == (piano_key_t)__key) {
                     return KeyState::Glissando;
