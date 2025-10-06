@@ -75,7 +75,7 @@ KeyState PianoKeyboardController::playbackKeyState(piano_key_t key) const
             }
 
             if (m_trill_curr_ticks >= m_trill_ticks && m_trill_curr_ticks <= m_trill_ticks + _m_trill_duration_ticks) {
-                if (key == m_trill_note_key || key == m_trill_note_key1) {
+                if (key == m_trill_note_key || key == m_trill_note_key1 || key == m_trill_note_key - 1 || key == m_trill_note_key1 - 1) {
                     return KeyState::None;
                 }
             }
