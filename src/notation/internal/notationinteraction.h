@@ -132,6 +132,8 @@ public:
 
     void addTrillNote(mu::engraving::Note*, int, int, int, int, int, int, bool, bool) override;
     void addTrillNote1(mu::engraving::Note*, int, int, int, int, int, int, bool) override;
+    void addTremoloNote(int, int, int, int, int, int, mu::engraving::Note*, std::vector<mu::engraving::Note*>, std::vector<mu::engraving::Note*>) override;
+    void addTremoloNote1(int, int, int, int, int, int, mu::engraving::Note*, std::vector<mu::engraving::Note*>, std::vector<mu::engraving::Note*>) override;
     int trillNoteTicks() const override;
     int trillNoteTicks1() const override;
     bool trillNoteHasTie() const override;
@@ -145,18 +147,49 @@ public:
     int trillNoteTremolotype1() const override;
     int trillCurrticks() const override;
     int trillCurrticks1() const override;
+    int tremoloCurrticks() const override;
+    int tremoloCurrticks1() const override;
     void trillNoteUpdate() override;
     void trillNoteUpdate1() override;
+    void tremoloNoteUpdate() override;
+    void tremoloNoteUpdate1() override;
     mu::engraving::Note *trillNote() const override;
     int trillType() const override;
     mu::engraving::Note *trillNote1() const override;
     int trillType1() const override;
     bool trillTick(int) override;
     bool trillTick1(int) override;
+    void tremoloTick(int) override;
+    void tremoloTick1(int) override;
+    
+    int tremoloPtype() const override;
+    int tremoloSt() const override;
+    int tremoloDt() const override;
+    int tremoloType() const override;
+    int tremoloOtavaType() const override;
+    int tremolo1OtavaType() const override;
+    mu::engraving::Note* tremoloNote() const override;
+    std::vector<mu::engraving::Note*> tremoloNotes() const override;
+    std::vector<mu::engraving::Note*> tremolo1Notes() const override;
+
+    int tremoloPtype1() const override;
+    int tremoloSt1() const override;
+    int tremoloDt1() const override;
+    int tremoloType1() const override;
+    int tremoloOtavaType1() const override;
+    int tremolo1OtavaType1() const override;
+    mu::engraving::Note* tremoloNote1() const override;
+    std::vector<mu::engraving::Note*> tremoloNotes1() const override;
+    std::vector<mu::engraving::Note*> tremolo1Notes1() const override;
+
     muse::async::Notification trillNoteChanged() override;
     muse::async::Notification trillNoteChanged1() override;
     muse::async::Notification trillTickChanged() override;
     muse::async::Notification trillTickChanged1() override;
+    muse::async::Notification tremoloNoteChanged() override;
+    muse::async::Notification tremoloNoteChanged1() override;
+    muse::async::Notification tremoloTickChanged() override;
+    muse::async::Notification tremoloTickChanged1() override;
     bool islastMeasure() const override;
     void lastMeasure(bool) override;
     muse::async::Notification lastMeasureChanged() override;
@@ -641,10 +674,37 @@ private:
     int trill_trill_duration_ticks1 = 0;
     int trill_tremolo_type1 = 0;
     int trill_curr_ticks1 = 0;
+
+    int tremolo_curr_ticks = 0;
+    int tremolo_ptype = 0;
+    int tremolo_st = 0;
+    int tremolo_dt = 0;
+    int tremolo_type = 0;
+    int tremolo_otavatype = 0;
+    int tremolo1_otavatype = 0;
+    Note* tremolo_note = nullptr;
+    std::vector<mu::engraving::Note*> tremolo_notes;
+    std::vector<mu::engraving::Note*> tremolo1_notes;
+
+    int tremolo_curr_ticks1 = 0;
+    int tremolo_ptype1 = 0;
+    int tremolo_st1 = 0;
+    int tremolo_dt1 = 0;
+    int tremolo_type1 = 0;
+    int tremolo_otavatype1 = 0;
+    int tremolo1_otavatype1 = 0;
+    Note* tremolo_note1 = nullptr;
+    std::vector<mu::engraving::Note*> tremolo_notes1;
+    std::vector<mu::engraving::Note*> tremolo1_notes1;
+
     muse::async::Notification m_trillNoteChanged;
     muse::async::Notification m_trillNoteChanged1;
     muse::async::Notification m_trillTickChanged;
     muse::async::Notification m_trillTickChanged1;
+    muse::async::Notification m_tremoloNoteChanged;
+    muse::async::Notification m_tremoloNoteChanged1;
+    muse::async::Notification m_tremoloTickChanged;
+    muse::async::Notification m_tremoloTickChanged1;
     bool m_islastMeasure = false;
     muse::async::Notification m_lastMeasureChanged;
 

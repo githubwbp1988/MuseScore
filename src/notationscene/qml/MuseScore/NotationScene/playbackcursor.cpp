@@ -649,6 +649,13 @@ void PlaybackCursor::processOttavaAsync(mu::engraving::Score* score, bool scoreP
         std::map<Note*, int> _measure_tremolo_type_map;
         std::map<Note*, bool> _measure_tremolo_half_map;
         std::map<Note*, EngravingItem*> _measure_tremolo_map;
+        std::set<Note*> _measure_tremolo_notes;
+        std::map<Note*, Chord*> _measure_tremolo_map0;
+        std::map<Note*, Chord*> _measure_tremolo_map1;
+        std::map<Note*, Chord*> _measure_tremolo_map2;
+        std::map<Note*, Chord*> _measure_tremolo_map3;
+        std::map<Note*, Chord*> _measure_tremolo_map4;
+        std::map<Note*, Note*> _measure_tremolo_suffix_map;
         EngravingItemList measure_children = measure->childrenItems(true);
         bool hasTremoloBar = false;
         for (size_t m_k = 0; m_k < measure_children.size(); m_k++) {
@@ -690,7 +697,7 @@ void PlaybackCursor::processOttavaAsync(mu::engraving::Score* score, bool scoreP
                 if (measure_item->type() == mu::engraving::ElementType::NOTE) {
                     Note* _tremoloNote = toNote(measure_item);
                     TremoloType _tremoloType = _tremoloNote->chord()->tremoloType();
-                    _measure_tremolo_type_map[_tremoloNote] = (int)_tremoloType;
+                    // _measure_tremolo_type_map[_tremoloNote] = (int)_tremoloType;
 
                     TremoloTwoChord* _tremoloTwoChord = _tremoloNote->chord()->tremoloTwoChord();
                     TremoloSingleChord* _tremoloSingleChord = _tremoloNote->chord()->tremoloSingleChord();
@@ -701,34 +708,58 @@ void PlaybackCursor::processOttavaAsync(mu::engraving::Score* score, bool scoreP
                         Note* leftFirstNote = chord1->notes()[0];
                         Note* leftLastNote = chord1->notes()[chord1->notes().size() - 1];
                         Note* leftNote = leftFirstNote;
-                        if (leftFirstNote->canvasPos().y() < leftLastNote->canvasPos().y()) {
+                        if (leftFirstNote->canvasPos().y() > leftLastNote->canvasPos().y()) {
                             leftNote = leftLastNote;
                         }
-                        _measure_trill_notes.insert(leftNote);
+                        // _measure_trill_notes.insert(leftNote);
                         
                         Note* rightFirstNote = chord2->notes()[0];
                         Note* rightLastNote = chord2->notes()[chord2->notes().size() - 1];
                         Note* rightNote = rightFirstNote;
-                        if (rightFirstNote->canvasPos().y() < rightLastNote->canvasPos().y()) {
+                        if (rightFirstNote->canvasPos().y() > rightLastNote->canvasPos().y()) {
                             rightNote = rightLastNote;
                         }
-                        _measure_trill_notes.insert(rightNote);
-                        _measure_tremolo_half_map[leftNote] = true;
-                        _measure_tremolo_half_map[rightNote] = true;
+                        // _measure_trill_notes.insert(rightNote);
+                        // _measure_tremolo_half_map[leftNote] = true;
+                        // _measure_tremolo_half_map[rightNote] = true;
 
                         _measure_tremolo_map[leftNote] = (EngravingItem*)_tremoloTwoChord;
                         _measure_tremolo_map[rightNote] = (EngravingItem*)_tremoloTwoChord;
+
+                        _measure_tremolo_map3[leftNote] = chord1;
+                        _measure_tremolo_map4[leftNote] = chord2;
+                        _measure_tremolo_type_map[leftNote] = (int)_tremoloType;
+                        _measure_tremolo_notes.insert(leftNote);
+
+                        _measure_tremolo_suffix_map[rightNote] = leftNote;
                     }
                     if (_tremoloSingleChord) {
                         Chord* _chord = _tremoloNote->chord();
-                        Note* _firstNote = _chord->notes()[0];
-                        Note* _lastNote = _chord->notes()[_chord->notes().size() - 1];
-                        Note* _note = _firstNote;
-                        if (_firstNote->canvasPos().y() < _lastNote->canvasPos().y()) {
-                            _note = _lastNote;
+                        if (_chord->notes().size() == 1) {
+                            Note* _note = _chord->notes()[0];
+                            // _measure_trill_notes.insert(_note); 
+                            _measure_tremolo_map[_note] = (EngravingItem*)_tremoloSingleChord;
+                            _measure_tremolo_map0[_note] = _chord;
+                            _measure_tremolo_type_map[_note] = (int)_tremoloType;
+                            _measure_tremolo_notes.insert(_note);
+                        } else if (_chord->notes().size() == 2) {
+                            Note* _note = _chord->notes()[0];
+                            _measure_tremolo_map1[_note] = _chord;
+                            _measure_tremolo_type_map[_note] = (int)_tremoloType;
+                            _measure_tremolo_notes.insert(_note);
+                            _measure_tremolo_map[_note] = (EngravingItem*)_tremoloSingleChord;
+                        } else {
+                            Note* _firstNote = _chord->notes()[0];
+                            Note* _lastNote = _chord->notes()[_chord->notes().size() - 1];
+                            Note* _note = _firstNote;
+                            if (_firstNote->canvasPos().y() > _lastNote->canvasPos().y()) {
+                                _note = _lastNote;
+                            }
+                            _measure_tremolo_map2[_note] = _chord;
+                            _measure_tremolo_type_map[_note] = (int)_tremoloType;
+                            _measure_tremolo_notes.insert(_note);
+                            _measure_tremolo_map[_note] = (EngravingItem*)_tremoloSingleChord;
                         }
-                        _measure_trill_notes.insert(_note); 
-                        _measure_tremolo_map[_note] = (EngravingItem*)_tremoloSingleChord;
                     }
                 }
             }
@@ -750,6 +781,12 @@ void PlaybackCursor::processOttavaAsync(mu::engraving::Score* score, bool scoreP
             
             bool _trill_note_checked = false;
             bool _trill_note1_checked = false;
+
+            bool _tremolo_note_checked = false;
+            bool _tremolo_note1_checked = false;
+
+            bool _tremolo_note_checked1 = false;
+            bool _tremolo_note1_checked1 = false;
             for (size_t i = 0; i < engravingItemList.size(); i++) {
                 EngravingItem* engravingItem = engravingItemList[i];
                 if (engravingItem == nullptr) {
@@ -804,10 +841,6 @@ void PlaybackCursor::processOttavaAsync(mu::engraving::Score* score, bool scoreP
                                         }
                                         
                                         score_trill_map[engravingItem] = mnote;
-                                        EngravingItem* _tremolo_mark = _measure_tremolo_map[mnote];
-                                        if (_tremolo_mark) {
-                                            score_tremolo_map[engravingItem] = _tremolo_mark;
-                                        }
                                         score_trill_type_map[engravingItem] = trill_type;
                                         score_trill_st_map[engravingItem] = mnote->tick().ticks();
                                         score_trill_dt_map[engravingItem] = _duration_ticks;
@@ -858,10 +891,6 @@ void PlaybackCursor::processOttavaAsync(mu::engraving::Score* score, bool scoreP
                                         }
 
                                         score_trill_map1[engravingItem] = mnote;
-                                        EngravingItem* _tremolo_mark = _measure_tremolo_map[mnote];
-                                        if (_tremolo_mark) {
-                                            score_tremolo_map1[engravingItem] = _tremolo_mark;
-                                        }
                                         score_trill_type_map1[engravingItem] = trill_type;
                                         score_trill_st_map1[engravingItem] = mnote->tick().ticks();
                                         score_trill_dt_map1[engravingItem] = _duration_ticks;
@@ -884,6 +913,364 @@ void PlaybackCursor::processOttavaAsync(mu::engraving::Score* score, bool scoreP
                                         }
                                     }
                                 }
+                            }
+
+                            for (Note* mnote : _measure_tremolo_notes) {
+                                if (mnote == _pre_note) {
+                                    if (!_tremolo_note_checked) {
+                                        _tremolo_note_checked = true;
+                                        int logic_tremoloType = 0;
+                                        if (_measure_tremolo_type_map.find(mnote) != _measure_tremolo_type_map.end()) {
+                                            int _tremoloType = _measure_tremolo_type_map[mnote];
+                                            TremoloType tremoloType = (TremoloType)_tremoloType;
+                                            if (tremoloType == TremoloType::R8 || tremoloType == TremoloType::C8) {
+                                                logic_tremoloType = 20;
+                                            } else if (tremoloType == TremoloType::R16 || tremoloType == TremoloType::C16) {
+                                                logic_tremoloType = 40;
+                                            } else if (tremoloType == TremoloType::R32 || tremoloType == TremoloType::C32) {
+                                                logic_tremoloType = 80;
+                                            } else if (tremoloType == TremoloType::R64 || tremoloType == TremoloType::C64) {
+                                                logic_tremoloType = 160;
+                                            } else if (tremoloType == TremoloType::BUZZ_ROLL) {
+                                                logic_tremoloType = 50;
+                                            }
+                                        }
+                                        
+                                        score_tremolo_note_map[engravingItem] = mnote;
+                                        EngravingItem* _tremolo_mark = _measure_tremolo_map[mnote];
+                                        if (_tremolo_mark) {
+                                            score_tremolo_map[engravingItem] = _tremolo_mark;
+                                        }
+                                        score_tremolo_st_map[engravingItem] = mnote->tick().ticks();
+                                        score_tremolo_dt_map[engravingItem] = duration_ticks;
+                                        score_tremolo_type_map[engravingItem] = logic_tremoloType;
+                                        score_tremolo_ot_map[engravingItem] = ottava_map[mnote];
+                                        if (_measure_tremolo_map0.find(mnote) != _measure_tremolo_map0.end()) {
+                                            score_tremolo_pt_map[engravingItem] = 1;
+                                            score_tremolo_note_note_map[engravingItem] = mnote;
+                                        }
+                                        if (_measure_tremolo_map1.find(mnote) != _measure_tremolo_map1.end()) {
+                                            score_tremolo_pt_map[engravingItem] = 2;
+                                            if (score_tremolo_note_notes_map.find(engravingItem) != score_tremolo_note_notes_map.end()) {
+                                                score_tremolo_note_notes_map[engravingItem].clear();
+                                            } else {
+                                                score_tremolo_note_notes_map[engravingItem] = {};
+                                            }
+                                            for (Note* _note : _measure_tremolo_map1[mnote]->notes()) {
+                                                score_tremolo_note_notes_map[engravingItem].push_back(_note);
+                                            }
+                                        }
+                                        if (_measure_tremolo_map2.find(mnote) != _measure_tremolo_map2.end()) {
+                                            score_tremolo_pt_map[engravingItem] = 3;
+                                            score_tremolo_note_note_map[engravingItem] = mnote;
+                                            if (score_tremolo_note_notes_map.find(engravingItem) != score_tremolo_note_notes_map.end()) {
+                                                score_tremolo_note_notes_map[engravingItem].clear();
+                                            } else {
+                                                score_tremolo_note_notes_map[engravingItem] = {};
+                                            }
+                                            for (Note* _note : _measure_tremolo_map2[mnote]->notes()) {
+                                                score_tremolo_note_notes_map[engravingItem].push_back(_note);
+                                            }
+                                        }
+                                        if (_measure_tremolo_map3.find(mnote) != _measure_tremolo_map3.end()) {
+                                            score_tremolo_pt_map[engravingItem] = 4;
+                                            if (score_tremolo_note_notes_map.find(engravingItem) != score_tremolo_note_notes_map.end()) {
+                                                score_tremolo_note_notes_map[engravingItem].clear();
+                                            } else {
+                                                score_tremolo_note_notes_map[engravingItem] = {};
+                                            }
+                                            for (Note* _note : _measure_tremolo_map3[mnote]->notes()) {
+                                                score_tremolo_note_notes_map[engravingItem].push_back(_note);
+                                            }
+                                        }
+                                        if (_measure_tremolo_map4.find(mnote) != _measure_tremolo_map4.end()) {
+                                            Chord* chord2 = _measure_tremolo_map4[mnote];
+                                            if (chord2) {
+                                                Note* note2 = chord2->notes()[0];
+                                                score_tremolo1_ot_map[engravingItem] = ottava_map[note2];
+
+                                                if (score_tremolo_note_notes1_map.find(engravingItem) != score_tremolo_note_notes1_map.end()) {
+                                                    score_tremolo_note_notes1_map[engravingItem].clear();
+                                                } else {
+                                                    score_tremolo_note_notes1_map[engravingItem] = {};
+                                                }
+                                                for (Note* _note : chord2->notes()) {
+                                                    score_tremolo_note_notes1_map[engravingItem].push_back(_note);
+                                                }
+
+                                                score_tremolo_dt_map[engravingItem] = duration_ticks;
+                                            }
+                                        }
+                                        
+                                    } else if (_tremolo_note_checked && !_tremolo_note1_checked) {
+                                        _tremolo_note1_checked = true;
+                                        int logic_tremoloType = 0;
+                                        if (_measure_tremolo_type_map.find(mnote) != _measure_tremolo_type_map.end()) {
+                                            int _tremoloType = _measure_tremolo_type_map[mnote];
+                                            TremoloType tremoloType = (TremoloType)_tremoloType;
+                                            if (tremoloType == TremoloType::R8 || tremoloType == TremoloType::C8) {
+                                                logic_tremoloType = 20;
+                                            } else if (tremoloType == TremoloType::R16 || tremoloType == TremoloType::C16) {
+                                                logic_tremoloType = 40;
+                                            } else if (tremoloType == TremoloType::R32 || tremoloType == TremoloType::C32) {
+                                                logic_tremoloType = 80;
+                                            } else if (tremoloType == TremoloType::R64 || tremoloType == TremoloType::C64) {
+                                                logic_tremoloType = 160;
+                                            } else if (tremoloType == TremoloType::BUZZ_ROLL) {
+                                                logic_tremoloType = 50;
+                                            }
+                                        }
+
+                                        score_tremolo_note_map1[engravingItem] = mnote;
+                                        EngravingItem* _tremolo_mark = _measure_tremolo_map[mnote];
+                                        if (_tremolo_mark) {
+                                            score_tremolo_map1[engravingItem] = _tremolo_mark;
+                                        }
+                                        score_tremolo_st_map1[engravingItem] = mnote->tick().ticks();
+                                        score_tremolo_dt_map1[engravingItem] = duration_ticks;
+                                        score_tremolo_type_map1[engravingItem] = logic_tremoloType;
+                                        score_tremolo_ot_map1[engravingItem] = ottava_map[mnote];
+                                        if (_measure_tremolo_map0.find(mnote) != _measure_tremolo_map0.end()) {
+                                            score_tremolo_pt_map1[engravingItem] = 1;
+                                            score_tremolo_note_note_map1[engravingItem] = mnote;
+                                        }
+                                        if (_measure_tremolo_map1.find(mnote) != _measure_tremolo_map1.end()) {
+                                            score_tremolo_pt_map1[engravingItem] = 2;
+                                            if (score_tremolo_note_notes_map1.find(engravingItem) != score_tremolo_note_notes_map1.end()) {
+                                                score_tremolo_note_notes_map1[engravingItem].clear();
+                                            } else {
+                                                score_tremolo_note_notes_map1[engravingItem] = {};
+                                            }
+                                            for (Note* _note : _measure_tremolo_map1[mnote]->notes()) {
+                                                score_tremolo_note_notes_map1[engravingItem].push_back(_note);
+                                            }
+                                        }
+                                        if (_measure_tremolo_map2.find(mnote) != _measure_tremolo_map2.end()) {
+                                            score_tremolo_pt_map1[engravingItem] = 3;
+                                            score_tremolo_note_note_map1[engravingItem] = mnote;
+                                            if (score_tremolo_note_notes_map1.find(engravingItem) != score_tremolo_note_notes_map1.end()) {
+                                                score_tremolo_note_notes_map1[engravingItem].clear();
+                                            } else {
+                                                score_tremolo_note_notes_map1[engravingItem] = {};
+                                            }
+                                            for (Note* _note : _measure_tremolo_map2[mnote]->notes()) {
+                                                score_tremolo_note_notes_map1[engravingItem].push_back(_note);
+                                            }
+                                        }
+                                        if (_measure_tremolo_map3.find(mnote) != _measure_tremolo_map3.end()) {
+                                            score_tremolo_pt_map1[engravingItem] = 4;
+                                            if (score_tremolo_note_notes_map1.find(engravingItem) != score_tremolo_note_notes_map1.end()) {
+                                                score_tremolo_note_notes_map1[engravingItem].clear();
+                                            } else {
+                                                score_tremolo_note_notes_map1[engravingItem] = {};
+                                            }
+                                            for (Note* _note : _measure_tremolo_map3[mnote]->notes()) {
+                                                score_tremolo_note_notes_map1[engravingItem].push_back(_note);
+                                            }
+                                        }
+                                        if (_measure_tremolo_map4.find(mnote) != _measure_tremolo_map4.end()) {
+                                            Chord* chord2 = _measure_tremolo_map4[mnote];
+                                            if (chord2) {
+                                                Note* note2 = chord2->notes()[0];
+                                                score_tremolo1_ot_map1[engravingItem] = ottava_map[note2];
+
+                                                if (score_tremolo_note_notes1_map1.find(engravingItem) != score_tremolo_note_notes1_map1.end()) {
+                                                    score_tremolo_note_notes1_map1[engravingItem].clear();
+                                                } else {
+                                                    score_tremolo_note_notes1_map1[engravingItem] = {};
+                                                }
+                                                for (Note* _note : chord2->notes()) {
+                                                    score_tremolo_note_notes1_map1[engravingItem].push_back(_note);
+                                                }
+
+                                                score_tremolo_dt_map1[engravingItem] = duration_ticks;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
+                            if (_measure_tremolo_suffix_map[_pre_note]) {
+                                Note* _pre_note1 = _measure_tremolo_suffix_map[_pre_note];
+                                for (Note* mnote : _measure_tremolo_notes) {
+                                    if (mnote == _pre_note1) {
+                                        if (!_tremolo_note_checked1) {
+                                            _tremolo_note_checked1 = true;
+                                            int logic_tremoloType = 0;
+                                            if (_measure_tremolo_type_map.find(mnote) != _measure_tremolo_type_map.end()) {
+                                                int _tremoloType = _measure_tremolo_type_map[mnote];
+                                                TremoloType tremoloType = (TremoloType)_tremoloType;
+                                                if (tremoloType == TremoloType::R8 || tremoloType == TremoloType::C8) {
+                                                    logic_tremoloType = 20;
+                                                } else if (tremoloType == TremoloType::R16 || tremoloType == TremoloType::C16) {
+                                                    logic_tremoloType = 40;
+                                                } else if (tremoloType == TremoloType::R32 || tremoloType == TremoloType::C32) {
+                                                    logic_tremoloType = 80;
+                                                } else if (tremoloType == TremoloType::R64 || tremoloType == TremoloType::C64) {
+                                                    logic_tremoloType = 160;
+                                                } else if (tremoloType == TremoloType::BUZZ_ROLL) {
+                                                    logic_tremoloType = 50;
+                                                }
+                                            }
+
+                                            duration_ticks = mnote->chord()->durationTypeTicks().ticks();
+                                            
+                                            score_tremolo_note_map[engravingItem] = _pre_note;
+                                            EngravingItem* _tremolo_mark = _measure_tremolo_map[mnote];
+                                            if (_tremolo_mark) {
+                                                score_tremolo_map[engravingItem] = _tremolo_mark;
+                                            }
+                                            score_tremolo_st_map[engravingItem] = mnote->tick().ticks();
+                                            score_tremolo_dt_map[engravingItem] = duration_ticks;
+                                            score_tremolo_type_map[engravingItem] = logic_tremoloType;
+                                            score_tremolo_ot_map[engravingItem] = ottava_map[mnote];
+                                            if (_measure_tremolo_map0.find(mnote) != _measure_tremolo_map0.end()) {
+                                                score_tremolo_pt_map[engravingItem] = 1;
+                                                score_tremolo_note_note_map[engravingItem] = mnote;
+                                            }
+                                            if (_measure_tremolo_map1.find(mnote) != _measure_tremolo_map1.end()) {
+                                                score_tremolo_pt_map[engravingItem] = 2;
+                                                if (score_tremolo_note_notes_map.find(engravingItem) != score_tremolo_note_notes_map.end()) {
+                                                    score_tremolo_note_notes_map[engravingItem].clear();
+                                                } else {
+                                                    score_tremolo_note_notes_map[engravingItem] = {};
+                                                }
+                                                for (Note* _note : _measure_tremolo_map1[mnote]->notes()) {
+                                                    score_tremolo_note_notes_map[engravingItem].push_back(_note);
+                                                }
+                                            }
+                                            if (_measure_tremolo_map2.find(mnote) != _measure_tremolo_map2.end()) {
+                                                score_tremolo_pt_map[engravingItem] = 3;
+                                                score_tremolo_note_note_map[engravingItem] = mnote;
+                                                if (score_tremolo_note_notes_map.find(engravingItem) != score_tremolo_note_notes_map.end()) {
+                                                    score_tremolo_note_notes_map[engravingItem].clear();
+                                                } else {
+                                                    score_tremolo_note_notes_map[engravingItem] = {};
+                                                }
+                                                for (Note* _note : _measure_tremolo_map2[mnote]->notes()) {
+                                                    score_tremolo_note_notes_map[engravingItem].push_back(_note);
+                                                }
+                                            }
+                                            if (_measure_tremolo_map3.find(mnote) != _measure_tremolo_map3.end()) {
+                                                score_tremolo_pt_map[engravingItem] = 4;
+                                                if (score_tremolo_note_notes_map.find(engravingItem) != score_tremolo_note_notes_map.end()) {
+                                                    score_tremolo_note_notes_map[engravingItem].clear();
+                                                } else {
+                                                    score_tremolo_note_notes_map[engravingItem] = {};
+                                                }
+                                                for (Note* _note : _measure_tremolo_map3[mnote]->notes()) {
+                                                    score_tremolo_note_notes_map[engravingItem].push_back(_note);
+                                                }
+                                            }
+                                            if (_measure_tremolo_map4.find(mnote) != _measure_tremolo_map4.end()) {
+                                                Chord* chord2 = _measure_tremolo_map4[mnote];
+                                                if (chord2) {
+                                                    Note* note2 = chord2->notes()[0];
+                                                    score_tremolo1_ot_map[engravingItem] = ottava_map[note2];
+
+                                                    if (score_tremolo_note_notes1_map.find(engravingItem) != score_tremolo_note_notes1_map.end()) {
+                                                        score_tremolo_note_notes1_map[engravingItem].clear();
+                                                    } else {
+                                                        score_tremolo_note_notes1_map[engravingItem] = {};
+                                                    }
+                                                    for (Note* _note : chord2->notes()) {
+                                                        score_tremolo_note_notes1_map[engravingItem].push_back(_note);
+                                                    }
+
+                                                    score_tremolo_dt_map[engravingItem] = duration_ticks;
+                                                }
+                                            }
+                                            
+                                        } else if (_tremolo_note_checked1 && !_tremolo_note1_checked1) {
+                                            _tremolo_note1_checked1 = true;
+                                            int logic_tremoloType = 0;
+                                            if (_measure_tremolo_type_map.find(mnote) != _measure_tremolo_type_map.end()) {
+                                                int _tremoloType = _measure_tremolo_type_map[mnote];
+                                                TremoloType tremoloType = (TremoloType)_tremoloType;
+                                                if (tremoloType == TremoloType::R8 || tremoloType == TremoloType::C8) {
+                                                    logic_tremoloType = 20;
+                                                } else if (tremoloType == TremoloType::R16 || tremoloType == TremoloType::C16) {
+                                                    logic_tremoloType = 40;
+                                                } else if (tremoloType == TremoloType::R32 || tremoloType == TremoloType::C32) {
+                                                    logic_tremoloType = 80;
+                                                } else if (tremoloType == TremoloType::R64 || tremoloType == TremoloType::C64) {
+                                                    logic_tremoloType = 160;
+                                                } else if (tremoloType == TremoloType::BUZZ_ROLL) {
+                                                    logic_tremoloType = 50;
+                                                }
+                                            }
+
+                                            duration_ticks = mnote->chord()->durationTypeTicks().ticks();
+
+                                            score_tremolo_note_map1[engravingItem] = _pre_note;
+                                            EngravingItem* _tremolo_mark = _measure_tremolo_map[mnote];
+                                            if (_tremolo_mark) {
+                                                score_tremolo_map1[engravingItem] = _tremolo_mark;
+                                            }
+                                            score_tremolo_st_map1[engravingItem] = mnote->tick().ticks();
+                                            score_tremolo_dt_map1[engravingItem] = duration_ticks;
+                                            score_tremolo_type_map1[engravingItem] = logic_tremoloType;
+                                            score_tremolo_ot_map1[engravingItem] = ottava_map[mnote];
+                                            if (_measure_tremolo_map0.find(mnote) != _measure_tremolo_map0.end()) {
+                                                score_tremolo_pt_map1[engravingItem] = 1;
+                                                score_tremolo_note_note_map1[engravingItem] = mnote;
+                                            }
+                                            if (_measure_tremolo_map1.find(mnote) != _measure_tremolo_map1.end()) {
+                                                score_tremolo_pt_map1[engravingItem] = 2;
+                                                if (score_tremolo_note_notes_map1.find(engravingItem) != score_tremolo_note_notes_map1.end()) {
+                                                    score_tremolo_note_notes_map1[engravingItem].clear();
+                                                } else {
+                                                    score_tremolo_note_notes_map1[engravingItem] = {};
+                                                }
+                                                for (Note* _note : _measure_tremolo_map1[mnote]->notes()) {
+                                                    score_tremolo_note_notes_map1[engravingItem].push_back(_note);
+                                                }
+                                            }
+                                            if (_measure_tremolo_map2.find(mnote) != _measure_tremolo_map2.end()) {
+                                                score_tremolo_pt_map1[engravingItem] = 3;
+                                                score_tremolo_note_note_map1[engravingItem] = mnote;
+                                                if (score_tremolo_note_notes_map1.find(engravingItem) != score_tremolo_note_notes_map1.end()) {
+                                                    score_tremolo_note_notes_map1[engravingItem].clear();
+                                                } else {
+                                                    score_tremolo_note_notes_map1[engravingItem] = {};
+                                                }
+                                                for (Note* _note : _measure_tremolo_map2[mnote]->notes()) {
+                                                    score_tremolo_note_notes_map1[engravingItem].push_back(_note);
+                                                }
+                                            }
+                                            if (_measure_tremolo_map3.find(mnote) != _measure_tremolo_map3.end()) {
+                                                score_tremolo_pt_map1[engravingItem] = 4;
+                                                if (score_tremolo_note_notes_map1.find(engravingItem) != score_tremolo_note_notes_map1.end()) {
+                                                    score_tremolo_note_notes_map1[engravingItem].clear();
+                                                } else {
+                                                    score_tremolo_note_notes_map1[engravingItem] = {};
+                                                }
+                                                for (Note* _note : _measure_tremolo_map3[mnote]->notes()) {
+                                                    score_tremolo_note_notes_map1[engravingItem].push_back(_note);
+                                                }
+                                            }
+                                            if (_measure_tremolo_map4.find(mnote) != _measure_tremolo_map4.end()) {
+                                                Chord* chord2 = _measure_tremolo_map4[mnote];
+                                                if (chord2) {
+                                                    Note* note2 = chord2->notes()[0];
+                                                    score_tremolo1_ot_map1[engravingItem] = ottava_map[note2];
+
+                                                    if (score_tremolo_note_notes1_map1.find(engravingItem) != score_tremolo_note_notes1_map1.end()) {
+                                                        score_tremolo_note_notes1_map1[engravingItem].clear();
+                                                    } else {
+                                                        score_tremolo_note_notes1_map1[engravingItem] = {};
+                                                    }
+                                                    for (Note* _note : chord2->notes()) {
+                                                        score_tremolo_note_notes1_map1[engravingItem].push_back(_note);
+                                                    }
+
+                                                    score_tremolo_dt_map1[engravingItem] = duration_ticks;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+
                             }
                         }
                     } else if (item->type() == mu::engraving::ElementType::ARPEGGIO) {
@@ -2160,8 +2547,15 @@ muse::RectF PlaybackCursor::resolveCursorRectByTick1(muse::midi::tick_t _tick, b
                     engravingItem->setColor(muse::draw::Color::RED);
                     EngravingItem* _tremolo_mark = score_tremolo_map[engravingItem];
                     if (_tremolo_mark) {
-                        if (score_trill_dt_map[engravingItem]) {
-                            if (score_trill_dt_map[engravingItem] > 0 && tick.ticks() >= score_trill_st_map[engravingItem] && tick.ticks() < score_trill_st_map[engravingItem] + score_trill_dt_map[engravingItem]) {
+                        // if (score_trill_dt_map[engravingItem]) {
+                        //     if (score_trill_dt_map[engravingItem] > 0 && tick.ticks() >= score_trill_st_map[engravingItem] && tick.ticks() < score_trill_st_map[engravingItem] + score_trill_dt_map[engravingItem]) {
+                        //         _tremolo_mark->setColor(muse::draw::Color::RED);
+                        //     } else {
+                        //         _tremolo_mark->setColor(muse::draw::Color::BLACK);
+                        //     } 
+                        // } 
+                        if (score_tremolo_dt_map[engravingItem]) {
+                            if (score_tremolo_dt_map[engravingItem] > 0 && tick.ticks() >= score_tremolo_st_map[engravingItem] && tick.ticks() < score_tremolo_st_map[engravingItem] + score_tremolo_dt_map[engravingItem]) {
                                 _tremolo_mark->setColor(muse::draw::Color::RED);
                             } else {
                                 _tremolo_mark->setColor(muse::draw::Color::BLACK);
@@ -2170,8 +2564,15 @@ muse::RectF PlaybackCursor::resolveCursorRectByTick1(muse::midi::tick_t _tick, b
                     }
                     EngravingItem* _tremolo_mark1 = score_tremolo_map1[engravingItem];
                     if (_tremolo_mark1) {
-                        if (score_trill_dt_map1[engravingItem]) {
-                            if (score_trill_dt_map1[engravingItem] > 0 && tick.ticks() >= score_trill_st_map1[engravingItem] && tick.ticks() < score_trill_st_map1[engravingItem] + score_trill_dt_map1[engravingItem]) {
+                        // if (score_trill_dt_map1[engravingItem]) {
+                        //     if (score_trill_dt_map1[engravingItem] > 0 && tick.ticks() >= score_trill_st_map1[engravingItem] && tick.ticks() < score_trill_st_map1[engravingItem] + score_trill_dt_map1[engravingItem]) {
+                        //         _tremolo_mark1->setColor(muse::draw::Color::RED);
+                        //     } else {
+                        //         _tremolo_mark1->setColor(muse::draw::Color::BLACK);
+                        //     }
+                        // }
+                        if (score_tremolo_dt_map1[engravingItem]) {
+                            if (score_tremolo_dt_map1[engravingItem] > 0 && tick.ticks() >= score_tremolo_st_map1[engravingItem] && tick.ticks() < score_tremolo_st_map1[engravingItem] + score_tremolo_dt_map1[engravingItem]) {
                                 _tremolo_mark1->setColor(muse::draw::Color::RED);
                             } else {
                                 _tremolo_mark1->setColor(muse::draw::Color::BLACK);
@@ -2193,6 +2594,20 @@ muse::RectF PlaybackCursor::resolveCursorRectByTick1(muse::midi::tick_t _tick, b
                                 score_trill_tie_map1[score_trill_map1_1[engravingItem]]);
                             m_notation->interaction()->trillNoteUpdate1();
                         } 
+
+                        if (score_tremolo_note_map[engravingItem]) {
+                            m_notation->interaction()->addTremoloNote(score_tremolo_pt_map[engravingItem], score_tremolo_st_map[engravingItem], 
+                                score_tremolo_dt_map[engravingItem], score_tremolo_type_map[engravingItem], score_tremolo_ot_map[engravingItem], score_tremolo1_ot_map[engravingItem], 
+                                score_tremolo_note_note_map[engravingItem], score_tremolo_note_notes_map[engravingItem], score_tremolo_note_notes1_map[engravingItem]);
+                            m_notation->interaction()->tremoloNoteUpdate();
+                        }
+                        
+                        if (score_tremolo_note_map1[engravingItem]) {
+                            m_notation->interaction()->addTremoloNote1(score_tremolo_pt_map1[engravingItem], score_tremolo_st_map1[engravingItem], 
+                                score_tremolo_dt_map1[engravingItem], score_tremolo_type_map1[engravingItem], score_tremolo_ot_map1[engravingItem], score_tremolo1_ot_map1[engravingItem], 
+                                score_tremolo_note_note_map1[engravingItem], score_tremolo_note_notes_map1[engravingItem], score_tremolo_note_notes1_map1[engravingItem]);
+                            m_notation->interaction()->tremoloNoteUpdate1();
+                        }
 
                         if (score_arpeggio_map1.find(engravingItem) != score_arpeggio_map1.end()) {
                             m_notation->interaction()->addArpeggioNotes(score_arpeggio_map[engravingItem], score_arpeggio_st_map[engravingItem], score_arpeggio_dt_map[engravingItem], score_arpeggio_ot_map[engravingItem]);
@@ -2735,6 +3150,8 @@ muse::RectF PlaybackCursor::resolveCursorRectByTick1(muse::midi::tick_t _tick, b
         m_notation->interaction()->arpeggioTick(tick.ticks());
         m_notation->interaction()->trillTick(tick.ticks());
         m_notation->interaction()->trillTick1(tick.ticks());
+        m_notation->interaction()->tremoloTick(tick.ticks());
+        m_notation->interaction()->tremoloTick1(tick.ticks());
         m_notation->interaction()->glissandoTick(tick.ticks());
         m_notation->interaction()->lastMeasure(measure == score->lastMeasure());
     }

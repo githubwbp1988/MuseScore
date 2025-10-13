@@ -117,13 +117,35 @@ private:
     std::map<Note*, bool> score_trill_fermata_map;
 
     std::map<EngravingItem*, Note*> score_trill_map_1;
-    std::map<EngravingItem*, EngravingItem*> score_tremolo_map1;
     std::map<EngravingItem*, int> score_trill_type_map_1;
     std::map<EngravingItem*, int> score_trill_st_map_1;
     std::map<EngravingItem*, int> score_trill_dt_map_1;
     std::map<EngravingItem*, int> score_trill_tdt_map_1;
     std::map<EngravingItem*, int> score_trill_tt_map_1;
     std::map<EngravingItem*, int> score_trill_ot_map_1;
+
+    std::map<EngravingItem*, Note*> score_tremolo_note_map;
+    std::map<EngravingItem*, int> score_tremolo_pt_map;
+    std::map<EngravingItem*, Note*> score_tremolo_note_note_map;
+    std::map<EngravingItem*, std::vector<Note*>> score_tremolo_note_notes_map;
+    std::map<EngravingItem*, std::vector<Note*>> score_tremolo_note_notes1_map;
+    std::map<EngravingItem*, int> score_tremolo_st_map;
+    std::map<EngravingItem*, int> score_tremolo_dt_map;
+    std::map<EngravingItem*, int> score_tremolo_type_map;
+    std::map<EngravingItem*, int> score_tremolo_ot_map;
+    std::map<EngravingItem*, int> score_tremolo1_ot_map;
+
+    std::map<EngravingItem*, EngravingItem*> score_tremolo_map1;
+    std::map<EngravingItem*, Note*> score_tremolo_note_map1;
+    std::map<EngravingItem*, int> score_tremolo_pt_map1;
+    std::map<EngravingItem*, Note*> score_tremolo_note_note_map1;
+    std::map<EngravingItem*, std::vector<Note*>> score_tremolo_note_notes_map1;
+    std::map<EngravingItem*, std::vector<Note*>> score_tremolo_note_notes1_map1;
+    std::map<EngravingItem*, int> score_tremolo_st_map1;
+    std::map<EngravingItem*, int> score_tremolo_dt_map1;
+    std::map<EngravingItem*, int> score_tremolo_type_map1;
+    std::map<EngravingItem*, int> score_tremolo_ot_map1;
+    std::map<EngravingItem*, int> score_tremolo1_ot_map1;
 
     std::map<EngravingItem*, Note*> score_trill_map1;
     std::map<EngravingItem*, int> score_trill_type_map1;

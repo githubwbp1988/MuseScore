@@ -55,6 +55,8 @@ public:
     KeyState arpeggioKeyState(piano_key_t key) const;
     KeyState trillKeyState(piano_key_t key) const;
     KeyState trillKeyState1(piano_key_t key) const;
+    KeyState tremoloKeyState(piano_key_t key) const;
+    KeyState tremoloKeyState1(piano_key_t key) const;
 
     bool isFromMidi() const;
 
@@ -129,6 +131,30 @@ private:
     int m_trill_trill_duration_ticks1;
     int m_trill_tremolo_type1;
     int m_trill_curr_ticks1;
+
+    int m_tremolo_curr_ticks = 0;
+    int m_tremolo_ptype = 0;
+    int m_tremolo_st = 0;
+    int m_tremolo_dt = 0;
+    int m_tremolo_type = 0;
+    int m_tremolo_ottavatype = 0;
+    int m_tremolo1_ottavatype = 0;
+    Note* m_tremolo_note = nullptr;
+    std::vector<mu::engraving::Note*> m_tremolo_notes;
+    std::vector<mu::engraving::Note*> m_tremolo1_notes;
+    piano_key_t m_tremolo_note_key;
+
+    int m_tremolo_curr_ticks1 = 0;
+    int m_tremolo_ptype1 = 0;
+    int m_tremolo_st1 = 0;
+    int m_tremolo_dt1 = 0;
+    int m_tremolo_type1 = 0;
+    int m_tremolo_ottavatype1 = 0;
+    int m_tremolo1_ottavatype1 = 0;
+    Note* m_tremolo_note1 = nullptr;
+    std::vector<mu::engraving::Note*> m_tremolo_notes1;
+    std::vector<mu::engraving::Note*> m_tremolo1_notes1;
+    piano_key_t m_tremolo_note_key1;
 
     std::set<uint> m_clefKeySigsKeys;
     muse::async::Notification m_clefKeySigsKeysChanged;

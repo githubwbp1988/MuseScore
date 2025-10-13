@@ -538,6 +538,15 @@ void PianoKeyboardView::paintWhiteKeys(QPainter* painter, const QRectF& viewport
                 m_check_rects.insert({ key, rect });
             }
 
+            if (m_controller->tremoloKeyState(key) != KeyState::None) {
+                fillColor = m_whiteKeyStateColors[m_controller->tremoloKeyState(key)];
+                m_check_rects.insert({ key, rect });
+            }
+            if (m_controller->tremoloKeyState1(key) != KeyState::None) {
+                fillColor = m_whiteKeyStateColors[m_controller->tremoloKeyState1(key)];
+                m_check_rects.insert({ key, rect });
+            }
+
             if (m_controller->arpeggioKeyState(key) != KeyState::None) {
                 fillColor = m_whiteKeyStateColors[m_controller->arpeggioKeyState(key)];
                 m_check_rects.insert({ key, rect });
@@ -681,6 +690,17 @@ void PianoKeyboardView::paintBlackKeys(QPainter* painter, const QRectF& viewport
             if (m_controller->trillKeyState1(key) != KeyState::None) {
                 topPieceGradient.setColorAt(1.0, m_blackKeyTopPieceStateColors[m_controller->trillKeyState1(key)]);
                 bottomPieceGradient.setColorAt(0.0, m_blackKeyBottomPieceStateColors[m_controller->trillKeyState1(key)]);
+                m_check_rects.insert({ key, rect });
+            }
+
+            if (m_controller->tremoloKeyState(key) != KeyState::None) {
+                topPieceGradient.setColorAt(1.0, m_blackKeyTopPieceStateColors[m_controller->tremoloKeyState(key)]);
+                bottomPieceGradient.setColorAt(0.0, m_blackKeyBottomPieceStateColors[m_controller->tremoloKeyState(key)]);
+                m_check_rects.insert({ key, rect });
+            }
+            if (m_controller->tremoloKeyState1(key) != KeyState::None) {
+                topPieceGradient.setColorAt(1.0, m_blackKeyTopPieceStateColors[m_controller->tremoloKeyState1(key)]);
+                bottomPieceGradient.setColorAt(0.0, m_blackKeyBottomPieceStateColors[m_controller->tremoloKeyState1(key)]);
                 m_check_rects.insert({ key, rect });
             }
 

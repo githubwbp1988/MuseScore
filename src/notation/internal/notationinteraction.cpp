@@ -1353,6 +1353,74 @@ void NotationInteraction::addTrillNote1(mu::engraving::Note* note, int _trill_ty
         m_ottava_map[note] = ottavaType;
     }
 }
+void NotationInteraction::addTremoloNote(int ptype, int st, int dt, int type, int otavatype, int otavatype1, mu::engraving::Note* note, std::vector<mu::engraving::Note*> notes, std::vector<mu::engraving::Note*> notes1) 
+{ 
+    tremolo_ptype = ptype;
+    tremolo_st = st;
+    tremolo_dt = dt;
+    tremolo_type = type;
+    tremolo_otavatype = otavatype;
+    tremolo1_otavatype = otavatype1;
+    tremolo_note = note;
+    tremolo_notes = notes;
+    tremolo1_notes = notes1;
+    if (otavatype > 0) {
+        if (ptype == 1 || ptype == 3) {
+            if (note) {
+                m_ottava_map[note] = otavatype;
+            }
+        }
+        if (ptype == 2 || ptype == 3) {
+            for (const mu::engraving::Note* _note : notes) {
+                m_ottava_map[_note] = otavatype;
+            }
+        }
+    }
+    if (otavatype1 > 0) {
+        if (ptype == 4) {
+            for (const mu::engraving::Note* _note : notes) {
+                m_ottava_map[_note] = otavatype;
+            }
+            for (const mu::engraving::Note* _note : notes1) {
+                m_ottava_map[_note] = otavatype1;
+            }
+        }
+    }
+}
+void NotationInteraction::addTremoloNote1(int ptype, int st, int dt, int type, int otavatype, int otavatype1, mu::engraving::Note* note, std::vector<mu::engraving::Note*> notes, std::vector<mu::engraving::Note*> notes1) 
+{ 
+    tremolo_ptype1 = ptype;
+    tremolo_st1 = st;
+    tremolo_dt1 = dt;
+    tremolo_type1 = type;
+    tremolo_otavatype1 = otavatype;
+    tremolo1_otavatype1 = otavatype1;
+    tremolo_note1 = note;
+    tremolo_notes1 = notes;
+    tremolo1_notes1 = notes1;
+    if (otavatype > 0) {
+        if (ptype == 1 || ptype == 3) {
+            if (note) {
+                m_ottava_map[note] = otavatype;
+            }
+        }
+        if (ptype == 2 || ptype == 3) {
+            for (const mu::engraving::Note* _note : notes) {
+                m_ottava_map[_note] = otavatype;
+            }
+        }
+    }
+    if (otavatype1 > 0) {
+        if (ptype == 4) {
+            for (const mu::engraving::Note* _note : notes) {
+                m_ottava_map[_note] = otavatype;
+            }
+            for (const mu::engraving::Note* _note : notes1) {
+                m_ottava_map[_note] = otavatype1;
+            }
+        }
+    }
+}
 int NotationInteraction::trillNoteTicks() const 
 {
     return trill_ticks;
@@ -1405,6 +1473,14 @@ int NotationInteraction::trillCurrticks1() const
 {
     return trill_curr_ticks1;
 }
+int NotationInteraction::tremoloCurrticks() const 
+{
+    return tremolo_curr_ticks;
+}
+int NotationInteraction::tremoloCurrticks1() const 
+{
+    return tremolo_curr_ticks1;
+}
 void NotationInteraction::trillNoteUpdate() 
 {
     m_trillNoteChanged.notify();
@@ -1412,6 +1488,14 @@ void NotationInteraction::trillNoteUpdate()
 void NotationInteraction::trillNoteUpdate1() 
 {
     m_trillNoteChanged1.notify();
+}
+void NotationInteraction::tremoloNoteUpdate() 
+{
+    m_tremoloNoteChanged.notify();
+}
+void NotationInteraction::tremoloNoteUpdate1() 
+{
+    m_tremoloNoteChanged1.notify();
 }
 mu::engraving::Note* NotationInteraction::trillNote() const 
 {
@@ -1491,6 +1575,109 @@ bool NotationInteraction::trillTick1(int ticks)
     m_trillTickChanged1.notify();
     return false;
 }
+
+int NotationInteraction::tremoloPtype() const {
+    return tremolo_ptype;
+}
+int NotationInteraction::tremoloSt() const {
+    return tremolo_st;
+}
+int NotationInteraction::tremoloDt() const {
+    return tremolo_dt;
+}
+int NotationInteraction::tremoloType() const {
+    return tremolo_type;
+}
+int NotationInteraction::tremoloOtavaType() const {
+    return tremolo_otavatype;
+}
+int NotationInteraction::tremolo1OtavaType() const {
+    return tremolo1_otavatype;
+}
+mu::engraving::Note* NotationInteraction::tremoloNote() const {
+    return tremolo_note;
+}
+std::vector<mu::engraving::Note*> NotationInteraction::tremoloNotes() const {
+    return tremolo_notes;
+}
+std::vector<mu::engraving::Note*> NotationInteraction::tremolo1Notes() const {
+    return tremolo1_notes;
+}
+
+int NotationInteraction::tremoloPtype1() const {
+    return tremolo_ptype1;
+}
+int NotationInteraction::tremoloSt1() const {
+    return tremolo_st1;
+}
+int NotationInteraction::tremoloDt1() const {
+    return tremolo_dt1;
+}
+int NotationInteraction::tremoloType1() const {
+    return tremolo_type1;
+}
+int NotationInteraction::tremoloOtavaType1() const {
+    return tremolo_otavatype1;
+}
+int NotationInteraction::tremolo1OtavaType1() const {
+    return tremolo1_otavatype1;
+}
+mu::engraving::Note* NotationInteraction::tremoloNote1() const {
+    return tremolo_note1;
+}
+std::vector<mu::engraving::Note*> NotationInteraction::tremoloNotes1() const {
+    return tremolo_notes1;
+}
+std::vector<mu::engraving::Note*> NotationInteraction::tremolo1Notes1() const {
+    return tremolo1_notes1;
+}
+
+void NotationInteraction::tremoloTick(int ticks) {
+    if (tremolo_dt == 0) {
+        tremolo_curr_ticks = ticks;
+        m_tremoloTickChanged.notify();
+        return;
+    }
+    if (ticks < tremolo_dt || ticks > tremolo_st + tremolo_dt) {
+        tremolo_curr_ticks = ticks;
+        tremolo_ptype = 0;
+        tremolo_st = 0;
+        tremolo_dt = 0;
+        tremolo_type = 0;
+        tremolo_otavatype = 0;
+        tremolo1_otavatype = 0;
+        tremolo_note = nullptr;
+        tremolo_notes = {};
+        tremolo1_notes = {};
+        m_tremoloTickChanged.notify();
+        return;
+    } 
+    tremolo_curr_ticks = ticks;
+    m_tremoloTickChanged.notify();
+}
+void NotationInteraction::tremoloTick1(int ticks) {
+    if (tremolo_dt1 == 0) {
+        tremolo_curr_ticks1 = ticks;
+        m_tremoloTickChanged1.notify();
+        return;
+    }
+    if (ticks < tremolo_dt1 || ticks > tremolo_st1 + tremolo_dt1) {
+        tremolo_curr_ticks1 = ticks;
+        tremolo_ptype1 = 0;
+        tremolo_st1 = 0;
+        tremolo_dt1 = 0;
+        tremolo_type1 = 0;
+        tremolo_otavatype1 = 0;
+        tremolo1_otavatype1 = 0;
+        tremolo_note1 = nullptr;
+        tremolo_notes1 = {};
+        tremolo1_notes1 = {};
+        m_tremoloTickChanged1.notify();
+        return;
+    } 
+    tremolo_curr_ticks1 = ticks;
+    m_tremoloTickChanged1.notify();
+}
 muse::async::Notification NotationInteraction::trillNoteChanged() 
 {
     return m_trillNoteChanged;
@@ -1506,6 +1693,18 @@ muse::async::Notification NotationInteraction::trillTickChanged()
 muse::async::Notification NotationInteraction::trillTickChanged1() 
 {
     return m_trillTickChanged1;
+}
+muse::async::Notification NotationInteraction::tremoloNoteChanged() {
+    return m_tremoloNoteChanged;
+}
+muse::async::Notification NotationInteraction::tremoloNoteChanged1() {
+    return m_tremoloNoteChanged1;
+}
+muse::async::Notification NotationInteraction::tremoloTickChanged() {
+    return m_tremoloTickChanged;
+}
+muse::async::Notification NotationInteraction::tremoloTickChanged1() {
+    return m_tremoloTickChanged1;
 }
 
 bool NotationInteraction::islastMeasure() const

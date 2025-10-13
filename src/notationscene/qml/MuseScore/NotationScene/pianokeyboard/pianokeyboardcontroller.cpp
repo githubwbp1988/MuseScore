@@ -80,6 +80,181 @@ KeyState PianoKeyboardController::playbackKeyState(piano_key_t key) const
                 }
             }
         }
+
+        if (m_tremolo_ptype > 0 && m_tremolo_curr_ticks >= m_tremolo_st && m_tremolo_curr_ticks <= m_tremolo_st + m_tremolo_dt) {
+            if (m_tremolo_ptype == 1) {
+                if (key == m_tremolo_note_key) {
+                    return KeyState::None;
+                }
+            } else {
+                for (const mu::engraving::Note* _note : m_tremolo_notes) {
+                    const bool useWrittenPitch = notationConfiguration()->midiUseWrittenPitch().val;
+                    piano_key_t _note_key = static_cast<piano_key_t>(useWrittenPitch ? _note->epitch() : _note->ppitch());
+                    
+                    int _noteOttavaType = m_tremolo_ottavatype;
+
+                    if (_noteOttavaType > 0) {
+                        int __key = static_cast<int>(_note_key);
+                        if (_noteOttavaType == 100) {
+                            __key += 12;
+                        }
+                        if (_noteOttavaType == 101) {
+                            __key -= 12;
+                        }
+                        if (_noteOttavaType == 102) {
+                            __key += 24;
+                        }
+                        if (_noteOttavaType == 103) {
+                            __key -= 24;
+                        }
+                        if (_noteOttavaType == 104) {
+                            __key += 36;
+                        }
+                        if (_noteOttavaType == 105) {
+                            __key -= 36;
+                        }
+                        if (__key < static_cast<int>(lowestKey)) {
+                            __key = static_cast<int>(lowestKey);
+                        }
+                        if (__key >= static_cast<int>(lowestKey + numKeys)) {
+                            __key = static_cast<int>(lowestKey + numKeys) - 1;
+                        }
+                        _note_key = (piano_key_t)__key;
+                    }
+                    if (key == _note_key) {
+                        return KeyState::None;
+                    }
+                }
+                if (m_tremolo_ptype == 4) {
+                    for (const mu::engraving::Note* _note : m_tremolo1_notes) {
+                        const bool useWrittenPitch = notationConfiguration()->midiUseWrittenPitch().val;
+                        piano_key_t _note_key = static_cast<piano_key_t>(useWrittenPitch ? _note->epitch() : _note->ppitch());
+                        
+                        int _noteOttavaType = m_tremolo1_ottavatype;
+
+                        if (_noteOttavaType > 0) {
+                            int __key = static_cast<int>(_note_key);
+                            if (_noteOttavaType == 100) {
+                                __key += 12;
+                            }
+                            if (_noteOttavaType == 101) {
+                                __key -= 12;
+                            }
+                            if (_noteOttavaType == 102) {
+                                __key += 24;
+                            }
+                            if (_noteOttavaType == 103) {
+                                __key -= 24;
+                            }
+                            if (_noteOttavaType == 104) {
+                                __key += 36;
+                            }
+                            if (_noteOttavaType == 105) {
+                                __key -= 36;
+                            }
+                            if (__key < static_cast<int>(lowestKey)) {
+                                __key = static_cast<int>(lowestKey);
+                            }
+                            if (__key >= static_cast<int>(lowestKey + numKeys)) {
+                                __key = static_cast<int>(lowestKey + numKeys) - 1;
+                            }
+                            _note_key = (piano_key_t)__key;
+                        }
+                        if (key == _note_key) {
+                            return KeyState::None;
+                        }
+                    }
+                }
+            }
+        }
+
+        if (m_tremolo_ptype1 > 0 && m_tremolo_curr_ticks1 >= m_tremolo_st1 && m_tremolo_curr_ticks1 <= m_tremolo_st1 + m_tremolo_dt1) {
+            if (m_tremolo_ptype1 == 1) {
+                if (key == m_tremolo_note_key1) {
+                    return KeyState::None;
+                }
+            } else {
+                for (const mu::engraving::Note* _note : m_tremolo_notes1) {
+                    const bool useWrittenPitch = notationConfiguration()->midiUseWrittenPitch().val;
+                    piano_key_t _note_key = static_cast<piano_key_t>(useWrittenPitch ? _note->epitch() : _note->ppitch());
+                    
+                    int _noteOttavaType = m_tremolo_ottavatype1;
+
+                    if (_noteOttavaType > 0) {
+                        int __key = static_cast<int>(_note_key);
+                        if (_noteOttavaType == 100) {
+                            __key += 12;
+                        }
+                        if (_noteOttavaType == 101) {
+                            __key -= 12;
+                        }
+                        if (_noteOttavaType == 102) {
+                            __key += 24;
+                        }
+                        if (_noteOttavaType == 103) {
+                            __key -= 24;
+                        }
+                        if (_noteOttavaType == 104) {
+                            __key += 36;
+                        }
+                        if (_noteOttavaType == 105) {
+                            __key -= 36;
+                        }
+                        if (__key < static_cast<int>(lowestKey)) {
+                            __key = static_cast<int>(lowestKey);
+                        }
+                        if (__key >= static_cast<int>(lowestKey + numKeys)) {
+                            __key = static_cast<int>(lowestKey + numKeys) - 1;
+                        }
+                        _note_key = (piano_key_t)__key;
+                    }
+                    if (key == _note_key) {
+                        return KeyState::None;
+                    }
+                }
+                if (m_tremolo_ptype1 == 4) {
+                    for (const mu::engraving::Note* _note : m_tremolo1_notes1) {
+                        const bool useWrittenPitch = notationConfiguration()->midiUseWrittenPitch().val;
+                        piano_key_t _note_key = static_cast<piano_key_t>(useWrittenPitch ? _note->epitch() : _note->ppitch());
+                        
+                        int _noteOttavaType = m_tremolo1_ottavatype1;
+
+                        if (_noteOttavaType > 0) {
+                            int __key = static_cast<int>(_note_key);
+                            if (_noteOttavaType == 100) {
+                                __key += 12;
+                            }
+                            if (_noteOttavaType == 101) {
+                                __key -= 12;
+                            }
+                            if (_noteOttavaType == 102) {
+                                __key += 24;
+                            }
+                            if (_noteOttavaType == 103) {
+                                __key -= 24;
+                            }
+                            if (_noteOttavaType == 104) {
+                                __key += 36;
+                            }
+                            if (_noteOttavaType == 105) {
+                                __key -= 36;
+                            }
+                            if (__key < static_cast<int>(lowestKey)) {
+                                __key = static_cast<int>(lowestKey);
+                            }
+                            if (__key >= static_cast<int>(lowestKey + numKeys)) {
+                                __key = static_cast<int>(lowestKey + numKeys) - 1;
+                            }
+                            _note_key = (piano_key_t)__key;
+                        }
+                        if (key == _note_key) {
+                            return KeyState::None;
+                        }
+                    }
+                }
+            }
+        }
+
         return KeyState::RightHand;
     }
 
@@ -97,6 +272,13 @@ bool PianoKeyboardController::playbackKeyHitStartTick(piano_key_t key)
             return false;
         }
         if (trillKeyState1(key) != KeyState::None) {
+            return false;
+        }
+
+        if (tremoloKeyState(key) != KeyState::None) {
+            return false;
+        }
+        if (tremoloKeyState1(key) != KeyState::None) {
             return false;
         }
 
@@ -479,6 +661,511 @@ KeyState PianoKeyboardController::trillKeyState1(piano_key_t key) const
     return KeyState::None;
 }
 
+KeyState PianoKeyboardController::tremoloKeyState(piano_key_t key) const {
+    if (m_tremolo_ptype == 0) {
+        return KeyState::None;
+    }
+
+    if (m_tremolo_curr_ticks >= m_tremolo_st && m_tremolo_curr_ticks <= m_tremolo_st + m_tremolo_dt) {
+        int left_dis = m_tremolo_curr_ticks - m_tremolo_st;
+        double ratio = left_dis / static_cast<double>(m_tremolo_dt);
+
+        if (m_tremolo_ptype == 1 || m_tremolo_ptype == 3) {
+            DurationType noteDurationtype = m_tremolo_note->chord()->durationType().type();
+            int frequency = m_tremolo_type / 10;
+            if (noteDurationtype < mu::engraving::DurationType::V_WHOLE) {
+                frequency *= 8;
+            } else if (noteDurationtype <= mu::engraving::DurationType::V_HALF) {
+                frequency *= 4;
+            } 
+            int _ratio_count = static_cast<int>(frequency * ratio);
+            int _int_note_key = static_cast<int>(m_tremolo_note_key);
+            if (m_tremolo_ptype == 1) {
+                if (_ratio_count % 2 == 1) {
+                    _int_note_key -= 1;
+                } 
+                if (key == (piano_key_t)_int_note_key) {
+                    return KeyState::Trill;
+                }
+            } else {
+                if (_ratio_count % 2 == 1) {
+                    _int_note_key -= 1;
+                    if (key == (piano_key_t)_int_note_key) {
+                        return KeyState::Trill;
+                    }
+                } else {
+                    for (const mu::engraving::Note* _note : m_tremolo_notes) {
+                        const bool useWrittenPitch = notationConfiguration()->midiUseWrittenPitch().val;
+                        piano_key_t _note_key = static_cast<piano_key_t>(useWrittenPitch ? _note->epitch() : _note->ppitch());
+                        
+                        int _noteOttavaType = m_tremolo_ottavatype;
+
+                        if (_noteOttavaType > 0) {
+                            int __key = static_cast<int>(_note_key);
+                            if (_noteOttavaType == 100) {
+                                __key += 12;
+                            }
+                            if (_noteOttavaType == 101) {
+                                __key -= 12;
+                            }
+                            if (_noteOttavaType == 102) {
+                                __key += 24;
+                            }
+                            if (_noteOttavaType == 103) {
+                                __key -= 24;
+                            }
+                            if (_noteOttavaType == 104) {
+                                __key += 36;
+                            }
+                            if (_noteOttavaType == 105) {
+                                __key -= 36;
+                            }
+                            if (__key < static_cast<int>(lowestKey)) {
+                                __key = static_cast<int>(lowestKey);
+                            }
+                            if (__key >= static_cast<int>(lowestKey + numKeys)) {
+                                __key = static_cast<int>(lowestKey + numKeys) - 1;
+                            }
+                            _note_key = (piano_key_t)__key;
+                        }
+                        if (key == _note_key) {
+                            return KeyState::Trill;
+                        }
+                    }
+                }
+            }
+        }
+        if (m_tremolo_ptype == 2) {
+            DurationType noteDurationtype = m_tremolo_notes[0]->chord()->durationType().type();
+            int frequency = m_tremolo_type / 10;
+            if (noteDurationtype < mu::engraving::DurationType::V_WHOLE) {
+                frequency *= 8;
+            } else if (noteDurationtype <= mu::engraving::DurationType::V_HALF) {
+                frequency *= 4;
+            } 
+            int _ratio_count = static_cast<int>(frequency * ratio);
+            mu::engraving::Note* _note1 = m_tremolo_notes[0];
+            mu::engraving::Note* _note2 = m_tremolo_notes[1];
+            const bool useWrittenPitch = notationConfiguration()->midiUseWrittenPitch().val;
+            piano_key_t _note1_key = static_cast<piano_key_t>(useWrittenPitch ? _note1->epitch() : _note1->ppitch());
+            piano_key_t _note2_key = static_cast<piano_key_t>(useWrittenPitch ? _note2->epitch() : _note2->ppitch());
+            
+            int _note1OttavaType = m_tremolo_ottavatype;
+            int _note2OttavaType = m_tremolo_ottavatype;
+
+            if (_note1OttavaType > 0) {
+                int __key = static_cast<int>(_note1_key);
+                if (_note1OttavaType == 100) {
+                    __key += 12;
+                }
+                if (_note1OttavaType == 101) {
+                    __key -= 12;
+                }
+                if (_note1OttavaType == 102) {
+                    __key += 24;
+                }
+                if (_note1OttavaType == 103) {
+                    __key -= 24;
+                }
+                if (_note1OttavaType == 104) {
+                    __key += 36;
+                }
+                if (_note1OttavaType == 105) {
+                    __key -= 36;
+                }
+                if (__key < static_cast<int>(lowestKey)) {
+                    __key = static_cast<int>(lowestKey);
+                }
+                if (__key >= static_cast<int>(lowestKey + numKeys)) {
+                    __key = static_cast<int>(lowestKey + numKeys) - 1;
+                }
+                _note1_key = (piano_key_t)__key;
+            }
+            if (_note2OttavaType > 0) {
+                int __key = static_cast<int>(_note2_key);
+                if (_note2OttavaType == 100) {
+                    __key += 12;
+                }
+                if (_note2OttavaType == 101) {
+                    __key -= 12;
+                }
+                if (_note2OttavaType == 102) {
+                    __key += 24;
+                }
+                if (_note2OttavaType == 103) {
+                    __key -= 24;
+                }
+                if (_note2OttavaType == 104) {
+                    __key += 36;
+                }
+                if (_note2OttavaType == 105) {
+                    __key -= 36;
+                }
+                if (__key < static_cast<int>(lowestKey)) {
+                    __key = static_cast<int>(lowestKey);
+                }
+                if (__key >= static_cast<int>(lowestKey + numKeys)) {
+                    __key = static_cast<int>(lowestKey + numKeys) - 1;
+                }
+                _note2_key = (piano_key_t)__key;
+            }
+            if (_ratio_count % 2 == 1) {
+                if (key == _note2_key) {
+                    return KeyState::Trill;
+                }
+            } else {
+                if (key == _note1_key) {
+                    return KeyState::Trill;
+                }
+            }
+        }
+
+        if (m_tremolo_ptype == 4) {
+            DurationType noteDurationtype = m_tremolo_notes[0]->chord()->durationType().type();
+            int frequency = m_tremolo_type / 10;
+            if (noteDurationtype < mu::engraving::DurationType::V_WHOLE) {
+                frequency *= 8;
+            } else if (noteDurationtype <= mu::engraving::DurationType::V_HALF) {
+                frequency *= 4;
+            } 
+            int _ratio_count = static_cast<int>(frequency * ratio);
+            if (_ratio_count % 2 == 1) {
+                for (const mu::engraving::Note* _note : m_tremolo1_notes) {
+                    const bool useWrittenPitch = notationConfiguration()->midiUseWrittenPitch().val;
+                    piano_key_t _note_key = static_cast<piano_key_t>(useWrittenPitch ? _note->epitch() : _note->ppitch());
+                    
+                    int _noteOttavaType = m_tremolo1_ottavatype;
+
+                    if (_noteOttavaType > 0) {
+                        int __key = static_cast<int>(_note_key);
+                        if (_noteOttavaType == 100) {
+                            __key += 12;
+                        }
+                        if (_noteOttavaType == 101) {
+                            __key -= 12;
+                        }
+                        if (_noteOttavaType == 102) {
+                            __key += 24;
+                        }
+                        if (_noteOttavaType == 103) {
+                            __key -= 24;
+                        }
+                        if (_noteOttavaType == 104) {
+                            __key += 36;
+                        }
+                        if (_noteOttavaType == 105) {
+                            __key -= 36;
+                        }
+                        if (__key < static_cast<int>(lowestKey)) {
+                            __key = static_cast<int>(lowestKey);
+                        }
+                        if (__key >= static_cast<int>(lowestKey + numKeys)) {
+                            __key = static_cast<int>(lowestKey + numKeys) - 1;
+                        }
+                        _note_key = (piano_key_t)__key;
+                    }
+                    if (key == _note_key) {
+                        return KeyState::Trill;
+                    }
+                }
+            } else {
+                for (const mu::engraving::Note* _note : m_tremolo_notes) {
+                    const bool useWrittenPitch = notationConfiguration()->midiUseWrittenPitch().val;
+                    piano_key_t _note_key = static_cast<piano_key_t>(useWrittenPitch ? _note->epitch() : _note->ppitch());
+                    
+                    int _noteOttavaType = m_tremolo_ottavatype;
+
+                    if (_noteOttavaType > 0) {
+                        int __key = static_cast<int>(_note_key);
+                        if (_noteOttavaType == 100) {
+                            __key += 12;
+                        }
+                        if (_noteOttavaType == 101) {
+                            __key -= 12;
+                        }
+                        if (_noteOttavaType == 102) {
+                            __key += 24;
+                        }
+                        if (_noteOttavaType == 103) {
+                            __key -= 24;
+                        }
+                        if (_noteOttavaType == 104) {
+                            __key += 36;
+                        }
+                        if (_noteOttavaType == 105) {
+                            __key -= 36;
+                        }
+                        if (__key < static_cast<int>(lowestKey)) {
+                            __key = static_cast<int>(lowestKey);
+                        }
+                        if (__key >= static_cast<int>(lowestKey + numKeys)) {
+                            __key = static_cast<int>(lowestKey + numKeys) - 1;
+                        }
+                        _note_key = (piano_key_t)__key;
+                    }
+                    if (key == _note_key) {
+                        return KeyState::Trill;
+                    }
+                }
+            }
+        }
+    }
+    return KeyState::None;
+}
+
+KeyState PianoKeyboardController::tremoloKeyState1(piano_key_t key) const {
+    if (m_tremolo_ptype1 == 0) {
+        return KeyState::None;
+    }
+
+    if (m_tremolo_curr_ticks1 >= m_tremolo_st1 && m_tremolo_curr_ticks1 <= m_tremolo_st1 + m_tremolo_dt1) {
+        int left_dis = m_tremolo_curr_ticks1 - m_tremolo_st1;
+        double ratio = left_dis / static_cast<double>(m_tremolo_dt1);
+
+        if (m_tremolo_ptype1 == 1 || m_tremolo_ptype1 == 3) {
+            DurationType noteDurationtype = m_tremolo_note1->chord()->durationType().type();
+            int frequency = m_tremolo_type1 / 10;
+            if (noteDurationtype < mu::engraving::DurationType::V_WHOLE) {
+                frequency *= 8;
+            } else if (noteDurationtype <= mu::engraving::DurationType::V_HALF) {
+                frequency *= 4;
+            } 
+            int _ratio_count = static_cast<int>(frequency * ratio);
+            int _int_note_key = static_cast<int>(m_tremolo_note_key1);
+            if (m_tremolo_ptype == 1) {
+                if (_ratio_count % 2 == 1) {
+                    _int_note_key -= 1;
+                } 
+                if (key == (piano_key_t)_int_note_key) {
+                    return KeyState::Trill;
+                }
+            } else {
+                if (_ratio_count % 2 == 1) {
+                    _int_note_key -= 1;
+                    if (key == (piano_key_t)_int_note_key) {
+                        return KeyState::Trill;
+                    }
+                } else {
+                    for (const mu::engraving::Note* _note : m_tremolo_notes1) {
+                        const bool useWrittenPitch = notationConfiguration()->midiUseWrittenPitch().val;
+                        piano_key_t _note_key = static_cast<piano_key_t>(useWrittenPitch ? _note->epitch() : _note->ppitch());
+                        
+                        int _noteOttavaType = m_tremolo_ottavatype1;
+
+                        if (_noteOttavaType > 0) {
+                            int __key = static_cast<int>(_note_key);
+                            if (_noteOttavaType == 100) {
+                                __key += 12;
+                            }
+                            if (_noteOttavaType == 101) {
+                                __key -= 12;
+                            }
+                            if (_noteOttavaType == 102) {
+                                __key += 24;
+                            }
+                            if (_noteOttavaType == 103) {
+                                __key -= 24;
+                            }
+                            if (_noteOttavaType == 104) {
+                                __key += 36;
+                            }
+                            if (_noteOttavaType == 105) {
+                                __key -= 36;
+                            }
+                            if (__key < static_cast<int>(lowestKey)) {
+                                __key = static_cast<int>(lowestKey);
+                            }
+                            if (__key >= static_cast<int>(lowestKey + numKeys)) {
+                                __key = static_cast<int>(lowestKey + numKeys) - 1;
+                            }
+                            _note_key = (piano_key_t)__key;
+                        }
+                        if (key == _note_key) {
+                            return KeyState::Trill;
+                        }
+                    }
+                }
+            }
+        }
+        if (m_tremolo_ptype == 2) {
+            DurationType noteDurationtype = m_tremolo_notes1[0]->chord()->durationType().type();
+            int frequency = m_tremolo_type / 10;
+            if (noteDurationtype < mu::engraving::DurationType::V_WHOLE) {
+                frequency *= 8;
+            } else if (noteDurationtype <= mu::engraving::DurationType::V_HALF) {
+                frequency *= 4;
+            } 
+            int _ratio_count = static_cast<int>(frequency * ratio);
+            mu::engraving::Note* _note1 = m_tremolo_notes1[0];
+            mu::engraving::Note* _note2 = m_tremolo_notes1[1];
+            const bool useWrittenPitch = notationConfiguration()->midiUseWrittenPitch().val;
+            piano_key_t _note1_key = static_cast<piano_key_t>(useWrittenPitch ? _note1->epitch() : _note1->ppitch());
+            piano_key_t _note2_key = static_cast<piano_key_t>(useWrittenPitch ? _note2->epitch() : _note2->ppitch());
+            
+            int _note1OttavaType = m_tremolo_ottavatype1;
+            int _note2OttavaType = m_tremolo_ottavatype1;
+
+            if (_note1OttavaType > 0) {
+                int __key = static_cast<int>(_note1_key);
+                if (_note1OttavaType == 100) {
+                    __key += 12;
+                }
+                if (_note1OttavaType == 101) {
+                    __key -= 12;
+                }
+                if (_note1OttavaType == 102) {
+                    __key += 24;
+                }
+                if (_note1OttavaType == 103) {
+                    __key -= 24;
+                }
+                if (_note1OttavaType == 104) {
+                    __key += 36;
+                }
+                if (_note1OttavaType == 105) {
+                    __key -= 36;
+                }
+                if (__key < static_cast<int>(lowestKey)) {
+                    __key = static_cast<int>(lowestKey);
+                }
+                if (__key >= static_cast<int>(lowestKey + numKeys)) {
+                    __key = static_cast<int>(lowestKey + numKeys) - 1;
+                }
+                _note1_key = (piano_key_t)__key;
+            }
+            if (_note2OttavaType > 0) {
+                int __key = static_cast<int>(_note2_key);
+                if (_note2OttavaType == 100) {
+                    __key += 12;
+                }
+                if (_note2OttavaType == 101) {
+                    __key -= 12;
+                }
+                if (_note2OttavaType == 102) {
+                    __key += 24;
+                }
+                if (_note2OttavaType == 103) {
+                    __key -= 24;
+                }
+                if (_note2OttavaType == 104) {
+                    __key += 36;
+                }
+                if (_note2OttavaType == 105) {
+                    __key -= 36;
+                }
+                if (__key < static_cast<int>(lowestKey)) {
+                    __key = static_cast<int>(lowestKey);
+                }
+                if (__key >= static_cast<int>(lowestKey + numKeys)) {
+                    __key = static_cast<int>(lowestKey + numKeys) - 1;
+                }
+                _note2_key = (piano_key_t)__key;
+            }
+            if (_ratio_count % 2 == 1) {
+                if (key == _note2_key) {
+                    return KeyState::Trill;
+                }
+            } else {
+                if (key == _note1_key) {
+                    return KeyState::Trill;
+                }
+            }
+        }
+
+        if (m_tremolo_ptype == 4) {
+            DurationType noteDurationtype = m_tremolo_notes1[0]->chord()->durationType().type();
+            int frequency = m_tremolo_type / 10;
+            if (noteDurationtype < mu::engraving::DurationType::V_WHOLE) {
+                frequency *= 8;
+            } else if (noteDurationtype <= mu::engraving::DurationType::V_HALF) {
+                frequency *= 4;
+            } 
+            int _ratio_count = static_cast<int>(frequency * ratio);
+            if (_ratio_count % 2 == 1) {
+                for (const mu::engraving::Note* _note : m_tremolo1_notes1) {
+                    const bool useWrittenPitch = notationConfiguration()->midiUseWrittenPitch().val;
+                    piano_key_t _note_key = static_cast<piano_key_t>(useWrittenPitch ? _note->epitch() : _note->ppitch());
+                    
+                    int _noteOttavaType = m_tremolo1_ottavatype1;
+
+                    if (_noteOttavaType > 0) {
+                        int __key = static_cast<int>(_note_key);
+                        if (_noteOttavaType == 100) {
+                            __key += 12;
+                        }
+                        if (_noteOttavaType == 101) {
+                            __key -= 12;
+                        }
+                        if (_noteOttavaType == 102) {
+                            __key += 24;
+                        }
+                        if (_noteOttavaType == 103) {
+                            __key -= 24;
+                        }
+                        if (_noteOttavaType == 104) {
+                            __key += 36;
+                        }
+                        if (_noteOttavaType == 105) {
+                            __key -= 36;
+                        }
+                        if (__key < static_cast<int>(lowestKey)) {
+                            __key = static_cast<int>(lowestKey);
+                        }
+                        if (__key >= static_cast<int>(lowestKey + numKeys)) {
+                            __key = static_cast<int>(lowestKey + numKeys) - 1;
+                        }
+                        _note_key = (piano_key_t)__key;
+                    }
+                    if (key == _note_key) {
+                        return KeyState::Trill;
+                    }
+                }
+            } else {
+                for (const mu::engraving::Note* _note : m_tremolo_notes1) {
+                    const bool useWrittenPitch = notationConfiguration()->midiUseWrittenPitch().val;
+                    piano_key_t _note_key = static_cast<piano_key_t>(useWrittenPitch ? _note->epitch() : _note->ppitch());
+                    
+                    int _noteOttavaType = m_tremolo_ottavatype1;
+
+                    if (_noteOttavaType > 0) {
+                        int __key = static_cast<int>(_note_key);
+                        if (_noteOttavaType == 100) {
+                            __key += 12;
+                        }
+                        if (_noteOttavaType == 101) {
+                            __key -= 12;
+                        }
+                        if (_noteOttavaType == 102) {
+                            __key += 24;
+                        }
+                        if (_noteOttavaType == 103) {
+                            __key -= 24;
+                        }
+                        if (_noteOttavaType == 104) {
+                            __key += 36;
+                        }
+                        if (_noteOttavaType == 105) {
+                            __key -= 36;
+                        }
+                        if (__key < static_cast<int>(lowestKey)) {
+                            __key = static_cast<int>(lowestKey);
+                        }
+                        if (__key >= static_cast<int>(lowestKey + numKeys)) {
+                            __key = static_cast<int>(lowestKey + numKeys) - 1;
+                        }
+                        _note_key = (piano_key_t)__key;
+                    }
+                    if (key == _note_key) {
+                        return KeyState::Trill;
+                    }
+                }
+            }
+        }
+    }
+    return KeyState::None;
+}
+
+
 bool PianoKeyboardController::playbackKeyStatesEmpty() const 
 {
     if (m_righthand_keys.empty()) {
@@ -784,6 +1471,112 @@ void PianoKeyboardController::onNotationChanged()
             }
         });
 
+        notation->interaction()->tremoloNoteChanged().onNotify(this, [this]() {
+            auto notation = currentNotation();
+            if (!notation) {
+                return;
+            }
+            m_tremolo_ptype = notation->interaction()->tremoloPtype();
+            m_tremolo_st = notation->interaction()->tremoloSt();
+            m_tremolo_dt = notation->interaction()->tremoloDt();
+            m_tremolo_type = notation->interaction()->tremoloType();
+            m_tremolo_ottavatype = notation->interaction()->tremoloOtavaType();
+            m_tremolo1_ottavatype = notation->interaction()->tremolo1OtavaType();
+            m_tremolo_note = notation->interaction()->tremoloNote();
+            m_tremolo_notes = notation->interaction()->tremoloNotes();
+            m_tremolo1_notes = notation->interaction()->tremolo1Notes();
+
+            m_tremolo_note_key = static_cast<piano_key_t>(10000);
+            if (m_tremolo_ptype == 1 || m_tremolo_ptype == 3) {
+                const bool useWrittenPitch = notationConfiguration()->midiUseWrittenPitch().val;
+                m_tremolo_note_key = static_cast<piano_key_t>(useWrittenPitch ? m_tremolo_note->epitch() : m_tremolo_note->ppitch());
+                
+                int _noteOttavaType = m_tremolo_ottavatype;
+
+                if (_noteOttavaType > 0) {
+                    int __key = static_cast<int>(m_tremolo_note_key);
+                    if (_noteOttavaType == 100) {
+                        __key += 12;
+                    }
+                    if (_noteOttavaType == 101) {
+                        __key -= 12;
+                    }
+                    if (_noteOttavaType == 102) {
+                        __key += 24;
+                    }
+                    if (_noteOttavaType == 103) {
+                        __key -= 24;
+                    }
+                    if (_noteOttavaType == 104) {
+                        __key += 36;
+                    }
+                    if (_noteOttavaType == 105) {
+                        __key -= 36;
+                    }
+                    if (__key < static_cast<int>(lowestKey)) {
+                        __key = static_cast<int>(lowestKey);
+                    }
+                    if (__key >= static_cast<int>(lowestKey + numKeys)) {
+                        __key = static_cast<int>(lowestKey + numKeys) - 1;
+                    }
+                    m_tremolo_note_key = (piano_key_t)__key;
+                }
+            }
+        });
+
+        notation->interaction()->tremoloNoteChanged1().onNotify(this, [this]() {
+            auto notation = currentNotation();
+            if (!notation) {
+                return;
+            }
+            m_tremolo_ptype1 = notation->interaction()->tremoloPtype1();
+            m_tremolo_st1 = notation->interaction()->tremoloSt1();
+            m_tremolo_dt1 = notation->interaction()->tremoloDt1();
+            m_tremolo_type1 = notation->interaction()->tremoloType1();
+            m_tremolo_ottavatype1 = notation->interaction()->tremoloOtavaType1();
+            m_tremolo1_ottavatype1 = notation->interaction()->tremolo1OtavaType1();
+            m_tremolo_note1 = notation->interaction()->tremoloNote1();
+            m_tremolo_notes1 = notation->interaction()->tremoloNotes1();
+            m_tremolo1_notes1 = notation->interaction()->tremolo1Notes1();
+
+            m_tremolo_note_key1 = static_cast<piano_key_t>(10000);
+            if (m_tremolo_ptype1 == 1 || m_tremolo_ptype1 == 3) {
+                const bool useWrittenPitch = notationConfiguration()->midiUseWrittenPitch().val;
+                m_tremolo_note_key1 = static_cast<piano_key_t>(useWrittenPitch ? m_tremolo_note1->epitch() : m_tremolo_note1->ppitch());
+                
+                int _noteOttavaType = m_tremolo_ottavatype;
+
+                if (_noteOttavaType > 0) {
+                    int __key = static_cast<int>(m_tremolo_note_key1);
+                    if (_noteOttavaType == 100) {
+                        __key += 12;
+                    }
+                    if (_noteOttavaType == 101) {
+                        __key -= 12;
+                    }
+                    if (_noteOttavaType == 102) {
+                        __key += 24;
+                    }
+                    if (_noteOttavaType == 103) {
+                        __key -= 24;
+                    }
+                    if (_noteOttavaType == 104) {
+                        __key += 36;
+                    }
+                    if (_noteOttavaType == 105) {
+                        __key -= 36;
+                    }
+                    if (__key < static_cast<int>(lowestKey)) {
+                        __key = static_cast<int>(lowestKey);
+                    }
+                    if (__key >= static_cast<int>(lowestKey + numKeys)) {
+                        __key = static_cast<int>(lowestKey + numKeys) - 1;
+                    }
+                    m_tremolo_note_key1 = (piano_key_t)__key;
+                }
+            }
+        });
+
         notation->interaction()->trillTickChanged().onNotify(this, [this]() {
             auto notation = currentNotation();
             if (!notation) {
@@ -799,6 +1592,21 @@ void PianoKeyboardController::onNotationChanged()
             }
             m_trill_curr_ticks1 = notation->interaction()->trillCurrticks1();
             m_trill_tremolo_type1 = notation->interaction()->trillNoteTremolotype1();
+        });
+
+        notation->interaction()->tremoloTickChanged().onNotify(this, [this]() {
+            auto notation = currentNotation();
+            if (!notation) {
+                return;
+            }
+            m_tremolo_curr_ticks = notation->interaction()->tremoloCurrticks();
+        });
+        notation->interaction()->tremoloTickChanged1().onNotify(this, [this]() {
+            auto notation = currentNotation();
+            if (!notation) {
+                return;
+            }
+            m_tremolo_curr_ticks1 = notation->interaction()->tremoloCurrticks1();
         });
 
         notation->interaction()->clefKeySigsKeysChanged().onNotify(this, [this]() {

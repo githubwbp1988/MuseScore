@@ -206,6 +206,14 @@ public:
     {
         
     }
+    virtual void addTremoloNote(int, int, int, int, int, int, mu::engraving::Note*, std::vector<mu::engraving::Note*>, std::vector<mu::engraving::Note*>) 
+    {
+        
+    }
+    virtual void addTremoloNote1(int, int, int, int, int, int, mu::engraving::Note*, std::vector<mu::engraving::Note*>, std::vector<mu::engraving::Note*>) 
+    {
+        
+    }
     virtual int trillNoteTicks() const 
     {
         return 0;
@@ -259,11 +267,27 @@ public:
     {
         return 0;
     }
+    virtual int tremoloCurrticks() const 
+    {
+        return 0;
+    }
+    virtual int tremoloCurrticks1() const 
+    {
+        return 0;
+    }
     virtual void trillNoteUpdate() 
     {
         
     }
     virtual void trillNoteUpdate1() 
+    {
+        
+    }
+    virtual void tremoloNoteUpdate() 
+    {
+        
+    }
+    virtual void tremoloNoteUpdate1() 
     {
         
     }
@@ -291,6 +315,86 @@ public:
     {
         return false;
     }
+    virtual void tremoloTick(int) 
+    {
+        
+    }
+    virtual void tremoloTick1(int) 
+    {
+        
+    }
+    virtual int tremoloPtype() const
+    {
+        return 0;
+    }
+    virtual int tremoloSt() const 
+    {
+        return 0;
+    }
+    virtual int tremoloDt() const
+    {
+        return 0;
+    }
+    virtual int tremoloType() const 
+    {
+        return 0;
+    }
+    virtual int tremoloOtavaType() const
+    {
+        return 0;
+    }
+    virtual int tremolo1OtavaType() const 
+    {
+        return 0;
+    }
+    virtual mu::engraving::Note* tremoloNote() const 
+    {
+        return nullptr;
+    }
+    virtual std::vector<mu::engraving::Note*> tremoloNotes() const 
+    {
+        return {};
+    }
+    virtual std::vector<mu::engraving::Note*> tremolo1Notes() const 
+    {
+        return {};
+    }
+    virtual int tremoloPtype1() const
+    {
+        return 0;
+    }
+    virtual int tremoloSt1() const
+    {
+        return 0;
+    }
+    virtual int tremoloDt1() const
+    {
+        return 0;
+    }
+    virtual int tremoloType1() const
+    {
+        return 0;
+    }
+    virtual int tremoloOtavaType1() const
+    {
+        return 0;
+    }
+    virtual int tremolo1OtavaType1() const
+    {
+        return 0;
+    }
+    virtual mu::engraving::Note* tremoloNote1() const 
+    {
+        return nullptr;
+    }
+    virtual std::vector<mu::engraving::Note*> tremoloNotes1() const 
+    {
+        return {};
+    }
+    virtual std::vector<mu::engraving::Note*> tremolo1Notes1() const 
+    {
+        return {};
+    }
     virtual muse::async::Notification trillNoteChanged() 
     {
         return muse::async::Notification();
@@ -304,6 +408,23 @@ public:
         return muse::async::Notification();
     }
     virtual muse::async::Notification trillTickChanged1() 
+    {
+        return muse::async::Notification();
+    }
+
+    virtual muse::async::Notification tremoloNoteChanged() 
+    {
+        return muse::async::Notification();
+    }
+    virtual muse::async::Notification tremoloNoteChanged1() 
+    {
+        return muse::async::Notification();
+    }
+    virtual muse::async::Notification tremoloTickChanged() 
+    {
+        return muse::async::Notification();
+    }
+    virtual muse::async::Notification tremoloTickChanged1() 
     {
         return muse::async::Notification();
     }
