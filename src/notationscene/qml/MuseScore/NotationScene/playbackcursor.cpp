@@ -656,6 +656,7 @@ void PlaybackCursor::processOttavaAsync(mu::engraving::Score* score, bool scoreP
         std::map<Note*, Chord*> _measure_tremolo_map3;
         std::map<Note*, Chord*> _measure_tremolo_map4;
         std::map<Note*, Note*> _measure_tremolo_suffix_map;
+        std::map<Note*, Note*> _measure_tremolo_prefix_map;
         EngravingItemList measure_children = measure->childrenItems(true);
         bool hasTremoloBar = false;
         for (size_t m_k = 0; m_k < measure_children.size(); m_k++) {
@@ -732,6 +733,7 @@ void PlaybackCursor::processOttavaAsync(mu::engraving::Score* score, bool scoreP
                         _measure_tremolo_notes.insert(leftNote);
 
                         _measure_tremolo_suffix_map[rightNote] = leftNote;
+                        _measure_tremolo_prefix_map[leftNote] = rightNote;
                     }
                     if (_tremoloSingleChord) {
                         Chord* _chord = _tremoloNote->chord();
@@ -787,6 +789,9 @@ void PlaybackCursor::processOttavaAsync(mu::engraving::Score* score, bool scoreP
 
             bool _tremolo_note_checked1 = false;
             bool _tremolo_note1_checked1 = false;
+
+            bool _tremolo_note_checked2 = false;
+            bool _tremolo_note1_checked2 = false;
             for (size_t i = 0; i < engravingItemList.size(); i++) {
                 EngravingItem* engravingItem = engravingItemList[i];
                 if (engravingItem == nullptr) {
@@ -1085,6 +1090,21 @@ void PlaybackCursor::processOttavaAsync(mu::engraving::Score* score, bool scoreP
 
                                                 score_tremolo_dt_map1[engravingItem] = duration_ticks;
                                             }
+                                        }
+                                    }
+                                }
+                            }
+
+                            if (_measure_tremolo_prefix_map[_pre_note]) {
+                                Note* _suffix_note = _measure_tremolo_prefix_map[_pre_note];
+                                for (Note* mnote : _measure_tremolo_notes) {
+                                    if (mnote == _pre_note) {
+                                        if (!_tremolo_note_checked2) {
+                                            _tremolo_note_checked2 = true;
+                                            score_two_chard_tremolo_suffix_note_map[engravingItem] = _suffix_note;
+                                        } else if (_tremolo_note_checked2 && !_tremolo_note1_checked2) {
+                                            _tremolo_note1_checked2 = true;
+                                            score_two_chard_tremolo_suffix_note_map1[engravingItem] = _suffix_note;
                                         }
                                     }
                                 }
@@ -2579,6 +2599,93 @@ muse::RectF PlaybackCursor::resolveCursorRectByTick1(muse::midi::tick_t _tick, b
                             }
                         }
                     }
+                    // process the trailing notes of the two‑chord-tremolo
+                    Note* tremolo_suffix_note = score_two_chard_tremolo_suffix_note_map[engravingItem];
+                    if (tremolo_suffix_note) {
+                        if (score_tremolo_dt_map[engravingItem] > 0 && tick.ticks() >= score_tremolo_st_map[engravingItem] && tick.ticks() < score_tremolo_st_map[engravingItem] + score_tremolo_dt_map[engravingItem]) {
+                            for (Note* _note: tremolo_suffix_note->chord()->notes()) {
+                                for (int k = 0; k < _note->qmlDotsCount(); k++) {
+                                    _note->dot(k)->setColor(muse::draw::Color::RED);
+                                }
+                                _note->setColor(muse::draw::Color::RED);
+                            }
+                            
+                            Stem* _stem = tremolo_suffix_note->chord()->stem();
+                            if (_stem) {
+                                _stem->setColor(muse::draw::Color::RED);
+                            }
+
+                            Hook* _hook = tremolo_suffix_note->chord()->hook();
+                            if (_hook) {
+                                _hook->setColor(muse::draw::Color::RED);
+                            }
+                        } else {
+                            for (Note* _note: tremolo_suffix_note->chord()->notes()) {
+                                for (int k = 0; k < _note->qmlDotsCount(); k++) {
+                                    _note->dot(k)->setColor(muse::draw::Color::BLACK);
+                                }
+                                _note->setColor(muse::draw::Color::BLACK);
+                            }
+                            
+                            Stem* _stem = tremolo_suffix_note->chord()->stem();
+                            if (_stem) {
+                                _stem->setColor(muse::draw::Color::BLACK);
+                            }
+
+                            Hook* _hook = tremolo_suffix_note->chord()->hook();
+                            if (_hook) {
+                                _hook->setColor(muse::draw::Color::BLACK);
+                            }
+                        } 
+                    }
+                    Note* tremolo_suffix_note1 = score_two_chard_tremolo_suffix_note_map1[engravingItem];
+                    if (tremolo_suffix_note1) {
+                        if (score_tremolo_dt_map1[engravingItem] > 0 && tick.ticks() >= score_tremolo_st_map1[engravingItem] && tick.ticks() < score_tremolo_st_map1[engravingItem] + score_tremolo_dt_map1[engravingItem]) {
+                            for (Note* _note: tremolo_suffix_note1->chord()->notes()) {
+                                for (int k = 0; k < _note->qmlDotsCount(); k++) {
+                                    _note->dot(k)->setColor(muse::draw::Color::RED);
+                                }
+                                _note->setColor(muse::draw::Color::RED);
+                            }
+                            
+                            Stem* _stem = tremolo_suffix_note1->chord()->stem();
+                            if (_stem) {
+                                _stem->setColor(muse::draw::Color::RED);
+                            }
+
+                            Hook* _hook = tremolo_suffix_note1->chord()->hook();
+                            if (_hook) {
+                                _hook->setColor(muse::draw::Color::RED);
+                            }
+
+                            Beam* _beam = tremolo_suffix_note1->chord()->beam();
+                            if (_beam) {
+                                _beam->setColor(muse::draw::Color::RED);
+                            }
+                        } else {
+                            for (Note* _note: tremolo_suffix_note1->chord()->notes()) {
+                                for (int k = 0; k < _note->qmlDotsCount(); k++) {
+                                    _note->dot(k)->setColor(muse::draw::Color::BLACK);
+                                }
+                                _note->setColor(muse::draw::Color::BLACK);
+                            }
+                            
+                            Stem* _stem = tremolo_suffix_note1->chord()->stem();
+                            if (_stem) {
+                                _stem->setColor(muse::draw::Color::BLACK);
+                            }
+
+                            Hook* _hook = tremolo_suffix_note1->chord()->hook();
+                            if (_hook) {
+                                _hook->setColor(muse::draw::Color::BLACK);
+                            }
+
+                            Beam* _beam = tremolo_suffix_note1->chord()->beam();
+                            if (_beam) {
+                                _beam->setColor(muse::draw::Color::BLACK);
+                            }
+                        }
+                    }
 
                     if (pianoKeyboardPlaybackEnable) {
                         if (score_trill_map_1[engravingItem]) {
@@ -2993,6 +3100,7 @@ muse::RectF PlaybackCursor::resolveCursorRectByTick1(muse::midi::tick_t _tick, b
                                             _beam->setColor(muse::draw::Color::RED);
                                         }
                                     }
+
                                     if (pianoKeyboardPlaybackEnable && _pre_noteStaff->visible()) {
                                         m_notation->interaction()->addPlaybackNote(_pre_note, ottava_map[_pre_note], note_hit_ts);
                                     }
