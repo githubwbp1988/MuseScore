@@ -1601,7 +1601,8 @@ void PlaybackCursor::processOttavaAsync(mu::engraving::Score* score, bool scoreP
                                             continue;
                                         }
                                         if (__item__->type() == mu::engraving::ElementType::NOTE) {
-                                            if (__item__->tick().ticks() >= glissandoNote->tick().ticks() + duration_ticks / 10) {
+                                            // if (__item__->tick().ticks() >= glissandoNote->tick().ticks() + duration_ticks / 10) {
+                                            if (__item__->tick().ticks() == _glissando->tick2().ticks()) {
                                                 Note* _note = toNote(__item__);
                                                 if (std::find(score_glissando_endnotes_map[engravingItem].begin(), score_glissando_endnotes_map[engravingItem].end(), _note) == score_glissando_endnotes_map[engravingItem].end()) {
                                                     score_glissando_endnotes_map[engravingItem].push_back(_note);
