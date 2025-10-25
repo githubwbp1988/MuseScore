@@ -2441,9 +2441,9 @@ void PlaybackCursor::processCursorNoteRenderRecoverAsync(EngravingItem* engravin
             Note *_pre_note = toNote(item);
             // check grace
             bool is_grace = _pre_note->isGrace();
-            if (is_grace) {
-                _pre_note->setColor(muse::draw::Color::BLACK);
-            }
+            // if (is_grace) {
+            //     _pre_note->setColor(muse::draw::Color::BLACK);
+            // }
             if (_pre_note->qmlDotsCount() > 0) {
                 for (NoteDot* dot : _pre_note->dots()) {
                     dot->setColor(muse::draw::Color::BLACK);
@@ -2454,6 +2454,29 @@ void PlaybackCursor::processCursorNoteRenderRecoverAsync(EngravingItem* engravin
             }
 
             if (_pre_note->chord()) {
+                if (!is_grace) {
+                    std::vector<Chord*>& _graceChords = _pre_note->chord()->graceNotes();
+                    for (Chord *_chord : _graceChords) {
+                        _chord->setColor(muse::draw::Color::BLACK);
+                        for (Note* choreNote : _chord->notes()) {
+                            if (choreNote->accidental()) {
+                                choreNote->accidental()->setColor(muse::draw::Color::BLACK);
+                            }
+                        }
+                        Stem* _stem = _chord->stem();
+                        if (_stem) {
+                            _stem->setColor(muse::draw::Color::BLACK);
+                        }
+                        Hook* _hook = _chord->hook();
+                        if (_hook) {
+                            _hook->setColor(muse::draw::Color::BLACK);
+                        }
+                        Beam* _beam = _chord->beam();
+                        if (_beam) {
+                            _beam->setColor(muse::draw::Color::BLACK);
+                        }
+                    }
+                }
                 if (_pre_note->chord()->articulations().size() > 0) {
                     std::vector<Articulation*> mArticulations = _pre_note->chord()->articulations();
                     for (auto& a : mArticulations) {
@@ -2897,9 +2920,9 @@ muse::RectF PlaybackCursor::resolveCursorRectByTick1(muse::midi::tick_t _tick, b
                                                 }
                                                 Beam* _beam = _chord->beam();
                                                 if (_beam) {
-                                                    if (tick.ticks() < _beam->tick().ticks() || tick.ticks() >= _beam->tick().ticks() + _beam->ticks().ticks()) {
-                                                        _beam->setColor(muse::draw::Color::BLACK);
-                                                    }
+                                                    // if (tick.ticks() < _beam->tick().ticks() || tick.ticks() >= _beam->tick().ticks() + _beam->ticks().ticks()) {
+                                                    _beam->setColor(muse::draw::Color::BLACK);
+                                                    // }
                                                 }
                                             }
                                             _pre_note->setColor(muse::draw::Color::RED);
@@ -3033,9 +3056,9 @@ muse::RectF PlaybackCursor::resolveCursorRectByTick1(muse::midi::tick_t _tick, b
                                                 }
                                                 Beam* _beam = _chord->beam();
                                                 if (_beam) {
-                                                    if (tick.ticks() < _beam->tick().ticks() || tick.ticks() >= _beam->tick().ticks() + _beam->ticks().ticks()) {
-                                                        _beam->setColor(muse::draw::Color::BLACK);
-                                                    }
+                                                    // if (tick.ticks() < _beam->tick().ticks() || tick.ticks() >= _beam->tick().ticks() + _beam->ticks().ticks()) {
+                                                    _beam->setColor(muse::draw::Color::BLACK);
+                                                    // }
                                                 }
                                             }
                                             _pre_note->setColor(muse::draw::Color::RED);
