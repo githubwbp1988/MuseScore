@@ -109,6 +109,7 @@ private:
     std::map<EngravingItem*, EngravingItem*> score_tremolo_map;
     std::map<EngravingItem*, Note*> score_two_chard_tremolo_suffix_note_map;
     std::map<EngravingItem*, int> score_trill_type_map;
+    std::map<EngravingItem*, bool> score_trill_above_map;
     std::map<EngravingItem*, int> score_trill_st_map;
     std::map<EngravingItem*, int> score_trill_dt_map;
     std::map<EngravingItem*, int> score_trill_tdt_map;
@@ -119,6 +120,7 @@ private:
 
     std::map<EngravingItem*, Note*> score_trill_map_1;
     std::map<EngravingItem*, int> score_trill_type_map_1;
+    std::map<EngravingItem*, bool> score_trill_above_map_1;
     std::map<EngravingItem*, int> score_trill_st_map_1;
     std::map<EngravingItem*, int> score_trill_dt_map_1;
     std::map<EngravingItem*, int> score_trill_tdt_map_1;
@@ -151,6 +153,7 @@ private:
 
     std::map<EngravingItem*, Note*> score_trill_map1;
     std::map<EngravingItem*, int> score_trill_type_map1;
+    std::map<EngravingItem*, bool> score_trill_above_map1;
     std::map<EngravingItem*, int> score_trill_st_map1;
     std::map<EngravingItem*, int> score_trill_dt_map1;
     std::map<EngravingItem*, int> score_trill_tdt_map1;
@@ -160,6 +163,7 @@ private:
 
     std::map<EngravingItem*, Note*> score_trill_map1_1;
     std::map<EngravingItem*, int> score_trill_type_map1_1;
+    std::map<EngravingItem*, bool> score_trill_above_map1_1;
     std::map<EngravingItem*, int> score_trill_st_map1_1;
     std::map<EngravingItem*, int> score_trill_dt_map1_1;
     std::map<EngravingItem*, int> score_trill_tdt_map1_1;

@@ -1326,10 +1326,11 @@ muse::async::Notification NotationInteraction::arpeggioTickChanged()
     return m_arpeggioTickChanged;
 }
 
-void NotationInteraction::addTrillNote(mu::engraving::Note* note, int _trill_type, int ticks, int duration_ticks, int _trill_duration_ticks, int tremolo_type, int ottavaType, bool hasTie, bool isFermataMark) 
+void NotationInteraction::addTrillNote(mu::engraving::Note* note, int _trill_type, bool _trill_above, int ticks, int duration_ticks, int _trill_duration_ticks, int tremolo_type, int ottavaType, bool hasTie, bool isFermataMark) 
 {
     trill_note = note;
     trill_type = _trill_type;
+    trill_above = _trill_above;
     till_note_hastie = hasTie;
     trill_note_fermatamark = isFermataMark;
     trill_ticks = ticks;
@@ -1340,10 +1341,11 @@ void NotationInteraction::addTrillNote(mu::engraving::Note* note, int _trill_typ
         m_ottava_map[note] = ottavaType;
     }
 }
-void NotationInteraction::addTrillNote1(mu::engraving::Note* note, int _trill_type, int ticks, int duration_ticks, int _trill_duration_ticks, int tremolo_type, int ottavaType, bool hasTie) 
+void NotationInteraction::addTrillNote1(mu::engraving::Note* note, int _trill_type, bool _trill_above, int ticks, int duration_ticks, int _trill_duration_ticks, int tremolo_type, int ottavaType, bool hasTie) 
 {
     trill_note1 = note;
     trill_type1 = _trill_type;
+    trill_above1 = _trill_above;
     till_note1_hastie = hasTie;
     trill_ticks1 = ticks;
     trill_duration_ticks1 = duration_ticks;
@@ -1505,6 +1507,10 @@ int NotationInteraction::trillType() const
 {
     return trill_type;
 }
+bool NotationInteraction::trillAbove() const 
+{
+    return trill_above;
+}
 mu::engraving::Note* NotationInteraction::trillNote1() const 
 {
     return trill_note1;
@@ -1512,6 +1518,10 @@ mu::engraving::Note* NotationInteraction::trillNote1() const
 int NotationInteraction::trillType1() const 
 {
     return trill_type1;
+}
+bool NotationInteraction::trillAbove1() const 
+{
+    return trill_above1;
 }
 bool NotationInteraction::trillTick(int ticks) 
 {

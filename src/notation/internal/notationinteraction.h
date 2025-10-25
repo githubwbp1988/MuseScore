@@ -130,8 +130,8 @@ public:
     void arpeggioTick(int) override;
     muse::async::Notification arpeggioTickChanged() override;
 
-    void addTrillNote(mu::engraving::Note*, int, int, int, int, int, int, bool, bool) override;
-    void addTrillNote1(mu::engraving::Note*, int, int, int, int, int, int, bool) override;
+    void addTrillNote(mu::engraving::Note*, int, bool, int, int, int, int, int, bool, bool) override;
+    void addTrillNote1(mu::engraving::Note*, int, bool, int, int, int, int, int, bool) override;
     void addTremoloNote(int, int, int, int, int, int, mu::engraving::Note*, std::vector<mu::engraving::Note*>, std::vector<mu::engraving::Note*>) override;
     void addTremoloNote1(int, int, int, int, int, int, mu::engraving::Note*, std::vector<mu::engraving::Note*>, std::vector<mu::engraving::Note*>) override;
     int trillNoteTicks() const override;
@@ -155,8 +155,10 @@ public:
     void tremoloNoteUpdate1() override;
     mu::engraving::Note *trillNote() const override;
     int trillType() const override;
+    bool trillAbove() const override;
     mu::engraving::Note *trillNote1() const override;
     int trillType1() const override;
+    bool trillAbove1() const override;
     bool trillTick(int) override;
     bool trillTick1(int) override;
     void tremoloTick(int) override;
@@ -659,6 +661,7 @@ private:
 
     Note* trill_note = nullptr;
     int trill_type = 0;
+    bool trill_above = true;
     bool till_note_hastie = false;
     bool trill_note_fermatamark = false;
     int trill_ticks = 0;
@@ -668,6 +671,7 @@ private:
     int trill_curr_ticks = 0;
     Note* trill_note1 = nullptr;
     int trill_type1 = 0;
+    bool trill_above1 = true;
     bool till_note1_hastie = false;
     int trill_ticks1 = 0;
     int trill_duration_ticks1 = 0;

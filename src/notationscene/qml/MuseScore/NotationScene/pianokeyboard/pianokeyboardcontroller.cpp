@@ -75,8 +75,38 @@ KeyState PianoKeyboardController::playbackKeyState(piano_key_t key) const
             }
 
             if (m_trill_curr_ticks >= m_trill_ticks && m_trill_curr_ticks <= m_trill_ticks + _m_trill_duration_ticks) {
-                if (key == m_trill_note_key || key == m_trill_note_key1 || key == m_trill_note_key - 1 || key == m_trill_note_key1 - 1) {
+                if (key == m_trill_note_key || key == m_trill_note_key1) {
                     return KeyState::None;
+                }
+                if (m_trill_above) {
+                    if (key == m_trill_note_key - 1) {
+                        return KeyState::None;
+                    }
+                } else {
+                    if (m_trill_type == 2165) {
+                        if (key == m_trill_note_key + 2) {
+                            return KeyState::None;    
+                        }
+                    } else {
+                        if (key == m_trill_note_key + 1) {
+                            return KeyState::None;
+                        }
+                    }
+                }
+                if (m_trill_above1) {
+                    if (key == m_trill_note_key1 - 1) {
+                        return KeyState::None;
+                    }
+                } else {
+                    if (m_trill_type1 == 2165) {
+                        if (key == m_trill_note_key1 + 2) {
+                            return KeyState::None;
+                        }
+                    } else {
+                        if (key == m_trill_note_key1 + 1) {
+                            return KeyState::None;
+                        }
+                    }
                 }
             }
         }
@@ -414,9 +444,17 @@ KeyState PianoKeyboardController::trillKeyState(piano_key_t key) const
                 } 
                 int _ratio_count = static_cast<int>(frequency * ratio);
                 int _int_note_key = static_cast<int>(m_trill_note_key);
-                if (_ratio_count % 2 == 1) {
-                    _int_note_key -= 1;
-                } 
+                if (m_trill_above) {
+                    if (_ratio_count % 2 == 1) {
+                        _int_note_key -= 1;
+                    } 
+                } else {
+                    if (_ratio_count % 2 == 1) {
+                        _int_note_key += 1;
+                    } else {
+                        _int_note_key += 2;
+                    }
+                }
                 if (key == (piano_key_t)_int_note_key) {
                     return KeyState::Trill;
                 }
@@ -446,17 +484,45 @@ KeyState PianoKeyboardController::trillKeyState(piano_key_t key) const
                     if (_type <= mu::engraving::DurationType::V_QUARTER) {
                         int _ratio_count = static_cast<int>(80 * ratio);
                         int _int_note_key = static_cast<int>(m_trill_note_key);
-                        if (_type == mu::engraving::DurationType::V_QUARTER && m_trill_type == 2207) {
-                            if (ratio < 0.333 || ratio > 0.666) {
-                                _int_note_key -= 2;
+                        if (_type == mu::engraving::DurationType::V_QUARTER && (m_trill_type == 2207 || m_trill_type == 2165)) {
+                            if (m_trill_type == 2165) {
+                                if (m_trill_above) {
+                                    if (ratio < 0.333 || ratio > 0.666) {
+                                        _int_note_key -= 1;
+                                    } else {
+                                        _int_note_key -= 2;
+                                    }
+                                } else {
+                                    if (ratio < 0.333 || ratio > 0.666) {
+                                        _int_note_key += 2;
+                                    } else {
+                                        _int_note_key += 1;
+                                    }
+                                }
                             } else {
-                                _int_note_key -= 1;
+                                if (m_trill_above) {
+                                    if (ratio < 0.333 || ratio > 0.666) {
+                                        _int_note_key -= 1;
+                                    }
+                                } else {
+                                    if (ratio < 0.333 || ratio > 0.666) {
+                                        _int_note_key += 1;
+                                    } else {
+                                        _int_note_key += 2;
+                                    }
+                                }
                             }
                         } else {
-                            if (_ratio_count / 2 % 2 == 0) {
-                                _int_note_key -= 1;
+                            if (m_trill_above) {
+                                if (_ratio_count / 2 % 2 == 0) {
+                                    _int_note_key -= 1;
+                                } else {
+                                    _int_note_key -= 2;
+                                }
                             } else {
-                                _int_note_key -= 2;
+                                if (_ratio_count / 2 % 2 == 0) {
+                                    _int_note_key += 1;
+                                }
                             }
                         }
                         if (key == (piano_key_t)_int_note_key) {
@@ -464,61 +530,128 @@ KeyState PianoKeyboardController::trillKeyState(piano_key_t key) const
                         }
                     } else {
                         int _int_note_key = static_cast<int>(m_trill_note_key);
-                        if (m_trill_type == 2215) {
-                            if (ratio < 0.25) {
+                        if (m_trill_above) {
+                            if (m_trill_type == 2215) {
+                                if (ratio < 0.25) {
 
-                            } else if (ratio >= 0.25 && ratio < 0.5) {
-                                _int_note_key -= 1;
-                            } else if (ratio >= 0.5 && ratio < 0.75) {
-                                _int_note_key -= 2;
-                            } else {
-                                _int_note_key -= 1;
-                            }
-                        } else if (m_trill_type == 2216) {
-                            if (ratio < 0.25) {
-                                _int_note_key -= 1;
-                            } else if (ratio >= 0.25 && ratio < 0.5) {
-                                _int_note_key -= 2;
-                            } else if (ratio >= 0.5 && ratio < 0.75) {
-                                
-                            } else {
-                                _int_note_key -= 1;
-                            }
-                        } else if (m_trill_type == 2217) {
-                            if (ratio < 0.25) {
-                                _int_note_key -= 1;
-                            } else if (ratio >= 0.25 && ratio < 0.5) {
-                                
-                            } else if (ratio >= 0.5 && ratio < 0.75) {
-                                _int_note_key -= 2;
-                            } else {
-                                _int_note_key -= 1;
-                            }
-                        } else if (m_trill_type == 2207) {
-                            if (ratio < 0.333 || ratio > 0.666) {
-                                _int_note_key -= 2;
-                            } else {
-                                _int_note_key -= 1;
-                            }
-                        } else if (m_trill_type == 2214) {
-                            if (m_trill_note_hastie) {
-                                int _ratio_count = static_cast<int>(30 * ratio);
-                                if (_ratio_count / 2 % 2 == 0) {
+                                } else if (ratio >= 0.25 && ratio < 0.5) {
                                     _int_note_key -= 1;
-                                } else {
+                                } else if (ratio >= 0.5 && ratio < 0.75) {
                                     _int_note_key -= 2;
+                                } else {
+                                    _int_note_key -= 1;
                                 }
-                            } else {
-                                if (ratio < 0.2) {
-                                    _int_note_key -= 2;
-                                } else if (ratio >= 0.2 && ratio < 0.4) {
+                            } else if (m_trill_type == 2216) {
+                                if (ratio < 0.25) {
                                     _int_note_key -= 1;
-                                } else if (ratio >= 0.4 && ratio < 0.6) {
+                                } else if (ratio >= 0.25 && ratio < 0.5) {
                                     _int_note_key -= 2;
-                                } else if (ratio >= 0.6 && ratio < 0.8) { 
-                                    _int_note_key -= 1;
+                                } else if (ratio >= 0.5 && ratio < 0.75) {
+                                    
                                 } else {
+                                    _int_note_key -= 1;
+                                }
+                            } else if (m_trill_type == 2217) {
+                                if (ratio < 0.25) {
+                                    _int_note_key -= 1;
+                                } else if (ratio >= 0.25 && ratio < 0.5) {
+                                    
+                                } else if (ratio >= 0.5 && ratio < 0.75) {
                                     _int_note_key -= 2;
+                                } else {
+                                    _int_note_key -= 1;
+                                }
+                            } else if (m_trill_type == 2207) {
+                                if (ratio < 0.333 || ratio > 0.666) {
+                                    _int_note_key -= 1;
+                                }
+                            } else if (m_trill_type == 2214) {
+                                if (m_trill_note_hastie) {
+                                    int _ratio_count = static_cast<int>(30 * ratio);
+                                    if (_ratio_count / 2 % 2 == 0) {
+                                        _int_note_key -= 1;
+                                    } else {
+                                        _int_note_key -= 2;
+                                    }
+                                } else {
+                                    if (ratio < 0.2) {
+                                        _int_note_key -= 2;
+                                    } else if (ratio >= 0.2 && ratio < 0.4) {
+                                        _int_note_key -= 1;
+                                    } else if (ratio >= 0.4 && ratio < 0.6) {
+                                        _int_note_key -= 2;
+                                    } else if (ratio >= 0.6 && ratio < 0.8) { 
+                                        _int_note_key -= 1;
+                                    } else {
+                                        _int_note_key -= 2;
+                                    }
+                                }
+                            } else if (m_trill_type == 2165) {
+                                if (ratio < 0.333 || ratio > 0.666) {
+                                    _int_note_key -= 2;
+                                } else {
+                                    _int_note_key -= 1;
+                                }
+                            }
+                        } else {
+                            if (m_trill_type == 2215) {
+                                if (ratio < 0.25) {
+                                    _int_note_key += 2;
+                                } else if (ratio >= 0.25 && ratio < 0.5) {
+                                    _int_note_key += 1;
+                                } else if (ratio >= 0.5 && ratio < 0.75) {
+                                    
+                                } else {
+                                    _int_note_key += 1;
+                                }
+                            } else if (m_trill_type == 2216) {
+                                if (ratio < 0.25) {
+                                    _int_note_key += 1;
+                                } else if (ratio >= 0.25 && ratio < 0.5) {
+                                    
+                                } else if (ratio >= 0.5 && ratio < 0.75) {
+                                    _int_note_key += 2;
+                                } else {
+                                    _int_note_key += 1;
+                                }
+                            } else if (m_trill_type == 2217) {
+                                if (ratio < 0.25) {
+                                    _int_note_key += 1;
+                                } else if (ratio >= 0.25 && ratio < 0.5) {
+                                    _int_note_key += 2;
+                                } else if (ratio >= 0.5 && ratio < 0.75) {
+                                    
+                                } else {
+                                    _int_note_key += 1;
+                                }
+                            } else if (m_trill_type == 2207) {
+                                if (ratio < 0.333 || ratio > 0.666) {
+                                    _int_note_key += 1;
+                                } else {
+                                    _int_note_key += 2;
+                                }
+                            } else if (m_trill_type == 2214) {
+                                if (m_trill_note_hastie) {
+                                    int _ratio_count = static_cast<int>(30 * ratio);
+                                    if (_ratio_count / 2 % 2 == 0) {
+                                        _int_note_key += 1;
+                                    }
+                                } else {
+                                    if (ratio < 0.2) {
+                                        
+                                    } else if (ratio >= 0.2 && ratio < 0.4) {
+                                        _int_note_key += 1;
+                                    } else if (ratio >= 0.4 && ratio < 0.6) {
+                                        
+                                    } else if (ratio >= 0.6 && ratio < 0.8) { 
+                                        _int_note_key += 1;
+                                    } 
+                                }
+                            } else if (m_trill_type == 2165) {
+                                if (ratio < 0.333 || ratio > 0.666) {
+                                    _int_note_key += 1;
+                                } else {
+                                    _int_note_key += 2;
                                 }
                             }
                         }
@@ -560,10 +693,18 @@ KeyState PianoKeyboardController::trillKeyState1(piano_key_t key) const
                     frequency *= 4;
                 } 
                 int _ratio_count = static_cast<int>(frequency * ratio);
-                int _int_note_key = static_cast<int>(m_trill_note_key1);
-                if (_ratio_count % 2 == 1) {
-                    _int_note_key -= 1;
-                } 
+                int _int_note_key = static_cast<int>(m_trill_note_key1); 
+                if (m_trill_above1) {
+                    if (_ratio_count % 2 == 1) {
+                        _int_note_key -= 1;
+                    } 
+                } else {
+                    if (_ratio_count % 2 == 1) {
+                        _int_note_key += 1;
+                    } else {
+                        _int_note_key += 2;
+                    }
+                }
                 if (key == (piano_key_t)_int_note_key) {
                     return KeyState::Trill;
                 }
@@ -575,17 +716,45 @@ KeyState PianoKeyboardController::trillKeyState1(piano_key_t key) const
                 if (_type <= mu::engraving::DurationType::V_QUARTER) {
                     int _ratio_count = static_cast<int>(80 * ratio);
                     int _int_note_key = static_cast<int>(m_trill_note_key1);
-                    if (_type == mu::engraving::DurationType::V_QUARTER && m_trill_type == 2207) {
-                        if (ratio < 0.333 || ratio > 0.666) {
-                            _int_note_key -= 2;
+                    if (_type == mu::engraving::DurationType::V_QUARTER && (m_trill_type1 == 2207 || m_trill_type1 == 2165)) {
+                        if (m_trill_type1 == 2165) {
+                            if (m_trill_above1) {
+                                if (ratio < 0.333 || ratio > 0.666) {
+                                    _int_note_key -= 1;
+                                } else {
+                                    _int_note_key -= 2;
+                                }
+                            } else {
+                                if (ratio < 0.333 || ratio > 0.666) {
+                                    _int_note_key += 2;
+                                } else {
+                                    _int_note_key += 1;
+                                }
+                            }
                         } else {
-                            _int_note_key -= 1;
+                            if (m_trill_above1) {
+                                if (ratio < 0.333 || ratio > 0.666) {
+                                    _int_note_key -= 1;
+                                }
+                            } else {
+                                if (ratio < 0.333 || ratio > 0.666) {
+                                    _int_note_key += 1;
+                                } else {
+                                    _int_note_key += 2;
+                                }
+                            }
                         }
                     } else {
-                        if (_ratio_count / 2 % 2 == 0) {
-                            _int_note_key -= 1;
+                        if (m_trill_above1) {
+                            if (_ratio_count / 2 % 2 == 0) {
+                                _int_note_key -= 1;
+                            } else {
+                                _int_note_key -= 2;
+                            }
                         } else {
-                            _int_note_key -= 2;
+                            if (_ratio_count / 2 % 2 == 0) {
+                                _int_note_key += 1;
+                            }
                         }
                     }
                     if (key == (piano_key_t)_int_note_key) {
@@ -593,61 +762,128 @@ KeyState PianoKeyboardController::trillKeyState1(piano_key_t key) const
                     }
                 } else {
                     int _int_note_key = static_cast<int>(m_trill_note_key1);
-                    if (m_trill_type1 == 2215) {
-                        if (ratio < 0.25) {
+                    if (m_trill_above1) {
+                        if (m_trill_type1 == 2215) {
+                            if (ratio < 0.25) {
 
-                        } else if (ratio >= 0.25 && ratio < 0.5) {
-                            _int_note_key -= 1;
-                        } else if (ratio >= 0.5 && ratio < 0.75) {
-                            _int_note_key -= 2;
-                        } else {
-                            _int_note_key -= 1;
-                        }
-                    } else if (m_trill_type1 == 2216) {
-                        if (ratio < 0.25) {
-                            _int_note_key -= 1;
-                        } else if (ratio >= 0.25 && ratio < 0.5) {
-                            _int_note_key -= 2;
-                        } else if (ratio >= 0.5 && ratio < 0.75) {
-                            
-                        } else {
-                            _int_note_key -= 1;
-                        }
-                    } else if (m_trill_type == 2217) {
-                        if (ratio < 0.25) {
-                            _int_note_key -= 1;
-                        } else if (ratio >= 0.25 && ratio < 0.5) {
-                            
-                        } else if (ratio >= 0.5 && ratio < 0.75) {
-                            _int_note_key -= 2;
-                        } else {
-                            _int_note_key -= 1;
-                        }
-                    } else if (m_trill_type == 2207) {
-                        if (ratio < 0.333 || ratio > 0.666) {
-                            _int_note_key -= 2;
-                        } else {
-                            _int_note_key -= 1;
-                        }
-                    } else if (m_trill_type == 2214) {
-                        if (m_trill_note1_hastie) {
-                            int _ratio_count = static_cast<int>(30 * ratio);
-                            if (_ratio_count / 2 % 2 == 0) {
+                            } else if (ratio >= 0.25 && ratio < 0.5) {
                                 _int_note_key -= 1;
-                            } else {
+                            } else if (ratio >= 0.5 && ratio < 0.75) {
                                 _int_note_key -= 2;
+                            } else {
+                                _int_note_key -= 1;
                             }
-                        } else {
-                            if (ratio < 0.2) {
-                                _int_note_key -= 2;
-                            } else if (ratio >= 0.2 && ratio < 0.4) {
+                        } else if (m_trill_type1 == 2216) {
+                            if (ratio < 0.25) {
                                 _int_note_key -= 1;
-                            } else if (ratio >= 0.4 && ratio < 0.6) {
+                            } else if (ratio >= 0.25 && ratio < 0.5) {
                                 _int_note_key -= 2;
-                            } else if (ratio >= 0.6 && ratio < 0.8) { 
-                                _int_note_key -= 1;
+                            } else if (ratio >= 0.5 && ratio < 0.75) {
+                                
                             } else {
+                                _int_note_key -= 1;
+                            }
+                        } else if (m_trill_type1 == 2217) {
+                            if (ratio < 0.25) {
+                                _int_note_key -= 1;
+                            } else if (ratio >= 0.25 && ratio < 0.5) {
+                                
+                            } else if (ratio >= 0.5 && ratio < 0.75) {
                                 _int_note_key -= 2;
+                            } else {
+                                _int_note_key -= 1;
+                            }
+                        } else if (m_trill_type1 == 2207) {
+                            if (ratio < 0.333 || ratio > 0.666) {
+                                _int_note_key -= 1;
+                            }
+                        } else if (m_trill_type1 == 2214) {
+                            if (m_trill_note1_hastie) {
+                                int _ratio_count = static_cast<int>(30 * ratio);
+                                if (_ratio_count / 2 % 2 == 0) {
+                                    _int_note_key -= 1;
+                                } else {
+                                    _int_note_key -= 2;
+                                }
+                            } else {
+                                if (ratio < 0.2) {
+                                    _int_note_key -= 2;
+                                } else if (ratio >= 0.2 && ratio < 0.4) {
+                                    _int_note_key -= 1;
+                                } else if (ratio >= 0.4 && ratio < 0.6) {
+                                    _int_note_key -= 2;
+                                } else if (ratio >= 0.6 && ratio < 0.8) { 
+                                    _int_note_key -= 1;
+                                } else {
+                                    _int_note_key -= 2;
+                                }
+                            }
+                        } else if (m_trill_type1 == 2165) {
+                            if (ratio < 0.333 || ratio > 0.666) {
+                                _int_note_key -= 2;
+                            } else {
+                                _int_note_key -= 1;
+                            }
+                        }
+                    } else {
+                        if (m_trill_type1 == 2215) {
+                            if (ratio < 0.25) {
+                                _int_note_key += 2;
+                            } else if (ratio >= 0.25 && ratio < 0.5) {
+                                _int_note_key += 1;
+                            } else if (ratio >= 0.5 && ratio < 0.75) {
+                                
+                            } else {
+                                _int_note_key += 1;
+                            }
+                        } else if (m_trill_type1 == 2216) {
+                            if (ratio < 0.25) {
+                                _int_note_key += 1;
+                            } else if (ratio >= 0.25 && ratio < 0.5) {
+                                
+                            } else if (ratio >= 0.5 && ratio < 0.75) {
+                                _int_note_key += 2;
+                            } else {
+                                _int_note_key += 1;
+                            }
+                        } else if (m_trill_type1 == 2217) {
+                            if (ratio < 0.25) {
+                                _int_note_key += 1;
+                            } else if (ratio >= 0.25 && ratio < 0.5) {
+                                _int_note_key += 2;
+                            } else if (ratio >= 0.5 && ratio < 0.75) {
+                                
+                            } else {
+                                _int_note_key += 1;
+                            }
+                        } else if (m_trill_type1 == 2207) {
+                            if (ratio < 0.333 || ratio > 0.666) {
+                                _int_note_key += 1;
+                            } else {
+                                _int_note_key += 2;
+                            }
+                        } else if (m_trill_type1 == 2214) {
+                            if (m_trill_note1_hastie) {
+                                int _ratio_count = static_cast<int>(30 * ratio);
+                                if (_ratio_count / 2 % 2 == 0) {
+                                    _int_note_key += 1;
+                                }
+                            } else {
+                                if (ratio < 0.2) {
+                                    
+                                } else if (ratio >= 0.2 && ratio < 0.4) {
+                                    _int_note_key += 1;
+                                } else if (ratio >= 0.4 && ratio < 0.6) {
+                                    
+                                } else if (ratio >= 0.6 && ratio < 0.8) { 
+                                    _int_note_key += 1;
+                                } 
+                            }
+                        } else if (m_trill_type1 == 2165) {
+                            if (ratio < 0.333 || ratio > 0.666) {
+                                _int_note_key += 1;
+                            } else {
+                                _int_note_key += 2;
                             }
                         }
                     }
@@ -1378,6 +1614,7 @@ void PianoKeyboardController::onNotationChanged()
             
             Note *receivedNote = notation->interaction()->trillNote();
             m_trill_type = notation->interaction()->trillType();
+            m_trill_above = notation->interaction()->trillAbove();
 
             receive_note = receivedNote;
             if (receivedNote) {
@@ -1430,6 +1667,7 @@ void PianoKeyboardController::onNotationChanged()
             
             Note *receivedNote = notation->interaction()->trillNote1();
             m_trill_type1 = notation->interaction()->trillType1();
+            m_trill_above1 = notation->interaction()->trillAbove1();
 
             receive_note1 = receivedNote;
             if (receivedNote) {
