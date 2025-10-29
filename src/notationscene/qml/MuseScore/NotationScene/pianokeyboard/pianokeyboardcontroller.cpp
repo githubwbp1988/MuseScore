@@ -1534,7 +1534,13 @@ void PianoKeyboardController::onNotationChanged()
             std::vector<const Note*> notes;
             std::map<const Note*, bool> notes_hit_ts;
             for (const mu::engraving::Note* note : notation->interaction()->playbackNotes()) {
-                notes.push_back(note);
+                if (note->chord() && note->isGrace()) {
+                    if (m_arpeggio_curr_ticks >= note->tick().ticks() && m_arpeggio_curr_ticks < note->tick().ticks() + note->chord()->durationTypeTicks().ticks() / 4) {
+                        notes.push_back(note);
+                    }
+                } else {
+                    notes.push_back(note);
+                }
             }
             for (const auto& [note, hit] : notation->interaction()->playbackNotesHitTsMap()) {
                 notes_hit_ts[note] = hit;
