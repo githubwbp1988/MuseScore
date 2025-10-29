@@ -1401,7 +1401,7 @@ void PlaybackCursor::processOttavaAsync(mu::engraving::Score* score, bool scoreP
                                     // }
                                     if (isFermataTag) {
                                         if (fermata_stretch > 1) {
-                                            arpeggio_duration_ticks /= fermata_stretch;
+                                            arpeggio_duration_ticks /= fermata_stretch * 10;
                                         } else if (isFermataAtLastSegment) {
                                             arpeggio_duration_ticks /= 10;
                                         }
@@ -2764,7 +2764,7 @@ muse::RectF PlaybackCursor::resolveCursorRectByTick1(muse::midi::tick_t _tick, b
                         }
 
                         if (score_arpeggio_map1.find(engravingItem) != score_arpeggio_map1.end()) {
-                            m_notation->interaction()->addArpeggioNotes(score_arpeggio_map[engravingItem], score_arpeggio_st_map[engravingItem], score_arpeggio_dt_map[engravingItem], score_arpeggio_ot_map[engravingItem]);
+                            m_notation->interaction()->addArpeggioNotes(score_arpeggio_map1[engravingItem], score_arpeggio_st_map1[engravingItem], score_arpeggio_dt_map1[engravingItem], score_arpeggio_ot_map1[engravingItem]);
                             m_notation->interaction()->arpeggioNotesUpdate(false);
                         }
 
