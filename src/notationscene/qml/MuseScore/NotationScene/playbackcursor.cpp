@@ -822,6 +822,12 @@ void PlaybackCursor::processOttavaAsync(mu::engraving::Score* score, bool scoreP
                     }
                     if (item->type() == mu::engraving::ElementType::NOTE) {
                         Note* _pre_note = toNote(item);
+                        if (_pre_note->isGrace()) {
+                            if (_pre_note->parentItem()->isChord()) {
+                                Chord* _grace_parent_chord = toChord(_pre_note->parentItem());
+                                score_grace_next_seg_chord_map[engravingItem] = _grace_parent_chord;
+                            }
+                        }
                         Staff* _pre_noteStaff = _pre_note->staff();
                         if (!scorePartChaged || scorePartChaged && _pre_noteStaff->visible()) {
                             for (Note* mnote : _measure_trill_notes) {
@@ -3144,6 +3150,98 @@ muse::RectF PlaybackCursor::resolveCursorRectByTick1(muse::midi::tick_t _tick, b
 
                                     if (pianoKeyboardPlaybackEnable && _pre_noteStaff->visible()) {
                                         m_notation->interaction()->addPlaybackNote(_pre_note, ottava_map[_pre_note], note_hit_ts);
+                                    }
+                                }
+                            } else {
+                                if (score_grace_next_seg_chord_map[engravingItem]) {
+                                    Chord* ns_chord = score_grace_next_seg_chord_map[engravingItem];
+                                    if (_pre_note->chord()->durationTypeTicks().ticks() == ns_chord->durationTypeTicks().ticks()) {
+                                        if (tick.ticks() > _pre_note->tick().ticks() + _pre_note->chord()->durationTypeTicks().ticks() / 6) {
+                                            _pre_note->setColor(muse::draw::Color::BLACK);
+                                            for (int k = 0; k < _pre_note->qmlDotsCount(); k++) {
+                                                _pre_note->dot(k)->setColor(muse::draw::Color::BLACK);
+                                            }
+                                            if (_pre_note->accidental()) {
+                                                _pre_note->accidental()->setColor(muse::draw::Color::BLACK);
+                                            }
+                                            if (_pre_note->chord()) {
+                                                if (_pre_note->chord()->articulations().size() > 0) {
+                                                    std::vector<Articulation*> mArticulations = _pre_note->chord()->articulations();
+                                                    for (auto& a : mArticulations) {
+                                                        a->setColor(muse::draw::Color::BLACK);
+                                                    }
+                                                }
+
+                                                Stem* _stem = _pre_note->chord()->stem();
+                                                if (_stem) {
+                                                    _stem->setColor(muse::draw::Color::BLACK);
+                                                }
+                                                Hook* _hook = _pre_note->chord()->hook();
+                                                if (_hook) {
+                                                    _hook->setColor(muse::draw::Color::BLACK);
+                                                }
+                                                Beam* _beam = _pre_note->chord()->beam();
+                                                if (_beam) {
+                                                    _beam->setColor(muse::draw::Color::BLACK);
+                                                }
+                                            }
+                                            // ns_chord->parentItem()->setColor(muse::draw::Color::RED);
+                                            for (EngravingItem* ns_item: ns_chord->parentItem()->childrenItems(false)) {
+                                                if (ns_item->type() == mu::engraving::ElementType::NOTE) {
+                                                    Note* ns_note = toNote(ns_item);
+                                                    ns_note->setColor(muse::draw::Color::RED);
+                                                    for (int k = 0; k < ns_note->qmlDotsCount(); k++) {
+                                                        ns_note->dot(k)->setColor(muse::draw::Color::RED);
+                                                    }
+                                                    if (ns_note->accidental()) {
+                                                        ns_note->accidental()->setColor(muse::draw::Color::RED);
+                                                    }
+                                                    if (ns_note->chord()) {
+                                                        if (ns_note->chord()->articulations().size() > 0) {
+                                                            std::vector<Articulation*> mArticulations = ns_note->chord()->articulations();
+                                                            for (auto& a : mArticulations) {
+                                                                a->setColor(muse::draw::Color::RED);
+                                                            }
+                                                        }
+
+                                                        Stem* _stem = ns_note->chord()->stem();
+                                                        if (_stem) {
+                                                            _stem->setColor(muse::draw::Color::RED);
+                                                        }
+                                                        Hook* _hook = ns_note->chord()->hook();
+                                                        if (_hook) {
+                                                            _hook->setColor(muse::draw::Color::RED);
+                                                        }
+                                                        Beam* _beam = ns_note->chord()->beam();
+                                                        if (_beam) {
+                                                            _beam->setColor(muse::draw::Color::RED);
+                                                        }
+                                                    }
+                                                }   
+                                            }
+
+                                            if (pianoKeyboardPlaybackEnable && _pre_noteStaff->visible()) {
+                                                for (auto& _note: ns_chord->notes()) {
+                                                    bool note_hit_ts = false;
+                                                    int ticks_dis = tick.ticks() - _pre_note->tick().ticks() + _pre_note->chord()->durationTypeTicks().ticks() / 6;
+                                                    int note_dt = _pre_note->chord()->durationTypeTicks().ticks() / 6 * 5 + ns_chord->durationTypeTicks().ticks();
+                                                    if (ns_chord->durationType().type() <= mu::engraving::DurationType::V_WHOLE) {
+                                                        note_dt /= 4;
+                                                    }
+                                                    if (ns_chord->durationType().type() == mu::engraving::DurationType::V_HALF) {
+                                                        note_dt /= 2;
+                                                    }
+                                                    if (ns_chord->durationType().type() >= mu::engraving::DurationType::V_EIGHTH 
+                                                    && ns_chord->durationType().type() <= mu::engraving::DurationType::V_1024TH) {
+                                                        note_dt *= 4;
+                                                    }
+                                                    if (ticks_dis >= 0 && ticks_dis <= note_dt / 8) {
+                                                        note_hit_ts = true;
+                                                    }
+                                                    m_notation->interaction()->addPlaybackNote(_note, ottava_map[_note], note_hit_ts);
+                                                }
+                                            }
+                                        }
                                     }
                                 }
                             }

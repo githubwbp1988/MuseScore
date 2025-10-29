@@ -118,6 +118,8 @@ private:
     std::map<Note*, bool> score_trill_tie_map;
     std::map<Note*, bool> score_trill_fermata_map;
 
+    std::map<EngravingItem*, Chord*> score_grace_next_seg_chord_map;
+
     std::map<EngravingItem*, Note*> score_trill_map_1;
     std::map<EngravingItem*, int> score_trill_type_map_1;
     std::map<EngravingItem*, bool> score_trill_above_map_1;
