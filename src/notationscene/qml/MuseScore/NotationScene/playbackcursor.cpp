@@ -1157,6 +1157,12 @@ void PlaybackCursor::processOttavaAsync(mu::engraving::Score* score, bool scoreP
                                             }
 
                                             duration_ticks = mnote->chord()->durationTypeTicks().ticks();
+                                            if (_pre_note->chord()) {
+                                                int suffix_duration_ticks = _pre_note->chord()->durationTypeTicks().ticks();
+                                                if (mnote->tick().ticks() + duration_ticks <= _pre_note->tick().ticks() + suffix_duration_ticks * 0.25) {
+                                                    duration_ticks = _pre_note->tick().ticks() + suffix_duration_ticks * 0.5 - mnote->tick().ticks();
+                                                }
+                                            }
                                             
                                             score_tremolo_note_map[engravingItem] = _pre_note;
                                             EngravingItem* _tremolo_mark = _measure_tremolo_map[mnote];
@@ -1244,6 +1250,12 @@ void PlaybackCursor::processOttavaAsync(mu::engraving::Score* score, bool scoreP
                                             }
 
                                             duration_ticks = mnote->chord()->durationTypeTicks().ticks();
+                                            if (_pre_note->chord()) {
+                                                int suffix_duration_ticks = _pre_note->chord()->durationTypeTicks().ticks();
+                                                if (mnote->tick().ticks() + duration_ticks <= _pre_note->tick().ticks() + suffix_duration_ticks * 0.25) {
+                                                    duration_ticks = _pre_note->tick().ticks() + suffix_duration_ticks * 0.5 - mnote->tick().ticks();
+                                                }
+                                            }
 
                                             score_tremolo_note_map1[engravingItem] = _pre_note;
                                             EngravingItem* _tremolo_mark = _measure_tremolo_map[mnote];
