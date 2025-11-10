@@ -2342,6 +2342,8 @@ void TDraw::draw(const Note* item, Painter* painter, const PaintOptions& opt)
     }
     // NOT tablature
     else {
+        Color c(negativeFret ? config->criticalColor() : item->curColor(opt));
+        painter->setPen(c);
         // skip drawing, if second note of a cross-measure value
         if (item->chord() && item->chord()->crossMeasure() == CrossMeasure::SECOND) {
             return;
