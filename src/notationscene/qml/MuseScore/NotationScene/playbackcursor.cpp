@@ -3429,7 +3429,8 @@ muse::RectF PlaybackCursor::resolveCursorRectByTick1(muse::midi::tick_t _tick, b
     double y = system->staffYpage(0) + system->page()->pos().y();
     double _spatium = score->style().spatium();
 
-    double w  = 8;
+    // double w  = 8;
+    double w  = _spatium / 3;
     double h  = 6 * _spatium;
     //
     // set cursor height for whole system
