@@ -41,10 +41,10 @@
 #include "src/engraving/dom/glissando.h"
 #include "src/engraving/dom/keysig.h"
 #include "src/engraving/dom/tremolotwochord.h"
-#include "src/engraving/dom/engravingitem.h"
 
 using namespace mu::notation;
 using namespace muse;
+using namespace mu::engraving;
 
 void PlaybackCursor::paint(muse::draw::Painter* painter)
 {
@@ -241,8 +241,8 @@ void PlaybackCursor::processOttavaAsync(mu::engraving::Score* score, bool scoreP
                             Staff* noteStaff = note_->staff();
                             int noteStaffIndex = noteStaff->idx();
                             bool isOttavaStartd = false;
-                            const std::set<engraving::Spanner*> starttingSpanners_ = note_->chord()->startingSpanners();
-                            for (const engraving::Spanner* _spanner : starttingSpanners_) {
+                            const std::set<Spanner*> starttingSpanners_ = note_->chord()->startingSpanners();
+                            for (const Spanner* _spanner : starttingSpanners_) {
                                 if (_spanner->isOttava()) {
                                     int startTicks = _spanner->tick().ticks();
                                     int endTicks = _spanner->tick2().ticks();
@@ -284,8 +284,8 @@ void PlaybackCursor::processOttavaAsync(mu::engraving::Score* score, bool scoreP
                                 }
                             }
 
-                            const std::set<engraving::Spanner*> endingSpanners_ = note_->chord()->endingSpanners();
-                            for (const engraving::Spanner* _spanner : endingSpanners_) {
+                            const std::set<Spanner*> endingSpanners_ = note_->chord()->endingSpanners();
+                            for (const Spanner* _spanner : endingSpanners_) {
                                 if (_spanner->isOttava()) {
                                     int startTicks = staff_stick_map[noteStaffIndex];
                                     int endTicks = staff_etick_map[noteStaffIndex];
@@ -373,8 +373,8 @@ void PlaybackCursor::processOttavaAsync(mu::engraving::Score* score, bool scoreP
                             int noteStaffIndex = noteStaff->idx();
 
                             bool isOttavaStartd = false;
-                            const std::set<engraving::Spanner*> endingSpanners_ = note_->chord()->endingSpanners();
-                            for (const engraving::Spanner* _spanner : endingSpanners_) {
+                            const std::set<Spanner*> endingSpanners_ = note_->chord()->endingSpanners();
+                            for (const Spanner* _spanner : endingSpanners_) {
                                 if (_spanner->isOttava()) {
                                     int startTicks = _spanner->tick().ticks();
                                     int endTicks = _spanner->tick2().ticks();
@@ -418,8 +418,8 @@ void PlaybackCursor::processOttavaAsync(mu::engraving::Score* score, bool scoreP
                             }
                             
 
-                            const std::set<engraving::Spanner*> starttingSpanners_ = note_->chord()->startingSpanners();
-                            for (const engraving::Spanner* _spanner : starttingSpanners_) {
+                            const std::set<Spanner*> starttingSpanners_ = note_->chord()->startingSpanners();
+                            for (const Spanner* _spanner : starttingSpanners_) {
                                 if (_spanner->isOttava()) {
                                     int startTicks = staff_stick_map[noteStaffIndex];
                                     int endTicks = staff_etick_map[noteStaffIndex];
@@ -546,10 +546,10 @@ void PlaybackCursor::processOttavaAsync(mu::engraving::Score* score, bool scoreP
 
                     Chord* note_chord = note_item->chord();
                     if (note_chord) {
-                        const std::set<engraving::Spanner*> sSpanners = note_chord->startingSpanners();
-                        const std::set<engraving::Spanner*> eSpanners = note_chord->endingSpanners();
+                        const std::set<Spanner*> sSpanners = note_chord->startingSpanners();
+                        const std::set<Spanner*> eSpanners = note_chord->endingSpanners();
 
-                        for (engraving::Spanner* spanner : sSpanners) {
+                        for (Spanner* spanner : sSpanners) {
                             int spannerStartTicks = spanner->tick().ticks();
                             int spannerEndTicks = spanner->tick2().ticks();
                             if (spanner->isSlur() || spanner->isTrill() || spanner->isGlissando() || spanner->isHairpin()) {
@@ -562,7 +562,7 @@ void PlaybackCursor::processOttavaAsync(mu::engraving::Score* score, bool scoreP
                             }
                         }
 
-                        for (engraving::Spanner* spanner : eSpanners) {
+                        for (Spanner* spanner : eSpanners) {
                             int spannerStartTicks = spanner->tick().ticks();
                             int spannerEndTicks = spanner->tick2().ticks();
                             if (spanner->isSlur() || spanner->isTrill() || spanner->isGlissando() || spanner->isHairpin()) {
@@ -580,7 +580,7 @@ void PlaybackCursor::processOttavaAsync(mu::engraving::Score* score, bool scoreP
 
             auto spanners = smap.findOverlapping(min_ticks, max_ticks);
             for (auto interval : spanners) {
-                engraving::Spanner* spanner = interval.value;
+                Spanner* spanner = interval.value;
                 int spannerStartTicks = spanner->tick().ticks();
                 int spannerEndTicks = spanner->tick2().ticks();
                 EngravingItem* startElem = spanner->startElement();
@@ -611,7 +611,7 @@ void PlaybackCursor::processOttavaAsync(mu::engraving::Score* score, bool scoreP
             }
             spanners = smap.findContained(min_ticks, max_ticks);
             for (auto interval : spanners) {
-                engraving::Spanner* spanner = interval.value;
+                Spanner* spanner = interval.value;
                 int spannerStartTicks = spanner->tick().ticks();
                 int spannerEndTicks = spanner->tick2().ticks();
                 EngravingItem* startElem = spanner->startElement();
@@ -1596,8 +1596,8 @@ void PlaybackCursor::processOttavaAsync(mu::engraving::Score* score, bool scoreP
                                                             }
                                                             if (__item_->type() == mu::engraving::ElementType::NOTE) {
                                                                 Note* __note_ = toNote(__item_);
-                                                                const std::set<engraving::Spanner*>& spanners = __note_->chord()->startingSpanners();
-                                                                for (const engraving::Spanner* sp : spanners) {
+                                                                const std::set<Spanner*>& spanners = __note_->chord()->startingSpanners();
+                                                                for (const Spanner* sp : spanners) {
                                                                     if (toGlissando(sp)) {
                                                                         std::vector<Note*> _nextMeasure_ending_glissando_notes = __note_->chord()->notes();
                                                                         for (Note* __note__ : _nextMeasure_ending_glissando_notes) {
