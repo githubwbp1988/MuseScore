@@ -31,6 +31,8 @@
 #include "ui/iuiconfiguration.h"
 
 #include "pianokeyboardtypes.h"
+#include "src/project/iprojectrwregister.h"
+#include "src/project/iprojectwriter.h"
 
 namespace mu::notation {
 class PianoKeyboardController;
@@ -48,6 +50,8 @@ class PianoKeyboardView : public muse::uicomponents::QuickPaintedView, public mu
     muse::GlobalInject<INotationConfiguration> configuration;
     muse::GlobalInject<muse::ui::IUiConfiguration> uiConfiguration;
 
+    INJECT(mu::project::IProjectRWRegister, videoWriters)
+
 public:
     explicit PianoKeyboardView(QQuickItem* parent = nullptr);
     ~PianoKeyboardView() override;
@@ -55,6 +59,11 @@ public:
     Q_INVOKABLE void init();
 
     void paint(QPainter* painter) override;
+
+    qreal handlePaintKeyboard(QPainter* painter, QRectF viewport, QRectF keyboard_viewport);
+    void handlePaintKeyboardOff();
+
+    void invokePaintKeyboard();
 
     int numberOfKeys() const;
     void setNumberOfKeys(int number);
@@ -106,6 +115,8 @@ private:
     static constexpr piano_key_t MAX_NUM_KEYS = 128;
 
     bool m_isInitialized = false;
+    
+    mu::project::IProjectWriterPtr m_videowriter;
 
     piano_key_t m_lowestKey = MIN_KEY;
     piano_key_t m_numberOfKeys = MAX_NUM_KEYS;
@@ -209,5 +220,10 @@ private:
 
     qreal m_scrollBarPosition = 0.0;
     qreal m_scrollBarSize = 0.0;
+
+    QPainter* m_painter = nullptr;
+    QRectF m_viewport;
+    QRectF m_keyboard_viewport;
+    qreal m_keyboard_scale = 1.0;
 };
 }

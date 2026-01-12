@@ -160,6 +160,12 @@ jobs:
         brew install ccache
         bash ./buildscripts/ci/tools/setup_ccache_config.sh
 
+    - name: Install FFmpeg dependencies
+      run: |
+        brew install ffmpeg pkg-config
+        echo "pkgconf path: $(which pkgconf)"
+        echo "pkgconf version: $(pkgconf --version)"
+
     - name: Install Qt
       # uses: jurplel/install-qt-action@v4
       # with:

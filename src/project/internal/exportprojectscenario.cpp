@@ -41,7 +41,11 @@ std::vector<INotationWriter::UnitType> ExportProjectScenario::supportedUnitTypes
 
     auto writer = writers()->writer(exportType.suffixes.front().toStdString());
     if (!writer) {
-        return {};
+        auto videoWriter = videoWriters()->writer(exportType.suffixes.front().toStdString());
+        if (!videoWriter) {
+            return {};
+        }
+        return videoWriter->supportedUnitTypes();    
     }
 
     return writer->supportedUnitTypes();
@@ -243,6 +247,41 @@ bool ExportProjectScenario::exportScores(notation::INotationPtrList notations, c
 
     if (openDestinationFolderOnExport) {
         openFolder(destinationPath);
+    }
+
+    return true;
+}
+
+bool ExportProjectScenario::exportScoresVideo(const project::INotationProjectPtr& project, const muse::io::path_t destinationPath,
+                                              INotationWriter::UnitType unitType, bool openDestinationFolderOnExport) const {
+    std::string suffix = io::suffix(destinationPath);
+    IProjectWriterPtr writer = videoWriters()->writer(suffix);
+    if (!writer) {
+        return false;
+    }
+    
+    IF_ASSERT_FAILED(writer->supportsUnitType(unitType)) {
+        return false;
+    }
+
+    IProjectWriter::Options options {
+        { INotationWriter::OptionKey::UNIT_TYPE, Val(unitType) },
+    };
+
+    switch (unitType) {
+    case INotationWriter::UnitType::PER_PAGE: {
+        
+    } break;
+    case INotationWriter::UnitType::PER_PART: {
+        muse::io::path_t definitivePath = destinationPath;
+        Ret ret = writer->write(project, definitivePath, options);
+        if (ret.code() == static_cast<int>(Ret::Code::Cancel)) {
+            return false;
+        }
+    } break;
+    case INotationWriter::UnitType::MULTI_PART: {
+        
+    } break;
     }
 
     return true;

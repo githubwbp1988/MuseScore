@@ -23,6 +23,8 @@
 
 #include <QItemSelectionModel>
 
+#include <QProcess>
+
 #include "async/async.h"
 #include "translation.h"
 #include "log.h"
@@ -106,7 +108,11 @@ ExportDialogModel::ExportDialogModel(QObject* parent)
         ExportType::makeWithSuffixes({ "lrc" },
                                      muse::qtrc("project/export", "LRC file"),
                                      muse::qtrc("project/export", "LRC files"),
-                                     "LrcSettingsPage.qml")
+                                     "LrcSettingsPage.qml"),
+        ExportType::makeWithSuffixes({ "mp4" },
+                                     muse::qtrc("project/export", "MP4 video"),
+                                     muse::qtrc("project/export", "MP4 video files"),
+                                     "AudioSettingsPage.qml")
     };
 }
 
@@ -363,6 +369,26 @@ void ExportDialogModel::setUnitType(UnitType unitType)
     emit selectedUnitTypeChanged(unitType);
 }
 
+// build the command to merge video and audio
+void mergeVideo(QString videoFile, QString audioFile, double offset) {
+    QString tmpFile = videoFile;
+    tmpFile.replace(".mp4", ".tmp.mp4");
+
+    // execute ffmpeg
+    QProcess::execute("ffmpeg", QStringList() << "-y" << "-i" << videoFile 
+                                            << "-itsoffset" << QString::number(offset)
+                                            << "-i" << audioFile
+                                            << "-c:v" << "copy" << "-c:a" << "aac"
+                                            << "-map" << "0:v:0" << "-map" << "1:a:0"
+                                            << "-shortest" << tmpFile);
+
+    // execute mv
+    QProcess::execute("mv", QStringList() << tmpFile << videoFile);
+
+    // delete audio file
+    QProcess::execute("rm", QStringList() << audioFile);
+}
+
 bool ExportDialogModel::exportScores()
 {
     INotationPtrList notations;
@@ -414,9 +440,46 @@ bool ExportDialogModel::exportScores()
                    shouldDestinationFolderBeOpenedOnExport() };
 
     std::shared_ptr<IExportProjectScenario> scenario = exportProjectScenario();
-    async::Async::call(nullptr, [scenario, params]() {
-        scenario->exportScores(params.notations, params.exportPath, params.selectedUnitType, params.openFolderOnExport);
-    });
+
+    std::string suffix = io::suffix(m_exportPath);
+    if (suffix.empty()) {
+        LOGE() << "Export path has no suffix: " << m_exportPath.toQString();
+        return false;
+    }
+    if (suffix.compare("mp4") == 0) {
+        // async::Async::call(nullptr, [scenario, params, project]() {
+        muse::io::path_t m_exportPath1(params.exportPath.toQString().toStdString());
+        project::INotationWriter::UnitType m_selectedUnitType1 = params.selectedUnitType;
+        QString audioFile = params.exportPath.toQString();
+        audioFile = audioFile.left(audioFile.lastIndexOf('.')) + ".wav";
+        muse::io::path_t audioPath(audioFile.toStdString());
+        
+        bool ret = scenario->exportScores(params.notations, audioPath, params.selectedUnitType, params.openFolderOnExport);
+        
+        if (ret) {
+            LOGI() << "audio export success ... ";
+            
+            bool ret1 = scenario->exportScoresVideo(project, m_exportPath1, m_selectedUnitType1, params.openFolderOnExport);
+            if (ret1) {
+                LOGI() << "video export success ... ";
+                LOGI() << "merge video and audio to a single video file ... ";
+                QString videoFile = m_exportPath1.toQString();
+                QString audioFile = videoFile;
+                audioFile.replace(".mp4", ".wav");
+                mergeVideo(videoFile, audioFile, 3.0);
+                LOGI() << "video and audio merged successfully, replacing original video file ... ";
+            } else {
+                LOGE() << "video export failed ... ";
+            }
+        } else {
+            LOGE() << "audio export failed ... ";
+        }
+        // });
+    } else {
+        async::Async::call(nullptr, [scenario, params]() {
+            scenario->exportScores(params.notations, params.exportPath, params.selectedUnitType, params.openFolderOnExport);
+        });
+    }
 
     return true;
 }

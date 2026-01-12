@@ -43,19 +43,28 @@ public:
     muse::Ret write(project::INotationProjectPtr project, QIODevice& device, const Options& options = Options()) override;
     muse::Ret write(project::INotationProjectPtr project, const muse::io::path_t& filePath, const Options& options = Options()) override;
 
+    void pianoViewTrick(std::function<qreal(QPainter*, QRectF, QRectF)> trickFunction) override;
+    void pianoViewTrickOff(std::function<void()> trickOffFunction) override;
+
+    void pianoViewInvoke(std::function<void()> invokeFunction) override;
+
 private:
 
     struct Config
     {
         int width = 1920;
         int height = 1080;
-        int fps = 24;
+        int fps = 32; // 24
         int bitrate = 800000;
-        float leadingSec = 3.;
-        float trailingSec = 3.;
+        float leadingSec = 2.0;
+        float trailingSec = 0.0;
     };
 
     muse::Ret generatePagedOriginalVideo(project::INotationProjectPtr project, const muse::io::path_t& filePath, const Config& config);
+
+    std::function<qreal(QPainter*, QRectF, QRectF)> m_trickFunction = nullptr;
+    std::function<void()> m_trickOffFunction = nullptr;
+    std::function<void()> m_invokeFunction = nullptr;
 };
 }
 

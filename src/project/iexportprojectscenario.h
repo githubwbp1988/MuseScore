@@ -27,6 +27,7 @@
 #include "inotationwriter.h"
 #include "internal/exporttype.h"
 #include "types/projecttypes.h"
+#include "inotationproject.h"
 
 namespace mu::project {
 class IExportProjectScenario : MODULE_EXPORT_INTERFACE
@@ -43,6 +44,10 @@ public:
     virtual bool exportScores(notation::INotationPtrList notations, const muse::io::path_t destinationPath,
                               INotationWriter::UnitType unitType = INotationWriter::UnitType::PER_PART,
                               bool openDestinationFolderOnExport = false) const = 0;
+
+    virtual bool exportScoresVideo(const project::INotationProjectPtr& project, const muse::io::path_t destinationPath,
+                                INotationWriter::UnitType unitType = INotationWriter::UnitType::PER_PART,
+                                bool openDestinationFolderOnExport = false) const = 0;
 
     virtual const ExportInfo& exportInfo() const = 0;
     virtual void setExportInfo(const ExportInfo& exportInfo) = 0;

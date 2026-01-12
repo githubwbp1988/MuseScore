@@ -98,7 +98,7 @@ void AudioExportConfiguration::setExportSampleFormat(AudioSampleFormat format)
 void AudioExportConfiguration::setExportSampleFormat(const QString& extension, AudioSampleFormat format)
 {
     m_exportSampleFormat = format;
-    if (extension == QLatin1String("wav")) {
+    if (extension == QLatin1String("wav") || extension == QLatin1String("mp4")) {
         settings()->setSharedValue(EXPORT_WAV_SAMPLE_FORMAT_KEY, Val(static_cast<int>(format)));
     } else if (extension == QLatin1String("flac")) {
         settings()->setSharedValue(EXPORT_FLAC_SAMPLE_FORMAT_KEY, Val(static_cast<int>(format)));
@@ -107,7 +107,7 @@ void AudioExportConfiguration::setExportSampleFormat(const QString& extension, A
 
 const std::vector<AudioSampleFormat>& AudioExportConfiguration::availableSampleFormats(const QString& extension) const
 {
-    if (extension == QLatin1String("wav")) {
+    if (extension == QLatin1String("wav") || extension == QLatin1String("mp4")) {
         static const std::vector<muse::audio::AudioSampleFormat> wavSampleFormats {
             AudioSampleFormat::Int16,
             AudioSampleFormat::Int24,
@@ -128,7 +128,7 @@ const std::vector<AudioSampleFormat>& AudioExportConfiguration::availableSampleF
 
 void AudioExportConfiguration::loadSampleFormatSetting(const QString& extension)
 {
-    if (extension == QLatin1String("wav")) {
+    if (extension == QLatin1String("wav") || extension == QLatin1String("mp4")) {
         setExportSampleFormat(static_cast<AudioSampleFormat>(settings()->value(EXPORT_WAV_SAMPLE_FORMAT_KEY).toInt()));
     } else if (extension == QLatin1String("flac")) {
         setExportSampleFormat(static_cast<AudioSampleFormat>(settings()->value(EXPORT_FLAC_SAMPLE_FORMAT_KEY).toInt()));

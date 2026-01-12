@@ -29,6 +29,10 @@
 #include "async/channel.h"
 #include "global/progress.h"
 #include "inotationproject.h"
+#include "inotationwriter.h"
+
+using UnitType = mu::project::INotationWriter::UnitType;
+using OptionKey = mu::project::INotationWriter::OptionKey;
 
 namespace mu::project {
 class IProjectWriter
@@ -37,18 +41,18 @@ public:
 
     virtual ~IProjectWriter() = default;
 
-    enum class UnitType {
-        PER_PAGE,
-        PER_PART,
-        MULTI_PART
-    };
+    // enum class UnitType {
+    //     PER_PAGE,
+    //     PER_PART,
+    //     MULTI_PART
+    // };
 
-    enum class OptionKey {
-        UNIT_TYPE,
-        PAGE_NUMBER,
-        TRANSPARENT_BACKGROUND,
-        NOTES_COLORS
-    };
+    // enum class OptionKey {
+    //     UNIT_TYPE,
+    //     PAGE_NUMBER,
+    //     TRANSPARENT_BACKGROUND,
+    //     NOTES_COLORS
+    // };
 
     using Options = QMap<OptionKey, muse::Val>;
 
@@ -57,6 +61,11 @@ public:
 
     virtual muse::Ret write(project::INotationProjectPtr project, QIODevice& device, const Options& options = Options()) = 0;
     virtual muse::Ret write(project::INotationProjectPtr project, const muse::io::path_t& filePath, const Options& options = Options()) = 0;
+
+    virtual void pianoViewTrick(std::function<qreal(QPainter*, QRectF, QRectF)> trickFunction) {}
+    virtual void pianoViewTrickOff(std::function<void()> trickOffFunction) {}
+    
+    virtual void pianoViewInvoke(std::function<void()> invokeFunction) {}
 };
 
 using IProjectWriterPtr = std::shared_ptr<IProjectWriter>;

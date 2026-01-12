@@ -28,6 +28,7 @@
 #include "iprojectconfiguration.h"
 #include "iinteractive.h"
 #include "inotationwritersregister.h"
+#include "iprojectrwregister.h"
 #include "importexport/imagesexport/iimagesexportconfiguration.h"
 #include "context/iglobalcontext.h"
 #include "io/ifilesystem.h"
@@ -41,6 +42,7 @@ class ExportProjectScenario : public IExportProjectScenario, public muse::async:
     muse::GlobalInject<iex::imagesexport::IImagesExportConfiguration> imagesExportConfiguration;
     muse::Inject<muse::IInteractive> interactive = { this };
     muse::Inject<INotationWritersRegister> writers = { this };
+    muse::Inject<IProjectRWRegister> videoWriters = { this };
     muse::Inject<context::IGlobalContext> context = { this };
 
 public:
@@ -59,6 +61,10 @@ public:
     bool exportScores(notation::INotationPtrList notations, const muse::io::path_t destinationPath,
                       INotationWriter::UnitType unitType = INotationWriter::UnitType::PER_PART,
                       bool openDestinationFolderOnExport = false) const override;
+
+    bool exportScoresVideo(const project::INotationProjectPtr& project, const muse::io::path_t destinationPath, 
+                           INotationWriter::UnitType unitType = INotationWriter::UnitType::PER_PART,
+                           bool openDestinationFolderOnExport = false) const override;
 
     const ExportInfo& exportInfo() const override;
     void setExportInfo(const ExportInfo& exportInfo) override;
