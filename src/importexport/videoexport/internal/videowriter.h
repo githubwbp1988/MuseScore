@@ -24,6 +24,7 @@
 
 #include "modularity/ioc.h"
 #include "../ivideoexportconfiguration.h"
+#include "../../audioexport/iaudioexportconfiguration.h"
 #include "iapplication.h"
 
 #include "project/iprojectwriter.h"
@@ -32,6 +33,7 @@ namespace mu::iex::videoexport {
 class VideoWriter : public project::IProjectWriter
 {
     muse::GlobalInject<IVideoExportConfiguration> configuration;
+    muse::GlobalInject<audioexport::IAudioExportConfiguration> audioConfiguration;
     muse::Inject<muse::IApplication> application;
 
 public:

@@ -21,6 +21,7 @@
  */
 import QtQuick
 import QtQuick.Layouts
+import QtQuick.Controls
 
 import Muse.UiComponents
 import Muse.Ui
@@ -101,6 +102,35 @@ ExportSettingsPage {
 
             onActivated: function(index, value) {
                 root.model.selectedSampleFormat = value
+            }
+        }
+    }
+
+    ExportOptionItem {
+        id: exportFinetuneLabel
+        visible: root.model.showExportFinetuneControl()
+        text: qsTrc("project/export", "Video Cover File-tune path:")
+
+        RowLayout {
+            Layout.preferredWidth: 360
+            spacing: 8
+
+            TextField {
+                id: finetune
+                Layout.fillWidth: true
+                placeholderText: qsTr("Select file path...")
+                text: root.model.videoExportFineTuneConfigPath
+
+                onTextChanged: {
+                    root.model.videoExportFineTuneConfigPath = text
+                }
+            }
+
+            FlatButton {
+                text: qsTr("Choose file")
+                onClicked: {
+                    finetune.text = root.model.openExportFinetuneFile()
+                }
             }
         }
     }

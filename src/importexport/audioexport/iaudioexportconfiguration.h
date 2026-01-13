@@ -53,6 +53,9 @@ public:
     virtual const std::vector<muse::audio::AudioSampleFormat>& availableSampleFormats(const QString& extension) const = 0;
     virtual QString sampleFormatToString(muse::audio::AudioSampleFormat format) const = 0;
     virtual void loadSampleFormatSetting(const QString& extension) = 0;
+
+    virtual QString exportFineTuneConfigPath() = 0;
+    virtual void setExportFineTuneConfigPath(QString fineTuneConfigPath) = 0;
 };
 }
 

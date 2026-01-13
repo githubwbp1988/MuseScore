@@ -78,6 +78,8 @@ class ExportDialogModel : public QAbstractListModel, public QQmlParserStatus, pu
     Q_PROPERTY(QVariantList availableSampleFormats READ availableSampleFormats NOTIFY availableSampleFormatsChanged)
     Q_PROPERTY(int selectedSampleFormat READ selectedSampleFormat WRITE setSelectedSampleFormat NOTIFY selectedSampleFormatChanged)
 
+    Q_PROPERTY(QString videoExportFineTuneConfigPath READ videoExportFineTuneConfigPath WRITE setVideoExportFineTuneConfigPath NOTIFY videoExportFineTuneConfigPathChanged)
+
     Q_PROPERTY(bool midiExpandRepeats READ midiExpandRepeats WRITE setMidiExpandRepeats NOTIFY midiExpandRepeatsChanged)
     Q_PROPERTY(bool midiExportRpns READ midiExportRpns WRITE setMidiExportRpns NOTIFY midiExportRpnsChanged)
 
@@ -123,6 +125,9 @@ public:
     void setExportType(const ExportType& type);
     Q_INVOKABLE void selectExportTypeById(const QString& id);
 
+    Q_INVOKABLE bool showExportFinetuneControl();
+    Q_INVOKABLE QString openExportFinetuneFile();
+
     QVariantList availableUnitTypes() const;
     int selectedUnitType() const;
     void setUnitType(int unitType);
@@ -165,6 +170,9 @@ public:
     QVariantList availableSampleFormats() const;
     int selectedSampleFormat() const;
     void setSelectedSampleFormat(int format);
+
+    QString videoExportFineTuneConfigPath() const;
+    void setVideoExportFineTuneConfigPath(QString fineTuneConfigPath);
 
     bool midiExpandRepeats() const;
     void setMidiExpandRepeats(bool expandRepeats);
@@ -221,6 +229,8 @@ signals:
     void bitRateChanged(int bitRate);
     void availableSampleFormatsChanged();
     void selectedSampleFormatChanged();
+
+    void videoExportFineTuneConfigPathChanged();
 
     void midiExpandRepeatsChanged(bool expandRepeats);
     void midiExportRpnsChanged(bool exportRpns);

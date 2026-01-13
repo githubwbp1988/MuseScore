@@ -318,6 +318,29 @@ void ExportDialogModel::selectExportTypeById(const QString& id)
     setExportType(m_exportTypeList.front());
 }
 
+bool ExportDialogModel::showExportFinetuneControl()
+{
+    if (m_selectedExportType.suffixes[0] == QLatin1String("mp4")) {
+        return true;
+    }
+    return false;
+}
+
+QString ExportDialogModel::openExportFinetuneFile()
+{
+    io::path_t _dir;
+    QString fineTuneConfigPath = interactive()->selectOpeningFileSync(
+        muse::trc("diagnostics", "Save diagnostic files"),
+        _dir,
+        {}).toQString();
+
+    if (!fineTuneConfigPath.isEmpty()) {
+        audioExportConfiguration()->setExportFineTuneConfigPath(fineTuneConfigPath);
+        return fineTuneConfigPath;
+    }
+    return QString();
+}
+
 QVariantList ExportDialogModel::availableUnitTypes() const
 {
     QMap<UnitType, QString> unitTypeNames {
@@ -844,4 +867,15 @@ void ExportDialogModel::setSelectedSampleFormat(int format)
 
     audioExportConfiguration()->setExportSampleFormat(m_selectedExportType.suffixes[0], audioFormat);
     emit selectedSampleFormatChanged();
+}
+
+QString ExportDialogModel::videoExportFineTuneConfigPath() const
+{
+    return audioExportConfiguration()->exportFineTuneConfigPath();
+}
+
+void ExportDialogModel::setVideoExportFineTuneConfigPath(QString fineTuneConfigPath)
+{
+    audioExportConfiguration()->setExportFineTuneConfigPath(fineTuneConfigPath);
+    emit videoExportFineTuneConfigPathChanged();
 }

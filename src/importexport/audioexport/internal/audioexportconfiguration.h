@@ -48,9 +48,14 @@ public:
     QString sampleFormatToString(muse::audio::AudioSampleFormat format) const override;
     void loadSampleFormatSetting(const QString& extension) override;
 
+    QString exportFineTuneConfigPath() override;
+    void setExportFineTuneConfigPath(QString fineTuneConfigPath) override;
+
 private:
     std::optional<int> m_exportMp3BitrateOverride = std::nullopt;
     muse::audio::AudioSampleFormat m_exportSampleFormat;
+
+    QString m_exportFineTuneConfigPath;
 };
 }
 

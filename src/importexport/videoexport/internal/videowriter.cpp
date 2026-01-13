@@ -300,15 +300,61 @@ muse::Ret VideoWriter::generatePagedOriginalVideo(INotationProjectPtr project, c
     int coverAvatarLayout = 1;  // 0: left,  1: right   2: full  3: bottom(avatar below the text)
     int voffset = 0;
     int hoffset = 0;
+    float voffsetScale = 0.0;
+    float hoffsetScale = 0.0;
+    float coverHoffsetScale = 0.0;
+    int fontSize = 20;
+    bool avatarFullHeight = false;
     // QString avatarString = "/Users/erlich/Downloads/Tchaikovskys_Piano_Concerto_No._1_Opus_23_Arrangement_for_Solo_Piano.png";
     // QString avatarString = "/Users/erlich/Downloads/advanced_processed_1752139510167.png";
     // QString avatarString = "/Users/erlich/Downloads/simple_processed_xingxingdiandeng_cropped.png";
-    QString avatarString = "/Users/erlich/Developer/workspace/python/pythonProject/test/test_images/Luffy_Fierce_Attack.png";
+    QString avatarString = "/Users/erlich/Developer/workspace/python/pythonProject/test/test_images/Luffy_Fierce_Attack.png"; 
+
+    // read Fine-tune parameters of video cover from a txt file
+    // QString fineTunePath = "/Users/erlich/Downloads/musescore-fune-tune.txt";
+    QString fineTunePath = audioConfiguration()->exportFineTuneConfigPath();
+    QFile configFile(QString::fromStdWString(fineTunePath.toStdWString()));
+    if (configFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        isCoverLogoAvatar = false;
+        isCoverTextAvatar = false;
+        linesVec.clear();
+        QByteArray data = configFile.readAll();
+        QString content = QString::fromUtf8(data);
+        QStringList lines = content.split("\n");
+        for (const QString& line : lines) {
+            QStringList keyValue = line.split("=");
+            if (keyValue.size() == 2) {
+                QString key = keyValue[0].trimmed();
+                QString value = keyValue[1].trimmed();
+                if (key == "title") {
+                    linesVec.push_back(value);
+                } else if (key == "isCoverLogoAvatar") {
+                    isCoverLogoAvatar = (value.toLower() == "true");
+                } else if (key == "isCoverTextAvatar") {
+                    isCoverTextAvatar = (value.toLower() == "true");
+                } else if (key == "coverAvatarLayout") {
+                    coverAvatarLayout = value.toInt();
+                } else if (key == "voffsetScale") {
+                    voffsetScale = value.toFloat();
+                } else if (key == "hoffsetScale") {
+                    hoffsetScale = value.toFloat();
+                } else if (key == "coverHoffsetScale") {
+                    coverHoffsetScale = value.toFloat();
+                } else if (key == "fontSize") {
+                    fontSize = value.toInt();
+                } else if (key == "avatarString") {
+                    avatarString = value;
+                } else if (key == "avatarFullHeight") {
+                    avatarFullHeight = (value.toLower() == "true");
+                }
+            }
+        }
+    }
 
     int lines = linesVec.size();
 
     // QFont::Light Normal Medium DemiBold Bold
-    QFont font("Comic Sans MS", 20, QFont::Normal);   // 38 - Medium  48 - 2160p  28 - Normal
+    QFont font("Comic Sans MS", fontSize, QFont::Normal);   // 38 - Medium  48 - 2160p  28 - Normal
     QFontMetrics fm(font);
 
     // high_resolution_clock::time_point startTp = high_resolution_clock::now();
@@ -384,6 +430,9 @@ muse::Ret VideoWriter::generatePagedOriginalVideo(INotationProjectPtr project, c
 
                     QImage avatar(avatarString);  // 
                     int avatarSize = textHeight * 8;  // 6
+                    if (avatarFullHeight) {
+                        avatarSize = rect.height();
+                    }
                     if (!avatar.isNull()) {
                         if (coverAvatarLayout == 2) {
                             avatar = avatar.scaledToWidth(rect.width(), Qt::SmoothTransformation);
@@ -426,17 +475,21 @@ muse::Ret VideoWriter::generatePagedOriginalVideo(INotationProjectPtr project, c
                         } else if (coverAvatarLayout == 3) {
                             qp.drawImage(QPointF(xStart, yStart), avatar);
                         } else {
-                            if (coverAvatarLayout == 0) {
-                                // xStart += 0.4 * totalTextHeight;
-                            } else if (coverAvatarLayout == 1) {
-                                // xStart -= 0.4 * totalTextHeight;
-                            }
+                            // if (coverAvatarLayout == 0) {
+                            //     // xStart += 0.4 * totalTextHeight;
+                            // } else if (coverAvatarLayout == 1) {
+                            //     // xStart -= 0.4 * totalTextHeight;
+                            // }
+                            xStart += coverHoffsetScale * totalTextHeight;
                             qp.drawImage(QPointF(xStart, yStart + (totalTextHeight - avatar.height()) / 2), avatar);
                         }
                     }
 
+                    voffset = voffsetScale * totalTextHeight;
+                    hoffset = hoffsetScale * totalTextHeight;
+
                     if (coverAvatarLayout == 2) {
-                        voffset = -0.5 * totalTextHeight;
+                        // voffset = -0.5 * totalTextHeight;
                         // hoffset = 0.5 * totalTextHeight;
                         for (int i = 0; i < lines; ++i) {
                             QString line = linesVec[i];
@@ -455,13 +508,13 @@ muse::Ret VideoWriter::generatePagedOriginalVideo(INotationProjectPtr project, c
                             qp.drawText(textRect, Qt::AlignCenter, line);
                         }
                     } else {
-                        if (coverAvatarLayout == 0) {
-                            voffset = -0.2 * totalTextHeight;
-                            hoffset = -0.2 * totalTextHeight;
-                        } else if (coverAvatarLayout == 1) { 
-                            voffset = -0.2 * totalTextHeight;
-                            hoffset = 0.5 * totalTextHeight;
-                        }
+                        // if (coverAvatarLayout == 0) {
+                        //     voffset = -0.2 * totalTextHeight;
+                        //     hoffset = -0.2 * totalTextHeight;
+                        // } else if (coverAvatarLayout == 1) { 
+                        //     voffset = -0.2 * totalTextHeight;
+                        //     hoffset = 0.5 * totalTextHeight;
+                        // }
 
                         for (int i = 0; i < lines; ++i) {
                             QString line = linesVec[i];

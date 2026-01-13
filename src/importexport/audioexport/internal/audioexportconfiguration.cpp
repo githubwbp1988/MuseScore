@@ -34,6 +34,7 @@ static const Settings::Key EXPORT_SAMPLE_RATE_KEY("iex_audioexport", "export/aud
 static const Settings::Key EXPORT_MP3_BITRATE("iex_audioexport", "export/audio/mp3Bitrate");
 static const Settings::Key EXPORT_WAV_SAMPLE_FORMAT_KEY("iex_audioexport", "export/audio/wavSampleFormat");
 static const Settings::Key EXPORT_FLAC_SAMPLE_FORMAT_KEY("iex_audioexport", "export/audio/flacSampleFormat");
+static const Settings::Key EXPORT_FINE_TUNE_CONFIG_PATH_KEY("iex_audioexport", "export/video/fineTuneConfigPath");
 
 void AudioExportConfiguration::init()
 {
@@ -130,9 +131,23 @@ void AudioExportConfiguration::loadSampleFormatSetting(const QString& extension)
 {
     if (extension == QLatin1String("wav") || extension == QLatin1String("mp4")) {
         setExportSampleFormat(static_cast<AudioSampleFormat>(settings()->value(EXPORT_WAV_SAMPLE_FORMAT_KEY).toInt()));
+        if (extension == QLatin1String("mp4")) {
+            setExportFineTuneConfigPath(settings()->value(EXPORT_FINE_TUNE_CONFIG_PATH_KEY).toQString());
+        }
     } else if (extension == QLatin1String("flac")) {
         setExportSampleFormat(static_cast<AudioSampleFormat>(settings()->value(EXPORT_FLAC_SAMPLE_FORMAT_KEY).toInt()));
     }
+}
+
+QString AudioExportConfiguration::exportFineTuneConfigPath()
+{
+    return m_exportFineTuneConfigPath;
+}
+
+void AudioExportConfiguration::setExportFineTuneConfigPath(QString fineTuneConfigPath)
+{
+    m_exportFineTuneConfigPath = fineTuneConfigPath;
+    settings()->setSharedValue(EXPORT_FINE_TUNE_CONFIG_PATH_KEY, Val(fineTuneConfigPath));
 }
 
 QString AudioExportConfiguration::sampleFormatToString(AudioSampleFormat format) const
