@@ -451,6 +451,12 @@ const UiActionList NotationUiActions::s_actions = {
              TranslatableString("action", "Realize &chord symbols"),
              TranslatableString("action", "Realize chord symbols")
              ),
+    UiAction("extend-to-next-note",
+             mu::context::UiCtxProjectOpened,
+             mu::context::CTX_NOTATION_OPENED,
+             TranslatableString("action", "Extend to next note"),
+             TranslatableString("action", "Extend to next note")
+             ),
     UiAction("time-delete",
              mu::context::UiCtxProjectOpened,
              mu::context::CTX_NOTATION_OPENED,
@@ -2576,8 +2582,8 @@ const UiActionList NotationUiActions::s_actions = {
              mu::context::UiCtxProjectFocused,
              mu::context::CTX_NOTATION_OPENED,
              //: Pre-dive, i.e. a movement of the tremolo bar prepared before picking the note
-             TranslatableString("action", "Pre-Dive"),
-             TranslatableString("action", "Pre-Dive"),
+             TranslatableString("action", "Pre-dive"),
+             TranslatableString("action", "Pre-dive"),
              IconCode::Code::GUITAR_PRE_DIVE
              ),
     UiAction("dip",
