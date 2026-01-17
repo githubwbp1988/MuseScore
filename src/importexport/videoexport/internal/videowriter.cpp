@@ -134,8 +134,74 @@ muse::Ret VideoWriter::generatePagedOriginalVideo(INotationProjectPtr project, c
 
     engraving::MasterScore* score = masterNotation->notation()->elements()->msScore()->masterScore();
 
+    std::vector<QString> linesVec;
+    bool isCoverLogoAvatar = true;
+    bool isCoverTextAvatar = true;
+    int coverAvatarLayout = 1;  // 0: left,  1: right   2: full  3: bottom(avatar below the text)
+    int voffset = 0;
+    int hoffset = 0;
+    float voffsetScale = 0.0;
+    float hoffsetScale = 0.0;
+    float coverHoffsetScale = 0.0;
+    int fontSize = 20;
+    bool avatarFullHeight = false;
+    int textHeightScale = 5;
+    // QString avatarString = "/Users/erlich/Downloads/Tchaikovskys_Piano_Concerto_No._1_Opus_23_Arrangement_for_Solo_Piano.png";
+    // QString avatarString = "/Users/erlich/Downloads/advanced_processed_1752139510167.png";
+    // QString avatarString = "/Users/erlich/Downloads/simple_processed_xingxingdiandeng_cropped.png";
+    QString avatarString = "/Users/erlich/Developer/workspace/python/pythonProject/test/test_images/Luffy_Fierce_Attack.png"; 
+
+    // read Fine-tune parameters of video cover from a txt file
+    // QString fineTunePath = "/Users/erlich/Downloads/musescore-fune-tune.txt";
+    QString fineTunePath = audioConfiguration()->exportFineTuneConfigPath();
+    QFile configFile(QString::fromStdWString(fineTunePath.toStdWString()));
+    if (configFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        isCoverLogoAvatar = false;
+        isCoverTextAvatar = false;
+        QByteArray data = configFile.readAll();
+        QString content = QString::fromUtf8(data);
+        QStringList lines = content.split("\n");
+        for (const QString& line : lines) {
+            QStringList keyValue = line.split("=");
+            if (keyValue.size() == 2) {
+                QString key = keyValue[0].trimmed();
+                QString value = keyValue[1].trimmed();
+                if (key == "title") {
+                    linesVec.push_back(value);
+                } else if (key == "isCoverLogoAvatar") {
+                    isCoverLogoAvatar = (value.toLower() == "true");
+                } else if (key == "isCoverTextAvatar") {
+                    isCoverTextAvatar = (value.toLower() == "true");
+                } else if (key == "coverAvatarLayout") {
+                    coverAvatarLayout = value.toInt();
+                } else if (key == "voffsetScale") {
+                    voffsetScale = value.toFloat();
+                } else if (key == "hoffsetScale") {
+                    hoffsetScale = value.toFloat();
+                } else if (key == "coverHoffsetScale") {
+                    coverHoffsetScale = value.toFloat();
+                } else if (key == "fontSize") {
+                    fontSize = value.toInt();
+                } else if (key == "avatarString") {
+                    avatarString = value;
+                } else if (key == "avatarFullHeight") {
+                    avatarFullHeight = (value.toLower() == "true");
+                } else if (key == "viewMode") {
+                    if (value.toInt() == 0) {
+                        masterNotation->notation()->setViewMode(notation::ViewMode::PAGE);
+                    } else if (value.toInt() == 1) {
+                        masterNotation->notation()->setViewMode(notation::ViewMode::FLOAT);
+                    }
+                } else if (key == "textHeightScale") {
+                    textHeightScale = value.toInt();
+                }
+            }
+        }
+    } else {
+        masterNotation->notation()->setViewMode(notation::ViewMode::FLOAT);
+    }
+
     // Setup Score view
-    masterNotation->notation()->setViewMode(notation::ViewMode::FLOAT);
     score->setShowFrames(false);
     score->setShowInstrumentNames(true);
     score->setShowInvisible(false);
@@ -260,96 +326,39 @@ muse::Ret VideoWriter::generatePagedOriginalVideo(INotationProjectPtr project, c
     PlaybackCursor cursor(application()->iocContext());
     cursor.setNotation(masterNotation->notation());
 
-    QString workTitle = score->metaTag(u"workTitle");
-    QString subtitle = score->metaTag(u"subtitle");
-    QString composer = score->metaTag(u"composer");
-    QString arranger = score->metaTag(u"arranger");
+    // QString workTitle = score->metaTag(u"workTitle");
+    // QString subtitle = score->metaTag(u"subtitle");
+    // QString composer = score->metaTag(u"composer");
+    // QString arranger = score->metaTag(u"arranger");
 
-    QString line1 = workTitle;
-    QString line2 = subtitle;
-    QString line3 = arranger;
+    // QString line1 = workTitle;
+    // QString line2 = subtitle;
+    // QString line3 = arranger;
     
-    if (!composer.isEmpty()) {
-        if (line3.isEmpty()) {
-            line3 = composer;
-        } else {
-            line3 = arranger + "  " + composer; 
-        }
-    }
+    // if (!composer.isEmpty()) {
+    //     if (line3.isEmpty()) {
+    //         line3 = composer;
+    //     } else {
+    //         line3 = arranger + "  " + composer; 
+    //     }
+    // }
 
-    std::vector<QString> linesVec;
-    if (!line1.isEmpty()) {
-        linesVec.push_back(line1);
-    }
-    if (!line2.isEmpty()) {
-        linesVec.push_back(line2);
-    }
-    if (!line3.isEmpty()) {
-        linesVec.push_back(line3);
-    }
+    // if (!line1.isEmpty()) {
+    //     linesVec.push_back(line1);
+    // }
+    // if (!line2.isEmpty()) {
+    //     linesVec.push_back(line2);
+    // }
+    // if (!line3.isEmpty()) {
+    //     linesVec.push_back(line3);
+    // }
 
-    linesVec.clear();
-    // linesVec.push_back("No. 1 in B♭ Minor, Opus 23");
-    linesVec.push_back("Entrance to the Infinity Castle");
-    // linesVec.push_back("My Fatherland - The Moldau");
-    linesVec.push_back("Demon Slayer");
-    linesVec.push_back("Transcribed by Erlich");
-
-    bool isCoverLogoAvatar = true;
-    bool isCoverTextAvatar = true;
-    int coverAvatarLayout = 1;  // 0: left,  1: right   2: full  3: bottom(avatar below the text)
-    int voffset = 0;
-    int hoffset = 0;
-    float voffsetScale = 0.0;
-    float hoffsetScale = 0.0;
-    float coverHoffsetScale = 0.0;
-    int fontSize = 20;
-    bool avatarFullHeight = false;
-    // QString avatarString = "/Users/erlich/Downloads/Tchaikovskys_Piano_Concerto_No._1_Opus_23_Arrangement_for_Solo_Piano.png";
-    // QString avatarString = "/Users/erlich/Downloads/advanced_processed_1752139510167.png";
-    // QString avatarString = "/Users/erlich/Downloads/simple_processed_xingxingdiandeng_cropped.png";
-    QString avatarString = "/Users/erlich/Developer/workspace/python/pythonProject/test/test_images/Luffy_Fierce_Attack.png"; 
-
-    // read Fine-tune parameters of video cover from a txt file
-    // QString fineTunePath = "/Users/erlich/Downloads/musescore-fune-tune.txt";
-    QString fineTunePath = audioConfiguration()->exportFineTuneConfigPath();
-    QFile configFile(QString::fromStdWString(fineTunePath.toStdWString()));
-    if (configFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        isCoverLogoAvatar = false;
-        isCoverTextAvatar = false;
-        linesVec.clear();
-        QByteArray data = configFile.readAll();
-        QString content = QString::fromUtf8(data);
-        QStringList lines = content.split("\n");
-        for (const QString& line : lines) {
-            QStringList keyValue = line.split("=");
-            if (keyValue.size() == 2) {
-                QString key = keyValue[0].trimmed();
-                QString value = keyValue[1].trimmed();
-                if (key == "title") {
-                    linesVec.push_back(value);
-                } else if (key == "isCoverLogoAvatar") {
-                    isCoverLogoAvatar = (value.toLower() == "true");
-                } else if (key == "isCoverTextAvatar") {
-                    isCoverTextAvatar = (value.toLower() == "true");
-                } else if (key == "coverAvatarLayout") {
-                    coverAvatarLayout = value.toInt();
-                } else if (key == "voffsetScale") {
-                    voffsetScale = value.toFloat();
-                } else if (key == "hoffsetScale") {
-                    hoffsetScale = value.toFloat();
-                } else if (key == "coverHoffsetScale") {
-                    coverHoffsetScale = value.toFloat();
-                } else if (key == "fontSize") {
-                    fontSize = value.toInt();
-                } else if (key == "avatarString") {
-                    avatarString = value;
-                } else if (key == "avatarFullHeight") {
-                    avatarFullHeight = (value.toLower() == "true");
-                }
-            }
-        }
-    }
+    // linesVec.clear();
+    // // linesVec.push_back("No. 1 in B♭ Minor, Opus 23");
+    // linesVec.push_back("Entrance to the Infinity Castle");
+    // // linesVec.push_back("My Fatherland - The Moldau");
+    // linesVec.push_back("Demon Slayer");
+    // linesVec.push_back("Transcribed by Erlich");
 
     int lines = linesVec.size();
 
@@ -425,8 +434,8 @@ muse::Ret VideoWriter::generatePagedOriginalVideo(INotationProjectPtr project, c
                     // avatar + text
                     qreal centerX = rect.center().x();
                     qreal centerY = rect.center().y();
-                    textHeight = textHeight * 5;
-                    totalTextHeight = totalTextHeight * 5;
+                    textHeight = textHeight * textHeightScale;
+                    totalTextHeight = totalTextHeight * textHeightScale;
 
                     QImage avatar(avatarString);  // 
                     int avatarSize = textHeight * 8;  // 6
@@ -481,6 +490,9 @@ muse::Ret VideoWriter::generatePagedOriginalVideo(INotationProjectPtr project, c
                             //     // xStart -= 0.4 * totalTextHeight;
                             // }
                             xStart += coverHoffsetScale * totalTextHeight;
+                            if (xStart < 0) {
+                                xStart = 0;
+                            }
                             qp.drawImage(QPointF(xStart, yStart + (totalTextHeight - avatar.height()) / 2), avatar);
                         }
                     }
