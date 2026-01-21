@@ -7492,7 +7492,7 @@ void NotationInteraction::navigateToNextSyllable()
         }
     }
 
-    if (!segmentsAreAdjacentInRepeatStructure(segment, nextSegment)) {
+    if (!segmentsAreAdjacent(segment, nextSegment)) {
         nextSegment = nullptr;
     }
 
@@ -7506,7 +7506,7 @@ void NotationInteraction::navigateToNextSyllable()
     // we are extending with several dashes
     Lyrics* fromLyrics = nullptr;
     Segment* curSeg = segment;
-    while (segment && segmentsAreAdjacentInRepeatStructure(segment, curSeg)) {
+    while (segment && segmentsAreAdjacent(segment, curSeg)) {
         ChordRest* cr = toChordRest(segment->element(track));
         if (!cr) {
             segment = segment->prev1(SegmentType::ChordRest);
@@ -8350,7 +8350,7 @@ void NotationInteraction::addMelisma()
         }
     }
 
-    if (!segmentsAreAdjacentInRepeatStructure(segment, nextSegment)) {
+    if (!segmentsAreAdjacent(segment, nextSegment)) {
         nextSegment = nullptr;
     }
 
@@ -8359,7 +8359,7 @@ void NotationInteraction::addMelisma()
     Segment* curSeg = segment;
     Lyrics* fromLyrics = nullptr;
     PartialLyricsLine* prevPartialLyricsLine = nullptr;
-    while (segment && segmentsAreAdjacentInRepeatStructure(segment, curSeg)) {
+    while (segment && segmentsAreAdjacent(segment, curSeg)) {
         ChordRest* cr = toChordRest(segment->element(track));
         if (cr) {
             fromLyrics = cr->lyrics(verse, placement);
