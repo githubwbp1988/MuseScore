@@ -270,6 +270,8 @@ public:
 
     GuitarBend* bendFor() const;
     GuitarBend* bendBack() const;
+    GuitarBend* diveFor() const;
+    GuitarBend* diveBack() const;
     Tie* tieFor() const { return m_tieFor; }
     Tie* tieBack() const { return m_tieBack; }
     Tie* tieForNonPartial() const;
@@ -435,6 +437,9 @@ public:
 
     void setVisible(bool v) override;
 
+    bool overrideBendVisibilityRules() const { return m_overrideBendVisibilityRules; }
+    void setOverrideBendVisibilityRules(bool v) { m_overrideBendVisibilityRules = v; }
+
     TieJumpPointList* tieJumpPoints() { return &m_jumpPoints; }
     const TieJumpPointList* tieJumpPoints() const { return &m_jumpPoints; }
 
@@ -491,6 +496,8 @@ private:
     bool m_play = true;           // note is not played if false
     mutable bool m_mark = false;  // for use in sequencer
     bool m_fixed = false;         // for slash notation
+
+    bool m_overrideBendVisibilityRules = false;
 
     SlideType m_slideToType = SlideType::Undefined;
     SlideType m_slideFromType = SlideType::Undefined;

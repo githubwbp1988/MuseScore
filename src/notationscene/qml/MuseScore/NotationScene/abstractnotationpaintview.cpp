@@ -92,7 +92,7 @@ void AbstractNotationPaintView::load()
                      this, SLOT(handleLingeringCursorUpdate1()));
 
     m_playbackCursor->setVisible(false);
-    m_noteInputCursor = std::make_unique<NoteInputCursor>(configuration()->thinNoteInputCursor());
+    m_noteInputCursor = std::make_unique<NoteInputCursor>(iocContext(), configuration()->thinNoteInputCursor());
     m_ruler = std::make_unique<NotationRuler>(iocContext());
 
     m_loopInMarker = std::make_unique<LoopMarker>(LoopBoundaryType::LoopIn, iocContext());

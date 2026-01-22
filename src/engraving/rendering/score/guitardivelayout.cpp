@@ -129,31 +129,39 @@ void GuitarDiveLayout::layoutDiveTabStaff(GuitarBendSegment* item, LayoutContext
     if (bend->bendType() == GuitarBendType::PRE_DIVE) {
         bool alignToGrace = ctx.conf().styleB(Sid::alignPreBendAndPreDiveToGraceNote);
         for (Note* note : startChord->notes()) {
-            note->setVisible(alignToGrace);
+            if (!note->overrideBendVisibilityRules()) {
+                note->setVisible(alignToGrace);
+            }
         }
         for (Note* note : endChord->notes()) {
-            note->setVisible(!alignToGrace);
+            if (!note->overrideBendVisibilityRules()) {
+                note->setVisible(!alignToGrace);
+            }
         }
     } else if (bend->isFullReleaseDive() || item->isEndType()) {
         for (Note* note : endChord->notes()) {
-            note->setVisible(true);
+            if (!note->overrideBendVisibilityRules()) {
+                note->setVisible(true);
+            }
             note->setGhost(true);
             note->mutldata()->reset();
         }
         TLayout::layoutChord(endNote->chord(), ctx);
     } else if (!bend->isFullReleaseDive() || !ctx.conf().styleB(Sid::showFretOnFullBendRelease)) {
         for (Note* note : endChord->notes()) {
-            note->setVisible(false);
+            if (!note->overrideBendVisibilityRules()) {
+                note->setVisible(false);
+            }
         }
     }
 
     bool aboveStaff = bend->ldata()->aboveStaff();
     if (aboveStaff) {
         item->setPos(computeStartPosAboveStaff(item, ctx));
-        item->setPos2(computeEndPosAboveStaff(item, ctx) - item->pos());
+        item->setPos2(computeEndPosAboveStaff(item, ctx) - item->ldata()->pos());
     } else {
         item->setPos(computeStartPosOnStaff(item, ctx));
-        item->setPos2(computeEndPosOnStaff(item, ctx) - item->pos());
+        item->setPos2(computeEndPosOnStaff(item, ctx) - item->ldata()->pos());
     }
 
     GuitarBendText* bendText = item->bendText();
@@ -377,7 +385,7 @@ PointF GuitarDiveLayout::computeEndPosAboveStaff(GuitarBendSegment* item, Layout
     int steps = static_cast<int>(endingIdx) - static_cast<int>(startingIdx);
     double increment = spatium;
 
-    double y = item->pos().y() - steps * increment;
+    double y = item->ldata()->pos().y() - steps * increment;
 
     return PointF(x, y);
 }

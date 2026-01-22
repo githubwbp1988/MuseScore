@@ -1553,9 +1553,11 @@ void TWrite::write(const GuitarBend* item, XmlWriter& xml, WriteContext& ctx)
     writeProperty(item, xml, Pid::BEND_SHOW_HOLD_LINE);
     if (item->isDive()) {
         writeProperty(item, xml, Pid::GUITAR_DIVE_TAB_POS);
-        writeProperty(item, xml, Pid::GUITAR_BEND_AMOUNT);
         writeProperty(item, xml, Pid::VIBRATO_LINE_TYPE);
         writeProperty(item, xml, Pid::GUITAR_DIVE_IS_SLACK);
+        if (item->bendType() == GuitarBendType::DIP || item->overlappingBendOrDive()) {
+            writeProperty(item, xml, Pid::GUITAR_BEND_AMOUNT);
+        }
     }
 
     writeProperties(static_cast<const SLine*>(item), xml, ctx);
@@ -2372,6 +2374,10 @@ void TWrite::write(const Note* item, XmlWriter& xml, WriteContext& ctx)
         if (e->isChordLine() && toChordLine(e)->note() && toChordLine(e)->note() == item) {
             write(toChordLine(e), xml, ctx);
         }
+    }
+
+    if (item->overrideBendVisibilityRules()) {
+        xml.tag("overrideBendVisibilityRules", true);
     }
 
     xml.endElement();
