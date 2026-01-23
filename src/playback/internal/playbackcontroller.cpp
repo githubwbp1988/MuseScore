@@ -702,12 +702,22 @@ void PlaybackController::play()
         seek(startSecs);
     }
 
-    secs_t delay = 0.;
-    if (notationConfiguration()->isCountInEnabled()) {
-        notationPlayback()->triggerCountIn(m_currentTick, delay);
-    }
+    currentPlayer()->prepareToPlay().onResolve(this, [this](const Ret& ret) {
+        if (!currentPlayer()) {
+            return;
+        }
 
-    currentPlayer()->play(delay);
+        if (!ret) {
+            LOGE() << ret.toString();
+        }
+
+        secs_t delay = 0.;
+        if (notationConfiguration()->isCountInEnabled()) {
+            notationPlayback()->triggerCountIn(m_currentTick, delay);
+        }
+
+        currentPlayer()->play(delay);
+    });
 }
 
 void PlaybackController::rewind(const ActionData& args)
@@ -753,12 +763,22 @@ void PlaybackController::resume()
         return;
     }
 
-    secs_t delay = 0.;
-    if (notationConfiguration()->isCountInEnabled()) {
-        notationPlayback()->triggerCountIn(m_currentTick, delay);
-    }
+    currentPlayer()->prepareToPlay().onResolve(this, [this](const Ret& ret) {
+        if (!currentPlayer()) {
+            return;
+        }
 
-    currentPlayer()->resume(delay);
+        if (!ret) {
+            LOGE() << ret.toString();
+        }
+
+        secs_t delay = 0.;
+        if (notationConfiguration()->isCountInEnabled()) {
+            notationPlayback()->triggerCountIn(m_currentTick, delay);
+        }
+
+        currentPlayer()->resume(delay);
+    });
 }
 
 void PlaybackController::onPlaybackStatusChanged()
