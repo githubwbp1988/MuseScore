@@ -1,11 +1,11 @@
 /*
  * SPDX-License-Identifier: GPL-3.0-only
- * MuseScore-CLA-applies
+ * MuseScore-Studio-CLA-applies
  *
- * MuseScore
+ * MuseScore Studio
  * Music Composition & Notation
  *
- * Copyright (C) 2024 MuseScore Limited and others
+ * Copyright (C) 2026 MuseScore Limited
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3 as
@@ -19,15 +19,25 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef MU_MODULARITY_IMODULEINTERFACE_H
-#define MU_MODULARITY_IMODULEINTERFACE_H
 
-#include "../thirdparty/kors_modularity/modularity/imoduleinterface.h" // IWYU pragma: export
+#pragma once
 
-namespace muse::modularity {
-//! TODO Remove?
-// using IModuleExportInterface = kors::modularity::IModuleExportInterface;
-// using IModuleExportCreator = kors::modularity::IModuleExportCreator;
+#include "modularity/ioc.h"
+#include "global/iapplication.h"
+
+namespace mu::app {
+class WindowsController
+{
+    muse::Inject<muse::IApplication> application = { nullptr };
+
+public:
+
+    //! NOTE Temporary
+    static WindowsController* instance();
+
+    void startNewWindow();
+
+private:
+    WindowsController() = default;
+};
 }
-
-#endif // MU_MODULARITY_IMODULEINTERFACE_H
