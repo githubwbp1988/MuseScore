@@ -31,12 +31,13 @@ class QQmlContext;
 
 namespace muse::modularity {
 using kors::modularity::ModulesIoC;
+using kors::modularity::IoCID;
 using kors::modularity::Context;
 using kors::modularity::ContextPtr;
 
 using kors::modularity::Creator;
 
-inline ModulesIoC* _ioc(const ContextPtr& ctx = nullptr)
+inline ModulesIoC* ioc(const ContextPtr& ctx = nullptr)
 {
     return kors::modularity::ioc(ctx);
 }

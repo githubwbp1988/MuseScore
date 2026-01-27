@@ -84,7 +84,8 @@ public:
     ApplicationStub()
         : BaseApplication(std::make_shared<modularity::Context>()) {}
 
-    void perform() override {}
+    void setup() override {}
+    modularity::ContextPtr setupNewContext() override { return nullptr; }
     void finish() override {}
 };
 

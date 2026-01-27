@@ -224,6 +224,15 @@ if (MUE_ENABLE_CONSOLEAPP)
     )
 endif()
 
+if (MUSE_MULTICONTEXT_WIP)
+    set(APP_SRC ${APP_SRC}
+        internal/multiwindowprovider.cpp
+        internal/multiwindowprovider.h
+        internal/windowscontroller.cpp
+        internal/windowscontroller.h
+    )
+endif()
+
 if (CC_IS_EMCC)
     set(APP_SRC ${APP_SRC} webapi_export.cpp)
 endif()

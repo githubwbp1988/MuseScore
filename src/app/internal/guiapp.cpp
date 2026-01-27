@@ -3,8 +3,12 @@
 #include <QApplication>
 #include <QQmlApplicationEngine>
 #include <QQuickWindow>
+#include <QQmlContext>
+#include <QTimer>
 
-#include "appshell/widgets/splashscreen/splashscreen.h"
+#include "modularity/imodulesetup.h"
+#include "modularity/ioc.h"
+#include "thirdparty/kors_logger/src/log_base.h"
 #include "ui/iuiengine.h"
 #include "ui/graphicsapiprovider.h"
 
@@ -12,8 +16,25 @@
 
 #include "muse_framework_config.h"
 #include "app_config.h"
+
+#ifdef MUE_ENABLE_SPLASHSCREEN
+#include "appshell/widgets/splashscreen/splashscreen.h"
+#else
+namespace mu::appshell {
+class SplashScreen
+{
+public:
+    void close() {}
+};
+}
+#endif
+
 #ifdef QT_CONCURRENT_SUPPORTED
 #include <QThreadPool>
+#endif
+
+#ifdef MUSE_MULTICONTEXT_WIP
+#include "multiwindowprovider.h"
 #endif
 
 #include "log.h"
@@ -23,6 +44,8 @@ using namespace muse::ui;
 using namespace mu;
 using namespace mu::app;
 using namespace mu::appshell;
+
+static int m_lastId = 0;
 
 GuiApp::GuiApp(const CmdOptions& options, const modularity::ContextPtr& ctx)
     : muse::BaseApplication(ctx), m_options(options)
@@ -34,7 +57,7 @@ void GuiApp::addModule(muse::modularity::IModuleSetup* module)
     m_modules.push_back(module);
 }
 
-void GuiApp::perform()
+void GuiApp::setup()
 {
     const CmdOptions& options = m_options;
 
@@ -45,7 +68,6 @@ void GuiApp::perform()
 
     setRunMode(runMode);
 
-#ifdef MUE_BUILD_APPSHELL_MODULE
     // ====================================================
     // Setup modules: Resources, Exports, Imports, UiTypes
     // ====================================================
@@ -62,6 +84,12 @@ void GuiApp::perform()
     for (modularity::IModuleSetup* m : m_modules) {
         m->registerExports();
     }
+
+    //! NOTE Just for demonstration
+#ifdef MUSE_MULTICONTEXT_WIP
+    ioc()->unregister<muse::mi::IMultiInstancesProvider>("app");
+    ioc()->registerExport<muse::mi::IMultiInstancesProvider>("app", new MultiWindowProvider());
+#endif
 
     m_globalModule.resolveImports();
     m_globalModule.registerApi();
@@ -85,32 +113,26 @@ void GuiApp::perform()
     }
 
 #ifdef MUE_ENABLE_SPLASHSCREEN
-    static SplashScreen* splashScreen = nullptr;
     if (multiInstancesProvider()->isMainInstance()) {
-        splashScreen = new SplashScreen(SplashScreen::Default);
+        m_splashScreen = new SplashScreen(SplashScreen::Default);
     } else {
         const project::ProjectFile& file = startupScenario()->startupScoreFile();
         if (file.isValid()) {
             if (file.hasDisplayName()) {
-                splashScreen = new SplashScreen(SplashScreen::ForNewInstance, false, file.displayName(true /* includingExtension */));
+                m_splashScreen = new SplashScreen(SplashScreen::ForNewInstance, false, file.displayName(true /* includingExtension */));
             } else {
-                splashScreen = new SplashScreen(SplashScreen::ForNewInstance, false);
+                m_splashScreen = new SplashScreen(SplashScreen::ForNewInstance, false);
             }
         } else if (startupScenario()->isStartWithNewFileAsSecondaryInstance()) {
-            splashScreen = new SplashScreen(SplashScreen::ForNewInstance, true);
+            m_splashScreen = new SplashScreen(SplashScreen::ForNewInstance, true);
         } else {
-            splashScreen = new SplashScreen(SplashScreen::Default);
+            m_splashScreen = new SplashScreen(SplashScreen::Default);
         }
     }
 
-    if (splashScreen) {
-        splashScreen->show();
+    if (m_splashScreen) {
+        m_splashScreen->show();
     }
-#else
-    struct SplashScreen {
-        void close() {}
-    };
-    static SplashScreen* splashScreen = nullptr;
 #endif
 
     // ====================================================
@@ -138,6 +160,16 @@ void GuiApp::perform()
             m->onStartApp();
         }
     }, Qt::QueuedConnection);
+
+    // ====================================================
+    // Setup modules: onDelayedInit
+    // ====================================================
+    QTimer::singleShot(5000, [this]() {
+        m_globalModule.onDelayedInit();
+        for (modularity::IModuleSetup* m : m_modules) {
+            m->onDelayedInit();
+        }
+    });
 
     // ====================================================
     // Run
@@ -185,7 +217,7 @@ void GuiApp::perform()
         }
     }
 
-    QQmlApplicationEngine* engine = ioc()->resolve<muse::ui::IUiEngine>("app")->qmlAppEngine();
+    QQmlApplicationEngine* engine = muse::modularity::globalIoc()->resolve<muse::ui::IUiEngine>("app")->qmlAppEngine();
 
     QObject::connect(engine, &QQmlApplicationEngine::objectCreated, qApp, [](QObject* obj, const QUrl&) {
         QQuickWindow* w = dynamic_cast<QQuickWindow*>(obj);
@@ -196,65 +228,142 @@ void GuiApp::perform()
             LOGE() << "scene graph error: " << msg;
         });
     }, Qt::DirectConnection);
+}
 
-    QObject::connect(engine, &QQmlApplicationEngine::objectCreated,
-                     qApp, [this](QObject* obj, const QUrl& objUrl) {
-        LOGD() << "Qml loaded: " << objUrl.toString();
+muse::modularity::ContextPtr GuiApp::setupNewContext()
+{
+    //! NOTE
+    //! We're currently in a transitional state from a single global context to multiple contexts.
+    //! Therefore, this code will be improved; not everything is yet complete,
+    //! for example, there's no way to delete (close) a specific context.
+    //! Probably the context initialization needs to be moved to the base class of the app.
 
-        if (!obj) {
-            LOGE() << "failed Qml load\n";
-            QCoreApplication::exit(-1);
+#ifndef MUSE_MULTICONTEXT_WIP
+    static bool once = false;
+    IF_ASSERT_FAILED(!once) {
+        return nullptr;
+    }
+    once = true;
+#endif
+
+    modularity::ContextPtr ctx = std::make_shared<modularity::Context>();
+    ++m_lastId;
+#ifdef MUSE_MULTICONTEXT_WIP
+    ctx->id = m_lastId;
+#else
+    // only global
+    ctx->id = 0;
+#endif
+
+    const CmdOptions& options = m_options;
+    IApplication::RunMode runMode = options.runMode;
+    IF_ASSERT_FAILED(runMode == IApplication::RunMode::GuiApp) {
+        return nullptr;
+    }
+
+    LOGI() << "New context created with id: " << ctx->id;
+
+    std::vector<muse::modularity::IContextSetup*>& contexts = m_contexts[ctx->id];
+
+    modularity::IContextSetup* global = m_globalModule.newContext(ctx);
+    if (global) {
+        contexts.push_back(global);
+    }
+
+    for (modularity::IModuleSetup* m : m_modules) {
+        modularity::IContextSetup* s = m->newContext(ctx);
+        if (s) {
+            contexts.push_back(s);
+        }
+    }
+
+    // Setup
+    for (modularity::IContextSetup* s : contexts) {
+        s->registerExports();
+    }
+
+    for (modularity::IContextSetup* s : contexts) {
+        s->resolveImports();
+    }
+
+    for (modularity::IContextSetup* s : contexts) {
+        s->onPreInit(runMode);
+    }
+
+    for (modularity::IContextSetup* s : contexts) {
+        s->onInit(runMode);
+    }
+
+    for (modularity::IContextSetup* s : contexts) {
+        s->onAllInited(runMode);
+    }
+
+    // Load main window
+#if defined(Q_OS_MAC)
+    QString platform = "mac";
+#elif defined(Q_OS_WIN)
+    QString platform = "win";
+#else
+    QString platform = "linux";
+#endif
+
+    QQmlApplicationEngine* engine = muse::modularity::globalIoc()->resolve<muse::ui::IUiEngine>("app")->qmlAppEngine();
+
+    QString path = QString(":/qt/qml/MuseScore/AppShell/platform/%1/Main.qml").arg(platform);
+    QQmlComponent component = QQmlComponent(engine, path);
+    if (!component.isReady()) {
+        LOGE() << "Failed to load main qml file, err: " << component.errorString();
+        return nullptr;
+    }
+
+    QQmlContext* qmlCtx = new QQmlContext(engine);
+    qmlCtx->setObjectName(QString("QQmlContext: %1").arg(ctx ? ctx->id : 0));
+    QmlIoCContext* iocCtx = new QmlIoCContext(qmlCtx);
+    iocCtx->ctx = ctx;
+    qmlCtx->setContextProperty("ioc_context", QVariant::fromValue(iocCtx));
+
+    QObject* obj = component.create(qmlCtx);
+    if (!obj) {
+        LOGE() << "failed Qml load\n";
+        QCoreApplication::exit(-1);
+        return nullptr;
+    }
+
+    const auto finalizeStartup = [this, obj]() {
+        static bool haveFinalized = false;
+#ifndef MUSE_MULTICONTEXT_WIP
+        IF_ASSERT_FAILED(!haveFinalized) {
+            // Only call this once...
             return;
         }
+#endif
 
-        // ====================================================
-        // Setup modules: onDelayedInit
-        // ====================================================
-
-        m_globalModule.onDelayedInit();
-        for (modularity::IModuleSetup* m : m_modules) {
-            m->onDelayedInit();
+        if (m_splashScreen) {
+            m_splashScreen->close();
+            delete m_splashScreen;
+            m_splashScreen = nullptr;
         }
 
-        const auto finalizeStartup = [this, obj]() {
-            static bool haveFinalized = false;
-            IF_ASSERT_FAILED(!haveFinalized) {
-                // Only call this once...
-                return;
-            }
+        // The main window must be shown at this point so KDDockWidgets can read its size correctly
+        // and scale all sizes properly. https://github.com/musescore/MuseScore/issues/21148
+        // but before that, let's make the window transparent,
+        // otherwise the empty window frame will be visible
+        // https://github.com/musescore/MuseScore/issues/29630
+        // Transparency will be removed after the page loads.
+        QQuickWindow* w = dynamic_cast<QQuickWindow*>(obj);
+        w->setOpacity(0.01);
+        w->setVisible(true);
 
-            if (splashScreen) {
-                splashScreen->close();
-                delete splashScreen;
-            }
+        startupScenario()->runAfterSplashScreen();
+        haveFinalized = true;
+    };
 
-            // The main window must be shown at this point so KDDockWidgets can read its size correctly
-            // and scale all sizes properly. https://github.com/musescore/MuseScore/issues/21148
-            // but before that, let's make the window transparent,
-            // otherwise the empty window frame will be visible
-            // https://github.com/musescore/MuseScore/issues/29630
-            // Transparency will be removed after the page loads.
-            QQuickWindow* w = dynamic_cast<QQuickWindow*>(obj);
-            w->setOpacity(0.01);
-            w->setVisible(true);
+    muse::async::Promise<Ret> promise = startupScenario()->runOnSplashScreen();
+    promise.onResolve(nullptr, [finalizeStartup](Ret) {
+        finalizeStartup();
+    });
 
-            startupScenario()->runAfterSplashScreen();
-            haveFinalized = true;
-        };
-
-        muse::async::Promise<Ret> promise = startupScenario()->runOnSplashScreen();
-        promise.onResolve(nullptr, [finalizeStartup](Ret) {
-            finalizeStartup();
-        });
-    }, Qt::QueuedConnection);
-
-    // ====================================================
-    // Load Main qml
-    // ====================================================
-
-    engine->loadFromModule("MuseScore.AppShell", "Main");
-
-#endif // MUE_BUILD_APPSHELL_MODULE
+    return ctx;
 }
 
 void GuiApp::finish()
@@ -287,6 +396,11 @@ void GuiApp::finish()
     }
 
     m_globalModule.onDestroy();
+
+    // Delete contexts
+    for (auto& c : m_contexts) {
+        qDeleteAll(c.second);
+    }
 
     // Delete modules
     qDeleteAll(m_modules);

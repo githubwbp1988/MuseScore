@@ -11,11 +11,14 @@
 #include "global/globalmodule.h"
 
 #include "modularity/ioc.h"
-#include "global/iapplication.h"
 #include "multiinstances/imultiinstancesprovider.h"
 #include "appshell/iappshellconfiguration.h"
 #include "appshell/internal/istartupscenario.h"
 #include "importexport/guitarpro/iguitarproconfiguration.h"
+
+namespace mu::appshell {
+class SplashScreen;
+}
 
 namespace mu::app {
 class GuiApp : public muse::BaseApplication, public std::enable_shared_from_this<GuiApp>
@@ -30,7 +33,8 @@ public:
 
     void addModule(muse::modularity::IModuleSetup* module);
 
-    void perform() override;
+    void setup() override;
+    muse::modularity::ContextPtr setupNewContext() override;
     void finish() override;
 
 private:
@@ -38,10 +42,12 @@ private:
 
     CmdOptions m_options;
 
+    appshell::SplashScreen* m_splashScreen = nullptr;
+
     //! NOTE Separately to initialize logger and profiler as early as possible
     muse::GlobalModule m_globalModule;
-
     std::vector<muse::modularity::IModuleSetup*> m_modules;
+    std::map<muse::modularity::IoCID, std::vector<muse::modularity::IContextSetup*> > m_contexts;
 };
 }
 
