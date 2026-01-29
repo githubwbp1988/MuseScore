@@ -86,7 +86,8 @@ Item {
             navigation.panel: navPanel
             navigation.order: playbackActions.navigationOrderEnd + 1
 
-            onValueChanged: {
+            // onValueChanged: {
+            onMoved: {
                 thePlaybackModel.playPosition = value
             }
         }
