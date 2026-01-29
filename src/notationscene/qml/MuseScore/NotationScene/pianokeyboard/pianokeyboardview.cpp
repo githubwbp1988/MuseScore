@@ -388,8 +388,9 @@ void PianoKeyboardView::updatePlaybackKeyStateColors()
 
     m_whiteKeyClefSigColor = mixedColors(Qt::white, Qt::green, 0.25);
 
-    QColor whiteKeyRightHandHitColor(255, 100, 0);
-    m_whiteKeyHitColors[KeyState::RightHand] = mixedColors(Qt::white, whiteKeyRightHandHitColor, 1.0);
+    // QColor whiteKeyRightHandHitColor(255, 100, 0);
+    // m_whiteKeyHitColors[KeyState::RightHand] = mixedColors(Qt::white, whiteKeyRightHandHitColor, 1.0);
+    m_whiteKeyHitColors[KeyState::RightHand] = Qt::white;
 
     QColor whiteKeyTrillColor(255, 255, 0);
     m_whiteKeyStateColors[KeyState::Trill] = mixedColors(Qt::white, whiteKeyTrillColor, 0.8);
@@ -410,8 +411,9 @@ void PianoKeyboardView::updatePlaybackKeyStateColors()
 
     m_blackKeyTopClefSigColor = mixedColors(blackKeyTopPieceBaseColor, Qt::green, 0.4);
 
-    QColor blackKeyRightHandTopPieceHitColor(255, 100, 0);
-    m_blackKeyTopPieceStateHitColors[KeyState::RightHand] = mixedColors(blackKeyTopPieceBaseColor, blackKeyRightHandTopPieceHitColor, 1.0);
+    // QColor blackKeyRightHandTopPieceHitColor(255, 100, 0);
+    // m_blackKeyTopPieceStateHitColors[KeyState::RightHand] = mixedColors(blackKeyTopPieceBaseColor, blackKeyRightHandTopPieceHitColor, 1.0);
+    m_blackKeyTopPieceStateHitColors[KeyState::RightHand] = blackKeyTopPieceBaseColor;
 
     QColor blackKeyTrillTopPieceColor(255, 255, 0);
     m_blackKeyTopPieceStateColors[KeyState::Trill] = mixedColors(blackKeyTopPieceBaseColor, blackKeyTrillTopPieceColor, 0.8);
@@ -432,8 +434,9 @@ void PianoKeyboardView::updatePlaybackKeyStateColors()
 
     m_blackKeyBottomClefSigColor = mixedColors(blackKeyBottomPieceBaseColor, Qt::green, 0.4);
 
-    QColor blackKeyRightHandBottomPieceHitColor(255, 100, 0);
-    m_blackKeyBottomPieceStateHitColors[KeyState::RightHand] = mixedColors(blackKeyBottomPieceBaseColor, blackKeyRightHandBottomPieceHitColor, 1.0);
+    // QColor blackKeyRightHandBottomPieceHitColor(255, 100, 0);
+    // m_blackKeyBottomPieceStateHitColors[KeyState::RightHand] = mixedColors(blackKeyBottomPieceBaseColor, blackKeyRightHandBottomPieceHitColor, 1.0);
+    m_blackKeyBottomPieceStateHitColors[KeyState::RightHand] = blackKeyBottomPieceBaseColor;
 
     QColor blackKeyTrillBottomPieceColor(255, 255, 0);
     m_blackKeyBottomPieceStateColors[KeyState::Trill] = mixedColors(blackKeyBottomPieceBaseColor, blackKeyTrillBottomPieceColor, 0.8);
