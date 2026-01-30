@@ -32,7 +32,7 @@ namespace mu::iex::videoexport {
 class VideoWriter : public project::IProjectWriter
 {
     muse::GlobalInject<IVideoExportConfiguration> configuration;
-    muse::Inject<muse::IApplication> application = { nullptr };
+    muse::ContextInject<muse::IApplication> application = { nullptr };
 
 public:
     VideoWriter() = default;
