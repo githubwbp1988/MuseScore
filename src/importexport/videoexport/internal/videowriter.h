@@ -34,7 +34,7 @@ class VideoWriter : public project::IProjectWriter
 {
     muse::GlobalInject<IVideoExportConfiguration> configuration;
     muse::GlobalInject<audioexport::IAudioExportConfiguration> audioConfiguration;
-    muse::Inject<muse::IApplication> application = { nullptr };
+    muse::ContextInject<muse::IApplication> application = { nullptr };
 
 public:
     VideoWriter() = default;

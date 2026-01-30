@@ -35,20 +35,20 @@
 #include "async/asyncable.h"
 
 namespace mu::project {
-class ExportProjectScenario : public IExportProjectScenario, public muse::async::Asyncable, public muse::Injectable
+class ExportProjectScenario : public IExportProjectScenario, public muse::async::Asyncable, public muse::Contextable
 {
     muse::GlobalInject<muse::io::IFileSystem> fileSystem;
     muse::GlobalInject<IProjectConfiguration> configuration;
     muse::GlobalInject<iex::imagesexport::IImagesExportConfiguration> imagesExportConfiguration;
-    muse::Inject<muse::IInteractive> interactive = { this };
-    muse::Inject<INotationWritersRegister> writers = { this };
-    muse::Inject<IProjectRWRegister> videoWriters = { this };
-    muse::Inject<context::IGlobalContext> context = { this };
+    muse::ContextInject<muse::IInteractive> interactive = { this };
+    muse::ContextInject<INotationWritersRegister> writers = { this };
+    muse::ContextInject<IProjectRWRegister> videoWriters = { this };
+    muse::ContextInject<context::IGlobalContext> context = { this };
 
 public:
 
     ExportProjectScenario(const muse::modularity::ContextPtr& iocCtx)
-        : muse::Injectable(iocCtx)
+        : muse::Contextable(iocCtx)
     {
     }
 
