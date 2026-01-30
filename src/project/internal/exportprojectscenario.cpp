@@ -161,7 +161,7 @@ bool ExportProjectScenario::exportScores(notation::INotationPtrList notations, c
 
         m_exportProgress.canceled().onNotify(this, [writer]() {
             writer->abort();
-        });
+        }, muse::async::Asyncable::Mode::SetReplace);
     }
 
     DEFER {
