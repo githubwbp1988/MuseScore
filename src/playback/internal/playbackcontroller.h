@@ -109,10 +109,10 @@ public:
     bool actionChecked(const muse::actions::ActionCode& actionCode) const override;
     muse::async::Channel<muse::actions::ActionCode> actionCheckedChanged() const override;
 
-    QTime totalPlayTime() const override;
+    muse::secs_t totalPlayTime() const override;
     muse::async::Notification totalPlayTimeChanged() const override;
 
-    notation::Tempo currentTempo() const override;
+    const notation::Tempo& currentTempo() const override;
     muse::async::Notification currentTempoChanged() const override;
 
     notation::MeasureBeat currentBeat() const override;
@@ -182,7 +182,6 @@ private:
     void resume();
 
     muse::audio::secs_t playbackStartSecs() const;
-    muse::audio::secs_t playbackEndSecs() const;
 
     notation::InstrumentTrackIdSet instrumentTrackIdSetForRangePlayback() const;
 
