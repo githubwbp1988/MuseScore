@@ -123,6 +123,16 @@ void AbstractNotationPaintView::load()
         emit viewportChanged();
     }, async::Asyncable::Mode::SetReplace);
 
+    m_isAutomaticallyPanEnabled = configuration()->isAutomaticallyPanEnabled();
+    configuration()->isAutomaticallyPanEnabledChanged().onNotify(this, [this]() {
+        m_isAutomaticallyPanEnabled = configuration()->isAutomaticallyPanEnabled();
+    }, async::Asyncable::Mode::SetReplace);
+
+    m_isSmoothPanningEnabled = configuration()->isSmoothPanning();
+    configuration()->isSmoothPanningChanged().onNotify(this, [this]() {
+        m_isSmoothPanningEnabled = configuration()->isSmoothPanning();
+    }, async::Asyncable::Mode::SetReplace);
+
     scheduleRedraw();
 }
 
@@ -1591,8 +1601,8 @@ void AbstractNotationPaintView::movePlaybackCursor(muse::midi::tick_t tick)
         return;
     }
 
-    if (configuration()->isAutomaticallyPanEnabled()) {
-        if ((notation()->viewMode() == engraving::LayoutMode::LINE) && configuration()->isSmoothPanning()
+    if (m_isAutomaticallyPanEnabled) {
+        if ((notation()->viewMode() == engraving::LayoutMode::LINE) && m_isSmoothPanningEnabled
             && adjustCanvasPositionSmoothPan(newCursorRect)) {
             return;
         }

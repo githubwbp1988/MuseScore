@@ -27,7 +27,7 @@
 #include "async/asyncable.h"
 
 #include "modularity/ioc.h"
-#include "iinteractive.h"
+#include "interactive/iinteractive.h"
 #include "actions/iactionsdispatcher.h"
 #include "multiwindows/imultiwindowsprovider.h"
 #include "iappshellconfiguration.h"
@@ -68,8 +68,6 @@ public:
     void runAfterSplashScreen() override;
     bool startupCompleted() const override;
 
-    std::vector<QVariantMap> welcomeDialogData() const override;
-
 private:
     void registerAudioPlugins();
 
@@ -89,5 +87,6 @@ private:
     std::string m_startupTypeStr;
     project::ProjectFile m_startupScoreFile;
     bool m_startupCompleted = false;
+    size_t m_activeUpdateCheckCount = 0;
 };
 }

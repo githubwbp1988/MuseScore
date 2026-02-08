@@ -26,7 +26,7 @@
 
 #include "modularity/ioc.h"
 #include "async/asyncable.h"
-#include "iinteractive.h"
+#include "interactive/iinteractive.h"
 #include "engraving/rendering/isinglerenderer.h"
 #include "engraving/rendering/ieditmoderenderer.h"
 
@@ -511,6 +511,7 @@ private:
 
     void startEditText(mu::engraving::TextBase* text);
     bool needEndTextEdit() const;
+    void pasteIntoTextEdit();
 
     mu::engraving::Page* point2page(const muse::PointF& p, bool useNearestPage = false) const;
     std::vector<EngravingItem*> elementsAt(const muse::PointF& p) const;
