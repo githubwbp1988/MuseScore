@@ -95,6 +95,29 @@ public:
     Q_INVOKABLE QString homePath() { QDir dir; return dir.homePath(); }
     /// muse::Returns a path suitable for a temporary file
     Q_INVOKABLE QString tempPath() { QDir dir; return dir.tempPath(); }
+    // Returns the user's MuseScore documents directory (default location for Scores, Plugins, SoundFonts, Styles, Templates)
+    Q_INVOKABLE QString userDataPath();
+    // Returns the user-configured Plugins directory (Preferences → Folders → Plugins)
+    Q_INVOKABLE QString pluginsUserPath();
+    // Returns the user-configured Scores directory (Preferences → Folders → Scores)
+    Q_INVOKABLE QString userProjectsPath();
+    // Returns the user-configured Templates directory (Preferences → Folders → Templates)
+    Q_INVOKABLE QString userTemplatesPath();
+    // Returns the user-configured Styles directory (Preferences → Folders → Styles)
+    Q_INVOKABLE QString userStylesPath();
+    // Returns the user-configured SoundFonts directories (Preferences → Folders → SoundFonts)
+    Q_INVOKABLE QStringList userSoundFontDirectories();
+    // Returns the plugin's folder's path
+    Q_INVOKABLE QString pluginDirectoryPath();
+    // Returns the project's path (ex: .../Desktop/project.mscz)
+    Q_INVOKABLE QString projectPath();
+    // Returns whether or not the project is stored as a folder (with a .mscx file)
+    Q_INVOKABLE bool isProjectDirectory();
+    // Returns the project's folder's path
+    Q_INVOKABLE QString projectDirectoryPath();
+    /// Returns true if the plugin is allowed to write to the path
+    Q_INVOKABLE bool isPathWriteable(const QString& path);
+
     /// muse::Returns the file's last modification time
     Q_INVOKABLE int modifiedTime();
 

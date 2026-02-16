@@ -5776,7 +5776,7 @@ void NotationInteraction::addBoxes(BoxType boxType, int count, int beforeBoxInde
         case BoxType::Vertical: return TranslatableString("undoableAction", "Add vertical frame");
         case BoxType::Text: return TranslatableString("undoableAction", "Add text frame");
         case BoxType::Fret: return TranslatableString("undoableAction", "Add fretboard diagram legend");
-        case BoxType::Measure: return TranslatableString("undoableAction", "Add %n measure(s)", nullptr, count);
+        case BoxType::Measure: return TranslatableString("undoableAction", "Add %Ln measure(s)", nullptr, count);
         case BoxType::Unknown: break;
         }
 
@@ -7068,7 +7068,7 @@ void NotationInteraction::removeSelectedMeasures()
 
     int numDeletedMeasures = 1 + lastMeasure->measureIndex() - firstMeasure->measureIndex();
 
-    startEdit(TranslatableString("undoableAction", "Delete %n measure(s)", nullptr, numDeletedMeasures));
+    startEdit(TranslatableString("undoableAction", "Delete %Ln measure(s)", nullptr, numDeletedMeasures));
     score()->cmdTimeDelete();
     apply();
 }
