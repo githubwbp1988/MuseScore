@@ -41,18 +41,18 @@ std::string MnxModule::moduleName() const
 void MnxModule::registerExports()
 {
     m_configuration = std::make_shared<MnxConfiguration>();
-    ioc()->registerExport<IMnxConfiguration>(moduleName(), m_configuration);
+    globalIoc()->registerExport<IMnxConfiguration>(moduleName(), m_configuration);
 }
 
 void MnxModule::resolveImports()
 {
-    auto readers = ioc()->resolve<INotationReadersRegister>(moduleName());
+    auto readers = globalIoc()->resolve<INotationReadersRegister>(moduleName());
     if (readers) {
-        readers->reg({ "mnx", "json" }, std::make_shared<NotationMnxReader>(iocContext()));
+        readers->reg({ "mnx", "json" }, std::make_shared<NotationMnxReader>(globalCtx()));
     }
-    auto writers = ioc()->resolve<INotationWritersRegister>(moduleName());
+    auto writers = globalIoc()->resolve<INotationWritersRegister>(moduleName());
     if (writers) {
-        writers->reg({ "mnx" }, std::make_shared<NotationMnxWriter>(iocContext()));
+        writers->reg({ "mnx" }, std::make_shared<NotationMnxWriter>(globalCtx()));
     }
 }
 

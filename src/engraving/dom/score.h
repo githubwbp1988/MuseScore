@@ -206,6 +206,7 @@ struct Position {
     int line = 0;
     int fret = INVALID_FRET_INDEX;
     PointF pos;
+    bool beyondScore = false;
 };
 
 enum class PlayMode : char {
@@ -330,7 +331,7 @@ class Score : public EngravingObject, public muse::Contextable
     muse::GlobalInject<muse::draw::IImageProvider> imageProvider;
     muse::GlobalInject<IEngravingConfiguration> configuration;
     muse::GlobalInject<IEngravingFontsProvider> engravingFonts;
-    muse::ContextInject<muse::IApplication> application = { this };
+    muse::GlobalInject<muse::IApplication> application;
     muse::ContextInject<IEngravingElementsProvider> elementsProvider = { this };
 
     // internal

@@ -631,6 +631,7 @@ void PlaybackController::togglePlay(bool showErrors)
     }
 
     interaction()->endEditElement();
+    interaction()->noteInput()->endNoteInput();
 
     if (isPlaying()) {
         pause();
