@@ -41,14 +41,14 @@ std::string LyricsExportModule::moduleName() const
 void LyricsExportModule::registerExports()
 {
     m_configuration = std::make_shared<LyricsExportConfiguration>();
-    ioc()->registerExport<ILyricsExportConfiguration>(moduleName(), m_configuration);
+    globalIoc()->registerExport<ILyricsExportConfiguration>(moduleName(), m_configuration);
 }
 
 void LyricsExportModule::resolveImports()
 {
-    auto writers = ioc()->resolve<INotationWritersRegister>(moduleName());
+    auto writers = globalIoc()->resolve<INotationWritersRegister>(moduleName());
     if (writers) {
-        writers->reg({ "lrc" }, std::make_shared<LRCWriter>(iocContext()));
+        writers->reg({ "lrc" }, std::make_shared<LRCWriter>(muse::modularity::globalCtx()));
     }
 }
 

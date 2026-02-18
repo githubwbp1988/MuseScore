@@ -18,7 +18,11 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-cmake_minimum_required(VERSION 3.22...3.31) # Min. required by Qt 6.10
+if (APPLE)
+    cmake_minimum_required(VERSION 3.26...3.31) # Min. required for Swift-C++ interop
+else()
+    cmake_minimum_required(VERSION 3.22...3.31) # Min. required by Qt 6.10
+endif()
 
 project(MuseScore LANGUAGES C CXX)
 
@@ -127,6 +131,8 @@ option(MUE_BUILD_PROJECT_MODULE "Build project module" ON)
 option(MUE_BUILD_PROJECT_QML "Build project QML" ${MUE_BUILD_PROJECT_MODULE})
 option(MUE_BUILD_PROJECT_TESTS "Build project tests" ${MUE_BUILD_PROJECT_MODULE})
 
+option(MUE_BUILD_MACOS_INTEGRATION "Build macOS integration module" ON)
+
 # === Setup ===
 option(MUE_DOWNLOAD_SOUNDFONT "Download the latest soundfont version as part of the build process" ON)
 
@@ -153,6 +159,7 @@ option(MUE_COMPILE_USE_SYSTEM_FREETYPE "Try use system freetype" OFF)
 option(MUE_COMPILE_USE_SYSTEM_HARFBUZZ "Try use system harfbuzz" OFF)
 option(MUE_COMPILE_USE_SYSTEM_OPUS "Try use system opus" OFF)
 option(MUE_COMPILE_USE_SYSTEM_OPUSENC "Try use system libopusenc" OFF)
+option(MUE_COMPILE_USE_SYSTEM_MNXDOM "Try use system mnxdom" OFF)
 
 # === Debug ===
 option(MUE_ENABLE_LOAD_QML_FROM_SOURCE "Load qml files from source (not resource)" OFF)

@@ -39,6 +39,7 @@
 #include "engraving/engravingerrors.h"
 #include "engraving/engravingproject.h"
 #include "engraving/infrastructure/mscio.h"
+#include "engraving/rw/inoutdata.h"
 #include "engraving/rw/write/writecontext.h"
 
 #include "iprojectautosaver.h"
@@ -160,8 +161,9 @@ Ret NotationProject::doLoad(const muse::io::path_t& path, const OpenParams& open
     // Load engraving project
     m_engravingProject->setFileInfoProvider(std::make_shared<ProjectFileInfoProvider>(this));
 
-    SettingsCompat settingsCompat;
-    ret = m_engravingProject->loadMscz(reader, settingsCompat, openParams.forceMode);
+    rw::ReadInOutData inOutData;
+    inOutData.forcePageMode = openParams.forcePageMode;
+    ret = m_engravingProject->loadMscz(reader, &inOutData, openParams.forceMode);
     if (!ret) {
         return ret;
     }
@@ -217,10 +219,12 @@ Ret NotationProject::doLoad(const muse::io::path_t& path, const OpenParams& open
 
     // Load audio settings
     bool tryCompatAudio = false;
-    ret = m_projectAudioSettings->read(reader);
-    if (!ret) {
-        m_projectAudioSettings->makeDefault();
-        tryCompatAudio = true;
+    if (!openParams.disablePlayback) {
+        ret = m_projectAudioSettings->read(reader);
+        if (!ret) {
+            m_projectAudioSettings->makeDefault();
+            tryCompatAudio = true;
+        }
     }
 
     // Load cloud info
@@ -254,8 +258,8 @@ Ret NotationProject::doLoad(const muse::io::path_t& path, const OpenParams& open
     }
 
     // Apply compat audio settings (needs to be done after notations are created)
-    if (tryCompatAudio && !settingsCompat.audioSettings.empty()) {
-        for (const auto& audioCompat : settingsCompat.audioSettings) {
+    if (!openParams.disablePlayback && tryCompatAudio && !inOutData.settingsCompat.audioSettings.empty()) {
+        for (const auto& audioCompat : inOutData.settingsCompat.audioSettings) {
             notation::INotationSoloMuteState::SoloMuteState state = { audioCompat.second.mute, audioCompat.second.solo };
             INotationSoloMuteStatePtr soloMuteStatePtr = m_masterNotation->notation()->soloMuteState();
             soloMuteStatePtr->setTrackSoloMuteState(audioCompat.second.instrumentId, state);
@@ -1240,7 +1244,7 @@ void NotationProject::setMetaInfo(const ProjectMeta& meta, bool undoable)
         m_masterNotation->notation()->undoStack()->prepareChanges(TranslatableString("undoableAction", "Edit project properties"));
         score->undo(new mu::engraving::ChangeMetaTags(score, tags));
         m_masterNotation->notation()->undoStack()->commitChanges();
-        m_masterNotation->notation()->notationChanged().notify();
+        m_masterNotation->notation()->notationChanged().send(muse::RectF());
     } else {
         score->setMetaTags(tags);
     }

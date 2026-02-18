@@ -2087,6 +2087,10 @@ void Score::cmdAddTie(bool addToChord)
             m_is.setTrack(note->chord()->track());
             m_is.setSegment(note->chord()->segment());
             m_is.moveToNextInputPos();
+            if (m_is.beyondScore()) {
+                appendMeasures(1);
+                m_is.moveToNextInputPos();
+            }
             m_is.setLastSegment(m_is.segment());
 
             if (!m_is.cr()) {
@@ -2755,9 +2759,9 @@ void Score::deleteItem(EngravingItem* el)
         Part* part = el->part();
         InstrumentName* in = toInstrumentName(el);
         if (in->instrumentNameType() == InstrumentNameType::LONG) {
-            undo(new ChangeInstrumentLong(Fraction(0, 1), part, StaffNameList()));
+            undo(new ChangeInstrumentLong(Fraction(0, 1), part, StaffName()));
         } else if (in->instrumentNameType() == InstrumentNameType::SHORT) {
-            undo(new ChangeInstrumentShort(Fraction(0, 1), part, StaffNameList()));
+            undo(new ChangeInstrumentShort(Fraction(0, 1), part, StaffName()));
         }
     }
     break;
@@ -4580,6 +4584,11 @@ void Score::cmdEnterRest(const TDuration& d)
 void Score::enterRest(const TDuration& d, InputState* externalInputState)
 {
     InputState& is = externalInputState ? (*externalInputState) : m_is;
+
+    if (is.beyondScore()) {
+        appendMeasures(1);
+        is.moveToNextInputPos();
+    }
 
     expandVoice(is.segment(), is.track());
 

@@ -33,9 +33,9 @@ std::string InspectorModule::moduleName() const
 
 void InspectorModule::registerExports()
 {
-    m_popupController = std::make_shared<InspectorPopupController>(iocContext());
+    m_popupController = std::make_shared<InspectorPopupController>(muse::modularity::globalCtx());
 
-    ioc()->registerExport<IInspectorPopupController>(moduleName(), m_popupController);
+    globalIoc()->registerExport<IInspectorPopupController>(moduleName(), m_popupController);
 }
 
 void InspectorModule::onInit(const muse::IApplication::RunMode&)

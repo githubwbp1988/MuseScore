@@ -45,19 +45,19 @@ void MidiModule::registerExports()
 {
     m_configuration = std::make_shared<MidiConfiguration>();
 
-    ioc()->registerExport<IMidiImportExportConfiguration>(moduleName(), m_configuration);
+    globalIoc()->registerExport<IMidiImportExportConfiguration>(moduleName(), m_configuration);
 }
 
 void MidiModule::resolveImports()
 {
-    auto readers = ioc()->resolve<INotationReadersRegister>(moduleName());
+    auto readers = globalIoc()->resolve<INotationReadersRegister>(moduleName());
     if (readers) {
         readers->reg({ "mid", "midi", "kar" }, std::make_shared<NotationMidiReader>());
     }
 
-    auto writers = ioc()->resolve<INotationWritersRegister>(moduleName());
+    auto writers = globalIoc()->resolve<INotationWritersRegister>(moduleName());
     if (writers) {
-        writers->reg({ "mid", "midi", "kar" }, std::make_shared<NotationMidiWriter>(iocContext()));
+        writers->reg({ "mid", "midi", "kar" }, std::make_shared<NotationMidiWriter>(globalCtx()));
     }
 }
 
