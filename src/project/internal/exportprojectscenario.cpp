@@ -446,7 +446,7 @@ Ret ExportProjectScenario::doExportLoop(const muse::io::path_t& scorePath, std::
         return make_ret(Ret::Code::InternalError);
     }
     std::string suffix = io::suffix(scorePath);
-    if (suffix == "mp3" || suffix == "wav" || suffix == "flac" || suffix == "ogg") {
+    if (suffix == "mp3" || suffix == "wav" || suffix == "flac" || suffix == "ogg" || suffix == "mp4") {
         while (true) {
             io::File outputFile(scorePath);
             outputFile.setMeta("file_path", scorePath.toStdString());
