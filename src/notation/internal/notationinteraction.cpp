@@ -5353,6 +5353,7 @@ void NotationInteraction::redo()
 
 void NotationInteraction::undoRedoToIndex(size_t idx)
 {
+    endEditElement();
     m_undoStack->undoRedoToIndex(idx, &m_editData);
 }
 
