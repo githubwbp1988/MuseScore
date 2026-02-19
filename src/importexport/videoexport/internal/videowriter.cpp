@@ -323,7 +323,7 @@ muse::Ret VideoWriter::generatePagedOriginalVideo(INotationProjectPtr project, c
 
     const Color CURSOR_COLOR = Color(0, 0, 255, 100);
 
-    PlaybackCursor cursor(application()->iocContext());
+    PlaybackCursor cursor(globalCtx());
     cursor.setNotation(masterNotation->notation());
 
     // QString workTitle = score->metaTag(u"workTitle");
