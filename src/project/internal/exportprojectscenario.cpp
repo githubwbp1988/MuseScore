@@ -21,6 +21,7 @@
  */
 #include "exportprojectscenario.h"
 
+#include "global/io/file.h"
 #include "global/io/buffer.h"
 #include "global/io/fileinfo.h"
 
@@ -405,38 +406,69 @@ Ret ExportProjectScenario::doExportLoop(const muse::io::path_t& scorePath, std::
     if (fileSystem()->exists(scorePath) && !shouldReplaceFile(filename)) {
         return make_ret(Ret::Code::InternalError);
     }
-
-    while (true) {
-        Buffer outputBuf;
-        outputBuf.setMeta("file_path", scorePath.toStdString());
-        IF_ASSERT_FAILED(outputBuf.open(IODevice::WriteOnly)) {
-            return make_ret(Ret::Code::InternalError);
-        }
-
-        Ret ret = exportFunction(outputBuf);
-        outputBuf.close();
-        if (!ret) {
-            if (ret.code() == static_cast<int>(Ret::Code::Cancel)) {
-                return ret;
+    std::string suffix = io::suffix(scorePath);
+    if (suffix == "mp3" || suffix == "wav" || suffix == "flac" || suffix == "ogg") {
+        while (true) {
+            io::File outputFile(scorePath);
+            outputFile.setMeta("file_path", scorePath.toStdString());
+            if (!outputFile.open(File::WriteOnly)) {
+                if (askForRetry(filename)) {
+                    continue;
+                } else {
+                    return make_ret(Ret::Code::Cancel);
+                }
             }
 
-            if (askForRetry(filename)) {
-                continue;
-            } else {
-                return make_ret(Ret::Code::Cancel);
-            }
-        }
+            Ret ret = exportFunction(outputFile);
+            outputFile.close();
 
-        ret = fileSystem()->writeFile(scorePath, outputBuf.data());
-        if (!ret) {
-            if (askForRetry(filename)) {
-                continue;
-            } else {
-                return make_ret(Ret::Code::Cancel);
-            }
-        }
+            if (!ret) {
+                if (ret.code() == static_cast<int>(Ret::Code::Cancel)) {
+                    fileSystem()->remove(scorePath);
+                    return ret;
+                }
 
-        break;
+                if (askForRetry(filename)) {
+                    continue;
+                } else {
+                    return make_ret(Ret::Code::Cancel);
+                }
+            }
+            break;
+        }
+    } else {
+        while (true) {
+            Buffer outputBuf;
+            outputBuf.setMeta("file_path", scorePath.toStdString());
+            IF_ASSERT_FAILED(outputBuf.open(IODevice::WriteOnly)) {
+                return make_ret(Ret::Code::InternalError);
+            }
+
+            Ret ret = exportFunction(outputBuf);
+            outputBuf.close();
+            if (!ret) {
+                if (ret.code() == static_cast<int>(Ret::Code::Cancel)) {
+                    return ret;
+                }
+
+                if (askForRetry(filename)) {
+                    continue;
+                } else {
+                    return make_ret(Ret::Code::Cancel);
+                }
+            }
+
+            ret = fileSystem()->writeFile(scorePath, outputBuf.data());
+            if (!ret) {
+                if (askForRetry(filename)) {
+                    continue;
+                } else {
+                    return make_ret(Ret::Code::Cancel);
+                }
+            }
+
+            break;
+        }
     }
 
     return muse::make_ok();
