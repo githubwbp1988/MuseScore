@@ -136,6 +136,7 @@
 #include "../xmlreader.h"
 #include "../read206/read206.h"
 #include "../read400/tread.h"
+#include "../read460/tread.h"
 #include "../compat/compatutils.h"
 #include "../compat/tremolocompat.h"
 #include "readcontext.h"
@@ -1006,13 +1007,9 @@ bool TRead::readProperties(Instrument* item, XmlReader& e, ReadContext& ctx, Par
     if (tag == "soundId") {
         item->setSoundId(e.readText());
     } else if (tag == "longName") {
-        StaffName name;
-        TRead::read(&name, e);
-        item->setLongName(name);
+        item->setLongName(read460::TRead::readStaffName(e));
     } else if (tag == "shortName") {
-        StaffName name;
-        TRead::read(&name, e);
-        item->setShortName(name);
+        item->setShortName(read460::TRead::readStaffName(e));
     } else if (tag == "trackName") {
         item->setTrackName(e.readText());
     } else if (tag == "minPitch") {      // obsolete
@@ -1312,19 +1309,19 @@ void TRead::read(KeySig* s, XmlReader& e, ReadContext& ctx)
                 } else if (t == "def") {
                     cd.degree = e.intAttribute("degree", 0);
                     cd.octAlt = e.intAttribute("octAlt", 0);
-                    cd.xAlt = e.doubleAttribute("xAlt", 0.0);
+                    cd.xAlt = Spatium(e.doubleAttribute("xAlt", 0.0));
                     e.readNext();
                 } else if (t == "pos") { // for older files
-                    double prevx = 0;
-                    double accidentalGap = ctx.score()->style().styleS(Sid::keysigAccidentalDistance).val();
+                    Spatium prevx = 0_sp;
+                    Spatium accidentalGap = ctx.score()->style().styleS(Sid::keysigAccidentalDistance);
                     double _spatium = s->spatium();
                     // count default x position
                     for (CustDef& cd2 : sig.customKeyDefs()) {
-                        prevx += s->symWidth(cd2.sym) / _spatium + accidentalGap + cd2.xAlt;
+                        prevx += Spatium::fromAbsolute(s->symWidth(cd2.sym), _spatium) + accidentalGap + cd2.xAlt;
                     }
                     bool flat = std::string(SymNames::nameForSymId(cd.sym).ascii()).find("Flat") != std::string::npos;
                     // if x not there, use default step
-                    cd.xAlt = e.doubleAttribute("x", prevx) - prevx;
+                    cd.xAlt = Spatium(e.doubleAttribute("x", prevx.val())) - prevx;
                     // if y not there, use middle line
                     int line = static_cast<int>(e.doubleAttribute("y", 2) * 2);
                     cd.degree = (3 - line) % 7;
@@ -4095,16 +4092,6 @@ bool TRead::readProperties(Staff* s, XmlReader& e, ReadContext& ctx, StaffHideMo
         return false;
     }
     return true;
-}
-
-void TRead::read(StaffName* item, XmlReader& xml)
-{
-    String name = xml.readXml();
-    if (name.startsWith(u"<html>")) {
-        // compatibility to old html implementation:
-        name = HtmlParser::parse(name);
-    }
-    item->setName(name);
 }
 
 void TRead::read(Stem* s, XmlReader& e, ReadContext& ctx)

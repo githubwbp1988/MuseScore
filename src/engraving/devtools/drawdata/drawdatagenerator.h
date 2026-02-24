@@ -19,8 +19,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef MU_ENGRAVING_DRAWDATAGENERATOR_H
-#define MU_ENGRAVING_DRAWDATAGENERATOR_H
+
+#pragma once
 
 #include "global/types/ret.h"
 #include "global/io/path.h"
@@ -33,12 +33,11 @@
 
 namespace mu::engraving {
 class MasterScore;
-class DrawDataGenerator : public muse::Contextable
+class DrawDataGenerator
 {
-    muse::ContextInject<engraving::rendering::IScoreRenderer> scoreRenderer = { this };
-public:
-    DrawDataGenerator(const muse::modularity::ContextPtr& iocCtx);
+    muse::GlobalInject<engraving::rendering::IScoreRenderer> scoreRenderer;
 
+public:
     muse::Ret processDir(const muse::io::path_t& scoreDir, const muse::io::path_t& outDir, const GenOpt& opt = GenOpt());
     muse::Ret processFile(const muse::io::path_t& scoreFile, const muse::io::path_t& outFile, const GenOpt& opt = GenOpt());
 
@@ -50,5 +49,3 @@ private:
     void applyOptions(engraving::MasterScore* score, const GenOpt& opt) const;
 };
 }
-
-#endif // MU_ENGRAVING_DRAWDATAGENERATOR_H
