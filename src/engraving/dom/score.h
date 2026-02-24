@@ -335,7 +335,7 @@ class Score : public EngravingObject, public muse::Contextable
     muse::ContextInject<IEngravingElementsProvider> elementsProvider = { this };
 
     // internal
-    muse::ContextInject<rendering::IScoreRenderer> renderer = { this };
+    muse::GlobalInject<rendering::IScoreRenderer> renderer;
 
 public:
     Score(const Score&) = delete;
@@ -391,6 +391,8 @@ public:
     void cmdAddBracket();
     void cmdToggleParentheses();
     void cmdToggleParentheses(EngravingItem* el);
+    void cmdAddParenthesesToNotes(std::list<Note*>& notes);
+    void cmdRemoveParenthesesFromNotes(std::list<Note*>& notes);
     void cmdAddParenthesesToNotes();
     void cmdRemoveParenthesesFromNotes();
     void cmdAddBraces();

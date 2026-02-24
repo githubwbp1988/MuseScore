@@ -2100,9 +2100,11 @@ void Score::upDown(bool up, UpDownMode mode)
                     }
                 }
             }
-            part->stringData(tick, staff->idx())->convertPitch(newPitch, staff, tick, &string, &fret);
             undoChangePitch(oNote, newPitch, newTpc1, newTpc2);
-            undoChangeFretting(oNote, newPitch, string, fret, newTpc1, newTpc2);
+            if (mode == UpDownMode::DIATONIC) {
+                part->stringData(tick, staff->idx())->convertPitch(newPitch, staff, tick, &string, &fret);
+                undoChangeFretting(oNote, newPitch, string, fret, newTpc1, newTpc2);
+            }
         }
         // store fret change only if undoChangePitch has not been called,
         // as undoChangePitch() already manages fret changes, if necessary
@@ -3581,15 +3583,14 @@ void Score::cmdToggleParenthesesOnNotes()
     }
 
     if (add) {
-        cmdAddParenthesesToNotes();
+        cmdAddParenthesesToNotes(notes);
     } else {
-        cmdRemoveParenthesesFromNotes();
+        cmdRemoveParenthesesFromNotes(notes);
     }
 }
 
-void Score::cmdAddParenthesesToNotes()
+void Score::cmdAddParenthesesToNotes(std::list<Note*>& notes)
 {
-    std::list<Note*> notes = selection().uniqueNotes(muse::nidx, false);
     std::map<Chord*, std::set<Note*, NoteComparator> > notesByChord = getNotesByChord(notes);
 
     for (auto& chordNoteEntry : notesByChord) {
@@ -3607,9 +3608,14 @@ void Score::cmdAddParenthesesToNotes()
     }
 }
 
-void Score::cmdRemoveParenthesesFromNotes()
+void Score::cmdAddParenthesesToNotes()
 {
     std::list<Note*> notes = selection().uniqueNotes(muse::nidx, false);
+    cmdAddParenthesesToNotes(notes);
+}
+
+void Score::cmdRemoveParenthesesFromNotes(std::list<Note*>& notes)
+{
     std::map<Chord*, std::set<Note*, NoteComparator> > notesByChord = getNotesByChord(notes);
 
     for (auto& chordNoteEntry : notesByChord) {
@@ -3625,6 +3631,12 @@ void Score::cmdRemoveParenthesesFromNotes()
 
         EditChord::removeChordParentheses(chord, noteVec);
     }
+}
+
+void Score::cmdRemoveParenthesesFromNotes()
+{
+    std::list<Note*> notes = selection().uniqueNotes(muse::nidx, false);
+    cmdRemoveParenthesesFromNotes(notes);
 }
 
 //---------------------------------------------------------

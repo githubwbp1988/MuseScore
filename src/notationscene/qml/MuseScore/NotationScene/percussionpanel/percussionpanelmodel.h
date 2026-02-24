@@ -75,11 +75,11 @@ class PercussionPanelModel : public QObject, public muse::Contextable, public mu
     muse::GlobalInject<INotationSceneConfiguration> configuration;
     muse::GlobalInject<INotationConfiguration> notationConfiguration;
     muse::GlobalInject<engraving::IEngravingConfiguration> engravingConfiguration;
+    muse::GlobalInject<muse::musesampler::IMuseSamplerInfo> museSampler;
+    muse::GlobalInject<IInstrumentsRepository> instrumentsRepository;
     muse::ContextInject<mu::context::IGlobalContext> globalContext = { this };
     muse::ContextInject<muse::actions::IActionsDispatcher> dispatcher = { this };
     muse::ContextInject<mu::playback::IPlaybackController> playbackController = { this };
-    muse::ContextInject<muse::musesampler::IMuseSamplerInfo> museSampler = { this };
-    muse::ContextInject<IInstrumentsRepository> instrumentsRepository = { this };
 
 public:
     explicit PercussionPanelModel(QObject* parent = nullptr);
