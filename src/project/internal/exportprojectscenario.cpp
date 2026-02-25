@@ -21,7 +21,6 @@
  */
 #include "exportprojectscenario.h"
 
-#include "global/io/file.h"
 #include "global/io/buffer.h"
 #include "global/io/fileinfo.h"
 
@@ -406,85 +405,85 @@ Ret ExportProjectScenario::doExportLoop(const muse::io::path_t& scorePath, std::
     if (fileSystem()->exists(scorePath) && !shouldReplaceFile(filename)) {
         return make_ret(Ret::Code::InternalError);
     }
-    std::string suffix = io::suffix(scorePath);
-    if (false) {
-        while (true) {
-            io::File outputFile(scorePath);
-            outputFile.setMeta("file_path", scorePath.toStdString());
-            if (!outputFile.open(File::WriteOnly)) {
-                if (askForRetry(filename)) {
-                    continue;
-                } else {
-                    return make_ret(Ret::Code::Cancel);
-                }
-            }
+    // std::string suffix = io::suffix(scorePath);
+    // if (suffix == "mp3" || suffix == "wav" || suffix == "ogg" || suffix == "flac") {
+    //     while (true) {
+    //         io::File outputFile(scorePath);
+    //         outputFile.setMeta("file_path", scorePath.toStdString());
+    //         if (!outputFile.open(File::WriteOnly)) {
+    //             if (askForRetry(filename)) {
+    //                 continue;
+    //             } else {
+    //                 return make_ret(Ret::Code::Cancel);
+    //             }
+    //         }
 
-            Ret ret = exportFunction(outputFile);
-            outputFile.close();
+    //         Ret ret = exportFunction(outputFile);
+    //         outputFile.close();
 
-            if (!ret) {
-                if (ret.code() == static_cast<int>(Ret::Code::Cancel)) {
+    //         if (!ret) {
+    //             if (ret.code() == static_cast<int>(Ret::Code::Cancel)) {
+    //                 fileSystem()->remove(scorePath);
+    //                 return ret;
+    //             }
+
+    //             if (askForRetry(filename)) {
+    //                 continue;
+    //             } else {
+    //                 return make_ret(Ret::Code::Cancel);
+    //             }
+    //         }
+    //         break;
+    //     }
+    // } else {
+    while (true) {
+        //! NOTE Most writers write data to a given device (buffer)
+        //! But there is one atypical case:
+        //! Export score to unpacked directory - creates a directory and writes files to it
+
+        Buffer outputBuf;
+        outputBuf.setMeta("file_path", scorePath.toStdString());
+        IF_ASSERT_FAILED(outputBuf.open(IODevice::WriteOnly)) {
+            return make_ret(Ret::Code::InternalError);
+        }
+
+        Ret ret = exportFunction(outputBuf);
+        outputBuf.close();
+
+        const bool isFileMode = fileSystem()->exists(scorePath);
+        if (!ret) {
+            if (ret.code() == static_cast<int>(Ret::Code::Cancel)) {
+                if (isFileMode) {
                     fileSystem()->remove(scorePath);
-                    return ret;
                 }
 
-                if (askForRetry(filename)) {
-                    continue;
-                } else {
-                    return make_ret(Ret::Code::Cancel);
-                }
+                return ret;
             }
+
+            if (askForRetry(filename)) {
+                continue;
+            } else {
+                return make_ret(Ret::Code::Cancel);
+            }
+        }
+
+        if (isFileMode) {
+            // files were written by writer - we're done
             break;
         }
-    } else {
-       while (true) {
-            //! NOTE Most writers write data to a given device (buffer)
-            //! But there is one atypical case:
-            //! Export score to unpacked directory - creates a directory and writes files to it
 
-            Buffer outputBuf;
-            outputBuf.setMeta("file_path", scorePath.toStdString());
-            IF_ASSERT_FAILED(outputBuf.open(IODevice::WriteOnly)) {
-                return make_ret(Ret::Code::InternalError);
+        ret = fileSystem()->writeFile(scorePath, outputBuf.data());
+        if (!ret) {
+            if (askForRetry(filename)) {
+                continue;
+            } else {
+                return make_ret(Ret::Code::Cancel);
             }
-
-            Ret ret = exportFunction(outputBuf);
-            outputBuf.close();
-
-            const bool isFileMode = fileSystem()->exists(scorePath);
-            if (!ret) {
-                if (ret.code() == static_cast<int>(Ret::Code::Cancel)) {
-                    if (isFileMode) {
-                        fileSystem()->remove(scorePath);
-                    }
-
-                    return ret;
-                }
-
-                if (askForRetry(filename)) {
-                    continue;
-                } else {
-                    return make_ret(Ret::Code::Cancel);
-                }
-            }
-
-            if (isFileMode) {
-                // files were written by writer - we're done
-                break;
-            }
-
-            ret = fileSystem()->writeFile(scorePath, outputBuf.data());
-            if (!ret) {
-                if (askForRetry(filename)) {
-                    continue;
-                } else {
-                    return make_ret(Ret::Code::Cancel);
-                }
-            }
-
-            break;
         }
+
+        break;
     }
+    // }
 
     return muse::make_ok();
 }
