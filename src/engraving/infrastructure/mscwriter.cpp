@@ -222,8 +222,7 @@ void MscWriter::writeMeta()
 void MscWriter::writeContainer(const std::vector<String>& paths)
 {
     ByteArray data;
-    Buffer buf(&data);
-    buf.open(IODevice::WriteOnly);
+    auto buf = Buffer::opened(IODevice::WriteOnly, &data);
     XmlStreamWriter xml(&buf);
     xml.startDocument();
     xml.startElement("container");
@@ -380,15 +379,9 @@ bool MscWriter::DirWriter::addFileData(const String& fileName, const ByteArray& 
         }
     }
 
-    File file(filePath);
-    if (!file.open(IODevice::WriteOnly)) {
-        LOGE() << "failed open file: " << filePath;
-        m_hasError = true;
-        return false;
-    }
-
-    if (file.write(data) != data.size()) {
-        LOGE() << "failed write file: " << filePath;
+    const Ret ret = File::writeFile(filePath, data);
+    if (!ret) {
+        LOGE() << "failed to write file: " << filePath;
         m_hasError = true;
         return false;
     }

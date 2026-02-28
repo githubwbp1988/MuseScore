@@ -30,7 +30,7 @@
 #include "global/io/buffer.h"
 #include "global/io/file.h"
 #include "global/io/ioretcodes.h"
-#include "global/io/devtools/allzerosfilecorruptor.h"
+#include "global/io/devtools/allzerosbuffercorruptor.h"
 
 #include "engraving/compat/engravingcompat.h"
 #include "engraving/dom/masterscore.h"
@@ -592,8 +592,7 @@ Ret NotationProject::writeToDevice(QIODevice* device)
         return make_ret(notation::Err::UnknownError);
     }
 
-    Buffer buf;
-    buf.open(IODevice::OpenMode::WriteOnly);
+    auto buf = Buffer::opened(IODevice::WriteOnly);
 
     MscWriter::Params params;
     params.device = &buf;
@@ -680,20 +679,16 @@ Ret NotationProject::doSave(const muse::io::path_t& path, engraving::MscIoMode i
 
         std::unique_ptr<Buffer> maybeOutBuf;
         if (shouldCorrupt) {
-            // Create a corrupted file so devs/qa can simulate a saved corrupted file.
-            params.device = new AllZerosFileCorruptor(savePath);
+            // Create corrupted data so devs/qa can simulate a saved corrupted file.
+            maybeOutBuf = std::make_unique<AllZerosBufferCorruptor>();
         } else if (ioMode != engraving::MscIoMode::Dir) {
             maybeOutBuf = std::make_unique<Buffer>();
-            params.device = maybeOutBuf.get();
         }
+        params.device = maybeOutBuf.get();
 
         MscWriter msczWriter(params);
         Ret ret = writeProject(msczWriter, createThumbnail);
         msczWriter.close();
-        if (shouldCorrupt) {
-            delete params.device;
-            params.device = nullptr;
-        }
 
         if (!ret) {
             LOGE() << "failed write project to buffer: " << ret.toString();
@@ -906,8 +901,7 @@ Ret NotationProject::writeProject(MscWriter& msczWriter, bool createThumbnail, c
         excerpt->notation()->viewState()->write(msczWriter, path);
 
         ByteArray soloMuteData;
-        Buffer soloMuteBuf(&soloMuteData);
-        soloMuteBuf.open(IODevice::WriteOnly);
+        auto soloMuteBuf = Buffer::opened(IODevice::WriteOnly, &soloMuteData);
         excerpt->notation()->soloMuteState()->write(&soloMuteBuf /*out*/);
         msczWriter.writeAudioSettingsJsonFile(soloMuteData, path);
     }
@@ -990,8 +984,7 @@ Ret NotationProject::exportProject(const muse::io::path_t& path, const std::stri
 {
     TRACEFUNC;
 
-    File file(path);
-    file.open(File::WriteOnly);
+    Buffer outBuf = Buffer::opened(IODevice::WriteOnly);
 
     auto writer = writers()->writer(suffix);
     if (!writer) {
@@ -999,10 +992,13 @@ Ret NotationProject::exportProject(const muse::io::path_t& path, const std::stri
         return false;
     }
 
-    Ret ret = writer->write(m_masterNotation->notation(), file);
-    file.close();
+    Ret ret = writer->write(m_masterNotation->notation(), outBuf);
+    if (!ret) {
+        return ret;
+    }
+    outBuf.close();
 
-    return ret;
+    return File::writeFile(path, outBuf.data());
 }
 
 IMasterNotationPtr NotationProject::masterNotation() const

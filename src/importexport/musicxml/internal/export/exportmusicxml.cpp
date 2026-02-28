@@ -8750,24 +8750,22 @@ void ExportMusicXml::write(muse::io::IODevice* dev)
 
 bool saveXml(Score* score, IODevice* device)
 {
-    muse::io::Buffer buf;
-    buf.open(muse::io::IODevice::WriteOnly);
     ExportMusicXml em(score);
-    em.write(&buf);
-    device->write(buf.data());
+    em.write(device);
     return true;
 }
 
 bool saveXml(Score* score, const String& name)
 {
-    File f(name);
-    if (!f.open(IODevice::WriteOnly)) {
-        return false;
-    }
+    auto buf = Buffer::opened(IODevice::WriteOnly);
 
-    bool res = saveXml(score, &f) && !f.hasError();
-    f.close();
-    return res;
+    bool res = saveXml(score, &buf) && !buf.hasError();
+    if (!res) {
+        return res;
+    }
+    buf.close();
+
+    return File::writeFile(name, buf.data());
 }
 
 //---------------------------------------------------------
@@ -8791,8 +8789,7 @@ bool saveXml(Score* score, const String& name)
 
 static void writeMxlArchive(Score* score, muse::ZipWriter& zip, const String& filename)
 {
-    muse::io::Buffer cbuf;
-    cbuf.open(muse::io::IODevice::ReadWrite);
+    auto cbuf = Buffer::opened(IODevice::ReadWrite);
 
     XmlWriter xml(&cbuf);
     xml.startDocument();
@@ -8807,8 +8804,7 @@ static void writeMxlArchive(Score* score, muse::ZipWriter& zip, const String& fi
 
     zip.addFile("META-INF/container.xml", cbuf.data());
 
-    muse::io::Buffer dbuf;
-    dbuf.open(muse::io::IODevice::ReadWrite);
+    auto dbuf = Buffer::opened(IODevice::ReadWrite);
     ExportMusicXml em(score);
     em.write(&dbuf);
     dbuf.seek(0);
@@ -8829,14 +8825,15 @@ bool saveMxl(Score* score, IODevice* device)
 
 bool saveMxl(Score* score, const String& name)
 {
-    muse::ZipWriter zip(name);
+    auto outBuf = Buffer::opened(IODevice::WriteOnly);
+    muse::ZipWriter zip(&outBuf);
 
     FileInfo fi(name);
     String fn = fi.completeBaseName() + u".xml";
     writeMxlArchive(score, zip, fn);
     zip.close();
 
-    return true;
+    return File::writeFile(name, outBuf.data());
 }
 
 double ExportMusicXml::getTenthsFromInches(double inches) const

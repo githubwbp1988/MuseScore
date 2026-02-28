@@ -5900,7 +5900,7 @@ void NotationInteraction::addBoxes(BoxType boxType, int count, int beforeBoxInde
     mu::engraving::MeasureBase* beforeBox = beforeBoxIndex >= 0 ? score()->measure(beforeBoxIndex) : nullptr;
 
     mu::engraving::Score::InsertMeasureOptions options;
-    options.createEmptyMeasures = false;
+    options.createMeasureRests = false;
     options.moveSignaturesClef = moveSignaturesClef;
     options.needDeselectAll = false;
     options.cloneBoxToAllParts = boxType != BoxType::Fret;
@@ -8533,6 +8533,28 @@ void NotationInteraction::addMelisma()
         score()->endCmd();
     }
 
+    auto getPartialLyricLineEndSegment = [&]() -> Fraction {
+        Segment* endSegment = segment;
+        while (endSegment && endSegment->tick() < endTick) {
+            endSegment = endSegment->nextCR(track, true);
+        }
+        EngravingItem* endSegmentElement = endSegment->element(track);
+        if (endSegment->tick() == endTick && endSegmentElement && endSegmentElement->isChord()) {
+            Segment* endChordSeg = endSegment;
+            Chord* endChord = toChord(endSegmentElement);
+
+            endSegment = endChordSeg->nextCR(track, false);
+
+            if (!endSegment || endSegment->tick() > endChord->endTick()) {
+                endSegment = endChordSeg;
+                while (endSegment && endSegment->tick() < endChord->endTick()) {
+                    endSegment = endSegment->nextCR(muse::nidx, true);
+                }
+            }
+        }
+        return endSegment ? endSegment->tick() : score()->endTick();
+    };
+
     if (!nextSegment) {
         score()->startCmd(TranslatableString("undoableAction", "Enter lyrics extension line"));
         if (fromLyrics) {
@@ -8564,7 +8586,8 @@ void NotationInteraction::addMelisma()
 
             score()->undoAddElement(melisma);
         } else if (prevPartialLyricsLine) {
-            const Fraction tickDiff = (segment->tick() + segment->ticks()) - prevPartialLyricsLine->tick2();
+            const Fraction segEndTick = getPartialLyricLineEndSegment();
+            const Fraction tickDiff = segEndTick - prevPartialLyricsLine->tick2();
             prevPartialLyricsLine->undoMoveEnd(tickDiff);
         }
 
@@ -8647,7 +8670,7 @@ void NotationInteraction::addMelisma()
 
         score()->undoAddElement(melisma);
     } else if (prevPartialLyricsLine) {
-        const Fraction segEndTick = segment->tick() + segment->ticks();
+        const Fraction segEndTick = getPartialLyricLineEndSegment();
         const Fraction tickDiff = segEndTick - prevPartialLyricsLine->tick2();
         prevPartialLyricsLine->undoMoveEnd(tickDiff);
         prevPartialLyricsLine->triggerLayout();
