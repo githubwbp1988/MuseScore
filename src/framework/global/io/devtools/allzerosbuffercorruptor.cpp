@@ -19,20 +19,17 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef MU_NOTATION_NOTATIONMSCZREADERMOCK_H
-#define MU_NOTATION_NOTATIONMSCZREADERMOCK_H
 
-#include <gmock/gmock.h>
+#include "allzerosbuffercorruptor.h"
 
-#include "project/imscmetareader.h"
+#include <cstring>
 
-namespace mu::notation {
-class MsczReaderMock : public project::IMscMetaReader
+using namespace muse::io;
+
+size_t AllZerosBufferCorruptor::writeData(const uint8_t*, size_t len)
 {
-public:
-    MOCK_METHOD(muse::RetVal<project::ProjectMeta>, readMeta, (const muse::io::path_t& filePath), (const, override));
-    MOCK_METHOD(muse::RetVal<project::CloudProjectInfo>, readCloudProjectInfo, (const muse::io::path_t& filePath), (const, override));
-};
+    // Ignore the actual data and write all zeros so as to corrupt the file.
+    uint8_t* corruptData = new uint8_t[len];
+    std::memset(corruptData, 0, len);
+    return Buffer::writeData(corruptData, len);
 }
-
-#endif // MU_NOTATION_NOTATIONMSCZREADERMOCK_H

@@ -19,17 +19,19 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+
 #pragma once
 
-#include "io/file.h"
+#include <gmock/gmock.h>
 
-namespace muse::io {
-class AllZerosFileCorruptor : public File
+#include "project/imscmetareader.h"
+
+namespace mu::notation {
+class MscMetaReaderMock : public project::IMscMetaReader
 {
 public:
-    AllZerosFileCorruptor(const path_t& filePath);
-
-private:
-    size_t writeData(const uint8_t* data, size_t len) override;
+    MOCK_METHOD(muse::RetVal<QPixmap>, readThumbnail, (const muse::io::path_t& filePath), (const, override));
+    MOCK_METHOD(muse::RetVal<project::ProjectMeta>, readMeta, (const muse::io::path_t& filePath), (const, override));
+    MOCK_METHOD(muse::RetVal<project::CloudProjectInfo>, readCloudProjectInfo, (const muse::io::path_t& filePath), (const, override));
 };
 }

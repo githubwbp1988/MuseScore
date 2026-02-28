@@ -1832,16 +1832,8 @@ void PlaybackController::setIsExportingAudio(bool exporting)
     m_isExportingAudio = exporting;
     updateSoloMuteStates();
 
-    if (!exporting) {
-        return;
-    }
-
-    if (notationPlayback()) {
+    if (exporting && notationPlayback()) {
         notationPlayback()->sendEventsForChangedTracks();
-    }
-
-    if (!onlineSounds().empty() && !audioConfiguration()->autoProcessOnlineSoundsInBackground()) {
-        dispatcher()->dispatch("process-online-sounds");
     }
 }
 

@@ -488,14 +488,14 @@ bool Palette::writeToFile(const QString& p) const
         path += ".mpal";
     }
 
-    ZipWriter f(path);
+    auto zipBuf = Buffer::opened(IODevice::WriteOnly);
+    ZipWriter f(&zipBuf);
     if (f.hasError()) {
         showWritingPaletteError(path);
         return false;
     }
 
-    Buffer cbuf;
-    cbuf.open(IODevice::ReadWrite);
+    auto cbuf = Buffer::opened(IODevice::ReadWrite);
     XmlWriter xml(&cbuf);
     xml.startDocument();
     xml.startElement("container");
@@ -520,8 +520,7 @@ bool Palette::writeToFile(const QString& p) const
         f.addFile(ipath, ip->buffer());
     }
     {
-        Buffer cbuf1;
-        cbuf1.open(IODevice::ReadWrite);
+        Buffer cbuf1 = Buffer::opened(IODevice::ReadWrite);
         XmlWriter xml1(&cbuf1);
         xml1.startDocument();
         xml1.startElement("museScore", { { "version", Constants::MSC_VERSION_STR } });
@@ -533,6 +532,11 @@ bool Palette::writeToFile(const QString& p) const
     }
     f.close();
     if (f.hasError()) {
+        showWritingPaletteError(path);
+        return false;
+    }
+
+    if (!File::writeFile(path, zipBuf.data())) {
         showWritingPaletteError(path);
         return false;
     }

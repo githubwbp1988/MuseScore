@@ -63,11 +63,10 @@ class ConsoleApp : public muse::BaseApplication, public std::enable_shared_from_
     muse::GlobalInject<iex::videoexport::IVideoExportConfiguration> videoExportConfiguration;
     muse::GlobalInject<iex::guitarpro::IGuitarProConfiguration> guitarProConfiguration;
     muse::GlobalInject<iex::musicxml::IMusicXmlConfiguration> musicXmlConfiguration;
-
-    muse::ContextInject<converter::IConverterController> converter = { this };
+    muse::GlobalInject<muse::audioplugins::IRegisterAudioPluginsScenario> registerAudioPluginsScenario;
+    muse::GlobalInject<converter::IConverterController> converter;
     muse::ContextInject<engraving::IDiagnosticDrawProvider> diagnosticDrawProvider = { this };
     muse::ContextInject<muse::autobot::IAutobot> autobot = { this };
-    muse::ContextInject<muse::audioplugins::IRegisterAudioPluginsScenario> registerAudioPluginsScenario = { this };
     muse::ContextInject<playback::ISoundProfilesRepository> soundProfilesRepository = { this };
 
 public:
@@ -95,7 +94,7 @@ private:
     CmdOptions m_options;
 
     //! NOTE Separately to initialize logger and profiler as early as possible
-    muse::GlobalModule m_globalModule;
+    muse::GlobalModule* m_globalModule = nullptr;
 
     std::vector<muse::modularity::IModuleSetup*> m_modules;
     muse::modularity::ContextPtr m_context;

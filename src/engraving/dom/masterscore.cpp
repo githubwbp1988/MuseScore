@@ -261,8 +261,7 @@ void MasterScore::removeExcerpt(Excerpt* ex)
 
 MasterScore* MasterScore::clone()
 {
-    Buffer buffer;
-    buffer.open(IODevice::WriteOnly);
+    auto buffer = Buffer::opened(IODevice::WriteOnly);
 
     rw::RWRegister::writer()->writeScore(this, &buffer);
 
@@ -786,7 +785,7 @@ MeasureBase* MasterScore::insertMeasure(MeasureBase* beforeMeasure, const Insert
 
     undoInsertTime(tick, ticks);
 
-    if (masterMeasure && !options.createEmptyMeasures) {
+    if (masterMeasure && !options.createMeasureRests) {
         //
         // fill measure with rest
         // undoAddCR adds rest to linked staves as well
