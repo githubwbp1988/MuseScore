@@ -2401,7 +2401,7 @@ void PlaybackCursor::processCursorNoteRenderStatusAsync(Measure* measure, int cu
                     if (_pre_note->isGrace()) {
                         _pre_note->setColor(muse::draw::Color::BLACK);
                     } 
-                    for (int k = 0; k < _pre_note->qmlDotsCount(); k++) {
+                    for (int k = 0; k < _pre_note->dots().size(); k++) {
                         _pre_note->dot(k)->setColor(muse::draw::Color::BLACK);
                     }
                     if (_pre_note->accidental()) {
@@ -2480,7 +2480,7 @@ void PlaybackCursor::processCursorNoteRenderRecoverAsync(EngravingItem* engravin
             // if (is_grace) {
             //     _pre_note->setColor(muse::draw::Color::BLACK);
             // }
-            if (_pre_note->qmlDotsCount() > 0) {
+            if (_pre_note->dots().size() > 0) {
                 for (NoteDot* dot : _pre_note->dots()) {
                     dot->setColor(muse::draw::Color::BLACK);
                 }
@@ -2664,7 +2664,7 @@ muse::RectF PlaybackCursor::resolveCursorRectByTick1(muse::midi::tick_t _tick, b
                     if (tremolo_suffix_note) {
                         if (score_tremolo_dt_map[engravingItem] > 0 && tick.ticks() >= score_tremolo_st_map[engravingItem] && tick.ticks() < score_tremolo_st_map[engravingItem] + score_tremolo_dt_map[engravingItem]) {
                             for (Note* _note: tremolo_suffix_note->chord()->notes()) {
-                                for (int k = 0; k < _note->qmlDotsCount(); k++) {
+                                for (int k = 0; k < _note->dots().size(); k++) {
                                     _note->dot(k)->setColor(muse::draw::Color::RED);
                                 }
                                 _note->setColor(muse::draw::Color::RED);
@@ -2681,7 +2681,7 @@ muse::RectF PlaybackCursor::resolveCursorRectByTick1(muse::midi::tick_t _tick, b
                             }
                         } else {
                             for (Note* _note: tremolo_suffix_note->chord()->notes()) {
-                                for (int k = 0; k < _note->qmlDotsCount(); k++) {
+                                for (int k = 0; k < _note->dots().size(); k++) {
                                     _note->dot(k)->setColor(muse::draw::Color::BLACK);
                                 }
                                 _note->setColor(muse::draw::Color::BLACK);
@@ -2702,7 +2702,7 @@ muse::RectF PlaybackCursor::resolveCursorRectByTick1(muse::midi::tick_t _tick, b
                     if (tremolo_suffix_note1) {
                         if (score_tremolo_dt_map1[engravingItem] > 0 && tick.ticks() >= score_tremolo_st_map1[engravingItem] && tick.ticks() < score_tremolo_st_map1[engravingItem] + score_tremolo_dt_map1[engravingItem]) {
                             for (Note* _note: tremolo_suffix_note1->chord()->notes()) {
-                                for (int k = 0; k < _note->qmlDotsCount(); k++) {
+                                for (int k = 0; k < _note->dots().size(); k++) {
                                     _note->dot(k)->setColor(muse::draw::Color::RED);
                                 }
                                 _note->setColor(muse::draw::Color::RED);
@@ -2724,7 +2724,7 @@ muse::RectF PlaybackCursor::resolveCursorRectByTick1(muse::midi::tick_t _tick, b
                             }
                         } else {
                             for (Note* _note: tremolo_suffix_note1->chord()->notes()) {
-                                for (int k = 0; k < _note->qmlDotsCount(); k++) {
+                                for (int k = 0; k < _note->dots().size(); k++) {
                                     _note->dot(k)->setColor(muse::draw::Color::BLACK);
                                 }
                                 _note->setColor(muse::draw::Color::BLACK);
@@ -2910,7 +2910,7 @@ muse::RectF PlaybackCursor::resolveCursorRectByTick1(muse::midi::tick_t _tick, b
                                                 }
                                             }
                                             _pre_note->setColor(muse::draw::Color::BLACK);
-                                            for (int k = 0; k < _pre_note->qmlDotsCount(); k++) {
+                                            for (int k = 0; k < _pre_note->dots().size(); k++) {
                                                 _pre_note->dot(k)->setColor(muse::draw::Color::BLACK);
                                             }
                                             if (_pre_note->accidental()) {
@@ -2962,7 +2962,7 @@ muse::RectF PlaybackCursor::resolveCursorRectByTick1(muse::midi::tick_t _tick, b
                                                 }
                                             }
                                             _pre_note->setColor(muse::draw::Color::RED);
-                                            for (int k = 0; k < _pre_note->qmlDotsCount(); k++) {
+                                            for (int k = 0; k < _pre_note->dots().size(); k++) {
                                                 _pre_note->dot(k)->setColor(muse::draw::Color::RED);
                                             }
                                             if (_pre_note->accidental()) {
@@ -3046,7 +3046,7 @@ muse::RectF PlaybackCursor::resolveCursorRectByTick1(muse::midi::tick_t _tick, b
                                                 }
                                             }
                                             _pre_note->setColor(muse::draw::Color::BLACK);
-                                            for (int k = 0; k < _pre_note->qmlDotsCount(); k++) {
+                                            for (int k = 0; k < _pre_note->dots().size(); k++) {
                                                 _pre_note->dot(k)->setColor(muse::draw::Color::BLACK);
                                             }
                                             if (_pre_note->accidental()) {
@@ -3098,7 +3098,7 @@ muse::RectF PlaybackCursor::resolveCursorRectByTick1(muse::midi::tick_t _tick, b
                                                 }
                                             }
                                             _pre_note->setColor(muse::draw::Color::RED);
-                                            for (int k = 0; k < _pre_note->qmlDotsCount(); k++) {
+                                            for (int k = 0; k < _pre_note->dots().size(); k++) {
                                                 _pre_note->dot(k)->setColor(muse::draw::Color::RED);
                                             }
                                             if (_pre_note->accidental()) {
@@ -3131,7 +3131,7 @@ muse::RectF PlaybackCursor::resolveCursorRectByTick1(muse::midi::tick_t _tick, b
                                         }
                                     }
                                 } else {
-                                    for (int k = 0; k < _pre_note->qmlDotsCount(); k++) {
+                                    for (int k = 0; k < _pre_note->dots().size(); k++) {
                                         _pre_note->dot(k)->setColor(muse::draw::Color::RED);
                                     }
                                     if (_pre_note->accidental()) {
@@ -3171,7 +3171,7 @@ muse::RectF PlaybackCursor::resolveCursorRectByTick1(muse::midi::tick_t _tick, b
                                     if (_pre_note->chord()->durationTypeTicks().ticks() == ns_chord->durationTypeTicks().ticks()) {
                                         if (tick.ticks() > _pre_note->tick().ticks() + _pre_note->chord()->durationTypeTicks().ticks() / 6) {
                                             _pre_note->setColor(muse::draw::Color::BLACK);
-                                            for (int k = 0; k < _pre_note->qmlDotsCount(); k++) {
+                                            for (int k = 0; k < _pre_note->dots().size(); k++) {
                                                 _pre_note->dot(k)->setColor(muse::draw::Color::BLACK);
                                             }
                                             if (_pre_note->accidental()) {
@@ -3203,7 +3203,7 @@ muse::RectF PlaybackCursor::resolveCursorRectByTick1(muse::midi::tick_t _tick, b
                                                 if (ns_item->type() == mu::engraving::ElementType::NOTE) {
                                                     Note* ns_note = toNote(ns_item);
                                                     ns_note->setColor(muse::draw::Color::RED);
-                                                    for (int k = 0; k < ns_note->qmlDotsCount(); k++) {
+                                                    for (int k = 0; k < ns_note->dots().size(); k++) {
                                                         ns_note->dot(k)->setColor(muse::draw::Color::RED);
                                                     }
                                                     if (ns_note->accidental()) {
@@ -3361,7 +3361,7 @@ muse::RectF PlaybackCursor::resolveCursorRectByTick1(muse::midi::tick_t _tick, b
                         if (_pre_note->isGrace()) {
                             _pre_note->setColor(muse::draw::Color::BLACK);
                         }
-                        for (int k = 0; k < _pre_note->qmlDotsCount(); k++) {
+                        for (int k = 0; k < _pre_note->dots().size(); k++) {
                             _pre_note->dot(k)->setColor(muse::draw::Color::BLACK);
                         }
                         if (_pre_note->accidental()) {
