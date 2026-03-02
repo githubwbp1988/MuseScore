@@ -10800,14 +10800,14 @@
         <source>Crotales</source>
         <comment>crotales trackName</comment>
         <extracomment>trackName for Crotales; Please see https://github.com/musescore/MuseScore/wiki/Translating-instrument-names</extracomment>
-        <translation>Crotales</translation>
+        <translation>Crótalos</translation>
     </message>
     <message>
         <location filename="../instruments/instrumentsxml.h" line="3617"/>
         <source>Crotales</source>
         <comment>crotales longName</comment>
         <extracomment>longName for Crotales; Please see https://github.com/musescore/MuseScore/wiki/Translating-instrument-names</extracomment>
-        <translation>Crotales</translation>
+        <translation>Crótalos</translation>
     </message>
     <message>
         <location filename="../instruments/instrumentsxml.h" line="3619"/>
@@ -10849,7 +10849,7 @@
         <source>Tubular bells (British English), or chimes (American English).</source>
         <comment>tubular-bells description</comment>
         <extracomment>description for Chimes; Please see https://github.com/musescore/MuseScore/wiki/Translating-instrument-names</extracomment>
-        <translation>Tubular bells (sinos tubulares, inglês britânico) ou chimes (sinos, inglês americano).</translation>
+        <translation>Carrilhões de orquestra</translation>
     </message>
     <message>
         <location filename="../instruments/instrumentsxml.h" line="3633"/>
