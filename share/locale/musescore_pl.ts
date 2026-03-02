@@ -3007,7 +3007,7 @@ space unit</extracomment>
     <message>
         <location filename="../../src/notationscene/widgets/editstyle.ui" line="7084"/>
         <source>Default positions of dynamics and hairpins</source>
-        <translation>Pozycje domyślne dynamiki i (de)crescendo</translation>
+        <translation>Domyślne pozycje dynamiki i (de)crescendo</translation>
     </message>
     <message>
         <location filename="../../src/notationscene/widgets/editstyle.ui" line="7095"/>
@@ -9692,7 +9692,7 @@ do lewej, po których są łączniki</translation>
     <message>
         <location filename="../../src/project/internal/projectuiactions.cpp" line="103"/>
         <source>&amp;Export…</source>
-        <translation>Eksportuj…</translation>
+        <translation>&amp;Eksportuj…</translation>
     </message>
     <message>
         <location filename="../../src/project/internal/projectuiactions.cpp" line="104"/>
@@ -9722,7 +9722,7 @@ do lewej, po których są łączniki</translation>
     <message>
         <location filename="../../src/project/internal/projectuiactions.cpp" line="123"/>
         <source>&amp;Print…</source>
-        <translation>Drukuj…</translation>
+        <translation>&amp;Drukuj…</translation>
     </message>
     <message>
         <location filename="../../src/project/internal/projectuiactions.cpp" line="124"/>

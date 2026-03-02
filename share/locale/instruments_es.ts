@@ -10486,7 +10486,7 @@ Afinada en Do.</translation>
         <source>Timple</source>
         <comment>timple-canario longName</comment>
         <extracomment>longName for Canarian Timple; Please see https://github.com/musescore/MuseScore/wiki/Translating-instrument-names</extracomment>
-        <translation type="unfinished"/>
+        <translation>Timple</translation>
     </message>
     <message>
         <location filename="../instruments/instrumentsxml.h" line="6294"/>
@@ -10507,7 +10507,7 @@ Afinada en Do.</translation>
         <source>Timple</source>
         <comment>timple-canario-tablature longName</comment>
         <extracomment>longName for Canarian Timple (tablature); Please see https://github.com/musescore/MuseScore/wiki/Translating-instrument-names</extracomment>
-        <translation type="unfinished"/>
+        <translation>Timple</translation>
     </message>
     <message>
         <location filename="../instruments/instrumentsxml.h" line="3523"/>
@@ -20677,7 +20677,7 @@ Afinada en Do.</translation>
     <message>
         <location filename="../instruments/instrumentsxml.h" line="194"/>
         <source>Timples</source>
-        <translation type="unfinished"/>
+        <translation>Timples</translation>
     </message>
     <message>
         <location filename="../instruments/instrumentsxml.h" line="195"/>
