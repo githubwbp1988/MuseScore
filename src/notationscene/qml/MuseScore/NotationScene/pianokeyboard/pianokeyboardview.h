@@ -49,7 +49,7 @@ class PianoKeyboardView : public muse::uicomponents::QuickPaintedView, public mu
 
     muse::GlobalInject<INotationConfiguration> configuration;
     muse::GlobalInject<muse::ui::IUiConfiguration> uiConfiguration;
-    muse::ContextInject<mu::project::IProjectRWRegister> videoWriters = { this };
+    muse::GlobalInject<mu::project::IProjectRWRegister> videoWriters;
 
 public:
     explicit PianoKeyboardView(QQuickItem* parent = nullptr);

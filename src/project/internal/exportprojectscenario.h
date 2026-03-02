@@ -42,8 +42,7 @@ class ExportProjectScenario : public IExportProjectScenario, public muse::async:
     muse::GlobalInject<iex::imagesexport::IImagesExportConfiguration> imagesExportConfiguration;
     muse::GlobalInject<INotationWritersRegister> writers;
     muse::ContextInject<muse::IInteractive> interactive = { this };
-    muse::ContextInject<INotationWritersRegister> writers = { this };
-    muse::ContextInject<IProjectRWRegister> videoWriters = { this };
+    muse::GlobalInject<IProjectRWRegister> videoWriters;
     muse::ContextInject<context::IGlobalContext> context = { this };
 
 public:
