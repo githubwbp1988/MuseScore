@@ -187,6 +187,7 @@ QVariant PropertyValue::toQVariant() const
     case P_TYPE::AUTO_CUSTOM_HIDE:  return static_cast<int>(value<AutoCustomHide>());
     case P_TYPE::MEASURE_NUMBER_PLACEMENT: return static_cast<int>(value<MeasureNumberPlacement>());
     case P_TYPE::CAPO_TRANSPOSE_MODE:  return static_cast<int>(value<CapoParams::TransposeMode>());
+    case P_TYPE::INSTRUMENT_NAMES_ALIGN: return static_cast<int>(value<InstrumentNamesAlign>());
 
     // Other
     case P_TYPE::GROUPS: {
@@ -309,6 +310,7 @@ PropertyValue PropertyValue::fromQVariant(const QVariant& v, P_TYPE type)
     case P_TYPE::MARKER_TYPE:         return PropertyValue(MarkerType(v.toInt()));
     case P_TYPE::MEASURE_NUMBER_PLACEMENT: return PropertyValue(MeasureNumberPlacement(v.toInt()));
     case P_TYPE::CAPO_TRANSPOSE_MODE: return PropertyValue(CapoParams::TransposeMode(v.toInt()));
+    case P_TYPE::INSTRUMENT_NAMES_ALIGN: return PropertyValue(InstrumentNamesAlign(v.toInt()));
 
     // Other
     case P_TYPE::GROUPS: {
