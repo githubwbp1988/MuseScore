@@ -334,6 +334,7 @@ public:
     bool canAddTupletToSelectedChordRests() const override;
     void addTupletToSelectedChordRests(const TupletOptions& options) override;
     void addBeamToSelectedChordRests(BeamMode mode) override;
+    void beamSelectedRange() override;
 
     void increaseDecreaseDuration(int steps, bool stepByDots) override;
 
