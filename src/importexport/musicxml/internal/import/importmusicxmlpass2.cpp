@@ -2732,7 +2732,7 @@ void MusicXmlParserPass2::measure(const String& partId, const Fraction time)
 
     if (m_e.asciiAttribute("implicit") == "yes") {
         // Implicit measure: expect measure number to be unchanged.
-        measure->setIrregular(true);
+        measure->setExcludeFromNumbering(true);
     } else {
         // Normal measure: expect number to have increased by one.
         ++m_measureNumber;
@@ -2740,7 +2740,7 @@ void MusicXmlParserPass2::measure(const String& partId, const Fraction time)
 
     if (isNumericMeasureNumber) {
         // Actual measure number may differ from expected value.
-        measure->setNoOffset(parsedMeasureNumber - m_measureNumber);
+        measure->setMeasureNumberOffset(parsedMeasureNumber - m_measureNumber);
         m_measureNumber = parsedMeasureNumber;
     }
 
@@ -7799,6 +7799,7 @@ void MusicXmlParserPass2::harmony(const String& partId, Measure* measure, const 
     Key key = staff ? staff->key(sTime) : Key::INVALID;
 
     const Color color = Color::fromString(m_e.asciiAttribute("color").ascii());
+    const String fontFamily = m_e.attribute("font-family");
     const String placement = m_e.attribute("placement");
     const bool printObject = m_e.asciiAttribute("print-object") != "no";
 
@@ -7993,6 +7994,10 @@ void MusicXmlParserPass2::harmony(const String& partId, Measure* measure, const 
         ha->resetProperty(Pid::OFFSET);
     }
     colorItem(ha, color);
+    if (!fontFamily.empty()) {
+        ha->setFamily(fontFamily);
+        ha->setPropertyFlags(Pid::FONT_FACE, PropertyFlags::UNSTYLED);
+    }
 
     const HarmonyDesc newHarmonyDesc(track, ha, fd);
     bool insert = true;

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<museScore version="4.70">
+<museScore version="5.00">
   <Score>
     <eid>B_B</eid>
     <Division>480</Division>
@@ -29,7 +29,6 @@
       <chordSymbolAFontSize>7.4</chordSymbolAFontSize>
       <chordSymbolBFontFace>Times</chordSymbolBFontFace>
       <chordSymbolBFontSize>7.4</chordSymbolBFontSize>
-      <romanNumeralFontFace>Times</romanNumeralFontFace>
       <nashvilleNumberFontFace>Times</nashvilleNumberFontFace>
       <nashvilleNumberFontSize>7.4</nashvilleNumberFontSize>
       <smallNoteMag>0.65</smallNoteMag>

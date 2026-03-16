@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<museScore version="4.70">
+<museScore version="5.00">
   <Score>
     <eid>B_B</eid>
     <Division>480</Division>
@@ -97,6 +97,8 @@
             <HairPin>
               <subtype>0</subtype>
               <veloChange>10</veloChange>
+              <beginHookHeight>-1.9</beginHookHeight>
+              <endHookHeight>-1.9</endHookHeight>
               <eid>K_K</eid>
               </HairPin>
             <next>

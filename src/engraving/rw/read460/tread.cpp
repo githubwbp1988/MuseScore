@@ -1495,6 +1495,8 @@ void TRead::read(Image* img, XmlReader& e, ReadContext& ctx)
             e.unknown();
         }
     }
+
+    compat::CompatUtils::convertPre470ImageSize(img);
 }
 
 void TRead::read(Tuplet* t, XmlReader& e, ReadContext& ctx)
@@ -2869,6 +2871,7 @@ void TRead::read(GuitarBend* g, XmlReader& e, ReadContext& ctx)
         } else if (TRead::readProperty(g, tag, e, ctx, Pid::DIRECTION)) {
         } else if (TRead::readProperty(g, tag, e, ctx, Pid::BEND_SHOW_HOLD_LINE)) {
         } else if (TRead::readProperty(g, tag, e, ctx, Pid::BEND_START_TIME_FACTOR)) {
+        } else if (TRead::readProperty(g, tag, e, ctx, Pid::BEND_TARGET_TIME_FACTOR)) {
         } else if (TRead::readProperty(g, tag, e, ctx, Pid::BEND_END_TIME_FACTOR)) {
         } else if (TRead::readProperty(g, tag, e, ctx, Pid::GUITAR_DIVE_TAB_POS)) {
         } else if (TRead::readProperty(g, tag, e, ctx, Pid::GUITAR_BEND_AMOUNT)) {

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<museScore version="4.70">
+<museScore version="5.00">
   <Score>
     <eid>B_B</eid>
     <Division>480</Division>
@@ -321,6 +321,8 @@
           <Spanner type="HairPin">
             <HairPin>
               <subtype>0</subtype>
+              <beginHookHeight>-1.9</beginHookHeight>
+              <endHookHeight>-1.9</endHookHeight>
               <eid>W_W</eid>
               </HairPin>
             <next>
@@ -538,6 +540,8 @@
           <Spanner type="HairPin">
             <HairPin>
               <subtype>0</subtype>
+              <beginHookHeight>-1.9</beginHookHeight>
+              <endHookHeight>-1.9</endHookHeight>
               <eid>4_4</eid>
               </HairPin>
             <next>
@@ -754,6 +758,8 @@
           <Spanner type="HairPin">
             <HairPin>
               <subtype>0</subtype>
+              <beginHookHeight>-1.9</beginHookHeight>
+              <endHookHeight>-1.9</endHookHeight>
               <eid>ZB_ZB</eid>
               </HairPin>
             <next>
@@ -970,6 +976,8 @@
           <Spanner type="HairPin">
             <HairPin>
               <subtype>0</subtype>
+              <beginHookHeight>-1.9</beginHookHeight>
+              <endHookHeight>-1.9</endHookHeight>
               <eid>6B_6B</eid>
               </HairPin>
             <next>
