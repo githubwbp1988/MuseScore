@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<museScore version="4.70">
+<museScore version="5.00">
   <Score>
     <eid>B_B</eid>
     <Division>480</Division>
@@ -19,7 +19,6 @@
       <lyricsEvenFontSize>11</lyricsEvenFontSize>
       <chordSymbolAFontFace>FreeSerif</chordSymbolAFontFace>
       <chordSymbolBFontFace>FreeSerif</chordSymbolBFontFace>
-      <romanNumeralFontFace>FreeSerif</romanNumeralFontFace>
       <nashvilleNumberFontFace>FreeSerif</nashvilleNumberFontFace>
       <nashvilleNumberFontSize>10</nashvilleNumberFontSize>
       <hideInstrumentNameIfOneInstrument>0</hideInstrumentNameIfOneInstrument>

@@ -77,6 +77,7 @@ void VstSequencer::updateMainStreamEvents(const mpe::PlaybackEventsMap& events, 
     }
 
     addPlaybackEvents(m_mainStreamEvents, events);
+    sortNoteOnEventsByPitch(m_mainStreamEvents);
 
     if (m_useDynamicEvents) {
         addDynamicEvents(m_mainStreamEvents, dynamics);
@@ -239,7 +240,7 @@ void VstSequencer::addPitchCurve(EventSequenceMap& destination, const mpe::NoteE
         Interpolation::Point p2 = makePoint(nextTime, nextBendValue);
 
         //! NOTE: Increasing this number results in fewer points being interpolated
-        constexpr mpe::pitch_level_t POINT_WEIGHT = mpe::PITCH_LEVEL_STEP / 5;
+        constexpr mpe::pitch_level_t POINT_WEIGHT = mpe::PITCH_LEVEL_STEP / 10;
         size_t pointCount = std::abs(nextIt->second - currIt->second) / POINT_WEIGHT;
         pointCount = std::max(pointCount, size_t(1));
 
@@ -273,6 +274,32 @@ void VstSequencer::addSostenutoEvents(EventSequenceMap& destination, const Soste
         if (timestampTo <= nextTnD.timestamp) { // handle potential overlap
             addParamChange(destination, timestampTo, SOSTENUTO_IDX, 0);
         }
+    }
+}
+
+//! Hack to make keyswitches work until we have proper UI support
+//! see: https://github.com/musescore/MuseScore/issues/32150
+void VstSequencer::sortNoteOnEventsByPitch(EventSequenceMap& destination)
+{
+    for (auto& [_, seq] : destination) {
+        if (seq.size() <= 1) {
+            continue;
+        }
+
+        std::stable_sort(seq.begin(), seq.end(), [](const EventType& e1, const EventType& e2) {
+            if (!std::holds_alternative<VstEvent>(e1) || !std::holds_alternative<VstEvent>(e2)) {
+                return false;
+            }
+
+            const VstEvent& ve1 = std::get<VstEvent>(e1);
+            const VstEvent& ve2 = std::get<VstEvent>(e2);
+
+            if (ve1.type == VstEvent::kNoteOnEvent && ve2.type == VstEvent::kNoteOnEvent) {
+                return ve1.noteOn.pitch < ve2.noteOn.pitch;
+            }
+
+            return false;
+        });
     }
 }
 

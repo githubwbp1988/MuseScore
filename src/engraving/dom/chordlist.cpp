@@ -1113,7 +1113,7 @@ bool ParsedChord::parse(const String& s, const ChordList* cl, bool syntaxOnly, b
                 } else if (tok2L == "2") {
                     m_xmlKind = u"suspended-second";
                 }
-                m_xmlText = tok1 + tok2;
+                m_xmlText = tok1L + tok2;
                 if (m_extension == "7" || m_extension == "9" || m_extension == "11" || m_extension == "13") {
                     m_xmlDegrees << ((m_quality == u"major") ? u"add#7" : u"add7");
                     // hack for programs that cannot assemble names well
@@ -1743,6 +1743,7 @@ const std::vector<RenderActionPtr >& ParsedChord::renderList(const ChordList* cl
                 bool nIsAcc = startsWithAcc(n);
                 bool curModStartsWithSusOrAdd = startsWithSusOrAdd(curMod);
                 bool nIsSusOrAdd = startsWithSusOrAdd(n);
+                bool nIsParen = (n == u"(") || (n == u")");
 
                 if (curModStartsWithSusOrAdd) {                                         // Align sus or add left
                     if (nIsSusOrAdd) {
@@ -1754,7 +1755,7 @@ const std::vector<RenderActionPtr >& ParsedChord::renderList(const ChordList* cl
                     m_renderList.emplace_back(new RenderActionPush());
                 } else if (curModStartsWithAcc && !nextModStartsWithAcc && !nIsAcc) {   // current line has accidental, next line has no accidental ->  push before degree
                     m_renderList.emplace_back(new RenderActionPush());
-                } else if (!curModStartsWithAcc && nextModStartsWithAcc) {              // current line has no accidental, next line has accidental -> push before degree
+                } else if (!curModStartsWithAcc && nextModStartsWithAcc && !nIsParen) { // current line has no accidental, next line has accidental -> push before degree
                     m_renderList.emplace_back(new RenderActionPush());                  // and move by next line's accidental's width to align
                     String nextAcc = nextMod;
                     static const std::wregex DEGREE_REGEX = std::wregex(L"[0-9]+");

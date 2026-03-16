@@ -2193,6 +2193,7 @@ static bool readTextLineProperties(XmlReader& e, ReadContext& ctx, TextLineBase*
     } else if (!read400::TRead::readProperties(tl, e, ctx)) {
         return false;
     }
+
     return true;
 }
 
@@ -2223,6 +2224,7 @@ static void readVolta206(XmlReader& e, ReadContext& ctx, Volta* volta)
         LOGW("Correcting volta anchor type from %d to %d", int(volta->anchor()), int(Volta::VOLTA_ANCHOR));
         volta->setAnchor(Volta::VOLTA_ANCHOR);
     }
+    CompatUtils::resetHookHeightSign(volta);
     adjustPlacement(volta);
 }
 
@@ -2268,6 +2270,7 @@ static void readPedal(XmlReader& e, ReadContext& ctx, Pedal* pedal)
         pedal->setPropertyFlags(Pid::END_TEXT, PropertyFlags::STYLED);
     }
 
+    CompatUtils::resetHookHeightSign(pedal);
     adjustPlacement(pedal);
 }
 
@@ -2302,6 +2305,7 @@ static void readOttava(XmlReader& e, ReadContext& ctx, Ottava* ottava)
         }
     }
     ottava->styleChanged();
+    CompatUtils::resetHookHeightSign(ottava);
     adjustPlacement(ottava);
 }
 
@@ -2344,6 +2348,7 @@ void Read206::readHairpin206(XmlReader& e, ReadContext& ctx, Hairpin* h)
         h->setContinueText(u"");
         h->setEndText(u"");
     }
+    CompatUtils::resetHookHeightSign(h);
     adjustPlacement(h);
 }
 
@@ -2379,6 +2384,7 @@ void Read206::readTextLine206(XmlReader& e, ReadContext& ctx, TextLineBase* tlb)
             e.unknown();
         }
     }
+    CompatUtils::resetHookHeightSign(tlb);
     adjustPlacement(tlb);
 }
 
@@ -3103,11 +3109,11 @@ static void readMeasure206(Measure* m, int staffIdx, XmlReader& e, ReadContext& 
             // Ignore measure stretch pre 4.0
             e.skipCurrentElement();
         } else if (tag == "noOffset") {
-            m->setNoOffset(e.readInt());
+            m->setMeasureNumberOffset(e.readInt());
         } else if (tag == "measureNumberMode") {
             m->setMeasureNumberMode(MeasureNumberMode(e.readInt()));
         } else if (tag == "irregular") {
-            m->setIrregular(e.readBool());
+            m->setExcludeFromNumbering(e.readBool());
         } else if (tag == "breakMultiMeasureRest") {
             m->setBreakMultiMeasureRest(e.readBool());
         } else if (tag == "sysInitBarLineType") {
@@ -3648,7 +3654,8 @@ Ret Read206::readScoreFile(Score* score, XmlReader& e, ReadInOutData* out)
         for (staff_idx_t staffIdx = 0; staffIdx < numStaves; ++staffIdx) {
             const size_t maxSpan = numStaves - staffIdx - 1;
             const track_idx_t trackIdx = staff2track(staffIdx);
-            BarLine* barLine = toBarLine(s->element(trackIdx));
+            EngravingItem* el = s->element(trackIdx);
+            BarLine* barLine = el && el->isBarLine() ? toBarLine(el) : nullptr;
             if (barLine) {
                 if (const std::optional<size_t> span = ctx.getBarLineSpan(barLine)) {
                     if (*span > maxSpan) {
@@ -3673,13 +3680,17 @@ Ret Read206::readScoreFile(Score* score, XmlReader& e, ReadInOutData* out)
                     // clone previous bar line. This is safe because we always have a previous barline when
                     // barLineSpan != std::nullopt because it's either the one that was read or the one cloned
                     // in the previous iteration
-                    barLine = toBarLine(s->element(staff2track(staffIdx - 1)))
-                              ->clone();
-                    barLine->setTrack(trackIdx);
-                    s->add(barLine);
+                    el = s->element(staff2track(staffIdx - 1));
+                    if (el && el->isBarLine()) {
+                        barLine = toBarLine(el)->clone();
+                        barLine->setTrack(trackIdx);
+                        s->add(barLine);
+                    }
                 }
 
-                barLine->setSpanStaff(shouldBarLineSpan);
+                if (barLine) {
+                    barLine->setSpanStaff(shouldBarLineSpan);
+                }
             }
             if (*barLineSpan == 0) {
                 // we're done applying the local override

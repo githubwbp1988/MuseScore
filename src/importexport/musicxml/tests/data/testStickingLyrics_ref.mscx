@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<museScore version="4.70">
+<museScore version="5.00">
   <Score>
     <eid>B_B</eid>
     <Division>480</Division>
@@ -20,7 +20,6 @@
       <stemWidth>0.125</stemWidth>
       <staffLineWidth>0.125</staffLineWidth>
       <ledgerLineWidth>0.15625</ledgerLineWidth>
-      <romanNumeralFontFace>Edwin</romanNumeralFontFace>
       <smallNoteMag>0.75</smallNoteMag>
       <graceNoteMag>0.6</graceNoteMag>
       <concertPitch>1</concertPitch>

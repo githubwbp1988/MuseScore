@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<museScore version="4.70">
+<museScore version="5.00">
   <Score>
     <eid>B_B</eid>
     <Division>480</Division>
@@ -27,7 +27,6 @@
       <chordSymbolAFontSize>22</chordSymbolAFontSize>
       <chordSymbolBFontFace>Palatino,serif</chordSymbolBFontFace>
       <chordSymbolBFontSize>22</chordSymbolBFontSize>
-      <romanNumeralFontFace>Palatino,serif</romanNumeralFontFace>
       <nashvilleNumberFontFace>Palatino,serif</nashvilleNumberFontFace>
       <nashvilleNumberFontSize>22</nashvilleNumberFontSize>
       <smallNoteMag>0.75</smallNoteMag>
