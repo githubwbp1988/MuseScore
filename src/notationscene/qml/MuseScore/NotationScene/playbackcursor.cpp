@@ -488,8 +488,8 @@ void PlaybackCursor::processOttavaAsync(mu::engraving::Score* score, bool scoreP
 
         SpannerMap& smap = score->spannerMap();
         for (const Measure* measure = score->firstMeasure(); measure; measure = measure->nextMeasure()) {
-            if (measure_spanner_map.find(measure->no()) == measure_spanner_map.end()) {
-                measure_spanner_map[measure->no()] = {};
+            if (measure_spanner_map.find(measure->measureNumber()) == measure_spanner_map.end()) {
+                measure_spanner_map[measure->measureNumber()] = {};
             }
             EngravingItemList measure_children = measure->childrenItems(true);
             
@@ -517,7 +517,7 @@ void PlaybackCursor::processOttavaAsync(mu::engraving::Score* score, bool scoreP
                     Tie* _tieFor = note_item->tieFor();
                     if (_tieBack) {
                         if (_tieBack->startNote() && _tieBack->endNote()) {
-                            measure_spanner_map[measure->no()].insert((EngravingItem*)_tieBack);
+                            measure_spanner_map[measure->measureNumber()].insert((EngravingItem*)_tieBack);
                             if (spanner_ticks_map.find((EngravingItem*)_tieBack) == spanner_ticks_map.end()) {
                                 spanner_ticks_map[(EngravingItem*)_tieBack] = {};
                             }
@@ -531,7 +531,7 @@ void PlaybackCursor::processOttavaAsync(mu::engraving::Score* score, bool scoreP
                     }
                     if (_tieFor) {
                         if (_tieFor->startNote() && _tieFor->endNote()) {
-                            measure_spanner_map[measure->no()].insert((EngravingItem*)_tieFor);
+                            measure_spanner_map[measure->measureNumber()].insert((EngravingItem*)_tieFor);
                             if (spanner_ticks_map.find((EngravingItem*)_tieFor) == spanner_ticks_map.end()) {
                                 spanner_ticks_map[(EngravingItem*)_tieFor] = {};
                             }
@@ -553,7 +553,7 @@ void PlaybackCursor::processOttavaAsync(mu::engraving::Score* score, bool scoreP
                             int spannerStartTicks = spanner->tick().ticks();
                             int spannerEndTicks = spanner->tick2().ticks();
                             if (spanner->isSlur() || spanner->isTrill() || spanner->isGlissando() || spanner->isHairpin()) {
-                                measure_spanner_map[measure->no()].insert((EngravingItem*)spanner);
+                                measure_spanner_map[measure->measureNumber()].insert((EngravingItem*)spanner);
                                 if (spanner_ticks_map.find((EngravingItem*)spanner) == spanner_ticks_map.end()) {
                                     spanner_ticks_map[(EngravingItem*)spanner] = {};
                                 }
@@ -566,7 +566,7 @@ void PlaybackCursor::processOttavaAsync(mu::engraving::Score* score, bool scoreP
                             int spannerStartTicks = spanner->tick().ticks();
                             int spannerEndTicks = spanner->tick2().ticks();
                             if (spanner->isSlur() || spanner->isTrill() || spanner->isGlissando() || spanner->isHairpin()) {
-                                measure_spanner_map[measure->no()].insert((EngravingItem*)spanner);
+                                measure_spanner_map[measure->measureNumber()].insert((EngravingItem*)spanner);
                                 if (spanner_ticks_map.find((EngravingItem*)spanner) == spanner_ticks_map.end()) {
                                     spanner_ticks_map[(EngravingItem*)spanner] = {};
                                 }
@@ -601,7 +601,7 @@ void PlaybackCursor::processOttavaAsync(mu::engraving::Score* score, bool scoreP
                 }
 
                 if (spanner->isSlur() || spanner->isTrill() || spanner->isGlissando() || spanner->isHairpin()) {
-                    measure_spanner_map[measure->no()].insert((EngravingItem*)spanner);
+                    measure_spanner_map[measure->measureNumber()].insert((EngravingItem*)spanner);
                     if (spanner_ticks_map.find((EngravingItem*)spanner) == spanner_ticks_map.end()) {
                         spanner_ticks_map[(EngravingItem*)spanner] = {};
                     }
@@ -632,7 +632,7 @@ void PlaybackCursor::processOttavaAsync(mu::engraving::Score* score, bool scoreP
                 }
 
                 if (spanner->isSlur() || spanner->isTrill() || spanner->isGlissando() || spanner->isHairpin()) {
-                    measure_spanner_map[measure->no()].insert((EngravingItem*)spanner);
+                    measure_spanner_map[measure->measureNumber()].insert((EngravingItem*)spanner);
                     if (spanner_ticks_map.find((EngravingItem*)spanner) == spanner_ticks_map.end()) {
                         spanner_ticks_map[(EngravingItem*)spanner] = {};
                     }
@@ -1738,8 +1738,8 @@ void PlaybackCursor::processOttavaAsync(mu::engraving::Score* score, bool scoreP
                                 _score_clef_index_map[clefStaffIndex] = {};
                             }
                             if (_score_clef_index_map[clefStaffIndex].size() == 0 
-                            || _score_clef_index_map[clefStaffIndex][_score_clef_index_map[clefStaffIndex].size() - 1] != measure->no()) {
-                                _score_clef_index_map[clefStaffIndex].push_back(measure->no());
+                            || _score_clef_index_map[clefStaffIndex][_score_clef_index_map[clefStaffIndex].size() - 1] != measure->measureNumber()) {
+                                _score_clef_index_map[clefStaffIndex].push_back(measure->measureNumber());
                                 _clef_staff_map[clefStaffIndex].push_back({});
                             }
                             _clef_staff_map[clefStaffIndex][_clef_staff_map[clefStaffIndex].size() - 1].insert({ clef->tick().ticks(), clefType });
@@ -1786,7 +1786,7 @@ void PlaybackCursor::processOttavaAsync(mu::engraving::Score* score, bool scoreP
 
                             if (_score_clef_index_map[staffIndex].size() > __index) {
                                 if (_clef_staff_map_extend.find(staffIndex) != _clef_staff_map_extend.end()) {
-                                    std::map<int, ClefType> __extend_ts_clef_map = _clef_staff_map_extend[staffIndex][measure->no()];
+                                    std::map<int, ClefType> __extend_ts_clef_map = _clef_staff_map_extend[staffIndex][measure->measureNumber()];
                                     std::map<int, ClefType, Lower> _extend_ts_clef_map;
                                     _extend_ts_clef_map.insert(__extend_ts_clef_map.begin(), __extend_ts_clef_map.end());
 
@@ -1803,7 +1803,7 @@ void PlaybackCursor::processOttavaAsync(mu::engraving::Score* score, bool scoreP
                                         _score_staff_clef_map[staffIndex].insert({ segment->tick().ticks(), ___clefType });
                                     }
                                 }
-                                if (measure->no() == _score_clef_index_map[staffIndex][__index]) {
+                                if (measure->measureNumber() == _score_clef_index_map[staffIndex][__index]) {
                                     int _no = _score_clef_index_map[staffIndex][__index];
                                     
                                     std::map<int, ClefType> __ts_clef_map = _clef_staff_map[staffIndex][__index];
@@ -1853,7 +1853,7 @@ void PlaybackCursor::processOttavaAsync(mu::engraving::Score* score, bool scoreP
                                         }
                                     }
                                 }
-                                if (measure->no() < _score_clef_index_map[staffIndex][__index] && __index >= 1) {
+                                if (measure->measureNumber() < _score_clef_index_map[staffIndex][__index] && __index >= 1) {
                                     if (_score_staff_clef_map.find(staffIndex) == _score_staff_clef_map.end() 
                                     || _score_staff_clef_map[staffIndex].find(segment->tick().ticks()) == _score_staff_clef_map[staffIndex].end()) {
                                         int index__ = __index - 1;
@@ -1875,7 +1875,7 @@ void PlaybackCursor::processOttavaAsync(mu::engraving::Score* score, bool scoreP
                                         }
                                     }
                                 }
-                                if (measure->no() > _score_clef_index_map[staffIndex][__index]) {
+                                if (measure->measureNumber() > _score_clef_index_map[staffIndex][__index]) {
                                     traverse_measure_index_map[staffIndex] = __index;
                                     __index_map[staffIndex] = __index + 1;
                                 }
@@ -2225,7 +2225,7 @@ void PlaybackCursor::processOttavaAsync(mu::engraving::Score* score, bool scoreP
                             multimeasureRestsFlag = true;
                             multimeasureRestsStartPreMeasureRect = _preMeasureRect;
                             multimeasureRestsStartSystem = _preSystem;
-                            multimeasureStartNo = _measure->no();
+                            multimeasureStartNo = _measure->measureNumber();
                         }
                         
                         double y = 0;
@@ -2252,11 +2252,11 @@ void PlaybackCursor::processOttavaAsync(mu::engraving::Score* score, bool scoreP
 
                         h += y2;
                         y -= 3 * _spatium;
-                        mnRestSTicksMap.insert({ _measure->no(), sTicks });
-                        mnRestETicksMap.insert({ _measure->no(), eTicks });
-                        mnRestRectFMap.insert({ _measure->no(), RectF(0, y, 0, h) });
-                        mnCursorWidthMap.insert({ _measure->no(), cursorW });
-                        mnSpatiumMap.insert({ _measure->no(), _spatium });
+                        mnRestSTicksMap.insert({ _measure->measureNumber(), sTicks });
+                        mnRestETicksMap.insert({ _measure->measureNumber(), eTicks });
+                        mnRestRectFMap.insert({ _measure->measureNumber(), RectF(0, y, 0, h) });
+                        mnCursorWidthMap.insert({ _measure->measureNumber(), cursorW });
+                        mnSpatiumMap.insert({ _measure->measureNumber(), _spatium });
                     }
                 }
             }
@@ -2265,7 +2265,7 @@ void PlaybackCursor::processOttavaAsync(mu::engraving::Score* score, bool scoreP
             if (!isMultimeasure) {
                 if (multimeasureRestsFlag) {
                     multimeasureRestsFlag = false;
-                    int multimeasureEndNo = _measure->no() - 1;
+                    int multimeasureEndNo = _measure->measureNumber() - 1;
                     int multimeasuresCount = multimeasureEndNo - multimeasureStartNo + 1;
                     
                     int _x = multimeasureRestsStartPreMeasureRect.x() + multimeasureRestsStartPreMeasureRect.width();
@@ -2285,7 +2285,7 @@ void PlaybackCursor::processOttavaAsync(mu::engraving::Score* score, bool scoreP
                 }
             } else {
                 if (_measure == score->lastMeasure()) {
-                    int multimeasureEndNo = _measure->no();
+                    int multimeasureEndNo = _measure->measureNumber();
                     int multimeasuresCount = multimeasureEndNo - multimeasureStartNo + 1;
                     
                     int _x = multimeasureRestsStartPreMeasureRect.x() + multimeasureRestsStartPreMeasureRect.width();
@@ -2315,7 +2315,7 @@ void PlaybackCursor::processCursorSpannerRenderStatus(Measure* measure, Fraction
 }
 
 void PlaybackCursor::processCursorSpannerRenderStatusAsync(Measure* measure, Fraction tick, bool recover, bool isPlaying) {
-    for (EngravingItem* _item : measure_spanner_map[measure->no()]) {
+    for (EngravingItem* _item : measure_spanner_map[measure->measureNumber()]) {
         int max_rollback_measures = 4;
         if (recover) {
             max_rollback_measures = 8;
@@ -2336,7 +2336,7 @@ void PlaybackCursor::processCursorSpannerRenderStatusAsync(Measure* measure, Fra
         Measure* prevMeasure = measure->prevMeasure();
         max_rollback_measures -= 1;
         while (max_rollback_measures > 0 && prevMeasure) {
-            for (EngravingItem* _item : measure_spanner_map[prevMeasure->no()]) {
+            for (EngravingItem* _item : measure_spanner_map[prevMeasure->measureNumber()]) {
                 if (spanner_ticks_map.find(_item) != spanner_ticks_map.end()) {
                     if (recover) {
                         _item->setColor(muse::draw::Color::BLACK);
@@ -3302,7 +3302,7 @@ muse::RectF PlaybackCursor::resolveCursorRectByTick1(muse::midi::tick_t _tick, b
     std::vector<EngravingItem*> engravingItemList = s1->elist();
 
     // muse::RectF measureRect = measure->pageBoundingRect();
-    int measureNo = measure->no();
+    int measureNo = measure->measureNumber();
 
     if (hit_measure_no() != measureNo || hit_measure() != measure) {
         Measure* prevMeasure = measure->prevMeasure();
@@ -3453,7 +3453,7 @@ muse::RectF PlaybackCursor::resolveCursorRectByTick1(muse::midi::tick_t _tick, b
     m_adjust_nm_rect = false;
 
     Measure* next_measure = measure->nextMeasure();
-    if (next_measure && next_measure->no() != m_nm_no) {
+    if (next_measure && next_measure->measureNumber() != m_nm_no) {
         mu::engraving::System* nm_system = next_measure->system();
         if (nm_system != system && next_measure->canvasPos().y() > measure->canvasPos().y()) {
             double nm_y = nm_system->staffYpage(0) + nm_system->page()->pos().y();
@@ -3477,7 +3477,7 @@ muse::RectF PlaybackCursor::resolveCursorRectByTick1(muse::midi::tick_t _tick, b
 
             m_nm_rect = RectF(nm_x, nm_y, w, nm_h);
             m_adjust_nm_rect = true;
-            m_nm_no = next_measure->no();
+            m_nm_no = next_measure->measureNumber();
         }
     }
 
