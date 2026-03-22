@@ -2377,7 +2377,8 @@ void TRead::read(Symbol* sym, XmlReader& e, ReadContext& ctx)
             }
             sym->setSym(symId);
         } else if (tag == "font") {
-            fontName = e.readText();
+            readProperty(sym, e, ctx, Pid::SCORE_FONT);
+        } else if (readProperty(sym, tag, e, ctx, Pid::SCORE_FONT)) {
         } else if (readProperty(sym, tag, e, ctx, Pid::SYMBOLS_SIZE)) {
         } else if (readProperty(sym, tag, e, ctx, Pid::SYMBOL_ANGLE)) {
         } else if (tag == "Symbol") {
@@ -2397,15 +2398,7 @@ void TRead::read(Symbol* sym, XmlReader& e, ReadContext& ctx)
         }
     }
 
-    std::shared_ptr<IEngravingFont> scoreFont = nullptr;
-    if (!fontName.empty()) {
-        scoreFont = ctx.engravingFonts()->fontByName(fontName.toStdString());
-    }
-
     sym->setPos(PointF());
-    if (!sym->isSystemDivider()) {
-        sym->setSym(symId, scoreFont);
-    }
 }
 
 void TRead::read(SoundFlag* item, XmlReader& xml, ReadContext&)
@@ -4471,7 +4464,7 @@ bool TRead::readProperties(TextBase* t, XmlReader& e, ReadContext& ctx)
     const AsciiStringView tag(e.name());
     for (Pid i : TextBasePropertyId) {
         if (TRead::readProperty(t, tag, e, ctx, i)) {
-            if (ctx.mscVersion() < 470 || tag != "align" || t->isMarker()) {
+            if (ctx.mscVersion() >= 470 || tag != "align" || t->isMarker() || t->isJump() || t->isHarmony()) {
                 return true;
             }
 

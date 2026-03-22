@@ -713,7 +713,7 @@ void AbstractNotationPaintView::paint(QPainter* qp)
         return;
     }
 
-    qreal guiScaling = notationConfiguration()->guiScaling();
+    qreal guiScaling = notationConfiguration()->guiScaling(iocContext());
     Transform guiScalingCompensation;
     guiScalingCompensation.scale(guiScaling, guiScaling);
 
