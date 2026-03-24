@@ -5,7 +5,7 @@
  * MuseScore
  * Music Composition & Notation
  *
- * Copyright (C) 2021 MuseScore Limited and others
+ * Copyright (C) 2026 MuseScore Limited and others
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3 as
@@ -19,33 +19,24 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-#include "qmllauncher.h"
 
-using namespace muse::ui;
+#pragma once
 
-QmlLauncher::QmlLauncher(QObject* parent, const modularity::ContextPtr& iocCtx)
-    : QObject(parent), Contextable(iocCtx)
+#include <QDialog>
+
+#include "modularity/ioc.h"
+
+namespace muse::ui {
+class WidgetDialog : public QDialog, public muse::Contextable
 {
-}
+    Q_OBJECT
 
-bool QmlLauncher::open(const QString& uri)
-{
-    interactive()->open(UriQuery(uri.toStdString()));
-    return true;
-}
+public:
+    explicit WidgetDialog(QWidget* parent = nullptr)
+        : QDialog(parent), muse::Contextable(muse::iocCtxForQWidget(this))
+    {}
 
-bool QmlLauncher::openSync(const QString& uri)
-{
-    return interactive()->openSync(UriQuery(uri.toStdString())).ret;
-}
-
-bool QmlLauncher::openApp(const QString& uri)
-{
-    platformInteractive()->openApp(UriQuery(uri.toStdString()));
-    return true;
-}
-
-bool QmlLauncher::openUrl(const QString& url)
-{
-    return platformInteractive()->openUrl(QUrl(url));
+    virtual void classBegin() {}
+    virtual void componentComplete() {}
+};
 }
