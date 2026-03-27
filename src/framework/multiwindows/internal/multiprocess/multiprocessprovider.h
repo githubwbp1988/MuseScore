@@ -51,14 +51,15 @@ class MultiProcessProvider : public IMultiWindowsProvider, public IMultiProcessP
     ContextInject<IProjectProvider> projectProvider = { this };
 
 public:
-    MultiProcessProvider(const modularity::ContextPtr& iocCtx)
-        : Contextable(iocCtx)
+    MultiProcessProvider()
+        : Contextable(nullptr)
     {
     }
 
     ~MultiProcessProvider();
 
-    void init();
+    void initOnGlobal();
+    void initOnContext();
 
     // Contexts info
     size_t windowCount() const override;
@@ -89,6 +90,7 @@ public:
     // Quit for all
     void notifyAboutWindowWasQuited() override;
     void quitForAll() override;
+    void quitWindow(const modularity::ContextPtr& ctx) override;
     void quitAllAndRestartLast() override;
     void quitAllAndRunInstallation(const io::path_t& installerPath) override;
 

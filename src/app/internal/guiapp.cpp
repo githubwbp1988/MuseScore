@@ -5,13 +5,14 @@
 #include <QQmlApplicationEngine>
 #include <QQuickWindow>
 #include <QQmlContext>
-#include <QTimer>
 
 #include "modularity/imodulesetup.h"
 #include "modularity/ioc.h"
 #include "thirdparty/kors_logger/src/log_base.h"
 #include "ui/iuiengine.h"
 #include "ui/graphicsapiprovider.h"
+
+#include "appshell/internal/istartupscenario.h"
 
 #include "async/processevents.h"
 
@@ -44,8 +45,8 @@ using namespace mu::appshell;
 
 static int m_lastId = 0;
 
-GuiApp::GuiApp(const CmdOptions& options, const modularity::ContextPtr& ctx)
-    : muse::BaseApplication(ctx), m_options(options)
+GuiApp::GuiApp(const CmdOptions& options)
+    : muse::BaseApplication(), m_options(options)
 {
 }
 
@@ -83,15 +84,6 @@ void GuiApp::setup()
         m->registerExports();
     }
 
-#ifndef MUSE_MULTICONTEXT_WIP
-    modularity::ContextPtr ctx = std::make_shared<modularity::Context>();
-    ctx->id = 0;
-    std::vector<muse::modularity::IContextSetup*>& csetups = context(ctx).setups;
-    for (modularity::IContextSetup* s : csetups) {
-        s->registerExports();
-    }
-#endif
-
     m_globalModule->resolveImports();
     m_globalModule->registerApi();
     for (modularity::IModuleSetup* m : m_modules) {
@@ -99,12 +91,6 @@ void GuiApp::setup()
         m->resolveImports();
         m->registerApi();
     }
-
-#ifndef MUSE_MULTICONTEXT_WIP
-    for (modularity::IContextSetup* s : csetups) {
-        s->resolveImports();
-    }
-#endif
 
     // ====================================================
     // Setup modules: apply the command line options
@@ -119,15 +105,13 @@ void GuiApp::setup()
         m->onPreInit(runMode);
     }
 
-#ifndef MUSE_MULTICONTEXT_WIP
-    for (modularity::IContextSetup* s : csetups) {
-        s->onPreInit(runMode);
-    }
-#endif
-
     // Process all pending events (see IpcSocket::onReadyRead())
     // so that we can use isFirstWindow() as early as possible
     muse::async::processMessages();
+
+//! FIXME
+//! The launch scenario is contextual, but there is no context here.
+#undef MUE_ENABLE_SPLASHSCREEN
 
 #ifdef MUE_ENABLE_SPLASHSCREEN
     if (multiwindowsProvider()->isFirstWindow()) {
@@ -161,12 +145,6 @@ void GuiApp::setup()
         m->onInit(runMode);
     }
 
-#ifndef MUSE_MULTICONTEXT_WIP
-    for (modularity::IContextSetup* s : csetups) {
-        s->onInit(runMode);
-    }
-#endif
-
     // ====================================================
     // Setup modules: onAllInited
     // ====================================================
@@ -174,12 +152,6 @@ void GuiApp::setup()
     for (modularity::IModuleSetup* m : m_modules) {
         m->onAllInited(runMode);
     }
-
-#ifndef MUSE_MULTICONTEXT_WIP
-    for (modularity::IContextSetup* s : csetups) {
-        s->onAllInited(runMode);
-    }
-#endif
 
     // ====================================================
     // Setup modules: onStartApp (on next event loop)
@@ -194,12 +166,15 @@ void GuiApp::setup()
     // ====================================================
     // Setup modules: onDelayedInit
     // ====================================================
-    QTimer::singleShot(5000, [this]() {
+    m_delayedInitTimer.setSingleShot(true);
+    m_delayedInitTimer.setInterval(5000);
+    QObject::connect(&m_delayedInitTimer, &QTimer::timeout, [this]() {
         m_globalModule->onDelayedInit();
         for (modularity::IModuleSetup* m : m_modules) {
             m->onDelayedInit();
         }
     });
+    m_delayedInitTimer.start();
 
     // ====================================================
     // Run
@@ -293,13 +268,7 @@ size_t GuiApp::contextCount() const
 
 muse::modularity::ContextPtr GuiApp::setupNewContext(const StringList& args)
 {
-    //! NOTE
-    //! We're currently in a transitional state from a single global context to multiple contexts.
-    //! Therefore, this code will be improved; not everything is yet complete,
-    //! for example, there's no way to delete (close) a specific context.
-    //! Probably the context initialization needs to be moved to the base class of the app.
-
-#ifndef MUSE_MULTICONTEXT_WIP
+#ifndef MUSE_MODULE_MULTIWINDOWS_SINGLEPROC_MODE
     static bool once = false;
     IF_ASSERT_FAILED(!once) {
         return nullptr;
@@ -309,12 +278,7 @@ muse::modularity::ContextPtr GuiApp::setupNewContext(const StringList& args)
 
     modularity::ContextPtr ctxId = std::make_shared<modularity::Context>();
     ++m_lastId;
-#ifdef MUSE_MULTICONTEXT_WIP
     ctxId->id = m_lastId;
-#else
-    // only global
-    ctxId->id = 0;
-#endif
 
     const CmdOptions& options = m_options;
     IApplication::RunMode runMode = options.runMode;
@@ -325,7 +289,6 @@ muse::modularity::ContextPtr GuiApp::setupNewContext(const StringList& args)
     LOGI() << "New context created with id: " << ctxId->id;
 
     // Setup
-#ifdef MUSE_MULTICONTEXT_WIP
     std::vector<muse::modularity::IContextSetup*>& csetups = context(ctxId).setups;
 
     for (modularity::IContextSetup* s : csetups) {
@@ -347,7 +310,6 @@ muse::modularity::ContextPtr GuiApp::setupNewContext(const StringList& args)
     for (modularity::IContextSetup* s : csetups) {
         s->onAllInited(runMode);
     }
-#endif
 
     // Load main window
 #if defined(Q_OS_MAC)
@@ -496,6 +458,8 @@ void GuiApp::finish()
 {
     {
         TRACEFUNC
+
+        m_delayedInitTimer.stop();
 
 // Wait Thread Poll
 #ifdef QT_CONCURRENT_SUPPORTED

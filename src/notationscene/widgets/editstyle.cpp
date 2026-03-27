@@ -228,7 +228,11 @@ static void fillDynamicHairpinComboBox(QComboBox* comboBox)
 //---------------------------------------------------------
 
 EditStyle::EditStyle(QWidget* parent)
-    : QDialog(parent), muse::Contextable(muse::iocCtxForQWidget(this))
+    : muse::ui::WidgetDialog(parent)
+{
+}
+
+void EditStyle::classBegin()
 {
     //! NOTE: suppress all accessibility events causing a long delay when opening the dialog (massive spam from setupUi)
     accessibilityController()->setIgnoreQtAccessibilityEvents(true);
@@ -1017,8 +1021,8 @@ EditStyle::EditStyle(QWidget* parent)
     // Signal Mappers
     // ====================================================
 
-    QSignalMapper* setSignalMapper = new QSignalMapper(this); // value change signals
-    QSignalMapper* resetSignalMapper = new QSignalMapper(this); // reset style signals
+    QSignalMapper* setSignalMapper = new QSignalMapper(this);     // value change signals
+    QSignalMapper* resetSignalMapper = new QSignalMapper(this);     // reset style signals
 
     const auto mapFunction = QOverload<>::of(&QSignalMapper::map);
 
@@ -1075,7 +1079,14 @@ EditStyle::EditStyle(QWidget* parent)
     connect(setSignalMapper, &QSignalMapper::mappedInt, this, &EditStyle::valueChanged);
     connect(resetSignalMapper, &QSignalMapper::mappedInt, this, &EditStyle::resetStyleValue);
 
-    Score* score = globalContext()->currentNotation()->elements()->msScore();
+    const INotationPtr notation = globalContext()->currentNotation();
+    IF_ASSERT_FAILED(notation) {
+        return;
+    }
+    const Score* score = notation->elements()->msScore();
+    IF_ASSERT_FAILED(score) {
+        return;
+    }
 
     textStyles->clear();
     for (TextStyleType textStyleType : editableTextStyles()) {
@@ -1245,11 +1256,11 @@ EditStyle::EditStyle(QWidget* parent)
     });
 
     connect(textStyles, &QListWidget::currentRowChanged, this, &EditStyle::textStyleChanged);
-    textStyles->setCurrentRow(configuration()->styleDialogLastSubPageIndex());
+    textStyles->setCurrentRow(notation->viewState()->styleDialogLastSubPageIndex());
 
     connect(pageList, &QListWidget::currentRowChanged, pageStack, &QStackedWidget::setCurrentIndex);
     connect(pageList, &QListWidget::currentRowChanged, this, &EditStyle::on_pageRowSelectionChanged);
-    pageList->setCurrentRow(configuration()->styleDialogLastPageIndex());
+    pageList->setCurrentRow(notation->viewState()->styleDialogLastPageIndex());
 
     editLyricsTextStyleButton->setChecked(false);
     connect(editLyricsTextStyleButton, &QPushButton::clicked, pageList, [=](){
@@ -1689,7 +1700,10 @@ void EditStyle::on_resetStylesButton_clicked()
 
 void EditStyle::on_pageRowSelectionChanged()
 {
-    configuration()->setStyleDialogLastPageIndex(pageList->currentRow());
+    IF_ASSERT_FAILED(globalContext()->currentNotation()) {
+        return;
+    }
+    globalContext()->currentNotation()->viewState()->setStyleDialogLastPageIndex(pageList->currentRow());
 }
 
 //---------------------------------------------------------
@@ -2445,7 +2459,14 @@ void EditStyle::textStyleChanged(int row)
         }
     }
 
-    Score* score = globalContext()->currentNotation()->elements()->msScore();
+    INotationPtr notation = globalContext()->currentNotation();
+    IF_ASSERT_FAILED(notation) {
+        return;
+    }
+    const Score* score = notation->elements()->msScore();
+    IF_ASSERT_FAILED(score) {
+        return;
+    }
 
     styleName->setText(score->getTextStyleUserName(tid).qTranslated());
     styleName->setEnabled(int(tid) >= int(TextStyleType::USER1));
@@ -2454,7 +2475,7 @@ void EditStyle::textStyleChanged(int row)
     tupletUseSymbols->setVisible(tid == TextStyleType::TUPLET);
     resetTupletUseSymbols->setVisible(tid == TextStyleType::TUPLET);
 
-    configuration()->setStyleDialogLastSubPageIndex(row);
+    notation->viewState()->setStyleDialogLastSubPageIndex(row);
 }
 
 //---------------------------------------------------------

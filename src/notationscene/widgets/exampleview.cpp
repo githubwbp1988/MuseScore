@@ -30,6 +30,8 @@
 #include "engraving/dom/page.h"
 #include "engraving/dom/system.h"
 
+#include "notation/inotationcontextconfiguration.h"
+
 #include "log.h"
 
 using namespace mu;
@@ -56,8 +58,6 @@ ExampleView::ExampleView(QWidget* parent)
             LOGD("no valid pixmap %s", qPrintable(wallpaperPath));
         }
     }
-
-    m_defaultScaling = 0.9 * notationConfiguration()->notationScaling();
 }
 
 ExampleView::~ExampleView()
@@ -97,6 +97,11 @@ void ExampleView::setScore(Score* s)
     m_score = s;
     m_score->addViewer(this);
     m_score->setLayoutMode(LayoutMode::LINE);
+
+    //! HACK
+    muse::ContextInject<INotationContextConfiguration> contextConfiguration = { s->iocContext() };
+
+    m_defaultScaling = 0.9 * contextConfiguration()->notationScaling();
 
     ScoreLoad sl;
     m_score->doLayout();

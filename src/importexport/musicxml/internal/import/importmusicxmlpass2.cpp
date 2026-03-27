@@ -2236,7 +2236,6 @@ void MusicXmlParserPass2::part()
     String partName = mxmlPart.getName();
     setPartInstruments(m_logger, &m_e, part, id, m_score, m_pass1.getInstrList(id), m_pass1.getIntervals(id), instruments, partName);
     partName = replacePartNameAccidentals(partName);
-    part->setPartName(partName);
     const bool inconsistentVisibility = mxmlPart.getPrintName() != mxmlPart.getPrintAbbr();
     if (!isLikelyIncorrectPartName(partName)) {
         part->setLongNameAll(partName);
@@ -2252,12 +2251,7 @@ void MusicXmlParserPass2::part()
     } else {
         part->setPlainShortNameAll(u"");
     }
-    // set the parts first instrument
-    // try to prevent an empty track name
-    if (part->partName() == "") {
-        String instrId = m_pass1.getInstrList(id).instrument(Fraction(0, 1));
-        part->setPartName(muse::value(instruments, instrId).name);
-    }
+
     if (m_pass1.nparts() == 1 && mxmlPart.getPrintName() && mxmlPart.getPrintAbbr()) {
         m_score->style().set(Sid::hideInstrumentNameIfOneInstrument, false);
     }
@@ -6615,22 +6609,8 @@ static void handleSmallness(bool cueOrSmall, Note* note, Chord* c)
  Set the notehead parameters.
  */
 
-static void setNoteHead(Note* note, const Color noteheadColor, const bool noteheadParentheses, const String& noteheadFilled)
+static void setNoteHead(Note* note, const String& noteheadFilled)
 {
-    Score* const score = note->score();
-
-    colorItem(note, noteheadColor);
-    if (noteheadParentheses) {
-        Symbol* s = new Symbol(note);
-        s->setSym(SymId::noteheadParenthesisLeft);
-        s->setParent(note);
-        score->addElement(s);
-        s = new Symbol(note);
-        s->setSym(SymId::noteheadParenthesisRight);
-        s->setParent(note);
-        score->addElement(s);
-    }
-
     if (noteheadFilled == u"no") {
         note->setHeadType(NoteHeadType::HEAD_HALF);
     } else if (noteheadFilled == u"yes") {
@@ -7260,7 +7240,11 @@ Note* MusicXmlParserPass2::note(const String& partId,
             }
             c->add(stem);
         }
-        setNoteHead(note, noteheadColor, noteheadParentheses, noteheadFilled);
+        setNoteHead(note, noteheadFilled);
+        if (noteheadParentheses) {
+            note->setParenthesesMode(ParenthesesMode::BOTH);
+        }
+        colorItem(note, noteheadColor);
         note->setVisible(hasHead && printObject);
         stem->setVisible(printObject);
 

@@ -36,7 +36,8 @@ using namespace mu::engraving;
 using namespace muse::draw;
 
 NotationPainting::NotationPainting(Notation* notation)
-    : m_notation(notation)
+    : muse::Contextable(notation->iocContext())
+    , m_notation(notation)
 {
 }
 

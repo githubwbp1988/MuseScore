@@ -4,6 +4,8 @@
 #include <vector>
 #include <memory>
 
+#include <QTimer>
+
 #include "global/internal/baseapplication.h"
 #include "../cmdoptions.h"
 
@@ -13,7 +15,6 @@
 #include "modularity/ioc.h"
 #include "multiwindows/imultiwindowsprovider.h"
 #include "appshell/iappshellconfiguration.h"
-#include "appshell/internal/istartupscenario.h"
 #include "importexport/guitarpro/iguitarproconfiguration.h"
 
 class QQuickWindow;
@@ -30,7 +31,7 @@ class GuiApp : public muse::BaseApplication, public std::enable_shared_from_this
     muse::GlobalInject<iex::guitarpro::IGuitarProConfiguration> guitarProConfiguration;
 
 public:
-    GuiApp(const CmdOptions& options, const muse::modularity::ContextPtr& ctx);
+    GuiApp(const CmdOptions& options);
 
     void addModule(muse::modularity::IModuleSetup* module);
 
@@ -62,6 +63,7 @@ private:
     //! NOTE Separately to initialize logger and profiler as early as possible
     muse::GlobalModule* m_globalModule = nullptr;
     std::vector<muse::modularity::IModuleSetup*> m_modules;
+    QTimer m_delayedInitTimer;
 
     std::vector<Context> m_contexts;
 };

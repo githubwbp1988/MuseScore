@@ -232,9 +232,6 @@ bool ExportProjectScenario::exportScores(notation::INotationPtrList notations, c
     } break;
     case INotationWriter::UnitType::MULTI_PART: {
         auto exportFunction = [writer, notations, options](IODevice& destinationDevice) {
-                if (notations.size() == 1) {
-                    return writer->write(notations.front(), destinationDevice, options);
-                }
                 return writer->writeList(notations, destinationDevice, options);
             };
 
@@ -533,7 +530,7 @@ void ExportProjectScenario::showExportProgress(bool isAudioExport) const
 
 void ExportProjectScenario::openFolder(const muse::io::path_t& path) const
 {
-    Ret ret = interactive()->revealInFileBrowser(path.toQString());
+    Ret ret = platformInteractive()->revealInFileBrowser(path.toQString());
 
     if (!ret) {
         LOGE() << "Could not open folder: " << path.toQString();

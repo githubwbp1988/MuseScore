@@ -975,9 +975,11 @@ bool TRead::readProperties(Instrument* item, XmlReader& e, ReadContext& ctx, Par
     if (tag == "soundId") {
         item->setSoundId(e.readText());
     } else if (tag == "longName") {
-        item->setLongName(readStaffName(e));
+        item->setLongName(readLegacyStaffName(e)); // Old implementation
     } else if (tag == "shortName") {
-        item->setShortName(readStaffName(e));
+        item->setShortName(readLegacyStaffName(e)); // Old implementation
+    } else if (tag == "InstrumentLabel") {
+        readInstrumentLabel(item->instrumentLabel(), e); // New implementation
     } else if (tag == "trackName") {
         item->setTrackName(e.readText());
     } else if (tag == "minPitchA") {
@@ -2377,7 +2379,8 @@ void TRead::read(Symbol* sym, XmlReader& e, ReadContext& ctx)
             }
             sym->setSym(symId);
         } else if (tag == "font") {
-            fontName = e.readText();
+            readProperty(sym, e, ctx, Pid::SCORE_FONT);
+        } else if (readProperty(sym, tag, e, ctx, Pid::SCORE_FONT)) {
         } else if (readProperty(sym, tag, e, ctx, Pid::SYMBOLS_SIZE)) {
         } else if (readProperty(sym, tag, e, ctx, Pid::SYMBOL_ANGLE)) {
         } else if (tag == "Symbol") {
@@ -2397,15 +2400,7 @@ void TRead::read(Symbol* sym, XmlReader& e, ReadContext& ctx)
         }
     }
 
-    std::shared_ptr<IEngravingFont> scoreFont = nullptr;
-    if (!fontName.empty()) {
-        scoreFont = ctx.engravingFonts()->fontByName(fontName.toStdString());
-    }
-
     sym->setPos(PointF());
-    if (!sym->isSystemDivider()) {
-        sym->setSym(symId, scoreFont);
-    }
 }
 
 void TRead::read(SoundFlag* item, XmlReader& xml, ReadContext&)
@@ -3550,10 +3545,6 @@ void TRead::read(Part* p, XmlReader& e, ReadContext& ctx)
             e.unknown();
         }
     }
-
-    if (p->partName().isEmpty()) {
-        p->setPartName(p->instrument()->trackName());
-    }
 }
 
 void TRead::read(PartialLyricsLine* p, XmlReader& xml, ReadContext& ctx)
@@ -3600,8 +3591,6 @@ bool TRead::readProperties(Part* p, XmlReader& e, ReadContext& ctx)
         p->setColor(e.readInt());
     } else if (tag == "shortName") {
         p->instrument()->setShortName(e.readText());
-    } else if (tag == "trackName") {
-        p->setPartName(e.readText());
     } else if (tag == "show") {
         p->setShow(e.readInt());
     } else if (tag == "soloist") {
@@ -3826,10 +3815,11 @@ void TRead::readHopoText(HammerOnPullOffSegment* hopoSeg, XmlReader& xml, ReadCo
     hopoSeg->addHopoText(hopoText);
 }
 
-void TRead::lineBreakFromTag(String& str)
+String TRead::lineBreakFromTag(const String& str)
 {
     // Raw newlines appearing next to tags (<font size="10> or <sym>...) get eaten by XML readers.
-    str.replace(u"<br/>", u"\n");
+    String s = str;
+    return s.replace(u"<br/>", u"\n");
 }
 
 void TRead::readNoteParenGroup(Chord* ch, XmlReader& e, ReadContext& ctx)
@@ -3944,10 +3934,9 @@ void TRead::read(StaffType* t, XmlReader& e, ReadContext& ctx)
         const AsciiStringView tag(e.name());
         if (tag == "name") {
             t->setXmlName(e.readText());
-        } else if (tag == "longName") {
-            t->setLongName(readStaffName(e));
-        } else if (tag == "shortName") {
-            t->setShortName(readStaffName(e));
+        } else if (tag == "StaffLabel") {
+            StaffLabel& staffLabel = t->staffLabel();
+            readStaffLabel(staffLabel, e);
         } else if (tag == "lines") {
             t->setLines(e.readInt());
         } else if (tag == "lineDistance") {
@@ -4140,15 +4129,91 @@ bool TRead::readProperties(Staff* s, XmlReader& e, ReadContext& ctx)
     return true;
 }
 
-String TRead::readStaffName(XmlReader& xml)
+String TRead::readLegacyStaffName(XmlReader& xml)
 {
-    String name = xml.readXml();
-    lineBreakFromTag(name);
+    String name = lineBreakFromTag(xml.readXml());
     if (name.startsWith(u"<html>")) {
         // compatibility to old html implementation:
         name = HtmlParser::parse(name);
     }
     return name;
+}
+
+void TRead::readStaffLabel(StaffLabel& item, XmlReader& xml)
+{
+    while (xml.readNextStartElement()) {
+        if (!readProperties(item, xml)) {
+            xml.unknown();
+        }
+    }
+}
+
+bool TRead::readProperties(StaffLabel& item, XmlReader& xml)
+{
+    AsciiStringView tag = xml.name();
+
+    if (tag == "longName") {
+        item.setLongName(lineBreakFromTag(xml.readXml()));
+    } else if (tag == "shortName") {
+        item.setShortName(lineBreakFromTag(xml.readXml()));
+    } else {
+        return false;
+    }
+
+    return true;
+}
+
+void TRead::readInstrumentLabel(InstrumentLabel& item, XmlReader& xml)
+{
+    while (xml.readNextStartElement()) {
+        if (!readProperties(item, xml)) {
+            xml.unknown();
+        }
+    }
+}
+
+bool TRead::readProperties(InstrumentLabel& item, XmlReader& xml)
+{
+    AsciiStringView tag = xml.name();
+
+    if (readProperties(static_cast<StaffLabel&>(item), xml)) {
+    } else if (tag == "transposition") {
+        item.setTransposition(lineBreakFromTag(xml.readXml()));
+    } else if (tag == "showTranspositionLong") {
+        item.setShowTranspositionLong(xml.readBool());
+    } else if (tag == "showTranspositionShort") {
+        item.setShowTranspositionShort(xml.readBool());
+    } else if (tag == "number") {
+        item.setNumber(xml.readInt());
+    } else if (tag == "showNumberLong") {
+        item.setShowNumberLong(xml.readBool());
+    } else if (tag == "showNumberShort") {
+        item.setShowNumberLong(xml.readBool());
+    } else if (tag == "useCustomName") {
+        item.setUseCustomName(xml.readBool());
+    } else if (tag == "customNameLong") {
+        item.setCustomNameLong(lineBreakFromTag(xml.readXml()));
+    } else if (tag == "customNameShort") {
+        item.setCustomNameShort(lineBreakFromTag(xml.readXml()));
+    } else if (tag == "allowGroupName") {
+        item.setAllowGroupName(xml.readBool());
+    } else if (tag == "customNameLongGroup") {
+        item.setCustomNameLongGroup(lineBreakFromTag(xml.readXml()));
+    } else if (tag == "customNameShortGroup") {
+        item.setCustomNameShortGroup(lineBreakFromTag(xml.readXml()));
+    } else if (tag == "useCustomGroupName") {
+        item.setUseCustomGroupName(xml.readBool());
+    } else if (tag == "customNameLongIndividual") {
+        item.setCustomNameLongIndividual(lineBreakFromTag(xml.readXml()));
+    } else if (tag == "customNameShortIndividual") {
+        item.setCustomNameShortIndividual(lineBreakFromTag(xml.readXml()));
+    } else if (tag == "useCustomIndividualName") {
+        item.setUseCustomIndividualName(xml.readBool());
+    } else {
+        return false;
+    }
+
+    return true;
 }
 
 void TRead::read(Stem* s, XmlReader& e, ReadContext& ctx)
@@ -4471,7 +4536,7 @@ bool TRead::readProperties(TextBase* t, XmlReader& e, ReadContext& ctx)
     const AsciiStringView tag(e.name());
     for (Pid i : TextBasePropertyId) {
         if (TRead::readProperty(t, tag, e, ctx, i)) {
-            if (ctx.mscVersion() < 470 || tag != "align" || t->isMarker()) {
+            if (ctx.mscVersion() >= 470 || tag != "align" || t->isMarker() || t->isJump() || t->isHarmony()) {
                 return true;
             }
 
@@ -4484,8 +4549,7 @@ bool TRead::readProperties(TextBase* t, XmlReader& e, ReadContext& ctx)
     }
 
     if (tag == "text") {
-        String str = e.readXml();
-        lineBreakFromTag(str);
+        String str = lineBreakFromTag(e.readXml());
         t->setXmlText(str);
         t->checkCustomFormatting(str);
     } else if (tag == "bold") {

@@ -76,6 +76,8 @@ public:
                                                          const std::vector<std::string>& filter) override;
     io::path_t selectOpeningFileSync(const std::string& title, const io::path_t& dir, const std::vector<std::string>& filter,
                                      const int options = 0) override;
+    io::paths_t selectOpeningFilesSync(const std::string& title, const io::path_t& dir, const std::vector<std::string>& filter,
+                                       const int options = 0) override;
     io::path_t selectSavingFileSync(const std::string& title, const io::path_t& dir, const std::vector<std::string>& filter,
                                     bool confirmOverwrite = true) override;
 
@@ -108,16 +110,6 @@ public:
 
     QWindow* topWindow() const override;
     bool topWindowIsWidget() const override;
-
-    // external
-    Ret openUrl(const std::string& url) const override;
-    Ret openUrl(const QUrl& url) const override;
-
-    Ret isAppExists(const std::string& appIdentifier) const override;
-    Ret canOpenApp(const UriQuery& uri) const override;
-    async::Promise<Ret> openApp(const UriQuery& uri) const override;
-
-    Ret revealInFileBrowser(const io::path_t& filePath) const override;
 
     // AutobotInteractive
     io::path_t selectedFilePath() const; // last selected file path

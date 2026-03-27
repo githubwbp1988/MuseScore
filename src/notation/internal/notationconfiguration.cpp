@@ -659,16 +659,6 @@ Notification NotationConfiguration::defaultZoomChanged() const
     return m_defaultZoomChanged;
 }
 
-qreal NotationConfiguration::scalingFromZoomPercentage(int zoomPercentage) const
-{
-    return zoomPercentage / 100.0 * notationScaling();
-}
-
-int NotationConfiguration::zoomPercentageFromScaling(qreal scaling) const
-{
-    return std::round(scaling * 100.0 / notationScaling());
-}
-
 QList<int> NotationConfiguration::possibleZoomPercentageList() const
 {
     return {
@@ -922,16 +912,6 @@ bool NotationConfiguration::isCountInEnabled() const
 void NotationConfiguration::setIsCountInEnabled(bool enabled)
 {
     settings()->setSharedValue(IS_COUNT_IN_ENABLED, Val(enabled));
-}
-
-double NotationConfiguration::guiScaling() const
-{
-    return uiConfiguration() ? uiConfiguration()->guiScaling() : 1.0;
-}
-
-double NotationConfiguration::notationScaling() const
-{
-    return uiConfiguration() ? uiConfiguration()->physicalDpi() / mu::engraving::DPI : 1.0;
 }
 
 ValCh<muse::Orientation> NotationConfiguration::canvasOrientation() const

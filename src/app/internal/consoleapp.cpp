@@ -30,6 +30,8 @@
 #include "modularity/ioc.h"
 #include "async/processevents.h"
 
+#include "audioplugins/iregisteraudiopluginsscenario.h"
+
 #include "muse_framework_config.h"
 #include "app_config.h"
 
@@ -63,8 +65,8 @@ static std::optional<ConvertTarget> parseTarget(const QMap<CmdOptions::ParamKey,
     return num;
 }
 
-ConsoleApp::ConsoleApp(const CmdOptions& options, const modularity::ContextPtr& ctx)
-    : muse::BaseApplication(ctx), m_options(options)
+ConsoleApp::ConsoleApp(const CmdOptions& options)
+    : muse::BaseApplication(), m_options(options)
 {
 }
 
@@ -97,25 +99,10 @@ void ConsoleApp::setup()
         m->registerExports();
     }
 
-#ifndef MUSE_MULTICONTEXT_WIP
-    modularity::ContextPtr ctx = std::make_shared<modularity::Context>();
-    ctx->id = 0;
-    std::vector<muse::modularity::IContextSetup*>& csetups = contextSetups(ctx);
-    for (modularity::IContextSetup* s : csetups) {
-        s->registerExports();
-    }
-#endif
-
     m_globalModule->resolveImports();
     for (modularity::IModuleSetup* m : m_modules) {
         m->resolveImports();
     }
-
-#ifndef MUSE_MULTICONTEXT_WIP
-    for (modularity::IContextSetup* s : csetups) {
-        s->resolveImports();
-    }
-#endif
 
     m_globalModule->registerApi();
     for (modularity::IModuleSetup* m : m_modules) {
@@ -135,11 +122,6 @@ void ConsoleApp::setup()
         m->onPreInit(runMode);
     }
 
-#ifndef MUSE_MULTICONTEXT_WIP
-    for (modularity::IContextSetup* s : csetups) {
-        s->onPreInit(runMode);
-    }
-#endif
     // ====================================================
     // Setup modules: onInit
     // ====================================================
@@ -148,11 +130,6 @@ void ConsoleApp::setup()
         m->onInit(runMode);
     }
 
-#ifndef MUSE_MULTICONTEXT_WIP
-    for (modularity::IContextSetup* s : csetups) {
-        s->onInit(runMode);
-    }
-#endif
     // ====================================================
     // Setup modules: onAllInited
     // ====================================================
@@ -160,12 +137,6 @@ void ConsoleApp::setup()
     for (modularity::IModuleSetup* m : m_modules) {
         m->onAllInited(runMode);
     }
-
-#ifndef MUSE_MULTICONTEXT_WIP
-    for (modularity::IContextSetup* s : csetups) {
-        s->onAllInited(runMode);
-    }
-#endif
 
     // ====================================================
     // Setup modules: onStartApp (on next event loop)
@@ -176,55 +147,6 @@ void ConsoleApp::setup()
             m->onStartApp();
         }
     }, Qt::QueuedConnection);
-
-    // ====================================================
-    // Run
-    // ====================================================
-
-    switch (runMode) {
-    case IApplication::RunMode::ConsoleApp: {
-        // ====================================================
-        // Process Autobot
-        // ====================================================
-        CmdOptions::Autobot autobotOptions = options.autobot;
-        if (!autobotOptions.testCaseNameOrFile.isEmpty()) {
-            QMetaObject::invokeMethod(qApp, [this, autobotOptions]() {
-                    processAutobot(autobotOptions);
-                }, Qt::QueuedConnection);
-        } else {
-            // ====================================================
-            // Process Diagnostic
-            // ====================================================
-            CmdOptions::Diagnostic diagnostic = options.diagnostic;
-            if (diagnostic.type != DiagnosticType::Undefined) {
-                QMetaObject::invokeMethod(qApp, [this, diagnostic]() {
-                        int code = processDiagnostic(diagnostic);
-                        qApp->exit(code);
-                    }, Qt::QueuedConnection);
-            } else {
-                // ====================================================
-                // Process Converter
-                // ====================================================
-                CmdOptions::ConverterTask task = options.converterTask;
-                QMetaObject::invokeMethod(qApp, [this, task]() {
-                        int code = processConverter(task);
-                        qApp->exit(code);
-                    }, Qt::QueuedConnection);
-            }
-        }
-    } break;
-    case IApplication::RunMode::AudioPluginRegistration: {
-        CmdOptions::AudioPluginRegistration pluginRegistration = options.audioPluginRegistration;
-
-        QMetaObject::invokeMethod(qApp, [this, pluginRegistration]() {
-                int code = processAudioPluginRegistration(pluginRegistration);
-                qApp->exit(code);
-            }, Qt::QueuedConnection);
-    } break;
-    default: {
-        UNREACHABLE;
-    }
-    }
 }
 
 void ConsoleApp::destroyContext(const modularity::ContextPtr&)
@@ -273,31 +195,29 @@ std::vector<muse::modularity::IContextSetup*>& ConsoleApp::contextSetups(
 
 muse::modularity::ContextPtr ConsoleApp::setupNewContext(const StringList&)
 {
-    //! NOTE
-    //! We're currently in a transitional state from a single global context to multiple contexts.
-    //! Therefore, this code will be improved; not everything is yet complete,
-    //! for example, there's no way to delete (close) a specific context.
-    //! Probably the context initialization needs to be moved to the base class of the app.
+    //! NOTE Only one context is allowed for console app
+    static bool once = false;
+    IF_ASSERT_FAILED(!once) {
+        return nullptr;
+    }
+    once = true;
 
     m_context = std::make_shared<modularity::Context>();
     auto& ctx = m_context;
-    // only global
-    ctx->id = 0;
+    // only one
+    ctx->id = 1;
 
     const CmdOptions& options = m_options;
     IApplication::RunMode runMode = options.runMode;
-    if (runMode == IApplication::RunMode::AudioPluginRegistration) {
-        return nullptr;
-    }
 
-    IF_ASSERT_FAILED(runMode == IApplication::RunMode::ConsoleApp) {
+    IF_ASSERT_FAILED(runMode == IApplication::RunMode::ConsoleApp
+                     || runMode == IApplication::RunMode::AudioPluginRegistration) {
         return nullptr;
     }
 
     LOGI() << "New context created with id: " << ctx->id;
 
     // Setup
-#ifdef MUSE_MULTICONTEXT_WIP
     std::vector<muse::modularity::IContextSetup*>& csetups = contextSetups(ctx);
 
     for (modularity::IContextSetup* s : csetups) {
@@ -320,7 +240,54 @@ muse::modularity::ContextPtr ConsoleApp::setupNewContext(const StringList&)
         s->onAllInited(runMode);
     }
 
-#endif
+    // ====================================================
+    // Run
+    // ====================================================
+
+    switch (runMode) {
+    case IApplication::RunMode::ConsoleApp: {
+        // ====================================================
+        // Process Autobot
+        // ====================================================
+        CmdOptions::Autobot autobotOptions = options.autobot;
+        if (!autobotOptions.testCaseNameOrFile.isEmpty()) {
+            QMetaObject::invokeMethod(qApp, [this, autobotOptions, ctx]() {
+                    processAutobot(autobotOptions, ctx);
+                }, Qt::QueuedConnection);
+        } else {
+            // ====================================================
+            // Process Diagnostic
+            // ====================================================
+            CmdOptions::Diagnostic diagnostic = options.diagnostic;
+            if (diagnostic.type != DiagnosticType::Undefined) {
+                QMetaObject::invokeMethod(qApp, [this, diagnostic, ctx]() {
+                        int code = processDiagnostic(diagnostic, ctx);
+                        qApp->exit(code);
+                    }, Qt::QueuedConnection);
+            } else {
+                // ====================================================
+                // Process Converter
+                // ====================================================
+                CmdOptions::ConverterTask task = options.converterTask;
+                QMetaObject::invokeMethod(qApp, [this, task, ctx]() {
+                        int code = processConverter(task, ctx);
+                        qApp->exit(code);
+                    }, Qt::QueuedConnection);
+            }
+        }
+    } break;
+    case IApplication::RunMode::AudioPluginRegistration: {
+        CmdOptions::AudioPluginRegistration pluginRegistration = options.audioPluginRegistration;
+
+        QMetaObject::invokeMethod(qApp, [this, pluginRegistration, ctx]() {
+                int code = processAudioPluginRegistration(pluginRegistration, ctx);
+                qApp->exit(code);
+            }, Qt::QueuedConnection);
+    } break;
+    default: {
+        UNREACHABLE;
+    }
+    }
 
     return ctx;
 }
@@ -378,7 +345,7 @@ void ConsoleApp::applyCommandLineOptions(const CmdOptions& options, IApplication
         return;
     }
 
-    uiConfiguration()->setPhysicalDotsPerInch(options.ui.physicalDotsPerInch);
+    uiConfiguration()->setCustomPhysicalDotsPerInch(options.ui.physicalDotsPerInch);
 
     notationConfiguration()->setTemplateModeEnabled(options.notation.templateModeEnabled);
     notationConfiguration()->setTestModeEnabled(options.notation.testModeEnabled);
@@ -435,8 +402,11 @@ void ConsoleApp::applyCommandLineOptions(const CmdOptions& options, IApplication
     }
 }
 
-int ConsoleApp::processConverter(const CmdOptions::ConverterTask& task)
+int ConsoleApp::processConverter(const CmdOptions::ConverterTask& task, const muse::modularity::ContextPtr& ctx)
 {
+    muse::ContextInject<converter::IConverterController> converter = { ctx };
+    muse::ContextInject<playback::ISoundProfilesRepository> soundProfilesRepository = { ctx };
+
     Ret ret = make_ret(Ret::Code::Ok);
     String soundProfile = task.params[CmdOptions::ParamKey::SoundProfile].toString();
     UriQuery extensionUri = UriQuery(task.params[CmdOptions::ParamKey::ExtensionUri].toString().toStdString());
@@ -501,7 +471,7 @@ int ConsoleApp::processConverter(const CmdOptions::ConverterTask& task)
     return ret.code();
 }
 
-int ConsoleApp::processDiagnostic(const CmdOptions::Diagnostic& task)
+int ConsoleApp::processDiagnostic(const CmdOptions::Diagnostic& task, const muse::modularity::ContextPtr&)
 {
     if (!diagnosticDrawProvider()) {
         return make_ret(Ret::Code::NotSupported);
@@ -556,9 +526,11 @@ int ConsoleApp::processDiagnostic(const CmdOptions::Diagnostic& task)
     return ret.code();
 }
 
-int ConsoleApp::processAudioPluginRegistration(const CmdOptions::AudioPluginRegistration& task)
+int ConsoleApp::processAudioPluginRegistration(const CmdOptions::AudioPluginRegistration& task, const muse::modularity::ContextPtr& ctx)
 {
     Ret ret = make_ret(Ret::Code::Ok);
+
+    muse::ContextInject<audioplugins::IRegisterAudioPluginsScenario> registerAudioPluginsScenario = { ctx };
 
     if (task.failedPlugin) {
         ret = registerAudioPluginsScenario()->registerFailedPlugin(task.pluginPath, task.failCode);
@@ -573,11 +545,13 @@ int ConsoleApp::processAudioPluginRegistration(const CmdOptions::AudioPluginRegi
     return ret.code();
 }
 
-void ConsoleApp::processAutobot(const CmdOptions::Autobot& task)
+void ConsoleApp::processAutobot(const CmdOptions::Autobot& task, const muse::modularity::ContextPtr& ctx)
 {
     using namespace muse::autobot;
+    muse::ContextInject<IAutobot> autobot = { ctx };
+
     muse::async::Channel<StepInfo, Ret> stepCh = autobot()->stepStatusChanged();
-    stepCh.onReceive(nullptr, [](const StepInfo& step, const Ret& ret){
+    stepCh.onReceive(nullptr, [](const StepInfo& step, const Ret& ret) {
         if (!ret) {
             LOGE() << "failed step: " << step.name << ", ret: " << ret.toString();
             qApp->exit(ret.code());
@@ -587,7 +561,7 @@ void ConsoleApp::processAutobot(const CmdOptions::Autobot& task)
     });
 
     muse::async::Channel<muse::io::path_t, IAutobot::Status> statusCh = autobot()->statusChanged();
-    statusCh.onReceive(nullptr, [](const muse::io::path_t& path, IAutobot::Status st){
+    statusCh.onReceive(nullptr, [](const muse::io::path_t& path, IAutobot::Status st) {
         if (st == IAutobot::Status::Finished) {
             LOGI() << "success finished, path: " << path;
             qApp->exit(0);
