@@ -38,6 +38,9 @@ set(MUSE_MODULE_AUDIO_WORKMODE 1 CACHE STRING "Audio subsystem work mode")
 declare_muse_module_opt(AUDIOPLUGINS ON)
 
 declare_muse_module_opt(AUTOBOT ON)
+
+declare_muse_module_opt(AUTOMATION ON)
+
 declare_muse_module_opt(CLOUD ON)
 option(MUSE_MODULE_CLOUD_MUSESCORECOM "Enable MuseScore.com account" ON)
 
@@ -47,6 +50,7 @@ set(MUSE_MODULE_DIAGNOSTICS_CRASHPAD_HANDLER_PATH "" CACHE FILEPATH "Path to cus
 set(MUSE_MODULE_DIAGNOSTICS_CRASHREPORT_URL "" CACHE STRING "URL where to send crash reports")
 
 declare_muse_module_opt(DOCKWINDOW ON)
+option(MUSE_MODULE_DOCKWINDOW_KDDOCKWIDGETS_V2 "Use KDDockWidgets v2" OFF)
 
 declare_muse_module_opt(DRAW ON)
 option(MUSE_MODULE_DRAW_TRACE "Trace draw objects" OFF)
@@ -64,6 +68,7 @@ option(MUSE_MODULE_INTERACTIVE_SYNC_SUPPORTED "Sync interactive supported" ON)
 declare_muse_module_opt(LANGUAGES ON)
 declare_muse_module_opt(LEARN ON)
 declare_muse_module_opt(MIDI ON)
+declare_muse_module_opt(MIDIREMOTE ON)
 declare_muse_module_opt(MPE ON)
 
 declare_muse_module_opt(MULTIWINDOWS ON)

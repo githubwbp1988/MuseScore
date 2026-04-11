@@ -279,8 +279,9 @@ PalettePtr PaletteCreator::newDynamicsPalette(bool defaultPalette)
         auto hairpin = Factory::makeHairpin(paletteScore()->dummy());
         hairpin->setHairpinType(hairpinType);
         qreal mag = (hairpinType == HairpinType::CRESC_LINE || hairpinType == HairpinType::DIM_LINE) ? 1 : 0.9;
-        const QPointF offset = (hairpinType == HairpinType::CRESC_LINE || hairpinType == HairpinType::DIM_LINE)
-                               ? QPointF(1, 0.25) : QPointF(0, 0);
+        const QPointF offset = hairpinType == HairpinType::CRESC_LINE ? QPointF(1, 0.25)
+                               : hairpinType == HairpinType::DIM_LINE ? QPointF(1, 0.0)
+                               : QPointF(0, 0);
         sp->appendElement(hairpin, hairpin->subtypeUserName(), mag, offset);
     }
 
@@ -925,15 +926,16 @@ PalettePtr PaletteCreator::newBracketsPalette()
     PalettePtr sp = std::make_shared<Palette>(iocContext(), Palette::Type::Bracket);
     sp->setName(QT_TRANSLATE_NOOP("palette", "Brackets"));
     sp->setMag(0.7);
-    sp->setGridSize(40, 60);
+    sp->setGridSize(40, 80);
     sp->setDrawGrid(true);
     sp->setVisible(false);
 
-    const std::array<std::pair<BracketType, const char*>, 4> types { {
+    const std::array<std::pair<BracketType, const char*>, 5> types { {
         { BracketType::NORMAL, QT_TRANSLATE_NOOP("palette", "Bracket") },
         { BracketType::BRACE,  QT_TRANSLATE_NOOP("palette", "Brace") },
         { BracketType::SQUARE, QT_TRANSLATE_NOOP("palette", "Square") },
-        { BracketType::LINE,   QT_TRANSLATE_NOOP("palette", "Line") }
+        { BracketType::LINE,   QT_TRANSLATE_NOOP("palette", "Line") },
+        { BracketType::GROUP,  QT_TRANSLATE_NOOP("palette", "Group bracket") }
     } };
 
     static Part* bracketItemOwnerPart = new Part(paletteScore());

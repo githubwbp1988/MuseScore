@@ -48,6 +48,8 @@ target_sources(muse_ui PRIVATE
     api/keyboardapi.cpp
     api/keyboardapi.h
 
+    internal/guiapplication.cpp
+    internal/guiapplication.h
     internal/uistate.cpp
     internal/uistate.h
     internal/uiengine.cpp
@@ -95,7 +97,6 @@ target_sources(muse_ui PRIVATE
     view/widgetstatestore.cpp
     view/widgetstatestore.h
     view/widgetutils.h
-    view/widgetdialog.cpp
     view/widgetdialog.h
 )
 
