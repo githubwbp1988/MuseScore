@@ -89,7 +89,6 @@ void PlaybackContext::resolveImports()
 
 void PlaybackContext::onInit(const IApplication::RunMode& mode)
 {
-    m_soundProfileRepo->init();
     m_playbackController->init();
 
     if (mode != IApplication::RunMode::GuiApp) {
@@ -97,4 +96,5 @@ void PlaybackContext::onInit(const IApplication::RunMode& mode)
     }
 
     m_playbackUiActions->init();
+    m_soundProfileRepo->init();
 }

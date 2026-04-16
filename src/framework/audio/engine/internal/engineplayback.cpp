@@ -88,10 +88,12 @@ TrackSequenceId EnginePlayback::addSequence()
 {
     ONLY_AUDIO_ENGINE_THREAD;
 
-    static TrackSequenceId lastId = 0;
+    IF_ASSERT_FAILED(m_sequences.empty()) {
+        return DUMMY_SEQUENCE_ID;
+    }
 
-    TrackSequenceId newId = ++lastId;
-    ITrackSequencePtr s = std::make_shared<TrackSequence>(newId, iocContext());
+    TrackSequenceId newId = DUMMY_SEQUENCE_ID;
+    ITrackSequencePtr s = std::make_shared<TrackSequence>(newId);
 
     m_sequences.emplace(newId, s);
 
@@ -750,7 +752,7 @@ Ret EnginePlayback::doSaveSoundTrack(const TrackSequenceId sequenceId, io::IODev
     }
 
     const msecs_t totalDuration = s->player()->duration();
-    SoundTrackWriterPtr writer = std::make_shared<SoundTrackWriter>(dstDevice, format, totalDuration, mixer(), iocContext());
+    SoundTrackWriterPtr writer = std::make_shared<SoundTrackWriter>(dstDevice, format, totalDuration, mixer());
     SaveSoundTrackProgressData progressData = m_saveSoundTracksProgressMap[s->id()];
 
     writer->progress().progressChanged().onReceive(this, [progressData](int64_t current, int64_t total, std::string /*title*/) {

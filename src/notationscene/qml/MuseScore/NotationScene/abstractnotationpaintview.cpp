@@ -1796,3 +1796,11 @@ void AbstractNotationPaintView::setPlaybackCursorItem(QQuickItem* cursor)
         });
     }
 }
+
+void AbstractNotationPaintView::requestChangeAutomationPoint(qsizetype lineIdx, qsizetype pointIdx, qreal x, qreal y)
+{
+    IF_ASSERT_FAILED(notationAutomation()) {
+        return;
+    }
+    notationAutomation()->requestChangeAutomationPoint(lineIdx, pointIdx, x, y);
+}

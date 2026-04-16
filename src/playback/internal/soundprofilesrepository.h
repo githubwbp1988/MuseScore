@@ -23,8 +23,6 @@
 #ifndef MU_PLAYBACK_SOUNDPROFILESREPOSITORY_H
 #define MU_PLAYBACK_SOUNDPROFILESREPOSITORY_H
 
-#include <map>
-
 #include "audio/main/iplayback.h"
 #include "async/asyncable.h"
 #include "modularity/ioc.h"
@@ -40,9 +38,7 @@ class SoundProfilesRepository : public ISoundProfilesRepository, public muse::as
 
 public:
     SoundProfilesRepository(const muse::modularity::ContextPtr& iocCtx)
-        : muse::Contextable(iocCtx)
-    {
-    }
+        : muse::Contextable(iocCtx) {}
 
     void init();
 
