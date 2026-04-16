@@ -51,8 +51,8 @@ class NotationRegionsBeingProcessedModel : public QAbstractListModel, public mus
 
     muse::GlobalInject<IPlaybackConfiguration> configuration;
     muse::GlobalInject<notation::INotationConfiguration> notationConfiguration;
-    muse::ContextInject<mu::context::IGlobalContext> globalContext = { this };
     muse::ContextInject<muse::audio::IPlayback> playback = { this };
+    muse::ContextInject<mu::context::IGlobalContext> globalContext = { this };
     muse::ContextInject<IPlaybackController> playbackController = { this };
 
 public:
