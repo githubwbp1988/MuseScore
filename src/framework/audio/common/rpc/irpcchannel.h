@@ -49,11 +49,6 @@ enum class Method {
     // AudioEngine
     SetOutputSpec,
 
-    // Sequences
-    AddSequence,
-    RemoveSequence,
-    GetSequenceIdList,
-
     // Tracks
     RemoveTrack,
     RemoveAllTracks,
@@ -118,6 +113,9 @@ enum class Method {
     LoadSoundFonts,
     AddSoundFont,
     AddSoundFontData,
+
+    // Transport
+    TransportEventReceived,
 };
 
 inline std::string to_string(Method m)
@@ -135,11 +133,6 @@ inline std::string to_string(Method m)
 
     // AudioEngine
     case Method::SetOutputSpec: return "SetOutputSpec";
-
-    // Sequences
-    case Method::AddSequence: return "AddSequence";
-    case Method::RemoveSequence: return "RemoveSequence";
-    case Method::GetSequenceIdList: return "GetSequenceIdList";
 
     // Tracks
     case Method::RemoveTrack: return "RemoveTrack";
@@ -202,6 +195,9 @@ inline std::string to_string(Method m)
     case Method::LoadSoundFonts: return "LoadSoundFonts";
     case Method::AddSoundFont: return "AddSoundFont";
     case Method::AddSoundFontData: return "AddSoundFontData";
+
+    // Transport
+    case Method::TransportEventReceived: return "TransportEventReceived";
     }
 
     assert(false && "unknown enum value");
