@@ -30,7 +30,7 @@
 #include "global/modularity/ioc.h"
 #include "../isynthresolver.h"
 #include "../ifxresolver.h"
-#include "../iaudioengine.h"
+#include "iaudioengine.h"
 #include "../iaudioengineconfiguration.h"
 #include "../iengineplayer.h"
 
@@ -125,8 +125,8 @@ public:
 
 private:
 
-    std::shared_ptr<Mixer> mixer() const;
-    void ensureMixerSubscriptions();
+    std::shared_ptr<IAudioContext> audioContext() const;
+    void ensureAudioContextSubscriptions();
 
     TrackId newTrackId() const;
     void doAddTrack(const TrackPtr& track);

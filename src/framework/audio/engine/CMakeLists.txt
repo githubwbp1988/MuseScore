@@ -38,7 +38,6 @@ else()
         iaudioengineconfiguration.h
         ienginecontroller.h
         iengineplayback.h
-        iaudioengine.h
         iaudiosource.h
         iplayhead.h
         iengineplayer.h
@@ -50,6 +49,12 @@ else()
         itransporteventsdispatcher.h
 
         # internal
+        internal/iaudioengine.h
+        internal/iaudiocontext.h
+        internal/audioengine.cpp
+        internal/audioengine.h
+        internal/audiocontext.cpp
+        internal/audiocontext.h
         internal/audioengineconfiguration.cpp
         internal/audioengineconfiguration.h
         internal/enginecontroller.cpp
@@ -59,10 +64,6 @@ else()
         internal/igettracks.h
         internal/enginerpccontroller.cpp
         internal/enginerpccontroller.h
-        internal/audioengine.cpp
-        internal/audioengine.h
-        internal/audiobuffer.cpp
-        internal/audiobuffer.h
         internal/mixer.cpp
         internal/mixer.h
         internal/mixerchannel.cpp

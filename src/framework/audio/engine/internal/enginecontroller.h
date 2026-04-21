@@ -27,7 +27,7 @@
 #include "../iaudioengineconfiguration.h"
 #include "../ienginecontroller.h"
 #include "../isynthresolver.h"
-#include "../iaudioengine.h"
+#include "iaudioengine.h"
 #include "../iengineplayback.h"
 #include "../itransporteventsdispatcher.h"
 
@@ -58,9 +58,6 @@ public:
     async::Channel<OutputSpec> outputSpecChanged() const;
 
     void process(float* stream, unsigned samplesPerChannel);
-
-    void process();
-    void popAudioData(float* stream, unsigned samplesPerChannel);
 
 private:
     std::shared_ptr<rpc::IRpcChannel> m_rpcChannel;

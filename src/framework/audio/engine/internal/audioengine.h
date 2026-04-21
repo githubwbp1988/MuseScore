@@ -26,12 +26,12 @@
 #include <atomic>
 #include <mutex>
 
-#include "../iaudioengine.h"
+#include "iaudioengine.h"
 
 #include "global/types/ret.h"
 
 namespace muse::audio::engine {
-class AudioBuffer;
+class AudioContext;
 class AudioEngine : public IAudioEngine
 {
 public:
@@ -40,6 +40,9 @@ public:
 
     Ret init(const OutputSpec& outputSpec, const RenderConstraints& consts) override;
     void deinit() override;
+
+    std::shared_ptr<IAudioContext> context(const modularity::IoCID& ctxId) const override;
+    void destroyContext(const modularity::IoCID& ctxId) override;
 
     void setOutputSpec(const OutputSpec& outputSpec) override;
     OutputSpec outputSpec() const override;
@@ -52,18 +55,17 @@ public:
     void execOperation(OperationType type, const Operation& func) override;
     OperationType operation() const override;
 
-    MixerPtr mixer() const override;
-
-    void processAudioData() override;
     samples_t process(float* buffer, samples_t samplesPerChannel) override;
-    void popAudioData(float* dest, size_t sampleCount) override;
 
 private:
 
-    void updateBufferConstraints();
     samples_t fillSilent(float* buffer, samples_t samplesPerChannel);
 
     std::atomic<bool> m_inited = false;
+
+    // Temporarily one context, for the transition phase
+    std::shared_ptr<AudioContext> m_context;
+    //mutable std::map<modularity::IoCID, std::shared_ptr<AudioContext> > m_contexts;
 
     OutputSpec m_outputSpec;
     async::Channel<OutputSpec> m_outputSpecChanged;
@@ -75,8 +77,6 @@ private:
     std::atomic<OperationType> m_operationType = OperationType::Undefined;
     std::mutex m_quickOperationWaitMutex;
 
-    MixerPtr m_mixer = nullptr;
-    std::shared_ptr<AudioBuffer> m_buffer = nullptr;
     RenderConstraints m_renderConsts;
 };
 }
