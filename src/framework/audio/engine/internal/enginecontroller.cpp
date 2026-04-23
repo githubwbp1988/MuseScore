@@ -90,9 +90,9 @@ void EngineController::init(const OutputSpec& outputSpec, const AudioEngineConfi
     consts.minTrackCountForMultithreading = configuration()->minTrackCountForMultithreading();
 
     // Setup audio engine
-    audioEngine()->init(outputSpec, consts);
+    audioEngine()->init(outputSpec);
 
-    playback()->init();
+    audioEngine()->context()->init(consts);
 
     transportEventsDispatcher()->init();
 }
@@ -100,9 +100,9 @@ void EngineController::init(const OutputSpec& outputSpec, const AudioEngineConfi
 void EngineController::deinit()
 {
     //! AUDIO THREAD
-    playback()->deinit();
-    audioEngine()->deinit();
     m_rpcController->deinit();
+    audioEngine()->context()->deinit();
+    audioEngine()->deinit();
 }
 
 OutputSpec EngineController::outputSpec() const

@@ -34,8 +34,8 @@ class IAudioSource
 public:
     virtual ~IAudioSource() = default;
 
-    virtual bool isActive() const = 0;
-    virtual void setIsActive(bool arg) = 0;
+    virtual void setMode(const ProcessMode mode) = 0;
+    virtual ProcessMode mode() const = 0;
 
     //! set current output spec. Called by destination.
     virtual void setOutputSpec(const OutputSpec& spec) = 0;

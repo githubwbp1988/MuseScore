@@ -63,8 +63,8 @@ public:
 
     AudioSignalChanges audioSignalChanges() const override;
 
-    bool isActive() const override;
-    void setIsActive(bool arg) override;
+    ProcessMode mode() const override;
+    void setMode(const ProcessMode mode) override;
 
     void setOutputSpec(const OutputSpec& spec) override;
     unsigned int audioChannelsCount() const override;
@@ -78,6 +78,7 @@ private:
 
     TrackId m_trackId = -1;
 
+    ProcessMode m_mode = ProcessMode::Undefined;
     OutputSpec m_outputSpec;
     AudioOutputParams m_params;
 

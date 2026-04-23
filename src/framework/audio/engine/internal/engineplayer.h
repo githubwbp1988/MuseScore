@@ -20,26 +20,22 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef MUSE_AUDIO_ENGINEPLAYER_H
-#define MUSE_AUDIO_ENGINEPLAYER_H
+#pragma once
 
+#include "global/types/retval.h"
+#include "global/async/channel.h"
 #include "global/async/asyncable.h"
-
-#include "modularity/ioc.h"
-#include "iaudioengine.h"
 
 #include "../iengineplayer.h"
 #include "../iplayhead.h"
 
-#include "igettracks.h"
+#include "igettracksource.h"
 
 namespace muse::audio::engine {
 class EnginePlayer : public IEnginePlayer, public IPlayhead, public async::Asyncable
 {
-    GlobalInject<engine::IAudioEngine> audioEngine;
-
 public:
-    explicit EnginePlayer(IGetTracks* getTracks);
+    explicit EnginePlayer(IGetTrackSource* getTracks);
 
     async::Promise<Ret> prepareToPlay() override;
 
@@ -51,6 +47,8 @@ public:
 
     PlaybackStatus playbackStatus() const override;
     async::Channel<PlaybackStatus> playbackStatusChanged() const override;
+    bool isActive() const override;
+    async::Channel<bool> isActiveChanged() const override;
 
     secs_t duration() const override;
     void setDuration(const secs_t duration) override;
@@ -86,9 +84,10 @@ private:
     using AllTracksReadyCallback = std::function<void ()>;
     void prepareAllTracksToPlay(AllTracksReadyCallback allTracksReadyCallback);
 
-    IGetTracks* m_getTracks = nullptr;
+    IGetTrackSource* m_trackSource = nullptr;
 
     ValCh<PlaybackStatus> m_status;
+    ValCh<bool> m_isActive;
 
     TimePosition m_currentPosition;
     async::Channel<secs_t> m_timeChanged;
@@ -104,5 +103,3 @@ private:
     std::set<TrackId> m_notYetReadyToPlayTrackIdSet;
 };
 }
-
-#endif // MUSE_AUDIO_ENGINEPLAYER_H

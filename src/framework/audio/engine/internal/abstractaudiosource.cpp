@@ -25,19 +25,19 @@ using namespace muse;
 using namespace muse::audio;
 using namespace muse::audio::engine;
 
+void AbstractAudioSource::setMode(const ProcessMode mode)
+{
+    m_mode = mode;
+}
+
+ProcessMode AbstractAudioSource::mode() const
+{
+    return m_mode;
+}
+
 void AbstractAudioSource::setOutputSpec(const OutputSpec& spec)
 {
     m_outputSpec = spec;
-}
-
-bool AbstractAudioSource::isActive() const
-{
-    return m_isActive;
-}
-
-void AbstractAudioSource::setIsActive(bool isActive)
-{
-    m_isActive = isActive;
 }
 
 async::Channel<unsigned int> AbstractAudioSource::audioChannelsCountChanged() const

@@ -46,7 +46,7 @@ AudioEngine::~AudioEngine()
     ONLY_AUDIO_MAIN_OR_ENGINE_THREAD;
 }
 
-Ret AudioEngine::init(const OutputSpec& outputSpec, const RenderConstraints& consts)
+Ret AudioEngine::init(const OutputSpec& outputSpec)
 {
     ONLY_AUDIO_ENGINE_THREAD;
 
@@ -63,11 +63,6 @@ Ret AudioEngine::init(const OutputSpec& outputSpec, const RenderConstraints& con
            << ", audioChannelCount: " << outputSpec.audioChannelCount;
 
     m_outputSpec = outputSpec;
-    m_renderConsts = consts;
-
-    m_context->init(outputSpec, consts);
-
-    setMode(RenderMode::IdleMode);
 
     m_operationType = OperationType::NoOperation;
 
@@ -148,46 +143,6 @@ async::Channel<OutputSpec> AudioEngine::outputSpecChanged() const
     return m_outputSpecChanged;
 }
 
-RenderMode AudioEngine::mode() const
-{
-    ONLY_AUDIO_ENGINE_THREAD;
-
-    return m_mode;
-}
-
-void AudioEngine::setMode(const RenderMode newMode)
-{
-    ONLY_AUDIO_ENGINE_THREAD;
-
-    if (newMode == m_mode) {
-        return;
-    }
-
-    m_mode = newMode;
-
-    switch (m_mode) {
-    case RenderMode::RealTimeMode:
-        m_context->setIsIdle(false);
-        break;
-    case RenderMode::IdleMode:
-        m_context->setIsIdle(true);
-        break;
-    case RenderMode::OfflineMode:
-        m_context->setIsIdle(false);
-        break;
-    case RenderMode::Undefined:
-        UNREACHABLE;
-        break;
-    }
-
-    m_modeChanged.send(m_mode);
-}
-
-async::Channel<RenderMode> AudioEngine::modeChanged() const
-{
-    return m_modeChanged;
-}
-
 void AudioEngine::execOperation(OperationType type, const Operation& func)
 {
     // wait end of processing
@@ -232,28 +187,25 @@ samples_t AudioEngine::process(float* buffer, samples_t samplesPerChannel)
         return fillSilent(buffer, samplesPerChannel);
     }
 
-    if (m_mode == RenderMode::RealTimeMode // playing
-        || m_mode == RenderMode::IdleMode) { // individual events can be played
-        // check current operation
-        switch (m_operationType) {
-        case OperationType::Undefined: {
-            UNREACHABLE;
-            return fillSilent(buffer, samplesPerChannel);
-        }
-        case OperationType::NoOperation: {
-            // normal playing
-            return m_context->process(buffer, samplesPerChannel);
-        }
-        case OperationType::QuickOperation: {
-            // wait
-            LOGD() << "wait end of quick operation";
-            std::scoped_lock<std::mutex> lock(m_quickOperationWaitMutex);
-            return m_context->process(buffer, samplesPerChannel);
-        }
-        case OperationType::LongOperation: {
-            return fillSilent(buffer, samplesPerChannel);
-        }
-        }
+    // check current operation
+    switch (m_operationType) {
+    case OperationType::Undefined: {
+        UNREACHABLE;
+        return fillSilent(buffer, samplesPerChannel);
+    }
+    case OperationType::NoOperation: {
+        // normal playing
+        return m_context->process(buffer, samplesPerChannel);
+    }
+    case OperationType::QuickOperation: {
+        // wait
+        LOGD() << "wait end of quick operation";
+        std::scoped_lock<std::mutex> lock(m_quickOperationWaitMutex);
+        return m_context->process(buffer, samplesPerChannel);
+    }
+    case OperationType::LongOperation: {
+        return fillSilent(buffer, samplesPerChannel);
+    }
     }
 
     return fillSilent(buffer, samplesPerChannel);

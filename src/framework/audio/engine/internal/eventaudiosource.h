@@ -42,9 +42,10 @@ public:
 
     ~EventAudioSource() override;
 
-    bool isActive() const override;
-    void setIsActive(const bool active) override;
+    TrackId trackId() const override;
 
+    void setMode(const ProcessMode mode) override;
+    ProcessMode mode() const override;
     void setOutputSpec(const OutputSpec& spec) override;
     unsigned int audioChannelsCount() const override;
     async::Channel<unsigned int> audioChannelsCountChanged() const override;
@@ -70,7 +71,7 @@ public:
 private:
     struct SynthCtx
     {
-        bool isActive = false;
+        ProcessMode mode = ProcessMode::Undefined;
         msecs_t playbackPosition = -1;
 
         bool isValid() const

@@ -39,11 +39,13 @@ EventAudioSource::EventAudioSource(const TrackId trackId,
 {
     ONLY_AUDIO_ENGINE_THREAD;
 
-    m_playbackData.offStream.onReceive(this, [onOffStreamReceived, trackId](const PlaybackEventsMap&,
-                                                                            const DynamicLevelLayers&,
-                                                                            bool) {
-        onOffStreamReceived(trackId);
-    });
+    if (onOffStreamReceived) {
+        m_playbackData.offStream.onReceive(this, [onOffStreamReceived, trackId](const PlaybackEventsMap&,
+                                                                                const DynamicLevelLayers&,
+                                                                                bool) {
+            onOffStreamReceived(trackId);
+        });
+    }
 }
 
 EventAudioSource::~EventAudioSource()
@@ -51,18 +53,12 @@ EventAudioSource::~EventAudioSource()
     m_playbackData.offStream.disconnect(this);
 }
 
-bool EventAudioSource::isActive() const
+TrackId EventAudioSource::trackId() const
 {
-    ONLY_AUDIO_ENGINE_THREAD;
-
-    if (!m_synth) {
-        return false;
-    }
-
-    return m_synth->isActive();
+    return m_trackId;
 }
 
-void EventAudioSource::setIsActive(const bool active)
+void EventAudioSource::setMode(const ProcessMode mode)
 {
     ONLY_AUDIO_ENGINE_THREAD;
 
@@ -70,12 +66,23 @@ void EventAudioSource::setIsActive(const bool active)
         return;
     }
 
-    if (m_synth->isActive() == active) {
+    if (m_synth->mode() == mode) {
         return;
     }
 
-    m_synth->setIsActive(active);
+    m_synth->setMode(mode);
     m_synth->flushSound();
+}
+
+ProcessMode EventAudioSource::mode() const
+{
+    ONLY_AUDIO_ENGINE_THREAD;
+
+    if (!m_synth) {
+        return ProcessMode::Undefined;
+    }
+
+    return m_synth->mode();
 }
 
 void EventAudioSource::setOutputSpec(const OutputSpec& spec)
@@ -195,7 +202,7 @@ void EventAudioSource::applyInputParams(const AudioInputParams& requiredParams)
     if (ctx.isValid()) {
         restoreSynthCtx(ctx);
     } else {
-        m_synth->setIsActive(false);
+        m_synth->setMode(ProcessMode::Idle);
     }
 
     m_params = m_synth->params();
@@ -290,13 +297,13 @@ EventAudioSource::SynthCtx EventAudioSource::currentSynthCtx() const
         return SynthCtx();
     }
 
-    return { m_synth->isActive(), m_synth->playbackPosition() };
+    return { m_synth->mode(), m_synth->playbackPosition() };
 }
 
 void EventAudioSource::restoreSynthCtx(const SynthCtx& ctx)
 {
     m_synth->setPlaybackPosition(ctx.playbackPosition);
-    m_synth->setIsActive(ctx.isActive);
+    m_synth->setMode(ctx.mode);
 }
 
 void EventAudioSource::setupSource()

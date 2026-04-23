@@ -30,17 +30,17 @@ class AbstractAudioSource : public IAudioSource
 public:
     virtual ~AbstractAudioSource() = default;
 
-    virtual void setOutputSpec(const OutputSpec& spec) override;
+    virtual void setMode(const ProcessMode mode) override;
+    ProcessMode mode() const override;
 
-    bool isActive() const override;
-    void setIsActive(bool arg) override;
+    virtual void setOutputSpec(const OutputSpec& spec) override;
 
     async::Channel<unsigned int> audioChannelsCountChanged() const override;
 
 protected:
+    ProcessMode m_mode = ProcessMode::Undefined;
     OutputSpec m_outputSpec;
     async::Channel<unsigned int> m_streamsCountChanged;
-    bool m_isActive = false;
 };
 }
 
