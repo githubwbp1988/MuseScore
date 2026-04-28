@@ -141,5 +141,6 @@ public:
     virtual bool specificSlursLayoutWorkaround() const = 0;
     virtual bool preferSameStringForTranspose() const = 0;
     virtual void setPreferSameStringForTranspose(bool preferSameString) = 0;
+    virtual bool keepDeadNotesUnchangedOnTranspose() const = 0;
 };
 }

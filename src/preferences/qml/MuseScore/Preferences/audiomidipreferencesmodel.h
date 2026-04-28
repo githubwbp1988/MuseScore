@@ -40,7 +40,8 @@ class AudioMidiPreferencesModel : public QObject, public muse::Contextable, publ
     Q_OBJECT
     QML_ELEMENT;
 
-    Q_PROPERTY(int currentAudioApiIndex READ currentAudioApiIndex WRITE setCurrentAudioApiIndex NOTIFY currentAudioApiIndexChanged)
+    Q_PROPERTY(
+        int currentAudioDriverIndex READ currentAudioDriverIndex WRITE setCurrentAudioDriverIndex NOTIFY currentAudioDriverIndexChanged)
 
     Q_PROPERTY(QVariantList midiInputDevices READ midiInputDevices NOTIFY midiInputDevicesChanged)
     Q_PROPERTY(QString midiInputDeviceId READ midiInputDeviceId NOTIFY midiInputDeviceIdChanged)
@@ -72,7 +73,7 @@ public:
 
     Q_INVOKABLE void init();
 
-    int currentAudioApiIndex() const;
+    int currentAudioDriverIndex() const;
 
     QString midiInputDeviceId() const;
     Q_INVOKABLE void inputDeviceSelected(const QString& deviceId);
@@ -80,7 +81,7 @@ public:
     QString midiOutputDeviceId() const;
     Q_INVOKABLE void outputDeviceSelected(const QString& deviceId);
 
-    Q_INVOKABLE QStringList audioApiList() const;
+    Q_INVOKABLE QStringList audioDrivers() const;
 
     Q_INVOKABLE void restartAudioAndMidiDevices();
 
@@ -99,7 +100,7 @@ public:
     int onlineSoundsShowProgressBarMode() const;
 
 public slots:
-    void setCurrentAudioApiIndex(int index);
+    void setCurrentAudioDriverIndex(int index);
 
     void setUseMIDI20Output(bool use);
 
@@ -110,7 +111,7 @@ public slots:
     void setOnlineSoundsShowProgressBarMode(int mode);
 
 signals:
-    void currentAudioApiIndexChanged(int index);
+    void currentAudioDriverIndexChanged(int index);
     void midiInputDeviceIdChanged();
     void midiOutputDeviceIdChanged();
 

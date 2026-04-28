@@ -24,6 +24,7 @@ target_include_directories(muse_audio_common PRIVATE ..)
 
 target_sources(muse_audio_common PRIVATE
     audiotypes.h
+    timeposition.h
     soundfonttypes.h
     audioerrors.h
     audioutils.h
@@ -39,9 +40,6 @@ target_sources(muse_audio_common PRIVATE
     # Rpc
     rpc/irpcchannel.h
     rpc/rpcpacker.h
-    rpc/icontextrpcchannel.h
-    rpc/contextrpcchannel.cpp
-    rpc/contextrpcchannel.h
 )
 
 if(OS_IS_WASM)

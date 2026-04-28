@@ -25,11 +25,6 @@
 #include <QLocalSocket>
 #include <QThread>
 
-#ifdef Q_OS_UNIX
-#include <QFile>
-#include <QDir>
-#endif
-
 #include "async/async.h"
 #include "ipclock.h"
 #include "ipclog.h"
@@ -56,13 +51,11 @@ bool IpcServer::listen(const QString& serverName)
 
     bool ok = m_server->listen(serverName);
 
-#ifdef Q_OS_UNIX
-    // Workaround
     if (!ok && m_server->serverError() == QAbstractSocket::AddressInUseError) {
-        QFile::remove(QDir::cleanPath(QDir::tempPath()) + QLatin1Char('/') + serverName);
+        LOGW() << "stale endpoint for " << serverName << ", removing";
+        QLocalServer::removeServer(serverName);
         ok = m_server->listen(serverName);
     }
-#endif
 
     if (!ok) {
         LOGE() << "failed listen: " << m_server->errorString();

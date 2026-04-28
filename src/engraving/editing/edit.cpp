@@ -2720,7 +2720,7 @@ void Score::cmdFlip()
                 if (ee->isSpanner()) {
                     Spanner* spanner = toSpanner(ee);
                     for (SpannerSegment* ss : spanner->spannerSegments()) {
-                        if (!ss->isStyled(Pid::OFFSET)) {
+                        if (!ss->offset().isNull()) {
                             PointF off = ss->getProperty(Pid::OFFSET).value<PointF>();
                             double oldY = off.y() - oldDefaultY;
                             off.ry() = newDefaultY - oldY;
@@ -2728,7 +2728,7 @@ void Score::cmdFlip()
                             ss->setOffsetChanged(false);
                         }
                     }
-                } else if (!ee->isStyled(Pid::OFFSET)) {
+                } else if (!ee->offset().isNull()) {
                     PointF off = ee->getProperty(Pid::OFFSET).value<PointF>();
                     double oldY = off.y() - oldDefaultY;
                     off.ry() = newDefaultY - oldY;
@@ -6731,6 +6731,23 @@ void Score::undoAddElement(EngravingItem* element, bool addToLinkedStaves, bool 
                         }
                         Transpose::undoTransposeHarmony(score, h, interval);
                     }
+                }
+            }
+
+            // Match vertical align settings of exiting items
+            if (ne->isHarmony() || ne->isFretDiagram()) {
+                bool exclude = ne->excludeVerticalAlign();
+                for (EngravingItem* item : seg->annotations()) {
+                    if ((!item->isFretDiagram() && !item->isHarmony())
+                        || item->staffIdx() != ne->staffIdx()) {
+                        continue;
+                    }
+
+                    exclude = item->excludeVerticalAlign();
+                    break;
+                }
+                if (exclude != ne->excludeVerticalAlign()) {
+                    ne->undoChangeProperty(Pid::EXCLUDE_VERTICAL_ALIGN, exclude);
                 }
             }
         } else if (element->isSlur()

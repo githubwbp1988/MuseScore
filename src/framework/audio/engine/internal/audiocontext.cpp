@@ -36,25 +36,26 @@ using namespace muse;
 using namespace muse::audio;
 using namespace muse::audio::engine;
 
-AudioContext::AudioContext(const modularity::IoCID& ctxId)
+AudioContext::AudioContext(const AudioCtxId& ctxId)
     : m_ctxId(ctxId)
 {
-    UNUSED(m_ctxId); // just for information
-
     m_player = std::make_shared<EnginePlayer>(this);
     m_mixer = std::make_shared<Mixer>();
 }
 
-Ret AudioContext::init(const RenderConstraints& consts)
+AudioCtxId AudioContext::id() const
 {
-    m_mixer->init(consts.desiredAudioThreadNumber, consts.minTrackCountForMultithreading);
+    return m_ctxId;
+}
+
+Ret AudioContext::init()
+{
+    m_mixer->init();
     m_mixer->setPlayhead(std::static_pointer_cast<IPlayhead>(m_player));
 
     OutputSpec outputSpec = audioEngine()->outputSpec();
     setOutputSpec(outputSpec);
     setMode(ProcessMode::Idle);
-
-    m_player->seek(TimePosition::zero(outputSpec.sampleRate));
 
     m_player->isActiveChanged().onReceive(this, [this](bool isActive) {
         setMode(isActive ? ProcessMode::Playing : ProcessMode::Idle);
@@ -103,7 +104,13 @@ void AudioContext::setOutputSpec(const OutputSpec& outputSpec)
     ONLY_AUDIO_ENGINE_THREAD;
     m_outputSpec = outputSpec;
     m_mixer->setOutputSpec(outputSpec);
-    m_player->seek(TimePosition::zero(outputSpec.sampleRate));
+
+    TimePosition currentPosition = m_player->currentPosition();
+    if (currentPosition.isValid()) {
+        m_player->seek(TimePosition::fromTime(currentPosition.time(), outputSpec.sampleRate));
+    } else {
+        m_player->seek(TimePosition::zero(outputSpec.sampleRate));
+    }
 }
 
 // Setup tracks

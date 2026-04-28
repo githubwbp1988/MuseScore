@@ -27,6 +27,8 @@
 #include "global/async/promise.h"
 #include "global/async/channel.h"
 
+#include "global/types/retval.h"
+
 #include "audio/common/audiotypes.h"
 
 namespace muse::audio {

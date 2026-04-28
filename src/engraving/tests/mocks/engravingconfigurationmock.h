@@ -103,5 +103,6 @@ public:
     MOCK_METHOD(bool, specificSlursLayoutWorkaround, (), (const, override));
     MOCK_METHOD(bool, preferSameStringForTranspose, (), (const, override));
     MOCK_METHOD(void, setPreferSameStringForTranspose, (bool), (override));
+    MOCK_METHOD(bool, keepDeadNotesUnchangedOnTranspose, (), (const, override));
 };
 }

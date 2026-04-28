@@ -38,10 +38,9 @@ public:
 
     // IRpcChannel
     // msgs
-    void send(const Msg& msg, const Handler& onResponse = nullptr) override;
-    void onRequest(MsgCode code, Handler h) override;
-    void onNotification(MsgCode code, Handler h) override;
-    void listenAll(Handler h) override;
+    void send(const Msg& msg, const ResponseHandler& onResponse = nullptr) override;
+    void onRequest(CtxId ctxId, MsgCode code, RequestHandler h) override;
+    void onNotification(CtxId ctxId, MsgCode code, NotificationHandler h) override;
 
     // stream
     void addStream(std::shared_ptr<IRpcStream> s) override;
@@ -53,17 +52,16 @@ private:
 
     struct RpcData {
         // msgs
-        Handler listenerAll;
-        std::map<MsgCode, Handler> onRequests;
-        std::map<MsgCode, Handler> onNotifications;
-        std::map<CallId, Handler> onResponses;
+        std::map<MsgKey, RequestHandler> onRequests;
+        std::map<CallId, ResponseHandler> onResponses;
+        std::map<MsgKey, NotificationHandler> onNotifications;
 
         // stream
         std::map<StreamId, std::shared_ptr<IRpcStream> > streams;
         std::map<StreamId, StreamHandler> onStreams;
     };
 
-    void receive(RpcData& to, const Msg& m) const;
+    void receive(RpcData& to, const Msg& m);
 
     RpcData m_engineRpcData;
     RpcData m_mainRpcData;

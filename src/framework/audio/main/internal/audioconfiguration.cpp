@@ -39,7 +39,7 @@ using namespace muse::audio::synth;
 static const audioch_t AUDIO_CHANNELS = 2;
 
 //TODO: add other setting: audio device etc
-static const Settings::Key AUDIO_API_KEY("audio", "io/audioApi");
+static const Settings::Key AUDIO_DRIVER_KEY("audio", "io/audioDriver");
 static const Settings::Key AUDIO_OUTPUT_DEVICE_ID_KEY("audio", "io/outputDevice");
 static const Settings::Key AUDIO_BUFFER_SIZE_KEY("audio", "io/bufferSize");
 static const Settings::Key AUDIO_SAMPLE_RATE_KEY("audio", "io/sampleRate");
@@ -57,12 +57,12 @@ void AudioConfiguration::init()
     });
 
 #if defined(Q_OS_WIN)
-    settings()->setDefaultValue(AUDIO_API_KEY, Val("WASAPI"));
+    settings()->setDefaultValue(AUDIO_DRIVER_KEY, Val("WASAPI"));
 #elif defined(Q_OS_LINUX) || defined(Q_OS_FREEBSD)
-    settings()->setDefaultValue(AUDIO_API_KEY, Val("ALSA"));
+    settings()->setDefaultValue(AUDIO_DRIVER_KEY, Val("ALSA"));
 #endif
-    settings()->valueChanged(AUDIO_API_KEY).onReceive(nullptr, [this](const Val&) {
-        m_currentAudioApiChanged.notify();
+    settings()->valueChanged(AUDIO_DRIVER_KEY).onReceive(nullptr, [this](const Val&) {
+        m_currentAudioDriverChanged.notify();
     });
 
     settings()->setDefaultValue(AUDIO_OUTPUT_DEVICE_ID_KEY, Val(DEFAULT_DEVICE_ID));
@@ -103,27 +103,27 @@ AudioEngineConfig AudioConfiguration::engineConfig() const
 
 void AudioConfiguration::onEngineConfigChanged()
 {
-    rpcChannel()->send(rpc::make_notification(rpc::MsgCode::EngineConfigChanged, rpc::RpcPacker::pack(engineConfig())));
+    rpcChannel()->send(rpc::make_notification(rpc::GLOBAL_CTX_ID, rpc::MsgCode::EngineConfigChanged, rpc::RpcPacker::pack(engineConfig())));
 }
 
-std::string AudioConfiguration::defaultAudioApi() const
+std::string AudioConfiguration::defaultAudioDriverName() const
 {
-    return settings()->defaultValue(AUDIO_API_KEY).toString();
+    return settings()->defaultValue(AUDIO_DRIVER_KEY).toString();
 }
 
-std::string AudioConfiguration::currentAudioApi() const
+std::string AudioConfiguration::currentAudioDriverName() const
 {
-    return settings()->value(AUDIO_API_KEY).toString();
+    return settings()->value(AUDIO_DRIVER_KEY).toString();
 }
 
-void AudioConfiguration::setCurrentAudioApi(const std::string& name)
+void AudioConfiguration::setCurrentAudioDriverName(const std::string& name)
 {
-    settings()->setSharedValue(AUDIO_API_KEY, Val(name));
+    settings()->setSharedValue(AUDIO_DRIVER_KEY, Val(name));
 }
 
-async::Notification AudioConfiguration::currentAudioApiChanged() const
+async::Notification AudioConfiguration::currentAudioDriverChanged() const
 {
-    return m_currentAudioApiChanged;
+    return m_currentAudioDriverChanged;
 }
 
 std::string AudioConfiguration::audioOutputDeviceId() const

@@ -34,12 +34,11 @@ class IAudioDriverController : MODULE_GLOBAL_INTERFACE
 public:
     virtual ~IAudioDriverController() = default;
 
-    // Api
-    virtual std::vector<std::string> availableAudioApiList() const = 0;
+    virtual std::vector<std::string> availableAudioDrivers() const = 0;
 
-    virtual std::string currentAudioApi() const = 0;
-    virtual void changeCurrentAudioApi(const std::string& name) = 0;
-    virtual async::Notification currentAudioApiChanged() const = 0;
+    virtual std::string currentAudioDriverName() const = 0;
+    virtual void changeCurrentAudioDriver(const std::string& name) = 0;
+    virtual async::Notification currentAudioDriverChanged() const = 0;
 
     // Current driver operation
     virtual AudioDeviceList availableOutputDevices() const = 0;

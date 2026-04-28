@@ -31,12 +31,13 @@
 #include "audio/common/rpc/irpcchannel.h"
 
 namespace muse::audio {
-class Player : public IPlayer, public async::Asyncable
+class Player : public IPlayer, public Contextable, public async::Asyncable
 {
     GlobalInject<rpc::IRpcChannel> channel;
 
 public:
-    Player() = default;
+    Player(const muse::modularity::ContextPtr& ctx)
+        : Contextable(ctx) {}
 
     void init();
 
@@ -59,6 +60,8 @@ public:
     async::Channel<secs_t> playbackPositionChanged() const override;
 
 private:
+
+    rpc::CtxId ctxId() const;
 
     PlaybackStatus m_playbackStatus = PlaybackStatus::Stopped;
     async::Channel<PlaybackStatus> m_playbackStatusChanged;

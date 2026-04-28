@@ -24,6 +24,8 @@
 
 #include "audio/common/audioerrors.h"
 
+#include "audio/engine/internal/mixerchannel.h"
+
 #include "eventaudiosource.h"
 
 using namespace muse;

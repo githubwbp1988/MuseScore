@@ -39,10 +39,10 @@ public:
 
     virtual AudioEngineConfig engineConfig() const = 0;
 
-    virtual std::string defaultAudioApi() const = 0;
-    virtual std::string currentAudioApi() const = 0;
-    virtual void setCurrentAudioApi(const std::string& name) = 0;
-    virtual async::Notification currentAudioApiChanged() const = 0;
+    virtual std::string defaultAudioDriverName() const = 0;
+    virtual std::string currentAudioDriverName() const = 0;
+    virtual void setCurrentAudioDriverName(const std::string& name) = 0;
+    virtual async::Notification currentAudioDriverChanged() const = 0;
 
     virtual std::string audioOutputDeviceId() const = 0;
     virtual void setAudioOutputDeviceId(const std::string& deviceId) = 0;

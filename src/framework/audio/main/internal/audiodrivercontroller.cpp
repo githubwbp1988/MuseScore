@@ -115,7 +115,7 @@ IAudioDriverPtr AudioDriverController::createDriver(const std::string& name) con
 #endif
 }
 
-std::vector<std::string> AudioDriverController::availableAudioApiList() const
+std::vector<std::string> AudioDriverController::availableAudioDrivers() const
 {
     std::vector<std::string> names;
 #ifdef MUSE_MODULE_AUDIO_JACK
@@ -200,12 +200,12 @@ IAudioDriver::Spec AudioDriverController::defaultSpec() const
     return spec;
 }
 
-std::string AudioDriverController::currentAudioApi() const
+std::string AudioDriverController::currentAudioDriverName() const
 {
-    return configuration()->currentAudioApi();
+    return configuration()->currentAudioDriverName();
 }
 
-void AudioDriverController::changeCurrentAudioApi(const std::string& name)
+void AudioDriverController::changeCurrentAudioDriver(const std::string& name)
 {
     IF_ASSERT_FAILED(m_audioDriver) {
         return;
@@ -230,14 +230,14 @@ void AudioDriverController::changeCurrentAudioApi(const std::string& name)
         LOGW() << "no devices for " << name;
     }
 
-    configuration()->setCurrentAudioApi(name);
-    m_currentAudioApiChanged.notify();
+    configuration()->setCurrentAudioDriverName(name);
+    m_currentAudioDriverChanged.notify();
     m_availableOutputDevicesChanged.notify();
 }
 
-async::Notification AudioDriverController::currentAudioApiChanged() const
+async::Notification AudioDriverController::currentAudioDriverChanged() const
 {
-    return m_currentAudioApiChanged;
+    return m_currentAudioDriverChanged;
 }
 
 AudioDeviceList AudioDriverController::availableOutputDevices() const
@@ -257,8 +257,8 @@ bool AudioDriverController::open(const IAudioDriver::Spec& spec, IAudioDriver::S
 {
     m_callback = spec.callback;
 
-    const std::string currentAudioApi = configuration()->currentAudioApi();
-    IAudioDriverPtr driver = createDriver(currentAudioApi);
+    const std::string currentAudioDriverName = configuration()->currentAudioDriverName();
+    IAudioDriverPtr driver = createDriver(currentAudioDriverName);
     driver->init();
     setNewDriver(driver);
 
@@ -271,9 +271,9 @@ bool AudioDriverController::open(const IAudioDriver::Spec& spec, IAudioDriver::S
     }
 
     if (!ok) {
-        const std::string defaultAudioApi = configuration()->defaultAudioApi();
-        if (defaultAudioApi != currentAudioApi) {
-            IAudioDriverPtr defaultDriver = createDriver(defaultAudioApi);
+        const std::string defaultAudioDriverName = configuration()->defaultAudioDriverName();
+        if (defaultAudioDriverName != currentAudioDriverName) {
+            IAudioDriverPtr defaultDriver = createDriver(defaultAudioDriverName);
             defaultDriver->init();
             setNewDriver(defaultDriver);
             // reset to default
@@ -281,7 +281,7 @@ bool AudioDriverController::open(const IAudioDriver::Spec& spec, IAudioDriver::S
             defSpec.callback = spec.callback;
             ok = m_audioDriver->open(defSpec, activeSpec);
             if (ok) {
-                configuration()->setCurrentAudioApi(defaultAudioApi);
+                configuration()->setCurrentAudioDriverName(defaultAudioDriverName);
             }
         }
     }
@@ -388,7 +388,7 @@ void AudioDriverController::updateOutputSpec()
     }
 
     IAudioDriver::Spec activeSpec = m_audioDriver->activeSpec();
-    rpcChannel()->send(rpc::make_request(MsgCode::SetOutputSpec, RpcPacker::pack(activeSpec.output)));
+    rpcChannel()->send(rpc::make_request(rpc::GLOBAL_CTX_ID, MsgCode::SetOutputSpec, RpcPacker::pack(activeSpec.output)));
 }
 
 std::vector<samples_t> AudioDriverController::availableOutputDeviceBufferSizes() const

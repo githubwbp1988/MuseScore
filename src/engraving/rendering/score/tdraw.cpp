@@ -2334,7 +2334,7 @@ void TDraw::draw(const Note* item, Painter* painter, const PaintOptions& opt)
 
     const bool isTabStaff = staffType && staffType->isTabStaff();
     const bool negativeFret = isTabStaff && item->negativeFretUsed();
-    const bool useCriticalColor = negativeFret && !item->deadNote() && opt.isPrinting;
+    const bool useCriticalColor = negativeFret && !item->deadNote() && !opt.isPrinting;
 
     painter->setPen(useCriticalColor ? config->criticalColor() : item->curColor(opt));
 
@@ -2346,7 +2346,7 @@ void TDraw::draw(const Note* item, Painter* painter, const PaintOptions& opt)
         const Staff* st = item->staff();
         const StaffType* tab = st->staffTypeForElement(item);
 
-        if (negativeFret || (item->fretConflict() && !opt.isPrinting && item->score()->showUnprintable())) { // fret conflict
+        if (!opt.isPrinting && item->score()->showUnprintable() && (negativeFret || item->fretConflict())) { // fret conflict
             painter->save();
             painter->setPen(config->criticalColor());
             painter->setBrush(config->criticalBackgroundColor());

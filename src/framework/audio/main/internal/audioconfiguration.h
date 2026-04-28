@@ -42,10 +42,10 @@ public:
 
     AudioEngineConfig engineConfig() const override;
 
-    std::string defaultAudioApi() const override;
-    std::string currentAudioApi() const override;
-    void setCurrentAudioApi(const std::string& name) override;
-    async::Notification currentAudioApiChanged() const override;
+    std::string defaultAudioDriverName() const override;
+    std::string currentAudioDriverName() const override;
+    void setCurrentAudioDriverName(const std::string& name) override;
+    async::Notification currentAudioDriverChanged() const override;
 
     std::string audioOutputDeviceId() const override;
     void setAudioOutputDeviceId(const std::string& deviceId) override;
@@ -81,7 +81,7 @@ private:
     async::Channel<samples_t> m_samplesToPreallocateChanged;
     async::Channel<bool> m_autoProcessOnlineSoundsInBackgroundChanged;
 
-    async::Notification m_currentAudioApiChanged;
+    async::Notification m_currentAudioDriverChanged;
     async::Notification m_audioOutputDeviceIdChanged;
     async::Notification m_driverBufferSizeChanged;
     async::Notification m_driverSampleRateChanged;

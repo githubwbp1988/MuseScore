@@ -36,12 +36,12 @@ Item {
     width: parent.width
     height: content.height
 
-    CommonAudioApiConfigurationModel {
-        id: apiModel
+    CommonAudioDriverConfigurationModel {
+        id: audioDriverModel
     }
 
     Component.onCompleted: {
-        apiModel.load()
+        audioDriverModel.load()
     }
 
     Column {
@@ -53,15 +53,15 @@ Item {
             title: qsTrc("preferences", "Audio device")
             columnWidth: root.columnWidth
 
-            currentIndex: indexOfValue(apiModel.currentDeviceId)
-            model: apiModel.deviceList
+            currentIndex: indexOfValue(audioDriverModel.currentDeviceId)
+            model: audioDriverModel.deviceList
 
             navigationName: "AudioDeviceBox"
             navigationPanel: root.navigation
             navigationRow: root.navigationOrderStart
 
             onValueEdited: function(newIndex, newValue) {
-                apiModel.deviceSelected(newValue)
+                audioDriverModel.deviceSelected(newValue)
             }
         }
 
@@ -71,15 +71,15 @@ Item {
             title: qsTrc("preferences", "Buffer size")
             columnWidth: root.columnWidth
 
-            currentIndex: indexOfValue(apiModel.bufferSize)
-            model: apiModel.bufferSizeList
+            currentIndex: indexOfValue(audioDriverModel.bufferSize)
+            model: audioDriverModel.bufferSizeList
 
             navigationName: "BufferSizeBox"
             navigationPanel: root.navigation
             navigationRow: root.navigationOrderStart + 1
 
             onValueEdited: function(newIndex, newValue) {
-                apiModel.bufferSizeSelected(newValue)
+                audioDriverModel.bufferSizeSelected(newValue)
             }
         }
 
@@ -89,15 +89,15 @@ Item {
             title: qsTrc("preferences", "Sample rate")
             columnWidth: root.columnWidth
 
-            currentIndex: indexOfValue(apiModel.sampleRate)
-            model: apiModel.sampleRateList
+            currentIndex: indexOfValue(audioDriverModel.sampleRate)
+            model: audioDriverModel.sampleRateList
 
             navigationName: "SampleRateBox"
             navigationPanel: root.navigation
             navigationRow: root.navigationOrderStart + 2
 
             onValueEdited: function(newIndex, newValue) {
-                apiModel.sampleRateSelected(newValue)
+                audioDriverModel.sampleRateSelected(newValue)
             }
 
             visible: Qt.platform.os === "linux"

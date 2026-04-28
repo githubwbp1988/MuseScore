@@ -38,12 +38,11 @@ class AudioDriverController : public IAudioDriverController, public async::Async
 
 public:
 
-    // Api
-    std::vector<std::string> availableAudioApiList() const override;
+    std::vector<std::string> availableAudioDrivers() const override;
 
-    std::string currentAudioApi() const override;
-    void changeCurrentAudioApi(const std::string& name) override;
-    async::Notification currentAudioApiChanged() const override;
+    std::string currentAudioDriverName() const override;
+    void changeCurrentAudioDriver(const std::string& name) override;
+    async::Notification currentAudioDriverChanged() const override;
 
     // Current driver operation
     AudioDeviceList availableOutputDevices() const override;
@@ -79,7 +78,7 @@ private:
 
     IAudioDriver::Callback m_callback;
     IAudioDriverPtr m_audioDriver;
-    async::Notification m_currentAudioApiChanged;
+    async::Notification m_currentAudioDriverChanged;
     async::Notification m_availableOutputDevicesChanged;
     async::Channel<IAudioDriver::Spec> m_activeSpecChanged;
     async::Notification m_outputDeviceChanged;

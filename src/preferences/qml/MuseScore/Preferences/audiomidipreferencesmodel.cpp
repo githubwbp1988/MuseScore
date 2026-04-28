@@ -33,25 +33,25 @@ AudioMidiPreferencesModel::AudioMidiPreferencesModel(QObject* parent)
 {
 }
 
-int AudioMidiPreferencesModel::currentAudioApiIndex() const
+int AudioMidiPreferencesModel::currentAudioDriverIndex() const
 {
-    QString currentApi = QString::fromStdString(audioDriverController()->currentAudioApi());
-    return audioApiList().indexOf(currentApi);
+    QString current = QString::fromStdString(audioDriverController()->currentAudioDriverName());
+    return audioDrivers().indexOf(current);
 }
 
-void AudioMidiPreferencesModel::setCurrentAudioApiIndex(int index)
+void AudioMidiPreferencesModel::setCurrentAudioDriverIndex(int index)
 {
-    if (index == currentAudioApiIndex()) {
+    if (index == currentAudioDriverIndex()) {
         return;
     }
 
-    std::vector<std::string> apiList = audioDriverController()->availableAudioApiList();
-    if (index < 0 || index >= static_cast<int>(apiList.size())) {
+    std::vector<std::string> drivers = audioDriverController()->availableAudioDrivers();
+    if (index < 0 || index >= static_cast<int>(drivers.size())) {
         return;
     }
 
-    audioDriverController()->changeCurrentAudioApi(apiList.at(index));
-    emit currentAudioApiIndexChanged(index);
+    audioDriverController()->changeCurrentAudioDriver(drivers.at(index));
+    emit currentAudioDriverIndexChanged(index);
 }
 
 QString AudioMidiPreferencesModel::midiInputDeviceId() const
@@ -108,8 +108,8 @@ void AudioMidiPreferencesModel::init()
         emit onlineSoundsShowProgressBarModeChanged();
     });
 
-    audioDriverController()->currentAudioApiChanged().onNotify(this, [this]() {
-        emit currentAudioApiIndexChanged(currentAudioApiIndex());
+    audioDriverController()->currentAudioDriverChanged().onNotify(this, [this]() {
+        emit currentAudioDriverIndexChanged(currentAudioDriverIndex());
     });
 
     audioConfiguration()->autoProcessOnlineSoundsInBackgroundChanged().onReceive(this, [this](bool) {
@@ -117,15 +117,15 @@ void AudioMidiPreferencesModel::init()
     });
 }
 
-QStringList AudioMidiPreferencesModel::audioApiList() const
+QStringList AudioMidiPreferencesModel::audioDrivers() const
 {
-    const std::vector<std::string> apiList = audioDriverController()->availableAudioApiList();
+    const std::vector<std::string> drivers = audioDriverController()->availableAudioDrivers();
 
     QStringList result;
-    result.reserve(apiList.size());
+    result.reserve(drivers.size());
 
-    for (const std::string& api: apiList) {
-        result.emplace_back(QString::fromStdString(api));
+    for (const std::string& driver: drivers) {
+        result.emplace_back(QString::fromStdString(driver));
     }
 
     return result;

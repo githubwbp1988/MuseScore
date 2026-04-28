@@ -29,21 +29,21 @@ AudioEngineConfig AudioConfigurationStub::engineConfig() const
     return {};
 }
 
-std::string AudioConfigurationStub::defaultAudioApi() const
+std::string AudioConfigurationStub::defaultAudioDriverName() const
 {
     return {};
 }
 
-std::string AudioConfigurationStub::currentAudioApi() const
+std::string AudioConfigurationStub::currentAudioDriverName() const
 {
     return {};
 }
 
-void AudioConfigurationStub::setCurrentAudioApi(const std::string&)
+void AudioConfigurationStub::setCurrentAudioDriverName(const std::string&)
 {
 }
 
-async::Notification AudioConfigurationStub::currentAudioApiChanged() const
+async::Notification AudioConfigurationStub::currentAudioDriverChanged() const
 {
     return {};
 }

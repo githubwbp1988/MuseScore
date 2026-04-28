@@ -37,28 +37,27 @@
 using namespace muse;
 using namespace muse::audio;
 using namespace muse::audio::engine;
-using namespace muse::audio::fx;
 using namespace muse::audio::synth;
 
 EngineController::EngineController(std::shared_ptr<rpc::IRpcChannel> rpcChannel)
     : m_rpcChannel(rpcChannel)
 {
-    m_rpcChannel->onRequest(rpc::MsgCode::EngineInit, [this](const rpc::Msg& msg) {
+    m_rpcChannel->onRequest(rpc::GLOBAL_CTX_ID, rpc::MsgCode::EngineInit, [this](const rpc::Msg& msg) {
         OutputSpec spec;
         AudioEngineConfig conf;
 
         IF_ASSERT_FAILED(rpc::RpcPacker::unpack(msg.data, spec, conf)) {
-            return;
+            return make_response_ret(msg, make_ret(Err::InvalidRpcData));
         }
 
         init(spec, conf);
 
-        m_rpcChannel->send(rpc::make_response(msg));
+        return make_response_ret(msg, make_ok());
     });
 
-    m_rpcChannel->onRequest(rpc::MsgCode::EngineDeinit, [this](const rpc::Msg& msg) {
+    m_rpcChannel->onRequest(rpc::GLOBAL_CTX_ID, rpc::MsgCode::EngineDeinit, [this](const rpc::Msg& msg) {
         deinit();
-        m_rpcChannel->send(rpc::make_response(msg));
+        return make_response_ret(msg, make_ok());
     });
 }
 
@@ -72,7 +71,7 @@ void EngineController::onStartRunning()
 
     //! NOTE We inform that the engine is running and can receive messages
     //! (it has not yet been initialized)
-    m_rpcChannel->send(rpc::make_notification(rpc::MsgCode::EngineRunning));
+    m_rpcChannel->send(rpc::make_notification(rpc::GLOBAL_CTX_ID, rpc::MsgCode::EngineRunning));
 }
 
 void EngineController::init(const OutputSpec& outputSpec, const AudioEngineConfig& conf)
@@ -85,14 +84,8 @@ void EngineController::init(const OutputSpec& outputSpec, const AudioEngineConfi
     synthResolver()->init(configuration()->defaultAudioInputParams(), outputSpec);
     // ------------------------------------------------------------
 
-    RenderConstraints consts;
-    consts.desiredAudioThreadNumber = configuration()->desiredAudioThreadNumber();
-    consts.minTrackCountForMultithreading = configuration()->minTrackCountForMultithreading();
-
     // Setup audio engine
     audioEngine()->init(outputSpec);
-
-    audioEngine()->context()->init(consts);
 
     transportEventsDispatcher()->init();
 }
@@ -101,7 +94,6 @@ void EngineController::deinit()
 {
     //! AUDIO THREAD
     m_rpcController->deinit();
-    audioEngine()->context()->deinit();
     audioEngine()->deinit();
 }
 

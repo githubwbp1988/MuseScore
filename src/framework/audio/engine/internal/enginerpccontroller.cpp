@@ -23,6 +23,7 @@
 
 #include "audio/common/audiosanitizer.h"
 #include "audio/common/rpc/rpcpacker.h"
+#include "audio/common/audioerrors.h"
 
 #include "log.h"
 
@@ -44,9 +45,16 @@
 using namespace muse::audio::engine;
 using namespace muse::audio::rpc;
 
-std::shared_ptr<IAudioContext> EngineRpcController::audioContext() const
+std::shared_ptr<IAudioContext> EngineRpcController::audioContext(rpc::CtxId ctxId) const
 {
-    return audioEngine()->context();
+    IF_ASSERT_FAILED(ctxId > 0) {
+        return nullptr;
+    }
+    auto audioContext = audioEngine()->context(static_cast<AudioCtxId>(ctxId));
+    IF_ASSERT_FAILED(audioContext) {
+        return nullptr;
+    }
+    return audioContext;
 }
 
 void EngineRpcController::init()
@@ -54,531 +62,777 @@ void EngineRpcController::init()
     ONLY_AUDIO_RPC_THREAD;
 
     // AudioEngine
-    onLongRequest(MsgCode::SetOutputSpec, [this](const Msg& msg) {
+    onLongRequest(GLOBAL_CTX_ID, MsgCode::SetOutputSpec, [this](const Msg& msg) {
         OutputSpec spec;
         IF_ASSERT_FAILED(RpcPacker::unpack(msg.data, spec)) {
-            return;
+            return make_response_ret(msg, make_ret(Err::InvalidRpcData));
         }
         audioEngine()->setOutputSpec(spec);
+
+        return make_response_ret(msg, make_ok());
     });
 
     // Soundfont
-    onLongRequest(MsgCode::LoadSoundFonts, [this](const Msg& msg) {
+    onLongRequest(GLOBAL_CTX_ID, MsgCode::LoadSoundFonts, [this](const Msg& msg) {
         std::vector<synth::SoundFontUri> uris;
         IF_ASSERT_FAILED(RpcPacker::unpack(msg.data, uris)) {
-            return;
+            return make_response_ret(msg, make_ret(Err::InvalidRpcData));
         }
 
         soundFontRepository()->loadSoundFonts(uris);
+
+        return make_response_ret(msg, make_ok());
     });
 
-    onLongRequest(MsgCode::AddSoundFont, [this](const Msg& msg) {
+    onLongRequest(GLOBAL_CTX_ID, MsgCode::AddSoundFont, [this](const Msg& msg) {
         synth::SoundFontUri uri;
         IF_ASSERT_FAILED(RpcPacker::unpack(msg.data, uri)) {
-            return;
+            return make_response_ret(msg, make_ret(Err::InvalidRpcData));
         }
 
         soundFontRepository()->addSoundFont(uri);
+
+        return make_response_ret(msg, make_ok());
     });
 
-    onLongRequest(MsgCode::AddSoundFontData, [this](const Msg& msg) {
+    onLongRequest(GLOBAL_CTX_ID, MsgCode::AddSoundFontData, [this](const Msg& msg) {
         synth::SoundFontUri uri;
         ByteArray data;
         IF_ASSERT_FAILED(RpcPacker::unpack(msg.data, uri, data)) {
-            return;
+            return make_response_ret(msg, make_ret(Err::InvalidRpcData));
         }
 
         soundFontRepository()->addSoundFontData(uri, data);
+
+        return make_response_ret(msg, make_ok());
     });
 
     // Engine Conf
-    onLongRequest(MsgCode::EngineConfigChanged, [this](const Msg& msg) {
+    onLongRequest(GLOBAL_CTX_ID, MsgCode::EngineConfigChanged, [this](const Msg& msg) {
         AudioEngineConfig conf;
         IF_ASSERT_FAILED(RpcPacker::unpack(msg.data, conf)) {
-            return;
+            return make_response_ret(msg, make_ret(Err::InvalidRpcData));
         }
 
         configuration()->setConfig(conf);
+
+        return make_response_ret(msg, make_ok());
     });
 
     // AudioContext
-    // Notification
-    audioContext()->trackAdded().onReceive(this, [this](TrackId trackId) {
-        channel()->send(rpc::make_notification(MsgCode::TrackAdded, RpcPacker::pack(trackId)));
-    });
 
-    audioContext()->trackRemoved().onReceive(this, [this](TrackId trackId) {
-        channel()->send(rpc::make_notification(MsgCode::TrackRemoved, RpcPacker::pack(trackId)));
-    });
-
-    audioContext()->inputParamsChanged().onReceive(this, [this](TrackId trackId, const AudioInputParams& params) {
-        channel()->send(rpc::make_notification(MsgCode::InputParamsChanged, RpcPacker::pack(trackId, params)));
-    });
-
-    audioContext()->outputParamsChanged().onReceive(this, [this](TrackId trackId, const AudioOutputParams& params) {
-        channel()->send(rpc::make_notification(MsgCode::OutputParamsChanged, RpcPacker::pack(trackId, params)));
-    });
-
-    audioContext()->masterOutputParamsChanged().onReceive(this, [this](const AudioOutputParams& params) {
-        channel()->send(rpc::make_notification(MsgCode::MasterOutputParamsChanged, RpcPacker::pack(params)));
-    });
-
-    // Tracks
-    onQuickRequest(MsgCode::GetTrackIdList, [this](const Msg& msg) {
+    // Init / Deinit
+    onLongRequest(GLOBAL_CTX_ID, MsgCode::ContextInit, [this](const Msg& msg) {
         ONLY_AUDIO_RPC_THREAD;
-        RetVal<TrackIdList> ret = audioContext()->trackIdList();
-        channel()->send(rpc::make_response(msg, RpcPacker::pack(ret)));
-    });
 
-    onQuickRequest(MsgCode::GetTrackName, [this](const Msg& msg) {
-        ONLY_AUDIO_RPC_THREAD;
-        TrackId trackId = 0;
-        IF_ASSERT_FAILED(RpcPacker::unpack(msg.data, trackId)) {
-            return;
-        }
-        RetVal<TrackName> ret = audioContext()->trackName(trackId);
-        channel()->send(rpc::make_response(msg, RpcPacker::pack(ret)));
-    });
-
-    onLongRequest(MsgCode::AddTrackWithPlaybackData, [this](const Msg& msg) {
-        ONLY_AUDIO_RPC_THREAD;
-        TrackName trackName;
-        mpe::PlaybackData playbackData;
-        AudioParams params;
-        rpc::StreamId mainStreamId = 0;
-        rpc::StreamId offStreamId = 0;
-        IF_ASSERT_FAILED(RpcPacker::unpack(msg.data, trackName, playbackData, params, mainStreamId, offStreamId)) {
-            return;
+        rpc::CtxId ctxId = 0;
+        IF_ASSERT_FAILED(RpcPacker::unpack(msg.data, ctxId)) {
+            return make_response_ret(msg, make_ret(Err::InvalidRpcData));
         }
 
-        RpcStreamExec mainExec = [this](const std::function<void()>& func) {
-            audioEngine()->execOperation(OperationType::QuickOperation, func);
-        };
-
-        RpcStreamExec offExec = [this](const std::function<void()>& func) {
-            audioEngine()->execOperation(OperationType::QuickOperation, func);
-        };
-
-        channel()->addReceiveStream(StreamName::PlaybackDataMainStream, mainStreamId, playbackData.mainStream, mainExec);
-        channel()->addReceiveStream(StreamName::PlaybackDataOffStream, offStreamId, playbackData.offStream, offExec);
-
-        auto addTrackAndSendResponse = [this](const Msg& msg, const TrackName& trackName,
-                                              const mpe::PlaybackData& playbackData, const AudioParams& params) {
-            RetVal2<TrackId, AudioParams> ret = audioContext()->addTrack(trackName, playbackData, params);
-            channel()->send(rpc::make_response(msg, RpcPacker::pack(ret)));
-        };
-
-        AudioResourceType resourceType = params.in.resourceMeta.type;
-
-        // Not Fluid
-        if (resourceType != AudioResourceType::FluidSoundfont) {
-            addTrackAndSendResponse(msg, trackName, playbackData, params);
-            return;
+        RetVal<std::shared_ptr<IAudioContext> > ret = audioEngine()->addAudioContext(ctxId);
+        if (!ret.ret || !ret.val) {
+            return make_response_ret(msg, ret.ret);
         }
+        auto acontext = ret.val;
 
-        // Fluid
-        std::string sfname = params.in.resourceMeta.attributeVal(synth::SOUNDFONT_NAME_ATTRIBUTE).toStdString();
-        if (sfname.empty()) {
-            sfname = params.in.resourceMeta.id;
-        }
+        // Requests to audio context
 
-        if (soundFontRepository()->isSoundFontLoaded(sfname)) {
-            addTrackAndSendResponse(msg, trackName, playbackData, params);
-        }
-        // Waiting for SF to load
-        else if (soundFontRepository()->isLoadingSoundFonts()) {
-            LOGI() << "Waiting for SF to load, trackName: " << trackName << ", SF name: " << sfname;
-            m_pendingTracks[sfname].emplace_back(PendingTrack { msg, trackName, playbackData, params });
-
-            //! NOTE We subscribe for the first track for which a soundfont is not found.
-            //! When the notification is triggered, processing will be called for all tracks.
-            if (!m_soundFontsChangedSubscribed) {
-                m_soundFontsChangedSubscribed = true;
-                soundFontRepository()->soundFontsChanged().onNotify(this,
-                                                                    [this, addTrackAndSendResponse]() {
-                    std::vector<std::string> toRemove;
-                    for (auto& p : m_pendingTracks) {
-                        const std::string& sfname = p.first;
-                        if (soundFontRepository()->isSoundFontLoaded(sfname)) {
-                            for (const PendingTrack& t : p.second) {
-                                addTrackAndSendResponse(t.msg, t.trackName, t.playbackData, t.params);
-                            }
-                            toRemove.push_back(sfname);
-                        }
-                    }
-
-                    for (const std::string& sf : toRemove) {
-                        m_pendingTracks.erase(sf);
-                    }
-
-                    if (m_pendingTracks.empty()) {
-                        soundFontRepository()->soundFontsChanged().disconnect(this);
-                        m_soundFontsChangedSubscribed = false;
-                    }
-                });
-            }
-        } else { // Attempt to add it anyway (most likely fallback will be used)
-            addTrackAndSendResponse(msg, trackName, playbackData, params);
-        }
-    });
-
-    onLongRequest(MsgCode::AddTrackWithIODevice, [this](const Msg& msg) {
-        ONLY_AUDIO_RPC_THREAD;
-        TrackName trackName;
-        uint64_t devicePtr = 0;
-        AudioParams params;
-        IF_ASSERT_FAILED(RpcPacker::unpack(msg.data, trackName, devicePtr, params)) {
-            return;
-        }
-        io::IODevice* device = reinterpret_cast<io::IODevice*>(devicePtr);
-
-        RetVal2<TrackId, AudioParams> ret = audioContext()->addTrack(trackName, device, params);
-        channel()->send(rpc::make_response(msg, RpcPacker::pack(ret)));
-    });
-
-    onLongRequest(MsgCode::AddAuxTrack, [this](const Msg& msg) {
-        ONLY_AUDIO_RPC_THREAD;
-        TrackName trackName;
-        AudioOutputParams outputParams;
-        IF_ASSERT_FAILED(RpcPacker::unpack(msg.data, trackName, outputParams)) {
-            return;
-        }
-        RetVal2<TrackId, AudioOutputParams> ret = audioContext()->addAuxTrack(trackName, outputParams);
-        channel()->send(rpc::make_response(msg, RpcPacker::pack(ret)));
-    });
-
-    onLongRequest(MsgCode::RemoveTrack, [this](const Msg& msg) {
-        ONLY_AUDIO_RPC_THREAD;
-        TrackId trackId = 0;
-        IF_ASSERT_FAILED(RpcPacker::unpack(msg.data, trackId)) {
-            return;
-        }
-        audioContext()->removeTrack(trackId);
-    });
-
-    onLongRequest(MsgCode::RemoveAllTracks, [this](const Msg&) {
-        ONLY_AUDIO_RPC_THREAD;
-        audioContext()->removeAllTracks();
-    });
-
-    onQuickRequest(MsgCode::GetAvailableInputResources, [this](const Msg& msg) {
-        ONLY_AUDIO_RPC_THREAD;
-        AudioResourceMetaList list = audioContext()->availableInputResources();
-        //! NOTE The list can be large.
-        //! There can be many re-allocations, because of this it takes a long time to pack.
-        //! Let's add a reserve. 300 is approximately the size of one element, we get empirically.
-        channel()->send(rpc::make_response(msg, RpcPacker::pack(rpc::Options { list.size() * 300 }, list)));
-    });
-
-    onQuickRequest(MsgCode::GetAvailableSoundPresets, [this](const Msg& msg) {
-        ONLY_AUDIO_RPC_THREAD;
-        AudioResourceMeta meta;
-        IF_ASSERT_FAILED(RpcPacker::unpack(msg.data, meta)) {
-            return;
-        }
-        SoundPresetList list = audioContext()->availableSoundPresets(meta);
-        channel()->send(rpc::make_response(msg, RpcPacker::pack(list)));
-    });
-
-    onQuickRequest(MsgCode::GetInputParams, [this](const Msg& msg) {
-        ONLY_AUDIO_RPC_THREAD;
-        TrackId trackId = 0;
-        IF_ASSERT_FAILED(RpcPacker::unpack(msg.data, trackId)) {
-            return;
-        }
-        RetVal<AudioInputParams> ret = audioContext()->inputParams(trackId);
-        channel()->send(rpc::make_response(msg, RpcPacker::pack(ret)));
-    });
-
-    onLongRequest(MsgCode::SetInputParams, [this](const Msg& msg) {
-        ONLY_AUDIO_RPC_THREAD;
-        TrackId trackId = 0;
-        AudioInputParams params;
-        IF_ASSERT_FAILED(RpcPacker::unpack(msg.data, trackId, params)) {
-            return;
-        }
-        audioContext()->setInputParams(trackId, params);
-    });
-
-    onLongRequest(MsgCode::ProcessInput, [this](const Msg& msg) {
-        ONLY_AUDIO_RPC_THREAD;
-        TrackId trackId = 0;
-        IF_ASSERT_FAILED(RpcPacker::unpack(msg.data, trackId)) {
-            return;
-        }
-
-        audioContext()->processInput(trackId);
-    });
-
-    onQuickRequest(MsgCode::GetInputProcessingProgress, [this](const Msg& msg) {
-        ONLY_AUDIO_RPC_THREAD;
-        TrackId trackId = 0;
-        IF_ASSERT_FAILED(RpcPacker::unpack(msg.data, trackId)) {
-            return;
-        }
-
-        RetVal<InputProcessingProgress> ret = audioContext()->inputProcessingProgress(trackId);
-        StreamId streamId = 0;
-        if (ret.ret) {
-            streamId = channel()->addSendStream(StreamName::InputProcessingProgressStream, ret.val.processedChannel);
-        }
-
-        channel()->send(rpc::make_response(msg, RpcPacker::pack(ret.ret, ret.val.isStarted, streamId)));
-    });
-
-    onLongRequest(MsgCode::ClearCache, [this](const Msg& msg) {
-        ONLY_AUDIO_RPC_THREAD;
-        TrackId trackId = 0;
-        IF_ASSERT_FAILED(RpcPacker::unpack(msg.data, trackId)) {
-            return;
-        }
-
-        audioContext()->clearCache(trackId);
-    });
-
-    onLongRequest(MsgCode::ClearSources, [this](const Msg&) {
-        ONLY_AUDIO_RPC_THREAD;
-        audioContext()->clearSources();
-    });
-
-    // Play
-    onQuickRequest(MsgCode::PrepareToPlay, [this](const Msg& msg) {
-        ONLY_AUDIO_RPC_THREAD;
-        audioContext()->prepareToPlay().onResolve(this, [this, msg](const Ret& ret) {
-            channel()->send(rpc::make_response(msg, RpcPacker::pack(ret)));
-        });
-    });
-
-    onQuickRequest(MsgCode::Play, [this](const Msg& msg) {
-        ONLY_AUDIO_RPC_THREAD;
-        secs_t delay = 0;
-        IF_ASSERT_FAILED(RpcPacker::unpack(msg.data, delay)) {
-            return;
-        }
-        audioContext()->play(delay);
-    });
-
-    onQuickRequest(MsgCode::Seek, [this](const Msg& msg) {
-        ONLY_AUDIO_RPC_THREAD;
-        secs_t newPosition = 0;
-        bool flushSound = false;
-        IF_ASSERT_FAILED(RpcPacker::unpack(msg.data, newPosition, flushSound)) {
-            return;
-        }
-        audioContext()->seek(newPosition, flushSound);
-    });
-
-    onQuickRequest(MsgCode::Stop, [this](const Msg&) {
-        ONLY_AUDIO_RPC_THREAD;
-        audioContext()->stop();
-    });
-
-    onQuickRequest(MsgCode::Pause, [this](const Msg&) {
-        ONLY_AUDIO_RPC_THREAD;
-        audioContext()->pause();
-    });
-
-    onQuickRequest(MsgCode::Resume, [this](const Msg& msg) {
-        ONLY_AUDIO_RPC_THREAD;
-        secs_t delay = 0;
-        IF_ASSERT_FAILED(RpcPacker::unpack(msg.data, delay)) {
-            return;
-        }
-        audioContext()->resume(delay);
-    });
-
-    onQuickRequest(MsgCode::SetDuration, [this](const Msg& msg) {
-        ONLY_AUDIO_RPC_THREAD;
-        secs_t duration = 0;
-        IF_ASSERT_FAILED(RpcPacker::unpack(msg.data, duration)) {
-            return;
-        }
-        audioContext()->setDuration(duration);
-    });
-
-    onQuickRequest(MsgCode::SetLoop, [this](const Msg& msg) {
-        ONLY_AUDIO_RPC_THREAD;
-        secs_t from = 0;
-        secs_t to = 0;
-        IF_ASSERT_FAILED(RpcPacker::unpack(msg.data, from, to)) {
-            return;
-        }
-        Ret ret = audioContext()->setLoop(from, to);
-        channel()->send(rpc::make_response(msg, RpcPacker::pack(ret)));
-    });
-
-    onQuickRequest(MsgCode::ResetLoop, [this](const Msg&) {
-        ONLY_AUDIO_RPC_THREAD;
-        audioContext()->resetLoop();
-    });
-
-    onQuickRequest(MsgCode::GetPlaybackStatus, [this](const Msg& msg) {
-        ONLY_AUDIO_RPC_THREAD;
-
-        PlaybackStatus status = audioContext()->playbackStatus();
-        async::Channel<PlaybackStatus> ch = audioContext()->playbackStatusChanged();
-        StreamId streamId = channel()->addSendStream(StreamName::PlaybackStatusStream, ch);
-        channel()->send(rpc::make_response(msg, RpcPacker::pack(status, streamId)));
-    });
-
-    onQuickRequest(MsgCode::GetPlaybackPosition, [this](const Msg& msg) {
-        ONLY_AUDIO_RPC_THREAD;
-
-        secs_t pos = audioContext()->playbackPosition();
-        async::Channel<secs_t> ch = audioContext()->playbackPositionChanged();
-        StreamId streamId = channel()->addSendStream(StreamName::PlaybackPositionStream, ch);
-        channel()->send(rpc::make_response(msg, RpcPacker::pack(pos, streamId)));
-    });
-
-    // Output
-
-    onQuickRequest(MsgCode::GetOutputParams, [this](const Msg& msg) {
-        ONLY_AUDIO_RPC_THREAD;
-        TrackId trackId = 0;
-        IF_ASSERT_FAILED(RpcPacker::unpack(msg.data, trackId)) {
-            return;
-        }
-        RetVal<AudioOutputParams> ret = audioContext()->outputParams(trackId);
-        channel()->send(rpc::make_response(msg, RpcPacker::pack(ret)));
-    });
-
-    onQuickRequest(MsgCode::SetOutputParams, [this](const Msg& msg) {
-        ONLY_AUDIO_RPC_THREAD;
-        TrackId trackId = 0;
-        AudioOutputParams params;
-        IF_ASSERT_FAILED(RpcPacker::unpack(msg.data, trackId, params)) {
-            return;
-        }
-        audioContext()->setOutputParams(trackId, params);
-    });
-
-    onQuickRequest(MsgCode::GetMasterOutputParams, [this](const Msg& msg) {
-        ONLY_AUDIO_RPC_THREAD;
-        RetVal<AudioOutputParams> ret = audioContext()->masterOutputParams();
-        channel()->send(rpc::make_response(msg, RpcPacker::pack(ret)));
-    });
-
-    onQuickRequest(MsgCode::SetMasterOutputParams, [this](const Msg& msg) {
-        ONLY_AUDIO_RPC_THREAD;
-        AudioOutputParams params;
-        IF_ASSERT_FAILED(RpcPacker::unpack(msg.data, params)) {
-            return;
-        }
-        audioContext()->setMasterOutputParams(params);
-    });
-
-    onQuickRequest(MsgCode::ClearMasterOutputParams, [this](const Msg&) {
-        ONLY_AUDIO_RPC_THREAD;
-        audioContext()->clearMasterOutputParams();
-    });
-
-    onQuickRequest(MsgCode::GetAvailableOutputResources, [this](const Msg& msg) {
-        ONLY_AUDIO_RPC_THREAD;
-        AudioResourceMetaList list = audioContext()->availableOutputResources();
-        channel()->send(rpc::make_response(msg, RpcPacker::pack(list)));
-    });
-
-    onQuickRequest(MsgCode::GetSignalChanges, [this](const Msg& msg) {
-        ONLY_AUDIO_RPC_THREAD;
-        TrackId trackId = 0;
-        IF_ASSERT_FAILED(RpcPacker::unpack(msg.data, trackId)) {
-            return;
-        }
-
-        RetVal<AudioSignalChanges> ret = audioContext()->signalChanges(trackId);
-        StreamId streamId = 0;
-        if (ret.ret) {
-            streamId = channel()->addSendStream(StreamName::AudioSignalStream, ret.val);
-        }
-
-        RetVal<StreamId> res;
-        res.ret = ret.ret;
-        res.val = streamId;
-
-        channel()->send(rpc::make_response(msg, RpcPacker::pack(res)));
-    });
-
-    onQuickRequest(MsgCode::GetMasterSignalChanges, [this](const Msg& msg) {
-        ONLY_AUDIO_RPC_THREAD;
-        RetVal<AudioSignalChanges> ret = audioContext()->masterSignalChanges();
-        StreamId streamId = 0;
-        if (ret.ret) {
-            streamId = channel()->addSendStream(StreamName::AudioMasterSignalStream, ret.val);
-        }
-
-        RetVal<StreamId> res;
-        res.ret = ret.ret;
-        res.val = streamId;
-
-        channel()->send(rpc::make_response(msg, RpcPacker::pack(res)));
-    });
-
-    onLongRequest(MsgCode::SaveSoundTrack, [this](const Msg& msg) {
-        ONLY_AUDIO_RPC_THREAD;
-        SoundTrackFormat format;
-        uintptr_t dstDevicePtr = 0;
-        IF_ASSERT_FAILED(RpcPacker::unpack(msg.data, format, dstDevicePtr)) {
-            return;
-        }
-        io::IODevice& dstDevice = *reinterpret_cast<io::IODevice*>(dstDevicePtr);
-        audioContext()->saveSoundTrack(dstDevice, format).onResolve(this, [this, msg](const Ret& ret) {
-            channel()->send(rpc::make_response(msg, RpcPacker::pack(ret)));
-        });
-    });
-
-    onLongRequest(MsgCode::AbortSavingAllSoundTracks, [this](const Msg&) {
-        ONLY_AUDIO_RPC_THREAD;
-        audioContext()->abortSavingAllSoundTracks();
-    });
-
-    onQuickRequest(MsgCode::GetSaveSoundTrackProgress, [this](const Msg& msg) {
-        ONLY_AUDIO_RPC_THREAD;
-        SaveSoundTrackProgress ch = audioContext()->saveSoundTrackProgressChanged();
-        ch.onReceive(this, [this](int64_t current, int64_t total, SaveSoundTrackStage stage) {
+        // Tracks
+        onLongRequest(ctxId, MsgCode::AddTrackWithPlaybackData, [this](const Msg& msg) {
             ONLY_AUDIO_RPC_THREAD;
-            m_saveSoundTrackProgressStream.send(current, total, stage);
+
+            using RetType = RetVal2<TrackId, AudioParams>;
+
+            TrackName trackName;
+            mpe::PlaybackData playbackData;
+            AudioParams params;
+            rpc::StreamId mainStreamId = 0;
+            rpc::StreamId offStreamId = 0;
+            IF_ASSERT_FAILED(RpcPacker::unpack(msg.data, trackName, playbackData, params, mainStreamId, offStreamId)) {
+                return make_response(msg, RpcPacker::pack(RetType::make_ret(Err::InvalidRpcData)));
+            }
+
+            RpcStreamExec mainExec = [this](const std::function<void()>& func) {
+                audioEngine()->execOperation(OperationType::QuickOperation, func);
+            };
+
+            RpcStreamExec offExec = [this](const std::function<void()>& func) {
+                audioEngine()->execOperation(OperationType::QuickOperation, func);
+            };
+
+            channel()->addReceiveStream(StreamName::PlaybackDataMainStream, mainStreamId, playbackData.mainStream, mainExec);
+            channel()->addReceiveStream(StreamName::PlaybackDataOffStream, offStreamId, playbackData.offStream, offExec);
+
+            auto addTrackAndSendResponse = [this](const Msg& msg, const TrackName& trackName,
+                                                  const mpe::PlaybackData& playbackData, const AudioParams& params) {
+                if (auto actx = audioContext(msg.ctxId)) {
+                    RetType ret = actx->addTrack(trackName, playbackData, params);
+                    channel()->send(make_response(msg, RpcPacker::pack(ret)));
+                } else {
+                    channel()->send(make_response(msg, RpcPacker::pack(RetType::make_ret(Err::InvalidContext))));
+                }
+            };
+
+            AudioResourceType resourceType = params.in.resourceMeta.type;
+
+            // Not Fluid
+            if (resourceType != AudioResourceType::FluidSoundfont) {
+                addTrackAndSendResponse(msg, trackName, playbackData, params);
+                return make_response_delayed(msg);
+            }
+
+            // Fluid
+            std::string sfname = params.in.resourceMeta.attributeVal(synth::SOUNDFONT_NAME_ATTRIBUTE).toStdString();
+            if (sfname.empty()) {
+                sfname = params.in.resourceMeta.id;
+            }
+
+            if (soundFontRepository()->isSoundFontLoaded(sfname)) {
+                addTrackAndSendResponse(msg, trackName, playbackData, params);
+                return make_response_delayed(msg);
+            }
+            // Waiting for SF to load
+            else if (soundFontRepository()->isLoadingSoundFonts()) {
+                LOGI() << "Waiting for SF to load, trackName: " << trackName << ", SF name: " << sfname;
+                m_pendingTracks[sfname].emplace_back(PendingTrack { msg, trackName, playbackData, params });
+
+                //! NOTE We subscribe for the first track for which a soundfont is not found.
+                //! When the notification is triggered, processing will be called for all tracks.
+                if (!m_soundFontsChangedSubscribed) {
+                    m_soundFontsChangedSubscribed = true;
+                    soundFontRepository()->soundFontsChanged().onNotify(this, [this, addTrackAndSendResponse]() {
+                        std::vector<std::string> toRemove;
+                        for (auto& p : m_pendingTracks) {
+                            const std::string& sfname = p.first;
+                            if (soundFontRepository()->isSoundFontLoaded(sfname)) {
+                                for (const PendingTrack& t : p.second) {
+                                    addTrackAndSendResponse(t.msg, t.trackName, t.playbackData, t.params);
+                                }
+                                toRemove.push_back(sfname);
+                            }
+                        }
+
+                        for (const std::string& sf : toRemove) {
+                            m_pendingTracks.erase(sf);
+                        }
+
+                        if (m_pendingTracks.empty()) {
+                            soundFontRepository()->soundFontsChanged().disconnect(this);
+                            m_soundFontsChangedSubscribed = false;
+                        }
+                    });
+                }
+            } else { // Attempt to add it anyway (most likely fallback will be used)
+                addTrackAndSendResponse(msg, trackName, playbackData, params);
+            }
+
+            return make_response_delayed(msg);
         });
 
-        if (m_saveSoundTrackProgressStreamId == 0) {
-            m_saveSoundTrackProgressStreamId = channel()->addSendStream(StreamName::SaveSoundTrackProgressStream,
-                                                                        m_saveSoundTrackProgressStream);
+        onLongRequest(ctxId, MsgCode::AddTrackWithIODevice, [this](const Msg& msg) {
+            ONLY_AUDIO_RPC_THREAD;
+
+            using RetType = RetVal2<TrackId, AudioParams>;
+
+            TrackName trackName;
+            uint64_t devicePtr = 0;
+            AudioParams params;
+            IF_ASSERT_FAILED(RpcPacker::unpack(msg.data, trackName, devicePtr, params)) {
+                return make_response(msg, RpcPacker::pack(RetType::make_ret(Err::InvalidRpcData)));
+            }
+            io::IODevice* device = reinterpret_cast<io::IODevice*>(devicePtr);
+
+            if (auto actx = audioContext(msg.ctxId)) {
+                RetType ret = actx->addTrack(trackName, device, params);
+                return make_response(msg, RpcPacker::pack(ret));
+            } else {
+                return make_response(msg, RpcPacker::pack(RetType::make_ret(Err::InvalidContext)));
+            }
+        });
+
+        onLongRequest(ctxId, MsgCode::AddAuxTrack, [this](const Msg& msg) {
+            ONLY_AUDIO_RPC_THREAD;
+
+            using RetType = RetVal2<TrackId, AudioOutputParams>;
+
+            TrackName trackName;
+            AudioOutputParams outputParams;
+            IF_ASSERT_FAILED(RpcPacker::unpack(msg.data, trackName, outputParams)) {
+                return make_response(msg, RpcPacker::pack(RetType::make_ret(Err::InvalidRpcData)));
+            }
+
+            if (auto actx = audioContext(msg.ctxId)) {
+                RetType ret = actx->addAuxTrack(trackName, outputParams);
+                return make_response(msg, RpcPacker::pack(ret));
+            } else {
+                return make_response(msg, RpcPacker::pack(RetType::make_ret(Err::InvalidContext)));
+            }
+        });
+
+        onLongRequest(ctxId, MsgCode::RemoveTrack, [this](const Msg& msg) {
+            ONLY_AUDIO_RPC_THREAD;
+            TrackId trackId = 0;
+            IF_ASSERT_FAILED(RpcPacker::unpack(msg.data, trackId)) {
+                return make_response_ret(msg, make_ret(Err::InvalidRpcData));
+            }
+
+            if (auto actx = audioContext(msg.ctxId)) {
+                actx->removeTrack(trackId);
+                return make_response_ret(msg, make_ok());
+            } else {
+                return make_response_ret(msg, make_ret(Err::InvalidContext));
+            }
+        });
+
+        onLongRequest(ctxId, MsgCode::RemoveAllTracks, [this](const Msg& msg) {
+            ONLY_AUDIO_RPC_THREAD;
+            if (auto actx = audioContext(msg.ctxId)) {
+                actx->removeAllTracks();
+                return make_response_ret(msg, make_ok());
+            } else {
+                return make_response_ret(msg, make_ret(Err::InvalidContext));
+            }
+        });
+
+        acontext->trackAdded().onReceive(this, [this, ctxId](TrackId trackId) {
+            channel()->send(rpc::make_notification(ctxId, MsgCode::TrackAdded, RpcPacker::pack(trackId)));
+        });
+
+        acontext->trackRemoved().onReceive(this, [this, ctxId](TrackId trackId) {
+            channel()->send(rpc::make_notification(ctxId, MsgCode::TrackRemoved, RpcPacker::pack(trackId)));
+        });
+
+        onQuickRequest(ctxId, MsgCode::GetTrackIdList, [this](const Msg& msg) {
+            ONLY_AUDIO_RPC_THREAD;
+            if (auto actx = audioContext(msg.ctxId)) {
+                RetVal<TrackIdList> ret = actx->trackIdList();
+                return make_response_ret(msg, ret);
+            } else {
+                return make_response_ret(msg, RetVal<TrackIdList>::make_ret(Err::InvalidContext));
+            }
+        });
+
+        onQuickRequest(ctxId, MsgCode::GetTrackName, [this](const Msg& msg) {
+            ONLY_AUDIO_RPC_THREAD;
+
+            TrackId trackId = 0;
+            IF_ASSERT_FAILED(RpcPacker::unpack(msg.data, trackId)) {
+                return make_response_ret(msg, make_ret(Err::InvalidRpcData));
+            }
+
+            if (auto actx = audioContext(msg.ctxId)) {
+                RetVal<TrackName> ret = actx->trackName(trackId);
+                return make_response_ret(msg, ret);
+            } else {
+                return make_response_ret(msg, RetVal<TrackName>::make_ret(Err::InvalidContext));
+            }
+        });
+
+        // Sources
+        onQuickRequest(ctxId, MsgCode::GetAvailableInputResources, [this](const Msg& msg) {
+            ONLY_AUDIO_RPC_THREAD;
+            if (auto actx = audioContext(msg.ctxId)) {
+                AudioResourceMetaList list = actx->availableInputResources();
+                return make_response_ret(msg, RetVal<AudioResourceMetaList>::make_ok(list));
+            } else {
+                return make_response_ret(msg, RetVal<AudioResourceMetaList>::make_ret(Err::InvalidContext));
+            }
+        });
+
+        onQuickRequest(ctxId, MsgCode::GetAvailableSoundPresets, [this](const Msg& msg) {
+            ONLY_AUDIO_RPC_THREAD;
+            AudioResourceMeta meta;
+            IF_ASSERT_FAILED(RpcPacker::unpack(msg.data, meta)) {
+                return make_response_ret(msg, make_ret(Err::InvalidRpcData));
+            }
+            if (auto actx = audioContext(msg.ctxId)) {
+                SoundPresetList list = actx->availableSoundPresets(meta);
+                return make_response_ret(msg, RetVal<SoundPresetList>::make_ok(list));
+            } else {
+                return make_response_ret(msg, RetVal<SoundPresetList>::make_ret(Err::InvalidContext));
+            }
+        });
+
+        onQuickRequest(ctxId, MsgCode::GetInputParams, [this](const Msg& msg) {
+            ONLY_AUDIO_RPC_THREAD;
+            TrackId trackId = 0;
+            IF_ASSERT_FAILED(RpcPacker::unpack(msg.data, trackId)) {
+                return make_response_ret(msg, make_ret(Err::InvalidRpcData));
+            }
+
+            if (auto actx = audioContext(msg.ctxId)) {
+                RetVal<AudioInputParams> ret = actx->inputParams(trackId);
+                return make_response_ret(msg, ret.ret);
+            } else {
+                return make_response_ret(msg, RetVal<AudioInputParams>::make_ret(Err::InvalidContext));
+            }
+        });
+
+        onLongRequest(ctxId, MsgCode::SetInputParams, [this](const Msg& msg) {
+            ONLY_AUDIO_RPC_THREAD;
+            TrackId trackId = 0;
+            AudioInputParams params;
+            IF_ASSERT_FAILED(RpcPacker::unpack(msg.data, trackId, params)) {
+                return make_response_ret(msg, make_ret(Err::InvalidRpcData));
+            }
+
+            if (auto actx = audioContext(msg.ctxId)) {
+                actx->setInputParams(trackId, params);
+                return make_response_ret(msg, make_ok());
+            } else {
+                return make_response_ret(msg, make_ret(Err::InvalidContext));
+            }
+        });
+
+        acontext->inputParamsChanged().onReceive(this, [this, ctxId](TrackId trackId, const AudioInputParams& params) {
+            channel()->send(rpc::make_notification(ctxId, MsgCode::InputParamsChanged, RpcPacker::pack(trackId, params)));
+        });
+
+        onLongRequest(ctxId, MsgCode::ProcessInput, [this](const Msg& msg) {
+            ONLY_AUDIO_RPC_THREAD;
+            TrackId trackId = 0;
+            IF_ASSERT_FAILED(RpcPacker::unpack(msg.data, trackId)) {
+                return make_response_ret(msg, make_ret(Err::InvalidRpcData));
+            }
+
+            if (auto actx = audioContext(msg.ctxId)) {
+                actx->processInput(trackId);
+                return make_response_ret(msg, make_ok());
+            } else {
+                return make_response_ret(msg, make_ret(Err::InvalidContext));
+            }
+        });
+
+        onQuickRequest(ctxId, MsgCode::GetInputProcessingProgress, [this](const Msg& msg) {
+            ONLY_AUDIO_RPC_THREAD;
+            TrackId trackId = 0;
+            IF_ASSERT_FAILED(RpcPacker::unpack(msg.data, trackId)) {
+                return make_response_ret(msg, make_ret(Err::InvalidRpcData));
+            }
+
+            if (auto actx = audioContext(msg.ctxId)) {
+                RetVal<InputProcessingProgress> ret = actx->inputProcessingProgress(trackId);
+                StreamId streamId = 0;
+                if (ret.ret) {
+                    streamId = channel()->addSendStream(StreamName::InputProcessingProgressStream, ret.val.processedChannel);
+                }
+                return make_response(msg, RpcPacker::pack(ret.ret, ret.val.isStarted, streamId));
+            } else {
+                return make_response(msg, RpcPacker::pack(make_ret(Err::InvalidContext), false, 0));
+            }
+        });
+
+        onLongRequest(ctxId, MsgCode::ClearCache, [this](const Msg& msg) {
+            ONLY_AUDIO_RPC_THREAD;
+            TrackId trackId = 0;
+            IF_ASSERT_FAILED(RpcPacker::unpack(msg.data, trackId)) {
+                return make_response_ret(msg, make_ret(Err::InvalidRpcData));
+            }
+
+            if (auto actx = audioContext(msg.ctxId)) {
+                actx->clearCache(trackId);
+                return make_response_ret(msg, make_ok());
+            } else {
+                return make_response_ret(msg, make_ret(Err::InvalidContext));
+            }
+        });
+
+        onLongRequest(ctxId, MsgCode::ClearSources, [this](const Msg& msg) {
+            ONLY_AUDIO_RPC_THREAD;
+            if (auto actx = audioContext(msg.ctxId)) {
+                actx->clearSources();
+                return make_response_ret(msg, make_ok());
+            } else {
+                return make_response_ret(msg, make_ret(Err::InvalidContext));
+            }
+        });
+
+        // Outputs
+        onQuickRequest(ctxId, MsgCode::GetAvailableOutputResources, [this](const Msg& msg) {
+            ONLY_AUDIO_RPC_THREAD;
+            if (auto actx = audioContext(msg.ctxId)) {
+                AudioResourceMetaList list = actx->availableOutputResources();
+                return make_response_ret(msg, RetVal<AudioResourceMetaList>::make_ok(list));
+            } else {
+                return make_response_ret(msg, RetVal<AudioResourceMetaList>::make_ret(Err::InvalidContext));
+            }
+        });
+
+        onQuickRequest(ctxId, MsgCode::GetOutputParams, [this](const Msg& msg) {
+            ONLY_AUDIO_RPC_THREAD;
+            TrackId trackId = 0;
+            IF_ASSERT_FAILED(RpcPacker::unpack(msg.data, trackId)) {
+                return make_response_ret(msg, make_ret(Err::InvalidRpcData));
+            }
+
+            if (auto actx = audioContext(msg.ctxId)) {
+                RetVal<AudioOutputParams> ret = actx->outputParams(trackId);
+                return make_response_ret(msg, ret);
+            } else {
+                return make_response_ret(msg, make_ret(Err::InvalidContext));
+            }
+        });
+
+        onQuickRequest(ctxId, MsgCode::SetOutputParams, [this](const Msg& msg) {
+            ONLY_AUDIO_RPC_THREAD;
+            TrackId trackId = 0;
+            AudioOutputParams params;
+            IF_ASSERT_FAILED(RpcPacker::unpack(msg.data, trackId, params)) {
+                return make_response_ret(msg, make_ret(Err::InvalidRpcData));
+            }
+
+            if (auto actx = audioContext(msg.ctxId)) {
+                actx->setOutputParams(trackId, params);
+                return make_response_ret(msg, make_ok());
+            } else {
+                return make_response_ret(msg, make_ret(Err::InvalidContext));
+            }
+        });
+
+        acontext->outputParamsChanged().onReceive(this, [this, ctxId](TrackId trackId, const AudioOutputParams& params) {
+            channel()->send(rpc::make_notification(ctxId, MsgCode::OutputParamsChanged, RpcPacker::pack(trackId, params)));
+        });
+
+        onQuickRequest(ctxId, MsgCode::GetSignalChanges, [this](const Msg& msg) {
+            ONLY_AUDIO_RPC_THREAD;
+            TrackId trackId = 0;
+            IF_ASSERT_FAILED(RpcPacker::unpack(msg.data, trackId)) {
+                return make_response_ret(msg, make_ret(Err::InvalidRpcData));
+            }
+
+            if (auto actx = audioContext(msg.ctxId)) {
+                RetVal<AudioSignalChanges> ret = audioContext(msg.ctxId)->signalChanges(trackId);
+                StreamId streamId = 0;
+                if (ret.ret) {
+                    streamId = channel()->addSendStream(StreamName::AudioSignalStream, ret.val);
+                }
+
+                RetVal<StreamId> res;
+                res.ret = ret.ret;
+                res.val = streamId;
+                return make_response_ret(msg, res);
+            } else {
+                return make_response_ret(msg, RetVal<StreamId>::make_ret(Err::InvalidContext));
+            }
+        });
+
+        onQuickRequest(ctxId, MsgCode::GetMasterOutputParams, [this](const Msg& msg) {
+            ONLY_AUDIO_RPC_THREAD;
+            if (auto actx = audioContext(msg.ctxId)) {
+                RetVal<AudioOutputParams> ret = actx->masterOutputParams();
+                return make_response_ret(msg, ret);
+            } else {
+                return make_response_ret(msg, RetVal<AudioOutputParams>::make_ret(Err::InvalidContext));
+            }
+        });
+
+        onQuickRequest(ctxId, MsgCode::SetMasterOutputParams, [this](const Msg& msg) {
+            ONLY_AUDIO_RPC_THREAD;
+            AudioOutputParams params;
+            IF_ASSERT_FAILED(RpcPacker::unpack(msg.data, params)) {
+                return make_response_ret(msg, make_ret(Err::InvalidRpcData));
+            }
+            if (auto actx = audioContext(msg.ctxId)) {
+                actx->setMasterOutputParams(params);
+                return make_response_ret(msg, make_ok());
+            } else {
+                return make_response_ret(msg, make_ret(Err::InvalidContext));
+            }
+        });
+
+        onQuickRequest(ctxId, MsgCode::ClearMasterOutputParams, [this](const Msg& msg) {
+            ONLY_AUDIO_RPC_THREAD;
+            if (auto actx = audioContext(msg.ctxId)) {
+                actx->clearMasterOutputParams();
+                return make_response_ret(msg, make_ok());
+            } else {
+                return make_response_ret(msg, make_ret(Err::InvalidContext));
+            }
+        });
+
+        acontext->masterOutputParamsChanged().onReceive(this, [this, ctxId](const AudioOutputParams& params) {
+            channel()->send(rpc::make_notification(ctxId, MsgCode::MasterOutputParamsChanged, RpcPacker::pack(params)));
+        });
+
+        onQuickRequest(ctxId, MsgCode::GetMasterSignalChanges, [this](const Msg& msg) {
+            ONLY_AUDIO_RPC_THREAD;
+
+            if (auto actx = audioContext(msg.ctxId)) {
+                RetVal<AudioSignalChanges> ret = actx->masterSignalChanges();
+                StreamId streamId = 0;
+                if (ret.ret) {
+                    streamId = channel()->addSendStream(StreamName::AudioMasterSignalStream, ret.val);
+                }
+
+                RetVal<StreamId> res;
+                res.ret = ret.ret;
+                res.val = streamId;
+                return make_response_ret(msg, res);
+            } else {
+                return make_response_ret(msg, RetVal<StreamId>::make_ret(Err::InvalidContext));
+            }
+        });
+
+        onLongRequest(ctxId, MsgCode::ClearAllFx, [this](const Msg& msg) {
+            ONLY_AUDIO_RPC_THREAD;
+            if (auto actx = audioContext(msg.ctxId)) {
+                actx->clearAllFx();
+                return make_response_ret(msg, make_ok());
+            } else {
+                return make_response_ret(msg, make_ret(Err::InvalidContext));
+            }
+        });
+
+        // Play
+        onQuickRequest(ctxId, MsgCode::PrepareToPlay, [this](const Msg& msg) {
+            ONLY_AUDIO_RPC_THREAD;
+            if (auto actx = audioContext(msg.ctxId)) {
+                actx->prepareToPlay().onResolve(this, [this, msg](const Ret& ret) {
+                    channel()->send(make_response_ret(msg, ret));
+                });
+                return make_response_delayed(msg);
+            } else {
+                return make_response_ret(msg, make_ret(Err::InvalidContext));
+            }
+        });
+
+        onQuickRequest(ctxId, MsgCode::Play, [this](const Msg& msg) {
+            ONLY_AUDIO_RPC_THREAD;
+            secs_t delay = 0;
+            IF_ASSERT_FAILED(RpcPacker::unpack(msg.data, delay)) {
+                return make_response_ret(msg, make_ret(Err::InvalidRpcData));
+            }
+
+            if (auto actx = audioContext(msg.ctxId)) {
+                actx->play(delay);
+                return make_response_ret(msg, make_ok());
+            } else {
+                return make_response_ret(msg, make_ret(Err::InvalidContext));
+            }
+        });
+
+        onQuickRequest(ctxId, MsgCode::Seek, [this](const Msg& msg) {
+            ONLY_AUDIO_RPC_THREAD;
+            secs_t newPosition = 0;
+            bool flushSound = false;
+            IF_ASSERT_FAILED(RpcPacker::unpack(msg.data, newPosition, flushSound)) {
+                return make_response_ret(msg, make_ret(Err::InvalidRpcData));
+            }
+            if (auto actx = audioContext(msg.ctxId)) {
+                actx->seek(newPosition, flushSound);
+                return make_response_ret(msg, make_ok());
+            } else {
+                return make_response_ret(msg, make_ret(Err::InvalidContext));
+            }
+        });
+
+        onQuickRequest(ctxId, MsgCode::Stop, [this](const Msg& msg) {
+            ONLY_AUDIO_RPC_THREAD;
+            if (auto actx = audioContext(msg.ctxId)) {
+                actx->stop();
+                return make_response_ret(msg, make_ok());
+            } else {
+                return make_response_ret(msg, make_ret(Err::InvalidContext));
+            }
+        });
+
+        onQuickRequest(ctxId, MsgCode::Pause, [this](const Msg& msg) {
+            ONLY_AUDIO_RPC_THREAD;
+            if (auto actx = audioContext(msg.ctxId)) {
+                actx->pause();
+                return make_response_ret(msg, make_ok());
+            } else {
+                return make_response_ret(msg, make_ret(Err::InvalidContext));
+            }
+        });
+
+        onQuickRequest(ctxId, MsgCode::Resume, [this](const Msg& msg) {
+            ONLY_AUDIO_RPC_THREAD;
+            secs_t delay = 0;
+            IF_ASSERT_FAILED(RpcPacker::unpack(msg.data, delay)) {
+                return make_response_ret(msg, make_ret(Err::InvalidRpcData));
+            }
+            if (auto actx = audioContext(msg.ctxId)) {
+                actx->resume(delay);
+                return make_response_ret(msg, make_ok());
+            } else {
+                return make_response_ret(msg, make_ret(Err::InvalidContext));
+            }
+        });
+
+        onQuickRequest(ctxId, MsgCode::SetDuration, [this](const Msg& msg) {
+            ONLY_AUDIO_RPC_THREAD;
+            secs_t duration = 0;
+            IF_ASSERT_FAILED(RpcPacker::unpack(msg.data, duration)) {
+                return make_response_ret(msg, make_ret(Err::InvalidRpcData));
+            }
+            if (auto actx = audioContext(msg.ctxId)) {
+                actx->setDuration(duration);
+                return make_response_ret(msg, make_ok());
+            } else {
+                return make_response_ret(msg, make_ret(Err::InvalidContext));
+            }
+        });
+
+        onQuickRequest(ctxId, MsgCode::SetLoop, [this](const Msg& msg) {
+            ONLY_AUDIO_RPC_THREAD;
+            secs_t from = 0;
+            secs_t to = 0;
+            IF_ASSERT_FAILED(RpcPacker::unpack(msg.data, from, to)) {
+                return make_response_ret(msg, make_ret(Err::InvalidRpcData));
+            }
+            if (auto actx = audioContext(msg.ctxId)) {
+                Ret ret = actx->setLoop(from, to);
+                return make_response_ret(msg, ret);
+            } else {
+                return make_response_ret(msg, make_ret(Err::InvalidContext));
+            }
+        });
+
+        onQuickRequest(ctxId, MsgCode::ResetLoop, [this](const Msg& msg) {
+            ONLY_AUDIO_RPC_THREAD;
+            if (auto actx = audioContext(msg.ctxId)) {
+                actx->resetLoop();
+                return make_response_ret(msg, make_ok());
+            } else {
+                return make_response_ret(msg, make_ret(Err::InvalidContext));
+            }
+        });
+
+        onQuickRequest(ctxId, MsgCode::GetPlaybackStatus, [this](const Msg& msg) {
+            ONLY_AUDIO_RPC_THREAD;
+
+            if (auto actx = audioContext(msg.ctxId)) {
+                PlaybackStatus status = actx->playbackStatus();
+                async::Channel<PlaybackStatus> ch = actx->playbackStatusChanged();
+                StreamId streamId = channel()->addSendStream(StreamName::PlaybackStatusStream, ch);
+                return make_response(msg, RpcPacker::pack(make_ok(), status, streamId));
+            } else {
+                return make_response(msg, RpcPacker::pack(make_ret(Err::InvalidContext), PlaybackStatus::Stopped, 0));
+            }
+        });
+
+        onQuickRequest(ctxId, MsgCode::GetPlaybackPosition, [this](const Msg& msg) {
+            ONLY_AUDIO_RPC_THREAD;
+
+            if (auto actx = audioContext(msg.ctxId)) {
+                secs_t pos = actx->playbackPosition();
+                async::Channel<secs_t> ch = actx->playbackPositionChanged();
+                StreamId streamId = channel()->addSendStream(StreamName::PlaybackPositionStream, ch);
+                return make_response(msg, RpcPacker::pack(make_ok(), pos, streamId));
+            } else {
+                return make_response(msg, RpcPacker::pack(make_ret(Err::InvalidContext), 0, 0));
+            }
+        });
+
+        // Export
+
+        onLongRequest(ctxId, MsgCode::SaveSoundTrack, [this](const Msg& msg) {
+            ONLY_AUDIO_RPC_THREAD;
+            SoundTrackFormat format;
+            uintptr_t dstDevicePtr = 0;
+            IF_ASSERT_FAILED(RpcPacker::unpack(msg.data, format, dstDevicePtr)) {
+                return make_response_ret(msg, make_ret(Err::InvalidRpcData));
+            }
+            io::IODevice& dstDevice = *reinterpret_cast<io::IODevice*>(dstDevicePtr);
+            if (auto actx = audioContext(msg.ctxId)) {
+                actx->saveSoundTrack(dstDevice, format).onResolve(this, [this, msg](const Ret& ret) {
+                    channel()->send(make_response_ret(msg, ret));
+                });
+                return make_response_delayed(msg);
+            } else {
+                return make_response_ret(msg, make_ret(Err::InvalidContext));
+            }
+        });
+
+        onLongRequest(ctxId, MsgCode::AbortSavingAllSoundTracks, [this](const Msg& msg) {
+            ONLY_AUDIO_RPC_THREAD;
+            if (auto actx = audioContext(msg.ctxId)) {
+                actx->abortSavingAllSoundTracks();
+                return make_response_ret(msg, make_ok());
+            } else {
+                return make_response_ret(msg, make_ret(Err::InvalidContext));
+            }
+        });
+
+        onQuickRequest(ctxId, MsgCode::GetSaveSoundTrackProgress, [this](const Msg& msg) {
+            ONLY_AUDIO_RPC_THREAD;
+            if (auto actx = audioContext(msg.ctxId)) {
+                SaveSoundTrackProgress ch = actx->saveSoundTrackProgressChanged();
+                ch.onReceive(this, [this](int64_t current, int64_t total, SaveSoundTrackStage stage) {
+                    ONLY_AUDIO_RPC_THREAD;
+                    m_saveSoundTrackProgressStream.send(current, total, stage);
+                });
+
+                if (m_saveSoundTrackProgressStreamId == 0) {
+                    m_saveSoundTrackProgressStreamId = channel()->addSendStream(StreamName::SaveSoundTrackProgressStream,
+                                                                                m_saveSoundTrackProgressStream);
+                }
+
+                return make_response_ret(msg, RetVal<StreamId>::make_ok(m_saveSoundTrackProgressStreamId));
+            } else {
+                return make_response_ret(msg, RetVal<StreamId>::make_ret(Err::InvalidContext));
+            }
+        });
+
+        // response on ContextInit request
+        return make_response_ret(msg, ret.ret);
+    });
+
+    onQuickRequest(GLOBAL_CTX_ID, MsgCode::ContextDeinit, [this](const Msg& msg) {
+        ONLY_AUDIO_RPC_THREAD;
+
+        rpc::CtxId ctxId = 0;
+        IF_ASSERT_FAILED(RpcPacker::unpack(msg.data, ctxId)) {
+            return make_response_ret(msg, make_ret(Err::InvalidRpcData));
         }
 
-        channel()->send(rpc::make_response(msg, RpcPacker::pack(m_saveSoundTrackProgressStreamId)));
+        auto audioContext = this->audioContext(ctxId);
+        IF_ASSERT_FAILED(audioContext) {
+            return make_response_ret(msg, make_ret(Err::InvalidContext));
+        }
+
+        audioContext->trackAdded().disconnect(this);
+        audioContext->trackRemoved().disconnect(this);
+        audioContext->inputParamsChanged().disconnect(this);
+        audioContext->outputParamsChanged().disconnect(this);
+        audioContext->masterOutputParamsChanged().disconnect(this);
+
+        audioEngine()->destroyContext(ctxId);
+
+        return make_response_ret(msg, make_ok());
     });
-
-    onQuickRequest(MsgCode::ClearAllFx, [this](const Msg&) {
-        ONLY_AUDIO_RPC_THREAD;
-        audioContext()->clearAllFx();
-    });
 }
 
-void EngineRpcController::onLongRequest(rpc::MsgCode code, const rpc::Handler& h)
+void EngineRpcController::onLongRequest(rpc::CtxId ctxId, rpc::MsgCode code, const RequestHandler& h)
 {
-    onRequest(OperationType::LongOperation, code, h);
+    onRequest(OperationType::LongOperation, ctxId, code, h);
 }
 
-void EngineRpcController::onQuickRequest(rpc::MsgCode code, const Handler& h)
+void EngineRpcController::onQuickRequest(rpc::CtxId ctxId, rpc::MsgCode code, const RequestHandler& h)
 {
-    onRequest(OperationType::QuickOperation, code, h);
+    onRequest(OperationType::QuickOperation, ctxId, code, h);
 }
 
-void EngineRpcController::onRequest(OperationType type, rpc::MsgCode code, const Handler& handler)
+void EngineRpcController::onRequest(OperationType type, rpc::CtxId ctxId, rpc::MsgCode code, const RequestHandler& handler)
 {
-    m_usedRequests.push_back(code);
+    m_usedRequests.push_back({ ctxId, code });
 
-    channel()->onRequest(code, [this, type, code, handler](const Msg& msg) {
-        IAudioEngine::Operation func = [this, code, handler, msg]() {
+    channel()->onRequest(ctxId, code, [this, type, code, handler](const Msg& msg) -> Msg {
+        Msg resp;
+        IAudioEngine::Operation func = [this, code, handler, msg, &resp]() {
             if (m_terminated) {
                 return;
             }
 
             UNUSED(code);
-            BEGIN_METHOD_DURATION
-            handler(msg);
-            END_METHOD_DURATION(code)
+            BEGIN_METHOD_DURATION;
+            resp = handler(msg);
+            END_METHOD_DURATION(code);
         };
         audioEngine()->execOperation(type, func);
+        return resp;
     });
 }
 
@@ -588,14 +842,8 @@ void EngineRpcController::deinit()
 
     m_terminated = true;
 
-    audioContext()->trackAdded().disconnect(this);
-    audioContext()->trackRemoved().disconnect(this);
-    audioContext()->inputParamsChanged().disconnect(this);
-    audioContext()->outputParamsChanged().disconnect(this);
-    audioContext()->masterOutputParamsChanged().disconnect(this);
-
-    for (const MsgCode& m : m_usedRequests) {
-        channel()->onRequest(m, nullptr);
+    for (const rpc::MsgKey& key : m_usedRequests) {
+        channel()->onRequest(key.ctxId, key.code, nullptr);
     }
     m_usedRequests.clear();
 }

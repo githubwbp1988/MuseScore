@@ -28,36 +28,34 @@ BaseSection {
 
     title: qsTrc("preferences", "Audio")
 
-    property int currentAudioApiIndex: -1
-    property var audioApiList: null
+    property int currentAudioDriverIndex: -1
+    property var audioDrivers: null
 
-    signal currentAudioApiIndexChangeRequested(int newIndex)
+    signal currentAudioDriverIndexChangeRequested(int newIndex)
 
     Row {
         spacing: 8
 
         ComboBoxWithTitle {
-            id: apiComboBox
-
-            title: qsTrc("preferences", "Audio API")
+            title: qsTrc("preferences", "Audio driver")
             columnWidth: root.columnWidth
 
-            visible: root.audioApiList.length > 1
+            visible: root.audioDrivers.length > 1
 
-            currentIndex: root.currentAudioApiIndex
-            model: root.audioApiList
+            currentIndex: root.currentAudioDriverIndex
+            model: root.audioDrivers
 
-            navigationName: "AudioApiBox"
+            navigationName: "AudioDriverBox"
             navigationPanel: root.navigation
             navigationRow: 1
 
             onValueEdited: function(newIndex, newValue) {
-                root.currentAudioApiIndexChangeRequested(newIndex)
+                root.currentAudioDriverIndexChangeRequested(newIndex)
             }
         }
     }
 
-    CommonAudioApiConfiguration {
+    CommonAudioDriverConfiguration {
         columnWidth: root.columnWidth
 
         navigation: root.navigation

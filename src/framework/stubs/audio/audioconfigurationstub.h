@@ -29,10 +29,10 @@ class AudioConfigurationStub : public IAudioConfiguration
 public:
     AudioEngineConfig engineConfig() const override;
 
-    std::string defaultAudioApi() const override;
-    std::string currentAudioApi() const override;
-    void setCurrentAudioApi(const std::string& name) override;
-    async::Notification currentAudioApiChanged() const override;
+    std::string defaultAudioDriverName() const override;
+    std::string currentAudioDriverName() const override;
+    void setCurrentAudioDriverName(const std::string& name) override;
+    async::Notification currentAudioDriverChanged() const override;
 
     std::string audioOutputDeviceId() const override;
     void setAudioOutputDeviceId(const std::string& deviceId) override;

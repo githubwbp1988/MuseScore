@@ -47,13 +47,13 @@ public:
 
 private:
 
-    std::shared_ptr<IAudioContext> audioContext() const;
+    std::shared_ptr<IAudioContext> audioContext(rpc::CtxId ctxId) const;
 
-    void onLongRequest(rpc::MsgCode code, const rpc::Handler& h);
-    void onQuickRequest(rpc::MsgCode code, const rpc::Handler& h);
-    void onRequest(OperationType type, rpc::MsgCode code, const rpc::Handler& h);
+    void onLongRequest(rpc::CtxId ctxId, rpc::MsgCode code, const rpc::RequestHandler& h);
+    void onQuickRequest(rpc::CtxId ctxId, rpc::MsgCode code, const rpc::RequestHandler& h);
+    void onRequest(OperationType type, rpc::CtxId ctxId, rpc::MsgCode code, const rpc::RequestHandler& h);
 
-    std::vector<rpc::MsgCode> m_usedRequests;
+    std::vector<rpc::MsgKey> m_usedRequests;
     std::atomic<bool> m_terminated = false;
 
     struct PendingTrack {

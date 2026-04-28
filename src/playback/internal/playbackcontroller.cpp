@@ -146,8 +146,8 @@ void PlaybackController::init()
 
         m_loadingProgress.start();
 
-        playback()->initPlayback().onResolve(this, [this](const bool& success) {
-            if (success) {
+        playback()->init().onResolve(this, [this](const Ret& ret) {
+            if (ret) {
                 setupPlayback();
             }
         });
@@ -1069,7 +1069,7 @@ void PlaybackController::resetPlayback()
 
     m_currentTick = 0;
 
-    playback()->deinitPlayback();
+    playback()->deinit();
 
     m_instrumentTrackIdMap.clear();
     m_auxTrackIdMap.clear();
@@ -1510,7 +1510,7 @@ void PlaybackController::setupPlayer()
         updateCurrentTempo();
 
         secs_t endSecs = totalPlayTime();
-        if (pos + milisecsToSecs(1) >= endSecs) {
+        if (pos + muse::msecs_to_secs(1) >= endSecs) {
             stop();
         }
     });

@@ -29,12 +29,11 @@ class AudioDriverControllerStub : public IAudioDriverController
 {
 public:
 
-    // Api
-    std::vector<std::string> availableAudioApiList() const override;
+    std::vector<std::string> availableAudioDrivers() const override;
 
-    std::string currentAudioApi() const override;
-    void changeCurrentAudioApi(const std::string& name)  override;
-    async::Notification currentAudioApiChanged() const override;
+    std::string currentAudioDriverName() const override;
+    void changeCurrentAudioDriver(const std::string& name)  override;
+    async::Notification currentAudioDriverChanged() const override;
 
     // Current driver operation
     AudioDeviceList availableOutputDevices() const override;

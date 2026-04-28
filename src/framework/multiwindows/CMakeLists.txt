@@ -26,6 +26,9 @@ target_sources(muse_multiwindows PRIVATE
     imultiwindowsprovider.h
     iprojectprovider.h
     resourcelockguard.h
+    singleinstance.h
+
+    internal/singleinstance.cpp
 
     internal/multiwindowsuiactions.cpp
     internal/multiwindowsuiactions.h

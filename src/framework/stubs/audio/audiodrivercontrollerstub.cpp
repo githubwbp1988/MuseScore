@@ -25,22 +25,21 @@
 using namespace muse;
 using namespace muse::audio;
 
-// Api
-std::vector<std::string> AudioDriverControllerStub::availableAudioApiList() const
+std::vector<std::string> AudioDriverControllerStub::availableAudioDrivers() const
 {
     return {};
 }
 
-std::string AudioDriverControllerStub::currentAudioApi() const
+std::string AudioDriverControllerStub::currentAudioDriverName() const
 {
     return {};
 }
 
-void AudioDriverControllerStub::changeCurrentAudioApi(const std::string&)
+void AudioDriverControllerStub::changeCurrentAudioDriver(const std::string&)
 {
 }
 
-async::Notification AudioDriverControllerStub::currentAudioApiChanged() const
+async::Notification AudioDriverControllerStub::currentAudioDriverChanged() const
 {
     return async::Notification();
 }

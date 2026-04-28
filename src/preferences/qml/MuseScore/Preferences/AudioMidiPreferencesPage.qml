@@ -41,15 +41,15 @@ PreferencesPage {
         width: parent.width
         spacing: root.sectionsSpacing
 
-        AudioApiSection {
-            currentAudioApiIndex: audioMidiModel.currentAudioApiIndex
-            audioApiList: audioMidiModel.audioApiList()
+        AudioDriverSection {
+            currentAudioDriverIndex: audioMidiModel.currentAudioDriverIndex
+            audioDrivers: audioMidiModel.audioDrivers()
 
             navigation.section: root.navigationSection
             navigation.order: root.navigationOrderStart + 1
 
-            onCurrentAudioApiIndexChangeRequested: function(newIndex) {
-                audioMidiModel.currentAudioApiIndex = newIndex
+            onCurrentAudioDriverIndexChangeRequested: function(newIndex) {
+                audioMidiModel.currentAudioDriverIndex = newIndex
             }
         }
 
