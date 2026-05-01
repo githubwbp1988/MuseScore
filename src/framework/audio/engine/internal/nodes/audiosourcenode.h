@@ -5,7 +5,7 @@
  * MuseScore
  * Music Composition & Notation
  *
- * Copyright (C) 2025 MuseScore Limited and others
+ * Copyright (C) 2026 MuseScore Limited and others
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3 as
@@ -22,29 +22,18 @@
 
 #pragma once
 
-#include <memory>
+#include "audionode.h"
 
-#include "global/async/channel.h"
 #include "global/async/notification.h"
-
+#include "global/async/channel.h"
 #include "audio/common/audiotypes.h"
 #include "audio/common/timeposition.h"
 
-#include "../iaudiosource.h"
-
 namespace muse::audio::engine {
-enum TrackType {
-    Undefined = -1,
-    Event_track,
-    Sound_track
-};
-
-class ITrackAudioInput : public IAudioSource
+//! NOTE Abstract Base Audio Source Node
+class AudioSourceNode : public AudioNode
 {
 public:
-    virtual ~ITrackAudioInput() = default;
-
-    virtual TrackId trackId() const = 0;
 
     virtual void seek(const TimePosition& position, const bool flushSound = true) = 0;
     virtual void flush() = 0;
@@ -64,18 +53,5 @@ public:
     virtual void clearCache() = 0;
 };
 
-class ITrackAudioOutput : public IAudioSource
-{
-public:
-    virtual ~ITrackAudioOutput() = default;
-
-    virtual const AudioOutputParams& outputParams() const = 0;
-    virtual void applyOutputParams(const AudioOutputParams& requiredParams) = 0;
-    virtual async::Channel<AudioOutputParams> outputParamsChanged() const = 0;
-
-    virtual AudioSignalChanges audioSignalChanges() const = 0;
-};
-
-using ITrackAudioInputPtr = std::shared_ptr<ITrackAudioInput>;
-using ITrackAudioOutputPtr = std::shared_ptr<ITrackAudioOutput>;
+using AudioSourceNodePtr = std::shared_ptr<AudioSourceNode>;
 }

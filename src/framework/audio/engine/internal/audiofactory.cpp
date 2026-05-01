@@ -24,9 +24,9 @@
 
 #include "audio/common/audioerrors.h"
 
-#include "audio/engine/internal/mixerchannel.h"
+#include "mixerchannel.h"
 
-#include "eventaudiosource.h"
+#include "nodes/eventaudionode.h"
 
 using namespace muse;
 using namespace muse::audio;
@@ -71,39 +71,51 @@ void AudioFactory::clearSynthSources()
     synthResolver()->clearSources();
 }
 
-RetVal<ITrackAudioInputPtr> AudioFactory::makeEventSource(const TrackId trackId, const mpe::PlaybackData& playbackData,
-                                                          const AudioInputParams& params,
-                                                          const std::function<void(const TrackId)> onOffStreamReceived) const
+RetVal<AudioSourceNodePtr> AudioFactory::makeEventSource(const TrackId trackId, const mpe::PlaybackData& playbackData,
+                                                         const AudioInputParams& params,
+                                                         const std::function<void()> onOffStreamReceived) const
 {
-    EventAudioSourcePtr source = std::make_shared<EventAudioSource>(trackId, playbackData, onOffStreamReceived);
+    EventAudioNodePtr source = std::make_shared<EventAudioNode>(trackId, playbackData, onOffStreamReceived);
     source->setOutputSpec(audioEngine()->outputSpec());
     source->applyInputParams(params);
-    return RetVal<ITrackAudioInputPtr>::make_ok(source);
+    return RetVal<AudioSourceNodePtr>::make_ok(source);
 }
 
-RetVal<ITrackAudioOutputPtr> AudioFactory::makeMixerChannel(const TrackId trackId, const AudioOutputParams& params,
-                                                            const ITrackAudioInputPtr& source) const
+RetVal<AudioOutputNodePtr> AudioFactory::makeMixerChannel(const TrackId trackId, const AudioOutputParams& params,
+                                                          const AudioSourceNodePtr& source) const
 {
     auto channel = std::make_shared<MixerChannel>(trackId, audioEngine()->outputSpec(), source, nullptr);
     channel->applyOutputParams(params);
-    return RetVal<ITrackAudioOutputPtr>::make_ok(channel);
+    return RetVal<AudioOutputNodePtr>::make_ok(channel);
 }
 
-RetVal<ITrackAudioOutputPtr> AudioFactory::makeMixerAuxChannel(const TrackId trackId, const AudioOutputParams& params) const
+RetVal<AudioOutputNodePtr> AudioFactory::makeMixerAuxChannel(const TrackId trackId, const AudioOutputParams& params) const
 {
     auto channel = std::make_shared<MixerChannel>(trackId, audioEngine()->outputSpec(), nullptr);
     channel->applyOutputParams(params);
-    return RetVal<ITrackAudioOutputPtr>::make_ok(channel);
+    return RetVal<AudioOutputNodePtr>::make_ok(channel);
 }
 
-std::vector<IFxProcessorPtr> AudioFactory::makeMasterFxList(const AudioFxChain& fxChain) const
+std::vector<FxNodePtr> AudioFactory::makeMasterFxList(const AudioFxChain& fxChain) const
 {
-    return fxResolver()->resolveMasterFxList(fxChain, audioEngine()->outputSpec());
+    std::vector<IFxProcessorPtr> fxlist = fxResolver()->resolveMasterFxList(fxChain, audioEngine()->outputSpec());
+    std::vector<FxNodePtr> result;
+    result.reserve(fxlist.size());
+    for (const auto& fx : fxlist) {
+        result.push_back(std::make_shared<FxNode>(fx));
+    }
+    return result;
 }
 
-std::vector<IFxProcessorPtr> AudioFactory::makeTrackFxList(const TrackId trackId, const AudioFxChain& fxChain) const
+std::vector<FxNodePtr> AudioFactory::makeTrackFxList(const TrackId trackId, const AudioFxChain& fxChain) const
 {
-    return fxResolver()->resolveFxList(trackId, fxChain, audioEngine()->outputSpec());
+    std::vector<IFxProcessorPtr> fxlist = fxResolver()->resolveFxList(trackId, fxChain, audioEngine()->outputSpec());
+    std::vector<FxNodePtr> result;
+    result.reserve(fxlist.size());
+    for (const auto& fx : fxlist) {
+        result.push_back(std::make_shared<FxNode>(fx));
+    }
+    return result;
 }
 
 void AudioFactory::clearAllFx()

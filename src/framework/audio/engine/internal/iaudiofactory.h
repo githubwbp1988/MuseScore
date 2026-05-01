@@ -25,9 +25,10 @@
 #include "global/modularity/imoduleinterface.h"
 #include "global/types/retval.h"
 #include "mpe/events.h"
-#include "track.h"
-#include "../ifxprocessor.h"
 #include "../isynthesizer.h"
+#include "nodes/audiosourcenode.h"
+#include "nodes/audiooutputnode.h"
+#include "nodes/fxnode.h"
 
 namespace muse::audio::engine {
 class IAudioFactory : MODULE_GLOBAL_INTERFACE
@@ -53,18 +54,18 @@ public:
     // This method clears this registry.
     virtual void clearSynthSources() = 0;
 
-    virtual RetVal<ITrackAudioInputPtr> makeEventSource(const TrackId trackId, const mpe::PlaybackData& playbackData,
-                                                        const AudioInputParams& params,
-                                                        const std::function<void(const TrackId)> onOffStreamReceived = nullptr) const = 0;
+    virtual RetVal<AudioSourceNodePtr> makeEventSource(const TrackId trackId, const mpe::PlaybackData& playbackData,
+                                                       const AudioInputParams& params,
+                                                       const std::function<void()> onOffStreamReceived = nullptr) const = 0;
 
     // Make output (mixer channel)
-    virtual RetVal<ITrackAudioOutputPtr> makeMixerChannel(const TrackId trackId, const AudioOutputParams& params,
-                                                          const ITrackAudioInputPtr& source) const = 0;
-    virtual RetVal<ITrackAudioOutputPtr> makeMixerAuxChannel(const TrackId trackId, const AudioOutputParams& params) const = 0;
+    virtual RetVal<AudioOutputNodePtr> makeMixerChannel(const TrackId trackId, const AudioOutputParams& params,
+                                                        const AudioSourceNodePtr& source) const = 0;
+    virtual RetVal<AudioOutputNodePtr> makeMixerAuxChannel(const TrackId trackId, const AudioOutputParams& params) const = 0;
 
     // Make FX
-    virtual std::vector<IFxProcessorPtr> makeMasterFxList(const AudioFxChain& fxChain) const = 0;
-    virtual std::vector<IFxProcessorPtr> makeTrackFxList(const TrackId trackId, const AudioFxChain& fxChain) const = 0;
+    virtual std::vector<FxNodePtr> makeMasterFxList(const AudioFxChain& fxChain) const = 0;
+    virtual std::vector<FxNodePtr> makeTrackFxList(const TrackId trackId, const AudioFxChain& fxChain) const = 0;
 
     //! NOTE For internal purposes,
     // created effect instances are registered in an internal registry (see VST).

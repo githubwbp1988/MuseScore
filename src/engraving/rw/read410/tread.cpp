@@ -136,7 +136,7 @@
 #include "../xmlreader.h"
 #include "../read206/read206.h"
 #include "../read400/tread.h"
-#include "../read460/tread.h"
+#include "../read500/tread.h"
 #include "../compat/compatutils.h"
 #include "../compat/tremolocompat.h"
 #include "readcontext.h"
@@ -1002,9 +1002,9 @@ bool TRead::readProperties(Instrument* item, XmlReader& e, ReadContext& ctx, Par
     if (tag == "soundId") {
         item->setSoundId(e.readText());
     } else if (tag == "longName") {
-        item->setLongName(read460::TRead::readLegacyStaffName(e));
+        item->setLongName(read500::TRead::readLegacyStaffName(e));
     } else if (tag == "shortName") {
-        item->setShortName(read460::TRead::readLegacyStaffName(e));
+        item->setShortName(read500::TRead::readLegacyStaffName(e));
     } else if (tag == "trackName") {
         item->setTrackName(e.readText());
     } else if (tag == "minPitchA") {

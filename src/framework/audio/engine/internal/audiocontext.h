@@ -22,6 +22,7 @@
 #pragma once
 
 #include "iaudiocontext.h"
+#include "nodes/audionode.h"
 
 #include "global/async/asyncable.h"
 
@@ -34,8 +35,8 @@
 #include "mixer.h"
 
 namespace muse::audio::engine {
-class EnginePlayer;
-class AudioContext : public IAudioContext, public IGetTrackSource, public async::Asyncable
+class ContextPlayer;
+class AudioContext : public AudioNode, public IAudioContext, public IGetTrackSource, public async::Asyncable
 {
     GlobalInject<IAudioEngine> audioEngine;
     GlobalInject<IAudioFactory> audioFactory;
@@ -51,7 +52,6 @@ public:
 
     // Config
     void setMode(const ProcessMode newMode) override;
-    void setOutputSpec(const OutputSpec& outputSpec) override;
 
     // Tracks
     RetVal2<TrackId, AudioParams> addTrack(const std::string& trackName, io::IODevice* playbackData, const AudioParams& params) override;
@@ -121,27 +121,32 @@ public:
     SaveSoundTrackProgress saveSoundTrackProgressChanged() const override;
     void abortSavingAllSoundTracks() override;
 
-    // Processing
-    samples_t process(float* buffer, samples_t samplesPerChannel) override;
-
 private:
+
+    enum class TrackType {
+        Undefined = -1,
+        Event_track,
+        Sound_track
+    };
 
     struct Track
     {
         TrackId id = INVALID_TRACK_ID;
-        TrackType type = Undefined;
+        TrackType type = TrackType::Undefined;
         TrackName name;
-        ITrackAudioInputPtr source = nullptr;
-        ITrackAudioOutputPtr output = nullptr;
+        AudioSourceNodePtr source;
+        AudioOutputNodePtr output;
     };
+
+    void onOutputSpecChanged(const OutputSpec& spec) override;
 
     TrackId newTrackId() const;
     void doAddTrack(const Track& track);
     const Track* track(const TrackId id) const;
 
     // IGetTrackSource
-    ITrackAudioInputPtr trackSource(const TrackId trackId) const override;
-    std::vector<ITrackAudioInputPtr> allTracksSources() const override;
+    AudioSourceNodePtr trackSource(const TrackId trackId) const override;
+    std::vector<AudioSourceNodePtr> allTracksSources() const override;
     // -----
 
     void listenInputProcessing(std::function<void(const Ret&)> completed);
@@ -149,10 +154,12 @@ private:
     size_t tracksBeingProcessedCount() const;
     Ret doSaveSoundTrack(io::IODevice& dstDevice, const SoundTrackFormat& format);
 
+    // Processing
+    void doSelfProcess(float* buffer, samples_t samplesPerChannel) override;
+
     AudioCtxId m_ctxId = 0;
 
-    OutputSpec m_outputSpec;
-    std::shared_ptr<EnginePlayer> m_player;
+    std::shared_ptr<ContextPlayer> m_player;
     std::shared_ptr<Mixer> m_mixer;
 
     std::vector<Track> m_tracks;

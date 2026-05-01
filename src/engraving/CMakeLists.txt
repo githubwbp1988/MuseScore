@@ -249,6 +249,19 @@ target_sources(engraving PRIVATE
     rw/read460/connectorinforeader.cpp
     rw/read460/connectorinforeader.h
 
+    rw/read500/read500.cpp
+    rw/read500/read500.h
+    rw/read500/staffread.cpp
+    rw/read500/staffread.h
+    rw/read500/measureread.cpp
+    rw/read500/measureread.h
+    rw/read500/readcontext.cpp
+    rw/read500/readcontext.h
+    rw/read500/tread.cpp
+    rw/read500/tread.h
+    rw/read500/connectorinforeader.cpp
+    rw/read500/connectorinforeader.h
+
     rw/compat/readstyle.cpp
     rw/compat/readstyle.h
     rw/compat/readchordlisthook.cpp
@@ -396,6 +409,13 @@ set_source_files_properties(
     rw/read460/readcontext.cpp
     rw/read460/tread.cpp
     rw/read460/connectorinforeader.cpp
+    
+    #rw/read500/read500.cpp
+    rw/read500/staffread.cpp
+    rw/read500/measureread.cpp
+    rw/read500/readcontext.cpp
+    rw/read500/tread.cpp
+    rw/read500/connectorinforeader.cpp
 
     PROPERTIES SKIP_UNITY_BUILD_INCLUSION ON
 )

@@ -32,10 +32,10 @@
 #include "igettracksource.h"
 
 namespace muse::audio::engine {
-class EnginePlayer : public IEnginePlayer, public IPlayhead, public async::Asyncable
+class ContextPlayer : public IEnginePlayer, public IPlayhead, public async::Asyncable
 {
 public:
-    explicit EnginePlayer(IGetTrackSource* getTracks);
+    explicit ContextPlayer(IGetTrackSource* getTracks);
 
     async::Promise<Ret> prepareToPlay() override;
 
@@ -107,6 +107,6 @@ private:
     async::Channel<TimeEvent> m_timeEvent;
 
     bool m_flushSoundOnSeek = true;
-    std::set<TrackId> m_notYetReadyToPlayTrackIdSet;
+    std::set<AudioSourceNodePtr> m_notYetReadyToPlayTracks;
 };
 }

@@ -25,7 +25,7 @@
 #include "audio/common/audioerrors.h"
 #include "audio/common/audioutils.h"
 
-#include "engineplayer.h"
+#include "contextplayer.h"
 
 #include "muse_framework_config.h"
 #ifdef MUSE_MODULE_AUDIO_EXPORT
@@ -39,7 +39,7 @@ using namespace muse::audio::engine;
 AudioContext::AudioContext(const AudioCtxId& ctxId)
     : m_ctxId(ctxId)
 {
-    m_player = std::make_shared<EnginePlayer>(this);
+    m_player = std::make_shared<ContextPlayer>(this);
     m_mixer = std::make_shared<Mixer>();
 }
 
@@ -99,10 +99,9 @@ void AudioContext::setMode(const ProcessMode mode)
     m_mixer->setMode(mode);
 }
 
-void AudioContext::setOutputSpec(const OutputSpec& outputSpec)
+void AudioContext::onOutputSpecChanged(const OutputSpec& outputSpec)
 {
     ONLY_AUDIO_ENGINE_THREAD;
-    m_outputSpec = outputSpec;
     m_mixer->setOutputSpec(outputSpec);
 
     TimePosition currentPosition = m_player->currentPosition();
@@ -158,7 +157,9 @@ RetVal2<TrackId, AudioParams> AudioContext::addTrack(const std::string& trackNam
         return RetType::make_ret(Err::InvalidSetupData);
     }
 
-    auto onOffStreamReceived = [this](const TrackId trackId) {
+    TrackId trackId = newTrackId();
+
+    auto onOffStreamReceived = [this, trackId]() {
         std::unordered_set<TrackId> tracksToProcess = m_tracksToProcessWhenIdle;
 
         if (m_prevActiveTrackId == INVALID_TRACK_ID) {
@@ -171,16 +172,14 @@ RetVal2<TrackId, AudioParams> AudioContext::addTrack(const std::string& trackNam
         m_prevActiveTrackId = trackId;
     };
 
-    TrackId trackId = newTrackId();
-
 // Make source
-    RetVal<ITrackAudioInputPtr> source = audioFactory()->makeEventSource(trackId, playbackData, params.in, onOffStreamReceived);
+    RetVal<AudioSourceNodePtr> source = audioFactory()->makeEventSource(trackId, playbackData, params.in, onOffStreamReceived);
     if (!source.ret) {
         return RetType::make_ret(source.ret);
     }
 
 // Make output and add to mixer
-    RetVal<ITrackAudioOutputPtr> output = audioFactory()->makeMixerChannel(trackId, params.out, source.val);
+    RetVal<AudioOutputNodePtr> output = audioFactory()->makeMixerChannel(trackId, params.out, source.val);
     if (!output.ret) {
         return RetType::make_ret(output.ret);
     }
@@ -222,7 +221,7 @@ RetVal2<TrackId, AudioOutputParams> AudioContext::addAuxTrack(const std::string&
     TrackId trackId = newTrackId();
 
 // Make output and add to mixer
-    RetVal<ITrackAudioOutputPtr> output = audioFactory()->makeMixerAuxChannel(trackId, params);
+    RetVal<AudioOutputNodePtr> output = audioFactory()->makeMixerAuxChannel(trackId, params);
     if (!output.ret) {
         return RetType::make_ret(output.ret);
     }
@@ -363,7 +362,7 @@ RetVal<TrackName> AudioContext::trackName(const TrackId trackId) const
     return RetVal<TrackName>::make_ret((int)Err::InvalidTrackId, "no track");
 }
 
-ITrackAudioInputPtr AudioContext::trackSource(const TrackId trackId) const
+AudioSourceNodePtr AudioContext::trackSource(const TrackId trackId) const
 {
     ONLY_AUDIO_ENGINE_THREAD;
     if (const Track* t = track(trackId)) {
@@ -372,10 +371,10 @@ ITrackAudioInputPtr AudioContext::trackSource(const TrackId trackId) const
     return nullptr;
 }
 
-std::vector<ITrackAudioInputPtr> AudioContext::allTracksSources() const
+std::vector<AudioSourceNodePtr> AudioContext::allTracksSources() const
 {
     ONLY_AUDIO_ENGINE_THREAD;
-    std::vector<ITrackAudioInputPtr> result;
+    std::vector<AudioSourceNodePtr> result;
     result.reserve(m_tracks.size());
     for (const Track& t : m_tracks) {
         if (t.source) {
@@ -809,8 +808,8 @@ SaveSoundTrackProgress AudioContext::saveSoundTrackProgressChanged() const
 }
 
 // Processing
-samples_t AudioContext::process(float* buffer, samples_t samplesPerChannel)
+void AudioContext::doSelfProcess(float* buffer, samples_t samplesPerChannel)
 {
     ONLY_AUDIO_PROC_THREAD;
-    return m_mixer->process(buffer, samplesPerChannel);
+    m_mixer->process(buffer, samplesPerChannel);
 }

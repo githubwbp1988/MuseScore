@@ -861,7 +861,7 @@ muse::Ret NotationProject::writeProject(const muse::io::path_t& path, const writ
         return make_ret(Ret::Code::InternalError);
     }
 
-    return saveScore(path, suffix, false /*generateBackup*/, false /*createThumbnail*/, false /*isAutosave*/, ctx);
+    return saveScore(path, suffix, false /*generateBackup*/, true /*createThumbnail*/, false /*isAutosave*/, ctx);
 }
 
 Ret NotationProject::writeProject(MscWriter& msczWriter, bool createThumbnail, const write::WriteContext* ctx)

@@ -40,7 +40,6 @@ public:
 
     // Config
     virtual void setMode(const ProcessMode newMode) = 0;
-    virtual void setOutputSpec(const OutputSpec& outputSpec) = 0;
 
     // Tracks
     virtual RetVal2<TrackId, AudioParams> addTrack(const TrackName& trackName, io::IODevice* playbackData, const AudioParams& params) = 0;
@@ -109,8 +108,5 @@ public:
     virtual async::Promise<Ret> saveSoundTrack(io::IODevice& dstDevice, const SoundTrackFormat& format) = 0;
     virtual SaveSoundTrackProgress saveSoundTrackProgressChanged() const = 0;
     virtual void abortSavingAllSoundTracks() = 0;
-
-    // Processing
-    virtual samples_t process(float* buffer, samples_t samplesPerChannel) = 0;
 };
 }

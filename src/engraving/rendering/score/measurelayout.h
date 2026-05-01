@@ -51,6 +51,9 @@ public:
     static void layout2(Measure* item, LayoutContext& ctx);
 
     static void getNextMeasure(LayoutContext& ctx);
+    static void updateTicksMeasNumbersAndMMRests(MeasureBase* currentMB, LayoutContext& ctx);
+    static void layoutMeasure(MeasureBase* currentMB, LayoutContext& ctx);
+
     static void computePreSpacingItems(Measure* m, LayoutContext& ctx);
 
     static void layoutStaffLines(Measure* m, LayoutContext& ctx);
@@ -94,7 +97,7 @@ private:
     static void layoutPartialWidth(StaffLines* lines, LayoutContext& ctx, double w, double wPartial, bool alignLeft);
 
     static void moveToNextMeasure(LayoutContext& ctx);
-    static void layoutMeasure(MeasureBase* currentMB, LayoutContext& ctx);
+
     static void checkStaffMoveValidity(Measure* measure, const LayoutContext& ctx);
 
     static void createMultiMeasureRestsIfNeed(Measure* firstMeasure, LayoutContext& ctx);

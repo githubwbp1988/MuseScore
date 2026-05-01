@@ -300,9 +300,11 @@ void ScoreHorizontalViewLayout::collectLinearSystem(LayoutContext& ctx)
         if (ctx.state().curMeasure()->isVBoxBase()) {
             ctx.mutState().curMeasure()->resetExplicitParent();
             MeasureLayout::getNextMeasure(ctx);
+            MeasureLayout::layoutMeasure(ctx.mutState().curMeasure(), ctx);
             continue;
         }
         system->appendMeasure(ctx.mutState().curMeasure());
+        MeasureLayout::layoutMeasure(ctx.mutState().curMeasure(), ctx);
         bool createHeader = ctx.state().prevMeasure() && ctx.state().prevMeasure()->isHBox()
                             && toHBox(ctx.state().prevMeasure())->createSystemHeader();
         if (ctx.state().curMeasure()->isMeasure()) {

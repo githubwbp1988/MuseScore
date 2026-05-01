@@ -801,13 +801,14 @@ void Selection::updateSelectedElements()
     for (Chord* singleNoteChord : singleNoteChords) {
         if (!m_rangeContainsMultiNoteChords || selectionFilter().includeSingleNotes()) {
             appendChordRest(singleNoteChord);
+        } else {
+            // Include elements anchored to the note even if the note itself isn't included...
+            const Note* note = singleNoteChord->notes().front();
+            const std::unordered_set<EngravingItem*> noteAnchored = collectElementsAnchoredToNote(note, true, false);
+            appendFiltered(noteAnchored);
+            const std::unordered_set<EngravingItem*> crAnchored = collectElementsAnchoredToChordRest(singleNoteChord);
+            appendFiltered(crAnchored);
         }
-        // Include elements anchored to the note even if the note itself isn't included...
-        const Note* note = singleNoteChord->notes().front();
-        const std::unordered_set<EngravingItem*> noteAnchored = collectElementsAnchoredToNote(note, true, false);
-        appendFiltered(noteAnchored);
-        const std::unordered_set<EngravingItem*> crAnchored = collectElementsAnchoredToChordRest(singleNoteChord);
-        appendFiltered(crAnchored);
     }
 
     for (Tuplet* tuplet : innerTuplets) {

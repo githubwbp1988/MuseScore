@@ -224,9 +224,9 @@ FocusScope {
 
                 Keys.onPressed: function(event) {
                     if (event.key === Qt.Key_Escape) {
+                        root.escaped()
                         root.focus = false
                         root.textEditingFinished(valueInput.text)
-                        root.escaped()
                     }
                 }
 

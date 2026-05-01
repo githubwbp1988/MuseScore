@@ -154,6 +154,7 @@ System* SystemLayout::collectSystem(LayoutContext& ctx)
     while (ctx.state().curMeasure()) {      // collect measure for system
         oldSystem = ctx.mutState().curMeasure()->system();
         system->appendMeasure(ctx.mutState().curMeasure());
+        MeasureLayout::layoutMeasure(ctx.mutState().curMeasure(), ctx);
 
         if (ctx.state().curMeasure()->isMeasure()) {
             Measure* m = toMeasure(ctx.mutState().curMeasure());
@@ -200,6 +201,7 @@ System* SystemLayout::collectSystem(LayoutContext& ctx)
         } else {
             // vbox:
             MeasureLayout::getNextMeasure(ctx);
+            MeasureLayout::layoutMeasure(ctx.mutState().curMeasure(), ctx);
             SystemLayout::layout2(system, ctx);         // compute staff distances
             return system;
         }

@@ -66,6 +66,7 @@ struct Subscriber
     {
         if (onUnSubscribe) {
             onUnSubscribe();
+            onUnSubscribe = nullptr;
         }
     }
 };
@@ -77,6 +78,7 @@ public:
     virtual ~ModulesIoCBase()
     {
         reset();
+        m_alive.reset();
     }
 
 #ifndef IOC_CHECK_INTERFACE_TYPE
@@ -129,10 +131,7 @@ public:
             s->changed(pointer_cast<I>(p));
         });
 
-        s->onUnSubscribe = [this, key, s]() {
-            doUnsubscribe(I::modularity_interfaceInfo(), key);
-            s->onUnSubscribe = nullptr;
-        };
+        s->onUnSubscribe = makeUnSubscribeFn<I>(key);
     }
 
 #endif
@@ -256,7 +255,19 @@ protected:
         std::map<int, OnChangedInternal> onChanges;
     };
 
+    template<class I>
+    std::function<void()> makeUnSubscribeFn(int key)
+    {
+        std::weak_ptr<bool> alive = m_alive;
+        return [this, key, alive]() {
+            if (!alive.expired()) {
+                doUnsubscribe(I::modularity_interfaceInfo(), key);
+            }
+        };
+    }
+
     std::map<std::string_view, Service > m_map;
+    std::shared_ptr<bool> m_alive = std::make_shared<bool>(true);
 };
 
 class ModulesGlobalIoC : public ModulesIoCBase
@@ -319,9 +330,7 @@ public:
             s->changed(pointer_cast<I>(p));
         });
 
-        s->onUnSubscribe = [this, key]() {
-            doUnsubscribe(I::modularity_interfaceInfo(), key);
-        };
+        s->onUnSubscribe = makeUnSubscribeFn<I>(key);
     }
 };
 
@@ -385,9 +394,7 @@ public:
             s->changed(pointer_cast<I>(p));
         });
 
-        s->onUnSubscribe = [this, key]() {
-            doUnsubscribe(I::modularity_interfaceInfo(), key);
-        };
+        s->onUnSubscribe = makeUnSubscribeFn<I>(key);
     }
 };
 }

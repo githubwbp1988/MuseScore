@@ -137,6 +137,7 @@
 
 #include "../xmlreader.h"
 #include "../read206/read206.h"
+#include "../read500/tread.h"
 #include "../compat/compatutils.h"
 #include "../compat/tremolocompat.h"
 #include "readcontext.h"
@@ -515,7 +516,7 @@ void TRead::readProperty(EngravingItem* item, XmlReader& xml, ReadContext& ctx, 
         v = v.value<PlacementV>() == PlacementV::ABOVE ? PropertyValue(DirectionV::UP) : PropertyValue(DirectionV::DOWN);
     }
 
-    if (pid == Pid::OFFSET && ctx.mscVersion() < 500) {
+    if (pid == Pid::OFFSET) {
         compat::CompatUtils::migrateOffset500(item, v);
     }
 
@@ -979,11 +980,9 @@ bool TRead::readProperties(Instrument* item, XmlReader& e, ReadContext& ctx, Par
     if (tag == "soundId") {
         item->setSoundId(e.readText());
     } else if (tag == "longName") {
-        item->setLongName(readLegacyStaffName(e)); // Old implementation
+        item->setLongName(read500::TRead::readLegacyStaffName(e)); // Old implementation
     } else if (tag == "shortName") {
-        item->setShortName(readLegacyStaffName(e)); // Old implementation
-    } else if (tag == "InstrumentLabel") {
-        readInstrumentLabel(item->instrumentLabel(), e); // New implementation
+        item->setShortName(read500::TRead::readLegacyStaffName(e)); // Old implementation
     } else if (tag == "trackName") {
         item->setTrackName(e.readText());
     } else if (tag == "minPitchA") {
@@ -3939,9 +3938,6 @@ void TRead::read(StaffType* t, XmlReader& e, ReadContext& ctx)
         const AsciiStringView tag(e.name());
         if (tag == "name") {
             t->setXmlName(e.readText());
-        } else if (tag == "StaffLabel") {
-            StaffLabel& staffLabel = t->staffLabel();
-            readStaffLabel(staffLabel, e);
         } else if (tag == "lines") {
             t->setLines(e.readInt());
         } else if (tag == "lineDistance") {
@@ -4089,11 +4085,6 @@ bool TRead::readProperties(Staff* s, XmlReader& e, ReadContext& ctx)
             bi->setColor(color);
         }
         e.readNext();
-    } else if (tag == "BracketItem") {
-        BracketItem* b = Factory::createBracketItem(s);
-        b->setStaff(s);
-        read(b, e, ctx);
-        s->insertBracket(b);
     } else if (tag == "barLineSpan") {
         const int barLineSpan = e.readInt();
         if (barLineSpan < 0) {
@@ -4136,114 +4127,6 @@ bool TRead::readProperties(Staff* s, XmlReader& e, ReadContext& ctx)
     } else {
         return false;
     }
-    return true;
-}
-
-void TRead::read(BracketItem* b, XmlReader& xml, ReadContext& ctx)
-{
-    while (xml.readNextStartElement()) {
-        const AsciiStringView& tag = xml.name();
-        if (tag == "type") {
-            b->setBracketType(TConv::fromXml(xml.readAsciiText(), BracketType::NORMAL));
-        } else if (readProperty(b, tag, xml, ctx, Pid::BRACKET_SPAN)) {
-        } else if (tag == "level") {
-            b->setColumn(xml.readInt());
-        } else if (readProperty(b, tag, xml, ctx, Pid::VISIBLE)) {
-        } else if (readProperty(b, tag, xml, ctx, Pid::GROUP_BRACKET_SHOW_TEXT)) {
-        } else if (readProperty(b, tag, xml, ctx, Pid::GROUP_BRACKET_SHOW_BRACKET)) {
-        } else if (tag == "StaffLabel") {
-            StaffLabel& label = b->label();
-            readStaffLabel(label, xml);
-        } else {
-            xml.unknown();
-        }
-    }
-}
-
-String TRead::readLegacyStaffName(XmlReader& xml)
-{
-    String name = lineBreakFromTag(xml.readXml());
-    if (name.startsWith(u"<html>")) {
-        // compatibility to old html implementation:
-        name = HtmlParser::parse(name);
-    }
-    return name;
-}
-
-void TRead::readStaffLabel(StaffLabel& item, XmlReader& xml)
-{
-    while (xml.readNextStartElement()) {
-        if (!readProperties(item, xml)) {
-            xml.unknown();
-        }
-    }
-}
-
-bool TRead::readProperties(StaffLabel& item, XmlReader& xml)
-{
-    AsciiStringView tag = xml.name();
-
-    if (tag == "longName") {
-        item.setLongName(lineBreakFromTag(xml.readXml()));
-    } else if (tag == "shortName") {
-        item.setShortName(lineBreakFromTag(xml.readXml()));
-    } else {
-        return false;
-    }
-
-    return true;
-}
-
-void TRead::readInstrumentLabel(InstrumentLabel& item, XmlReader& xml)
-{
-    while (xml.readNextStartElement()) {
-        if (!readProperties(item, xml)) {
-            xml.unknown();
-        }
-    }
-}
-
-bool TRead::readProperties(InstrumentLabel& item, XmlReader& xml)
-{
-    AsciiStringView tag = xml.name();
-
-    if (readProperties(static_cast<StaffLabel&>(item), xml)) {
-    } else if (tag == "transposition") {
-        item.setTransposition(lineBreakFromTag(xml.readXml()));
-    } else if (tag == "showTranspositionLong") {
-        item.setShowTranspositionLong(xml.readBool());
-    } else if (tag == "showTranspositionShort") {
-        item.setShowTranspositionShort(xml.readBool());
-    } else if (tag == "number") {
-        item.setNumber(xml.readInt());
-    } else if (tag == "showNumberLong") {
-        item.setShowNumberLong(xml.readBool());
-    } else if (tag == "showNumberShort") {
-        item.setShowNumberLong(xml.readBool());
-    } else if (tag == "useCustomName") {
-        item.setUseCustomName(xml.readBool());
-    } else if (tag == "customNameLong") {
-        item.setCustomNameLong(lineBreakFromTag(xml.readXml()));
-    } else if (tag == "customNameShort") {
-        item.setCustomNameShort(lineBreakFromTag(xml.readXml()));
-    } else if (tag == "allowGroupName") {
-        item.setAllowGroupName(xml.readBool());
-    } else if (tag == "customNameLongGroup") {
-        item.setCustomNameLongGroup(lineBreakFromTag(xml.readXml()));
-    } else if (tag == "customNameShortGroup") {
-        item.setCustomNameShortGroup(lineBreakFromTag(xml.readXml()));
-    } else if (tag == "useCustomGroupName") {
-        item.setUseCustomGroupName(xml.readBool());
-    } else if (tag == "customNameLongIndividual") {
-        item.setCustomNameLongIndividual(lineBreakFromTag(xml.readXml()));
-    } else if (tag == "customNameShortIndividual") {
-        item.setCustomNameShortIndividual(lineBreakFromTag(xml.readXml()));
-    } else if (tag == "useCustomIndividualName") {
-        item.setUseCustomIndividualName(xml.readBool());
-    } else {
-        return false;
-    }
-
     return true;
 }
 

@@ -92,6 +92,10 @@ namespace mu::engraving::read460 {
 class Read460;
 }
 
+namespace mu::engraving::read500 {
+class Read500;
+}
+
 namespace mu::engraving::write {
 class Writer;
 }
@@ -1079,6 +1083,7 @@ private:
     friend class read400::Read400;
     friend class read410::Read410;
     friend class read460::Read460;
+    friend class read500::Read500;
     friend class write::Writer;
 
     static std::set<Score*> validScores;
