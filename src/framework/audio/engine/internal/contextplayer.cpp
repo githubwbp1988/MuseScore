@@ -32,8 +32,9 @@ using namespace muse::audio;
 using namespace muse::audio::engine;
 using namespace muse::async;
 
-ContextPlayer::ContextPlayer(IGetTrackSource* getTracks)
+ContextPlayer::ContextPlayer(IGetTrackSource* getTracks, IExecOperation* execOperation)
     : m_trackSource(getTracks)
+    , m_execOperation(execOperation)
 {
     m_status.set(PlaybackStatus::Stopped);
     m_isActive.set(false);
@@ -46,6 +47,16 @@ ContextPlayer::ContextPlayer(IGetTrackSource* getTracks)
     m_timeEvent.onReceive(this, [this](const TimeEvent event) {
         onTimeEvent(event);
     });
+}
+
+void ContextPlayer::exec(OperationType type, const Operation& func)
+{
+    ONLY_AUDIO_ENGINE_THREAD;
+    if (m_execOperation) {
+        m_execOperation->execOperation(type, func);
+    } else {
+        func();
+    }
 }
 
 void ContextPlayer::onStatusChanged(const PlaybackStatus status)
@@ -124,15 +135,22 @@ const TimePosition& ContextPlayer::currentPosition() const
 void ContextPlayer::onTimeEvent(const TimeEvent event)
 {
     ONLY_AUDIO_ENGINE_THREAD;
+
     switch (event.type) {
     case TimeEventType::CountDownEnded:
-        m_isActive.set(m_status.val == PlaybackStatus::Running);
+        exec(OperationType::QuickOperation, [this]() {
+            m_isActive.set(m_status.val == PlaybackStatus::Running);
+        });
         break;
     case TimeEventType::LoopEnded:
-        seekAllTracks(event.position);
+        exec(OperationType::QuickOperation, [this, event]() {
+            seekAllTracks(event.position);
+        });
         break;
     case TimeEventType::PlaybackEnded:
-        pause();
+        exec(OperationType::QuickOperation, [this]() {
+            pause();
+        });
         break;
     default:
         break;
@@ -155,6 +173,7 @@ async::Promise<Ret> ContextPlayer::prepareToPlay()
 void ContextPlayer::play(const secs_t delay)
 {
     ONLY_AUDIO_ENGINE_THREAD;
+    ONLY_ON_OPERATION_EXEC;
 
     if (playbackStatus() == PlaybackStatus::Running) {
         return;
@@ -167,6 +186,7 @@ void ContextPlayer::play(const secs_t delay)
 void ContextPlayer::seek(const TimePosition& position, const bool flushSound)
 {
     ONLY_AUDIO_ENGINE_THREAD;
+    ONLY_ON_OPERATION_EXEC;
 
     //! NOTE During export, the current time does not change, it remains at 0
     // but a seek operation is still required to reset the internal state of the sources (synthesizers).
@@ -192,6 +212,7 @@ void ContextPlayer::seek(const TimePosition& position, const bool flushSound)
 void ContextPlayer::stop()
 {
     ONLY_AUDIO_ENGINE_THREAD;
+    ONLY_ON_OPERATION_EXEC;
 
     if (playbackStatus() == PlaybackStatus::Stopped) {
         return;
@@ -206,6 +227,7 @@ void ContextPlayer::stop()
 void ContextPlayer::pause()
 {
     ONLY_AUDIO_ENGINE_THREAD;
+    ONLY_ON_OPERATION_EXEC;
 
     if (playbackStatus() == PlaybackStatus::Paused) {
         return;
@@ -218,6 +240,7 @@ void ContextPlayer::pause()
 void ContextPlayer::resume(const secs_t delay)
 {
     ONLY_AUDIO_ENGINE_THREAD;
+    ONLY_ON_OPERATION_EXEC;
 
     if (playbackStatus() == PlaybackStatus::Running) {
         return;
@@ -243,6 +266,7 @@ void ContextPlayer::setDuration(const secs_t duration)
 Ret ContextPlayer::setLoop(const secs_t from, const secs_t to)
 {
     ONLY_AUDIO_ENGINE_THREAD;
+    ONLY_ON_OPERATION_EXEC;
 
     if (from >= to) {
         return make_ret(Err::InvalidTimeLoop);
@@ -257,6 +281,7 @@ Ret ContextPlayer::setLoop(const secs_t from, const secs_t to)
 void ContextPlayer::resetLoop()
 {
     ONLY_AUDIO_ENGINE_THREAD;
+    ONLY_ON_OPERATION_EXEC;
     m_timeLoopStart = 0;
     m_timeLoopEnd = 0;
 }
@@ -299,6 +324,9 @@ Channel<bool> ContextPlayer::isActiveChanged() const
 
 void ContextPlayer::seekAllTracks(const TimePosition& position)
 {
+    ONLY_AUDIO_ENGINE_THREAD;
+    ONLY_ON_OPERATION_EXEC;
+
     IF_ASSERT_FAILED(m_trackSource) {
         return;
     }
@@ -310,6 +338,9 @@ void ContextPlayer::seekAllTracks(const TimePosition& position)
 
 void ContextPlayer::flushAllTracks()
 {
+    ONLY_AUDIO_ENGINE_THREAD;
+    ONLY_ON_OPERATION_EXEC;
+
     IF_ASSERT_FAILED(m_trackSource) {
         return;
     }
@@ -330,6 +361,14 @@ void ContextPlayer::prepareAllTracksToPlay(AllTracksReadyCallback allTracksReady
     m_notYetReadyToPlayTracks.clear();
 
     for (const auto& source : m_trackSource->allTracksSources()) {
+        IF_ASSERT_FAILED(source) {
+            continue;
+        }
+
+        IF_ASSERT_FAILED(source->mode() == ProcessMode::Idle) {
+            continue;
+        }
+
         source->prepareToPlay();
 
         if (!source->readyToPlay()) {

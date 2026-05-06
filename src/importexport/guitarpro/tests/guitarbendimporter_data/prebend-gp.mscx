@@ -89,7 +89,7 @@
               <ghost>1</ghost>
               <Spanner type="GuitarBend">
                 <GuitarBend>
-                  <guitarBendType>1</guitarBendType>
+                  <guitarBendType>pre-bend</guitarBendType>
                   <bendStartTimeFactor>0</bendStartTimeFactor>
                   <bendEndTimeFactor>1</bendEndTimeFactor>
                   <eid>K_K</eid>
@@ -140,7 +140,7 @@
               <ghost>1</ghost>
               <Spanner type="GuitarBend">
                 <GuitarBend>
-                  <guitarBendType>1</guitarBendType>
+                  <guitarBendType>pre-bend</guitarBendType>
                   <bendStartTimeFactor>0</bendStartTimeFactor>
                   <bendEndTimeFactor>1</bendEndTimeFactor>
                   <eid>P_P</eid>

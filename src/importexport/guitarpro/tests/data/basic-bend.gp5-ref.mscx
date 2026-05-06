@@ -106,7 +106,7 @@
               <string>0</string>
               <Spanner type="GuitarBend">
                 <GuitarBend>
-                  <guitarBendType>0</guitarBendType>
+                  <guitarBendType>bend</guitarBendType>
                   <bendStartTimeFactor>0</bendStartTimeFactor>
                   <bendEndTimeFactor>0.5</bendEndTimeFactor>
                   <eid>N_N</eid>

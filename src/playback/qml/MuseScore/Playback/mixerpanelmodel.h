@@ -5,7 +5,7 @@
  * MuseScore Studio
  * Music Composition & Notation
  *
- * Copyright (C) 2021 MuseScore Limited
+ * Copyright (C) 2021 MuseScore Limited and others
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3 as
@@ -32,6 +32,7 @@
 #include "audio/main/iplayback.h"
 #include "context/iglobalcontext.h"
 #include "playback/iplaybackconfiguration.h"
+#include "project/iprojectaudiosettings.h"
 #include "ui/qml/Muse/Ui/navigationsection.h"
 
 #include "iplaybackcontroller.h"
@@ -106,7 +107,7 @@ private:
 
     MixerChannelItem* findChannelItem(const muse::audio::TrackId& trackId) const;
 
-    void loadOutputParams(MixerChannelItem* item, muse::audio::AudioOutputParams&& params);
+    void loadOutputParams(MixerChannelItem* item, project::AudioOutputParams&& params);
     void updateOutputResourceItemCount();
 
     project::INotationProjectPtr currentProject() const;

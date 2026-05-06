@@ -20,32 +20,31 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "audiooutputnode.h"
+#pragma once
 
-using namespace muse;
-using namespace muse::audio;
-using namespace muse::audio::engine;
+#include "audionode.h"
 
-const AudioOutputParams& AudioOutputNode::outputParams() const
+#include "../../iplayhead.h"
+
+namespace muse::audio {
+struct PlayheadTag
 {
-    return m_params;
+    static constexpr const char* name = "Playhead";
+};
 }
 
-void AudioOutputNode::applyOutputParams(const AudioOutputParams& requiredParams)
+namespace muse::audio::engine {
+class PlayheadNode : public AudioNode<PlayheadTag>
 {
-    if (m_params == requiredParams) {
-        return;
-    }
-    m_params = onOutputParamsChanged(requiredParams);
-    m_paramsChanges.send(m_params);
-}
+public:
+    explicit PlayheadNode(PlayheadPtr playhead);
 
-async::Channel<AudioOutputParams> AudioOutputNode::outputParamsChanged() const
-{
-    return m_paramsChanges;
-}
+protected:
 
-AudioOutputParams AudioOutputNode::onOutputParamsChanged(const AudioOutputParams& requiredParams)
-{
-    return requiredParams;
+    void doSelfProcess(float* buffer, samples_t samplesPerChannel) override;
+
+    PlayheadPtr m_playhead;
+};
+
+using PlayheadNodePtr = std::shared_ptr<PlayheadNode>;
 }

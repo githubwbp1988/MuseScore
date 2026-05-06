@@ -214,7 +214,7 @@
               </Note>
             </Chord>
           <Harmony>
-            <rootCase>1</rootCase>
+            <rootCase>lower</rootCase>
             <harmonyInfo>
               <name>not a chord</name>
               </harmonyInfo>

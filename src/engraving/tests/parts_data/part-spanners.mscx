@@ -290,7 +290,7 @@
               <tpc>15</tpc>
               <Spanner type="GuitarBend">
                 <GuitarBend>
-                  <guitarBendType>0</guitarBendType>
+                  <guitarBendType>bend</guitarBendType>
                   <bendStartTimeFactor>0</bendStartTimeFactor>
                   <bendEndTimeFactor>1</bendEndTimeFactor>
                   <eid>b_b</eid>
@@ -346,7 +346,7 @@
               <ghost>1</ghost>
               <Spanner type="GuitarBend">
                 <GuitarBend>
-                  <guitarBendType>1</guitarBendType>
+                  <guitarBendType>bend</guitarBendType>
                   <bendStartTimeFactor>0</bendStartTimeFactor>
                   <bendEndTimeFactor>1</bendEndTimeFactor>
                   <eid>j_j</eid>
@@ -562,7 +562,7 @@
               <tpc>15</tpc>
               <Spanner type="GuitarBend">
                 <GuitarBend>
-                  <guitarBendType>0</guitarBendType>
+                  <guitarBendType>bend</guitarBendType>
                   <bendStartTimeFactor>0</bendStartTimeFactor>
                   <bendEndTimeFactor>1</bendEndTimeFactor>
                   <eid>AB_AB</eid>
@@ -610,7 +610,7 @@
               <ghost>1</ghost>
               <Spanner type="GuitarBend">
                 <GuitarBend>
-                  <guitarBendType>1</guitarBendType>
+                  <guitarBendType>bend</guitarBendType>
                   <bendStartTimeFactor>0</bendStartTimeFactor>
                   <bendEndTimeFactor>1</bendEndTimeFactor>
                   <eid>HB_HB</eid>

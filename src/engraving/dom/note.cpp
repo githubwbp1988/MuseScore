@@ -5,7 +5,7 @@
  * MuseScore Studio
  * Music Composition & Notation
  *
- * Copyright (C) 2021 MuseScore Limited
+ * Copyright (C) 2021 MuseScore Limited and others
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3 as
@@ -2047,65 +2047,6 @@ EngravingItem* Note::drop(EditData& data)
 }
 
 //---------------------------------------------------------
-//   setDotY
-//    dotMove is number of staff spaces/lines to move from the note's
-//    space or line
-//---------------------------------------------------------
-
-void Note::setDotRelativeLine(int dotMove)
-{
-    double y = dotMove / 2.0;
-    if (staff()->isTabStaff(chord()->tick())) {
-        // with TAB's, dotPosX is not set:
-        // get dot X from width of fret text and use TAB default spacing
-        const Staff* st = staff();
-        const StaffType* tab = st->staffTypeForElement(this);
-        if (tab->stemThrough()) {
-            // if fret mark on lines, use standard processing
-            if (!tab->onLines()) {
-                // if fret marks above lines, raise the dots by half line distance
-                y = -0.5;
-            }
-            if (dotMove == 0) {
-                bool oddVoice = voice() & 1;
-                y = oddVoice ? 0.5 : -0.5;
-            } else {
-                y = 0.5;
-            }
-        }
-        // if stems beside staff, do nothing
-        else {
-            return;
-        }
-    }
-    y *= spatium() * staff()->lineDistance(tick());
-
-    // apply to dots
-
-    int cdots = static_cast<int>(chord()->dots());
-    int ndots = static_cast<int>(m_dots.size());
-
-    int n = cdots - ndots;
-    for (int i = 0; i < n; ++i) {
-        NoteDot* dot = Factory::createNoteDot(this);
-        dot->setParent(this);
-        dot->setTrack(track());      // needed to know the staff it belongs to (and detect tablature)
-        dot->setVisible(visible());
-        score()->undoAddElement(dot);
-    }
-    if (n < 0) {
-        for (int i = 0; i < -n; ++i) {
-            score()->undoRemoveElement(m_dots.back());
-        }
-    }
-
-    for (NoteDot* dot : m_dots) {
-        renderer()->layoutItem(dot);
-        dot->mutldata()->setPosY(y);
-    }
-}
-
-//---------------------------------------------------------
 //   dotIsUp
 //---------------------------------------------------------
 
@@ -2138,6 +2079,16 @@ static bool hasAlteredUnison(Note* note)
 
 void Note::updateAccidental(AccidentalState* as)
 {
+    if (deadNote() && configuration()->keepDeadNotesUnchangedOnTranspose()) {
+        if (m_accidental) {
+            score()->undoRemoveElement(m_accidental);
+        }
+        int eAbsLine = absStep(tpc(), epitch());
+        as->setAccidentalVal(eAbsLine, tpc2alter(tpc()), false);
+        updateRelLine(eAbsLine, true);
+        return;
+    }
+
     int absLine = absStep(tpc(), epitch());
 
     // Ensure m_centOffset and microtonal accidental match (they can mismatch when switching from TAB)
@@ -4101,7 +4052,7 @@ void Note::addLineAttachPoint(PointF point, EngravingItem* line, bool start)
 
 bool Note::negativeFretUsed() const
 {
-    return configuration()->negativeFretsAllowed() && m_fret < 0;
+    return configuration()->negativeFretsAllowed() && m_fret < 0 && m_string != INVALID_STRING_INDEX;
 }
 
 int Note::stringOrLine() const

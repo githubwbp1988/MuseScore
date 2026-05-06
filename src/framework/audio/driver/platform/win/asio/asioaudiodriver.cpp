@@ -420,12 +420,18 @@ AudioDeviceID AsioAudioDriver::defaultDevice() const
 
 bool AsioAudioDriver::open(const Spec& spec, Spec* activeSpec)
 {
-    LOGI() << "try open: " << spec.deviceId;
     IF_ASSERT_FAILED(!spec.deviceId.empty()) {
         return false;
     }
 
-    const char* name = spec.deviceId.c_str();
+    AudioDeviceID deviceId = spec.deviceId;
+    if (deviceId == DEFAULT_DEVICE_ID) {
+        deviceId = defaultDevice();
+    }
+
+    LOGI() << "try to open: " << deviceId;
+
+    const char* name = deviceId.c_str();
     bool ok = s_adata.drivers->loadDriver(const_cast<char*>(name));
     if (!ok) {
         LOGE() << "failed load driver: " << name;
@@ -465,14 +471,11 @@ bool AsioAudioDriver::open(const Spec& spec, Spec* activeSpec)
            << " preferred: " << metrics.preferredSize
            << " granularity: " << metrics.granularity;
 
-    ok = ASIOGetSampleRate(&metrics.sampleRate) == ASE_OK;
-    if (!ok) {
-        LOGE() << "failed get sample rate, driver: " << name;
-        return ok;
-    }
+    const bool useDeviceSampleRate = ASIOGetSampleRate(&metrics.sampleRate) == ASE_OK;
 
     // Set active
     s_adata.activeSpec = spec;
+    s_adata.activeSpec.deviceId = deviceId;
     OutputSpec& active = s_adata.activeSpec.output;
     active.audioChannelCount = 2;
 
@@ -480,11 +483,19 @@ bool AsioAudioDriver::open(const Spec& spec, Spec* activeSpec)
                                           (samples_t)metrics.minSize,
                                           (samples_t)metrics.maxSize);
 
-    ok = ASIOSetSampleRate(static_cast<double>(spec.output.sampleRate)) == ASE_OK;
-    if (!ok) {
-        LOGW() << "failed set sample rate: " << spec.output.sampleRate << ", driver: " << name;
+    if (useDeviceSampleRate) {
+        active.sampleRate = static_cast<sample_rate_t>(metrics.sampleRate);
+        LOGI() << "using ASIO device sample rate: " << active.sampleRate;
+    } else {
+        LOGE() << "failed get sample rate, driver: " << name
+               << ", trying ASIOSetSampleRate: " << spec.output.sampleRate;
+        ok = ASIOSetSampleRate(static_cast<double>(spec.output.sampleRate)) == ASE_OK;
+        if (!ok) {
+            LOGE() << "failed set sample rate: " << spec.output.sampleRate << ", driver: " << name;
+            return false;
+        }
+        active.sampleRate = spec.output.sampleRate;
     }
-    active.sampleRate = ok ? spec.output.sampleRate : static_cast<sample_rate_t>(metrics.sampleRate);
 
     LOGI() << "active spec"
            << " audioChannelCount: " << active.audioChannelCount

@@ -5,7 +5,7 @@
  * MuseScore Studio
  * Music Composition & Notation
  *
- * Copyright (C) 2021 MuseScore Limited
+ * Copyright (C) 2021 MuseScore Limited and others
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3 as
@@ -5125,7 +5125,7 @@ void MusicXmlParserDirection::bracket(const String& type, const int number,
             } else if (lineEnd == "both") {
                 textLine->setBeginHookType(HookType::HOOK_90T);
             } else if (lineEnd == "arrow") {
-                m_logger->logError(String(u"line-end \"arrow\" not supported"));
+                textLine->setBeginHookType(HookType::ARROW_FILLED);
             } else if (lineEnd == "none") {
                 textLine->setBeginHookType(HookType::NONE);
             }
@@ -5186,7 +5186,7 @@ void MusicXmlParserDirection::bracket(const String& type, const int number,
             } else if (lineEnd == "both") {
                 textLine->setEndHookType(HookType::HOOK_90T);
             } else if (lineEnd == "arrow") {
-                m_logger->logError(String(u"line-end \"arrow\" not supported"));
+                textLine->setEndHookType(HookType::ARROW_FILLED);
             } else if (lineEnd == "none") {
                 textLine->setEndHookType(HookType::NONE);
             }

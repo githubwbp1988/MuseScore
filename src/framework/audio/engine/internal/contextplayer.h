@@ -29,13 +29,14 @@
 #include "../iengineplayer.h"
 #include "../iplayhead.h"
 
+#include "iexecoperation.h"
 #include "igettracksource.h"
 
 namespace muse::audio::engine {
 class ContextPlayer : public IEnginePlayer, public IPlayhead, public async::Asyncable
 {
 public:
-    explicit ContextPlayer(IGetTrackSource* getTracks);
+    explicit ContextPlayer(IGetTrackSource* getTracks, IExecOperation* execOperation);
 
     async::Promise<Ret> prepareToPlay() override;
 
@@ -65,6 +66,8 @@ public:
 
 private:
 
+    void exec(OperationType type, const Operation& func);
+
     void onStatusChanged(const PlaybackStatus status);
 
     // Processing thread functions
@@ -92,6 +95,7 @@ private:
     void prepareAllTracksToPlay(AllTracksReadyCallback allTracksReadyCallback);
 
     IGetTrackSource* m_trackSource = nullptr;
+    IExecOperation* m_execOperation = nullptr;
 
     ValCh<PlaybackStatus> m_status;
     ValCh<bool> m_isActive;

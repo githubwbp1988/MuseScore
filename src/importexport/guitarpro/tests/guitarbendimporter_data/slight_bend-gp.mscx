@@ -84,7 +84,7 @@
               <string>1</string>
               <Spanner type="GuitarBend">
                 <GuitarBend>
-                  <guitarBendType>3</guitarBendType>
+                  <guitarBendType>slight-bend</guitarBendType>
                   <bendStartTimeFactor>0</bendStartTimeFactor>
                   <bendEndTimeFactor>0.266667</bendEndTimeFactor>
                   <eid>K_K</eid>
@@ -113,7 +113,7 @@
               <string>1</string>
               <Spanner type="GuitarBend">
                 <GuitarBend>
-                  <guitarBendType>3</guitarBendType>
+                  <guitarBendType>slight-bend</guitarBendType>
                   <bendStartTimeFactor>0</bendStartTimeFactor>
                   <bendEndTimeFactor>0.716667</bendEndTimeFactor>
                   <eid>N_N</eid>

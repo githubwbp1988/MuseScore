@@ -87,7 +87,7 @@
               <string>1</string>
               <Spanner type="GuitarBend">
                 <GuitarBend>
-                  <guitarBendType>2</guitarBendType>
+                  <guitarBendType>grace-note-bend</guitarBendType>
                   <bendStartTimeFactor>0</bendStartTimeFactor>
                   <bendEndTimeFactor>1</bendEndTimeFactor>
                   <eid>K_K</eid>
@@ -117,7 +117,7 @@
               <string>1</string>
               <Spanner type="GuitarBend">
                 <GuitarBend>
-                  <guitarBendType>0</guitarBendType>
+                  <guitarBendType>bend</guitarBendType>
                   <bendStartTimeFactor>0</bendStartTimeFactor>
                   <bendEndTimeFactor>1</bendEndTimeFactor>
                   <eid>N_N</eid>
@@ -165,7 +165,7 @@
               <string>1</string>
               <Spanner type="GuitarBend">
                 <GuitarBend>
-                  <guitarBendType>2</guitarBendType>
+                  <guitarBendType>grace-note-bend</guitarBendType>
                   <bendStartTimeFactor>0</bendStartTimeFactor>
                   <bendEndTimeFactor>0.789474</bendEndTimeFactor>
                   <eid>S_S</eid>
@@ -195,7 +195,7 @@
               <string>1</string>
               <Spanner type="GuitarBend">
                 <GuitarBend>
-                  <guitarBendType>0</guitarBendType>
+                  <guitarBendType>bend</guitarBendType>
                   <bendStartTimeFactor>0.363636</bendStartTimeFactor>
                   <bendEndTimeFactor>0.727273</bendEndTimeFactor>
                   <eid>V_V</eid>

@@ -24,7 +24,6 @@
 
 #include <memory>
 
-#include "audio/common/audiotypes.h"
 #include "audio/common/timeposition.h"
 
 namespace muse::audio::engine {

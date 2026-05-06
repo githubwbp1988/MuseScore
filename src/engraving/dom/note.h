@@ -5,7 +5,7 @@
  * MuseScore Studio
  * Music Composition & Notation
  *
- * Copyright (C) 2021 MuseScore Limited
+ * Copyright (C) 2021 MuseScore Limited and others
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3 as
@@ -375,7 +375,6 @@ public:
     bool mark() const { return m_mark; }
     void setMark(bool v) const { m_mark = v; }
     void setScore(Score* s) override;
-    void setDotRelativeLine(int);
 
     static SymId noteHead(int direction, NoteHeadGroup, NoteHeadType, int tpc, Key key, NoteHeadScheme scheme);
     static SymId noteHead(int direction, NoteHeadGroup, NoteHeadType);

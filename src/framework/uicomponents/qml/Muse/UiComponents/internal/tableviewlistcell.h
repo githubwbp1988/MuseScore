@@ -41,6 +41,8 @@ public:
     QString current() const;
     void setCurrent(const QString& current);
 
+    Val sortValue() const override { return Val(m_current); }
+
 signals:
     void currentChanged();
 

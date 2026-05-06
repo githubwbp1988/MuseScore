@@ -20,33 +20,19 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#pragma once
+#include "playheadnode.h"
 
-#include "audionode.h"
+using namespace muse;
+using namespace muse::audio;
+using namespace muse::audio::engine;
 
-#include "global/async/channel.h"
-
-#include "audio/common/audiotypes.h"
-
-namespace muse::audio::engine {
-class AudioOutputNode : public AudioNode
+PlayheadNode::PlayheadNode(PlayheadPtr playhead)
+    : m_playhead(playhead)
 {
-public:
+    assert(m_playhead && "PlayheadNode requires a non-null Playhead");
+}
 
-    const AudioOutputParams& outputParams() const;
-    void applyOutputParams(const AudioOutputParams& requiredParams);
-    async::Channel<AudioOutputParams> outputParamsChanged() const;
-
-    // Temporary
-    virtual AudioSignalChanges audioSignalChanges() const = 0;
-
-protected:
-
-    virtual AudioOutputParams onOutputParamsChanged(const AudioOutputParams& requiredParams);
-
-    AudioOutputParams m_params;
-    async::Channel<AudioOutputParams> m_paramsChanges;
-};
-
-using AudioOutputNodePtr = std::shared_ptr<AudioOutputNode>;
+void PlayheadNode::doSelfProcess(float*, samples_t samplesPerChannel)
+{
+    m_playhead->forward(TimePosition::fromSamples(samplesPerChannel, m_outputSpec.sampleRate));
 }

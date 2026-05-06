@@ -96,11 +96,14 @@ RetVal<std::shared_ptr<IAudioContext> > AudioEngine::addAudioContext(const Audio
         return RetType::make_ret(Err::AudioContextAlreadyExists);
     }
 
-    auto ctx = std::make_shared<AudioContext>(ctxId);
+    auto ctx = std::make_shared<AudioContext>(ctxId, this);
     Ret ret = ctx->init();
     if (!ret) {
         return RetType::make_ret(ret);
     }
+
+    ctx->setOutputSpec(m_outputSpec);
+    ctx->setMode(ProcessMode::Idle);
 
     m_contexts[ctxId] = ctx;
 
@@ -174,6 +177,8 @@ void AudioEngine::execOperation(OperationType type, const Operation& func)
     }
 
     m_operationType = type;
+    AudioSanitizer::setOperationType(type);
+
     if (m_operationType == OperationType::QuickOperation) {
         m_quickOperationWaitMutex.lock();
     }
@@ -184,11 +189,7 @@ void AudioEngine::execOperation(OperationType type, const Operation& func)
         m_quickOperationWaitMutex.unlock();
     }
     m_operationType = OperationType::NoOperation;
-}
-
-OperationType AudioEngine::operation() const
-{
-    return m_operationType.load();
+    AudioSanitizer::setOperationType(OperationType::NoOperation);
 }
 
 samples_t AudioEngine::fillSilent(float* buffer, samples_t samplesPerChannel)

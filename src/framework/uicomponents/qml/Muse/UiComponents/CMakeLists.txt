@@ -4,7 +4,7 @@
 # MuseScore Studio
 # Music Composition & Notation
 #
-# Copyright (C) 2025 MuseScore Limited
+# Copyright (C) 2025 MuseScore Limited and others
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License version 3 as
@@ -80,6 +80,8 @@ qt_add_qml_module(muse_uicomponents_qml
         sortfilterproxymodel.h
         shortcutoverridemodel.cpp
         shortcutoverridemodel.h
+        tablesortfilterproxymodel.cpp
+        tablesortfilterproxymodel.h
         toolbaritem.cpp
         toolbaritem.h
         validators/doubleinputvalidator.cpp

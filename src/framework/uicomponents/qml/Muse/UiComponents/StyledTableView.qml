@@ -34,8 +34,12 @@ Item {
     property alias model: tableView.model
     property var sourceComponentCallback
 
+    property int sortIndicatorColumn: -1
+    property int sortIndicatorOrder: ColumnSortOrder.Unsorted
+
     property bool showVerticalHeader: false
     property bool horizontalHeaderNavigationEnabled: true
+    property bool displayTruncatedTextOnHover: false
 
     property var currentEditedCell: null
 
@@ -77,6 +81,7 @@ Item {
     }
 
     signal handleItem(var index, var item)
+    signal horizontalHeaderClicked(int column)
 
     QtObject {
         id: prv
@@ -118,6 +123,8 @@ Item {
 
             headerCapitalization: root.headerCapitalization
 
+            sortOrder: index === root.sortIndicatorColumn ? root.sortIndicatorOrder : ColumnSortOrder.Unsorted
+
             navigation.panel: root.navigationPanel
             navigation.row: 0
             navigation.column: index * 100 // * 100 - some extra space for cell controls
@@ -133,8 +140,26 @@ Item {
                 }
             }
 
+            TableView.onReused: {
+                // Sorting can cause header items to be reused for different columns,
+                // invalidating indices and thereby navigation focus.
+
+                if (!root.navigationPanel.isNavigationOnHeaders) {
+                    return
+                }
+
+                const idx = root.navigationPanel.navigationIndexForRestore
+                if (idx && index === idx.x) {
+                    navigation.requestActive(true)
+                }
+            }
+
             onFormatChangeRequested: function(formatId) {
                 display.currentFormatId = formatId
+            }
+
+            onClicked: {
+                root.horizontalHeaderClicked(index)
             }
         }
     }
@@ -237,6 +262,7 @@ Item {
             preferredWidth: hHeaderData.preferredWidth
 
             sourceComponentCallback: root.sourceComponentCallback
+            displayTruncatedTextOnHover: root.displayTruncatedTextOnHover
 
             isSelected: tableView.selectionModel.hasSelection && tableView.selectionModel.isSelected(tableView.model.index(row, column))
             evenMargins: showVerticalHeader

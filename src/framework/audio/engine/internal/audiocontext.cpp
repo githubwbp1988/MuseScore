@@ -25,6 +25,8 @@
 #include "audio/common/audioerrors.h"
 #include "audio/common/audioutils.h"
 
+#include "nodes/trackchain.h"
+
 #include "contextplayer.h"
 
 #include "muse_framework_config.h"
@@ -36,11 +38,19 @@ using namespace muse;
 using namespace muse::audio;
 using namespace muse::audio::engine;
 
-AudioContext::AudioContext(const AudioCtxId& ctxId)
+AudioContext::AudioContext(const AudioCtxId& ctxId, IExecOperation* execOperation)
     : m_ctxId(ctxId)
+    , m_execOperation(execOperation)
 {
-    m_player = std::make_shared<ContextPlayer>(this);
+    m_player = std::make_shared<ContextPlayer>(this, execOperation);
+
+    m_playheadNode = std::make_shared<PlayheadNode>(std::static_pointer_cast<IPlayhead>(m_player));
     m_mixer = std::make_shared<Mixer>();
+
+    m_masterTrack.id = MASTER_TRACK_ID;
+    m_masterTrack.type = TrackType::Master_track;
+    m_masterTrack.name = "Master";
+    m_masterTrack.chain = std::make_shared<TrackChain>(MASTER_TRACK_ID, "Master");
 }
 
 AudioCtxId AudioContext::id() const
@@ -51,11 +61,19 @@ AudioCtxId AudioContext::id() const
 Ret AudioContext::init()
 {
     m_mixer->init();
-    m_mixer->setPlayhead(std::static_pointer_cast<IPlayhead>(m_player));
 
-    OutputSpec outputSpec = audioEngine()->outputSpec();
-    setOutputSpec(outputSpec);
-    setMode(ProcessMode::Idle);
+    // Make the chain: audiocontext <- playheadnode
+    // <- mastertrackchain <- mastersignalnode <- mastercontrolnode <- masterfxchain
+    // <- mixer
+    m_masterTrack.chain->setSource(m_mixer);
+    m_masterTrack.chain->setFxChain(nullptr); //!< NOTE Master fx chain is not exists yet
+    m_masterTrack.chain->setControl(std::make_shared<ControlNode>());
+    m_masterTrack.chain->setSignal(std::make_shared<SignalNode>());
+    m_masterTrack.chain->rebuild();
+
+    m_masterTrack.chain->connect(m_playheadNode);
+
+    LOGD() << "Master track chain: " << m_playheadNode->dump();
 
     m_player->isActiveChanged().onReceive(this, [this](bool isActive) {
         setMode(isActive ? ProcessMode::Playing : ProcessMode::Idle);
@@ -67,8 +85,6 @@ Ret AudioContext::init()
 void AudioContext::deinit()
 {
     ONLY_AUDIO_ENGINE_THREAD;
-
-    m_mixer->setPlayhead(nullptr);
 
     removeAllTracks();
 
@@ -82,27 +98,30 @@ void AudioContext::deinit()
     m_trackAdded = async::Channel<TrackId>();
 
     m_saveSoundTracksProgress = SaveSoundTrackProgressData();
-    m_outputParamsChanged = async::Channel<TrackId, AudioOutputParams>();
-    m_inputParamsChanged = async::Channel<TrackId, AudioInputParams>();
+    m_sourceParamsChanged = async::Channel<TrackId, AudioSourceParams>();
+    m_fxChainParamsChanged = async::Channel<TrackId, AudioFxChain>();
 
     async_disconnectAll();
 }
 
 // Config
-void AudioContext::setMode(const ProcessMode mode)
+void AudioContext::onModeChanged(const ProcessMode mode)
 {
     ONLY_AUDIO_ENGINE_THREAD;
     if (mode == ProcessMode::Idle) {
         m_mixer->setTracksToProcessWhenIdle(m_tracksToProcessWhenIdle);
     }
-    m_mixer->setIsIdle(mode == ProcessMode::Idle);
-    m_mixer->setMode(mode);
+
+    //! NOTE will be set on all nodes in the chain
+    m_playheadNode->setMode(mode);
 }
 
 void AudioContext::onOutputSpecChanged(const OutputSpec& outputSpec)
 {
     ONLY_AUDIO_ENGINE_THREAD;
-    m_mixer->setOutputSpec(outputSpec);
+
+    //! NOTE will be set on all nodes in the chain
+    m_playheadNode->setOutputSpec(outputSpec);
 
     TimePosition currentPosition = m_player->currentPosition();
     if (currentPosition.isValid()) {
@@ -115,18 +134,18 @@ void AudioContext::onOutputSpecChanged(const OutputSpec& outputSpec)
 // Setup tracks
 TrackId AudioContext::newTrackId() const
 {
-    static TrackId lastId = 0;
+    static TrackId lastId = MASTER_TRACK_ID;
     ++lastId;
     return lastId;
 }
 
-RetVal2<TrackId, AudioParams> AudioContext::addTrack(const std::string& trackName,
+RetVal2<TrackId, TrackParams> AudioContext::addTrack(const std::string& trackName,
                                                      io::IODevice* playbackData,
-                                                     const AudioParams&)
+                                                     const TrackParams& params)
 {
     ONLY_AUDIO_ENGINE_THREAD;
 
-    using RetType = RetVal2<TrackId, AudioParams>;
+    using RetType = RetVal2<TrackId, TrackParams>;
 
     if (!playbackData) {
         return RetType::make_ret(Err::InvalidAudioFilePath);
@@ -137,21 +156,22 @@ RetVal2<TrackId, AudioParams> AudioContext::addTrack(const std::string& trackNam
     track.type = TrackType::Sound_track;
     track.id = trackId;
     track.name = trackName;
-//! NOT IMPLEMENTED YET
-// track.source = source.val;
-// track.output = output.val;
+    track.params = params;
+    //! NOT IMPLEMENTED YET
+    // track.chain = ...
 
     doAddTrack(track);
 
     return RetType::make_ok(trackId, { });
 }
 
-RetVal2<TrackId, AudioParams> AudioContext::addTrack(const std::string& trackName,
-                                                     const mpe::PlaybackData& playbackData, const AudioParams& params)
+RetVal2<TrackId, TrackParams> AudioContext::addTrack(const std::string& trackName,
+                                                     const mpe::PlaybackData& playbackData,
+                                                     const TrackParams& params)
 {
     ONLY_AUDIO_ENGINE_THREAD;
 
-    using RetType = RetVal2<TrackId, AudioParams>;
+    using RetType = RetVal2<TrackId, TrackParams>;
 
     if (!playbackData.setupData.isValid()) {
         return RetType::make_ret(Err::InvalidSetupData);
@@ -172,84 +192,80 @@ RetVal2<TrackId, AudioParams> AudioContext::addTrack(const std::string& trackNam
         m_prevActiveTrackId = trackId;
     };
 
-// Make source
-    RetVal<AudioSourceNodePtr> source = audioFactory()->makeEventSource(trackId, playbackData, params.in, onOffStreamReceived);
+    // Make source
+    RetVal<AudioSourceNodePtr> source = audioFactory()->makeEventSource(trackId, playbackData, params.source, onOffStreamReceived);
     if (!source.ret) {
         return RetType::make_ret(source.ret);
     }
 
-// Make output and add to mixer
-    RetVal<AudioOutputNodePtr> output = audioFactory()->makeMixerChannel(trackId, params.out, source.val);
-    if (!output.ret) {
-        return RetType::make_ret(output.ret);
-    }
+    TrackChainPtr trackChain = std::make_shared<TrackChain>(trackId, trackName);
+    trackChain->setOutputSpec(outputSpec());
+    trackChain->setMode(mode());
+    trackChain->setSource(source.val);
+    trackChain->setFxChain(nullptr); // will be added later
+    trackChain->setControl(std::make_shared<ControlNode>());
+    trackChain->setSignal(std::make_shared<SignalNode>());
+    trackChain->rebuild();
 
-    Ret ret = m_mixer->addChannel(output.val);
+    Ret ret = m_mixer->addTrack(trackChain, params.auxSends);
     if (!ret) {
         return RetType::make_ret(ret);
     }
 
-    MixerChannelPtr channel = std::dynamic_pointer_cast<MixerChannel>(output.val);
-    IF_ASSERT_FAILED(channel) {
-        return RetType::make_ret(Ret::Code::InternalError);
-    }
-
-    channel->shouldProcessDuringSilenceChanged().onReceive(this, [this, trackId](bool shouldProcess) {
-        onShouldProcessDuringSilenceChanged(trackId, shouldProcess);
-    });
-
-// Make track info
+    // Make track info
     Track track;
     track.type = TrackType::Event_track;
     track.id = trackId;
     track.name = trackName;
-    track.source = source.val;
-    track.output = output.val;
+    track.params = params;
+    track.chain = trackChain;
+
+    track.params.source = source.val->inputParams();
+
+    onFxChainParamsChanged(track, params.fxChain);
+    onControlParamsChanged(track, params.control);
 
     doAddTrack(track);
 
-    return RetType::make_ok(trackId, { source.val->inputParams(), output.val->outputParams() });
+    return RetType::make_ok(trackId, track.params);
 }
 
-RetVal2<TrackId, AudioOutputParams> AudioContext::addAuxTrack(const std::string& trackName,
-                                                              const AudioOutputParams& params)
+RetVal2<TrackId, TrackParams> AudioContext::addAuxTrack(const std::string& trackName,
+                                                        const TrackParams& params)
 {
     ONLY_AUDIO_ENGINE_THREAD;
 
-    using RetType = RetVal2<TrackId, AudioOutputParams>;
+    using RetType = RetVal2<TrackId, TrackParams>;
 
     TrackId trackId = newTrackId();
 
-// Make output and add to mixer
-    RetVal<AudioOutputNodePtr> output = audioFactory()->makeMixerAuxChannel(trackId, params);
-    if (!output.ret) {
-        return RetType::make_ret(output.ret);
-    }
+    TrackChainPtr trackChain = std::make_shared<TrackChain>(trackId, trackName);
+    trackChain->setOutputSpec(outputSpec());
+    trackChain->setMode(mode());
+    trackChain->setFxChain(nullptr); // will be added later
+    trackChain->setControl(std::make_shared<ControlNode>());
+    trackChain->setSignal(std::make_shared<SignalNode>());
+    trackChain->rebuild();
 
-    Ret ret = m_mixer->addAuxChannel(output.val);
+    Ret ret = m_mixer->addAuxTrack(trackChain);
     if (!ret) {
         return RetType::make_ret(ret);
     }
 
-    MixerChannelPtr channel = std::dynamic_pointer_cast<MixerChannel>(output.val);
-    IF_ASSERT_FAILED(channel) {
-        return RetType::make_ret(make_ret(Ret::Code::InternalError));
-    }
-
-    channel->shouldProcessDuringSilenceChanged().onReceive(this, [this, trackId](bool shouldProcess) {
-        onShouldProcessDuringSilenceChanged(trackId, shouldProcess);
-    });
-
-// Make track info
+    // Make track info
     Track track;
-    track.type = TrackType::Event_track;
+    track.type = TrackType::Aux_track;
     track.id = trackId;
     track.name = trackName;
-    track.output = output.val;
+    track.params = params;
+    track.chain = trackChain;
+
+    onFxChainParamsChanged(track, params.fxChain);
+    onControlParamsChanged(track, params.control);
 
     doAddTrack(track);
 
-    return RetType::make_ok(trackId, output.val->outputParams());
+    return RetType::make_ok(trackId, track.params);
 }
 
 void AudioContext::doAddTrack(const Track& track)
@@ -257,21 +273,100 @@ void AudioContext::doAddTrack(const Track& track)
     ONLY_AUDIO_ENGINE_THREAD;
     const TrackId trackId = track.id;
 
-    if (track.source) {
-        track.source->seek(m_player->currentPosition());
-        track.source->inputParamsChanged().onReceive(this, [this, trackId](const AudioInputParams& params) {
-            m_inputParamsChanged.send(trackId, params);
-        });
-    }
-
-    if (track.output) {
-        track.output->outputParamsChanged().onReceive(this, [this, trackId](const AudioOutputParams& params) {
-            m_outputParamsChanged.send(trackId, params);
+    if (auto source = std::dynamic_pointer_cast<AudioSourceNode>(track.chain->source())) {
+        source->seek(m_player->currentPosition());
+        source->inputParamsChanged().onReceive(this, [this, trackId](const AudioInputParams& params) {
+            m_sourceParamsChanged.send(trackId, params);
         });
     }
 
     m_tracks.push_back(track);
     m_trackAdded.send(trackId);
+
+    updateNonMutedTrackCount();
+}
+
+void AudioContext::onSourceParamsChanged(Track& track, const AudioSourceParams& params)
+{
+    ONLY_AUDIO_ENGINE_THREAD;
+    if (auto source = std::dynamic_pointer_cast<AudioSourceNode>(track.chain->source())) {
+        source->applyInputParams(params);
+    }
+
+    track.params.source = params;
+}
+
+void AudioContext::onControlParamsChanged(Track& track, const ControlParams& params)
+{
+    ONLY_AUDIO_ENGINE_THREAD;
+    if (auto control = track.chain->control()) {
+        const bool mutedChanged = control->muted() != params.muted;
+
+        control->setVolume(muse::db_to_linear(params.volume));
+        control->setPan(params.balance);
+        control->setMuted(params.muted);
+
+        //! NOTE For regular tracks
+        if (mutedChanged && !params.muted && track.chain->source()) {
+            if (auto source = std::dynamic_pointer_cast<AudioSourceNode>(track.chain->source())) {
+                source->seek(m_player->currentPosition());
+            }
+        }
+    }
+
+    track.params.control = params;
+
+    updateNonMutedTrackCount();
+}
+
+void AudioContext::updateNonMutedTrackCount()
+{
+    ONLY_AUDIO_ENGINE_THREAD;
+    size_t count = 0;
+    for (const Track& t : m_tracks) {
+        if (auto control = t.chain->control()) {
+            if (!control->muted()) {
+                count++;
+            }
+        }
+    }
+    m_mixer->setNonMutedTrackCount(count);
+}
+
+void AudioContext::onFxChainParamsChanged(Track& track, const AudioFxChain& params)
+{
+    ONLY_AUDIO_ENGINE_THREAD;
+
+    const TrackId trackId = track.id;
+    std::shared_ptr<IPlayheadPosition> playheadPosition = std::static_pointer_cast<IPlayheadPosition>(m_player);
+
+    // Make fx chain
+    FxChainPtr fxChain = audioFactory()->makeTrackFxChain(trackId, params);
+    fxChain->setPlayheadPosition(playheadPosition);
+    fxChain->fxChainSpecChanged().onReceive(this, [this, trackId](const AudioFxChain& fxChainSpec) {
+        if (Track* t = this->track(trackId)) {
+            t->params.fxChain = fxChainSpec;
+            m_fxChainParamsChanged.send(trackId, t->params.fxChain);
+        }
+    });
+
+    fxChain->shouldProcessDuringSilenceChanged().onReceive(this, [this, trackId](bool shouldProcess) {
+        onShouldProcessDuringSilenceChanged(trackId, shouldProcess);
+    });
+
+    track.chain->setFxChain(fxChain);
+    track.chain->rebuild();
+
+    track.params.fxChain = fxChain->fxChainSpec();
+}
+
+void AudioContext::onAuxSendsParamsChanged(Track& track, const AuxSendsParams& params)
+{
+    ONLY_AUDIO_ENGINE_THREAD;
+
+    m_mixer->setAuxSends(track.id, params);
+
+    track.params.auxSends = params;
 }
 
 void AudioContext::removeTrack(const TrackId trackId)
@@ -287,14 +382,11 @@ void AudioContext::removeTrack(const TrackId trackId)
     }
 
     Track track = *it;
-    if (track.source) {
-        track.source->inputParamsChanged().disconnect(this);
-    }
-    if (track.output) {
-        track.output->outputParamsChanged().disconnect(this);
+    if (auto source = std::dynamic_pointer_cast<AudioSourceNode>(track.chain->source())) {
+        source->inputParamsChanged().disconnect(this);
     }
 
-    m_mixer->removeChannel(trackId);
+    m_mixer->removeTrack(trackId);
     m_tracks.erase(it);
     muse::remove(m_tracksToProcessWhenIdle, trackId);
 
@@ -343,7 +435,28 @@ RetVal<TrackIdList> AudioContext::trackIdList() const
 const AudioContext::Track* AudioContext::track(const TrackId id) const
 {
     ONLY_AUDIO_ENGINE_THREAD;
+
+    if (id == MASTER_TRACK_ID) {
+        return &m_masterTrack;
+    }
+
     for (const Track& t : m_tracks) {
+        if (t.id == id) {
+            return &t;
+        }
+    }
+    return nullptr;
+}
+
+AudioContext::Track* AudioContext::track(const TrackId id)
+{
+    ONLY_AUDIO_ENGINE_THREAD;
+
+    if (id == MASTER_TRACK_ID) {
+        return &m_masterTrack;
+    }
+
+    for (Track& t : m_tracks) {
         if (t.id == id) {
             return &t;
         }
@@ -366,7 +479,7 @@ AudioSourceNodePtr AudioContext::trackSource(const TrackId trackId) const
 {
     ONLY_AUDIO_ENGINE_THREAD;
     if (const Track* t = track(trackId)) {
-        return t->source;
+        return std::dynamic_pointer_cast<AudioSourceNode>(t->chain->source());
     }
     return nullptr;
 }
@@ -377,8 +490,8 @@ std::vector<AudioSourceNodePtr> AudioContext::allTracksSources() const
     std::vector<AudioSourceNodePtr> result;
     result.reserve(m_tracks.size());
     for (const Track& t : m_tracks) {
-        if (t.source) {
-            result.push_back(t.source);
+        if (auto source = std::dynamic_pointer_cast<AudioSourceNode>(t.chain->source())) {
+            result.push_back(source);
         }
     }
     return result;
@@ -409,38 +522,74 @@ SoundPresetList AudioContext::availableSoundPresets(const AudioResourceMeta& res
     return audioFactory()->availableSoundPresets(resourceMeta);
 }
 
-RetVal<AudioInputParams> AudioContext::inputParams(const TrackId trackId) const
+RetVal<TrackParams> AudioContext::params(const TrackId trackId) const
 {
     ONLY_AUDIO_ENGINE_THREAD;
     if (const Track* t = track(trackId)) {
-        return RetVal<AudioInputParams>::make_ok(t->source ? t->source->inputParams() : AudioInputParams());
+        return RetVal<TrackParams>::make_ok(t->params);
     }
 
-    return RetVal<AudioInputParams>::make_ret(Err::InvalidTrackId);
+    return RetVal<TrackParams>::make_ret(Err::InvalidTrackId);
 }
 
-void AudioContext::setInputParams(const TrackId trackId, const AudioInputParams& params)
+void AudioContext::setSourceParams(const TrackId trackId, const AudioSourceParams& params)
 {
     ONLY_AUDIO_ENGINE_THREAD;
-    if (const Track* t = track(trackId)) {
-        if (t->source) {
-            t->source->applyInputParams(params);
+    if (Track* t = track(trackId)) {
+        if (t->params.source != params) {
+            onSourceParamsChanged(*t, params);
         }
     }
 }
 
-async::Channel<TrackId, AudioInputParams> AudioContext::inputParamsChanged() const
+void AudioContext::setControlParams(const TrackId trackId, const ControlParams& params)
 {
     ONLY_AUDIO_ENGINE_THREAD;
-    return m_inputParamsChanged;
+    if (Track* t = track(trackId)) {
+        if (t->params.control != params) {
+            onControlParamsChanged(*t, params);
+        }
+    }
+}
+
+void AudioContext::setFxChainParams(const TrackId trackId, const AudioFxChain& params)
+{
+    ONLY_AUDIO_ENGINE_THREAD;
+    if (Track* t = track(trackId)) {
+        if (t->params.fxChain != params) {
+            onFxChainParamsChanged(*t, params);
+        }
+    }
+}
+
+void AudioContext::setAuxSendsParams(const TrackId trackId, const AuxSendsParams& params)
+{
+    ONLY_AUDIO_ENGINE_THREAD;
+    if (Track* t = track(trackId)) {
+        if (t->params.auxSends != params) {
+            onAuxSendsParamsChanged(*t, params);
+        }
+    }
+}
+
+async::Channel<TrackId, AudioSourceParams> AudioContext::sourceParamsChanged() const
+{
+    ONLY_AUDIO_ENGINE_THREAD;
+    return m_sourceParamsChanged;
+}
+
+async::Channel<TrackId, AudioFxChain> AudioContext::fxChainParamsChanged() const
+{
+    ONLY_AUDIO_ENGINE_THREAD;
+    return m_fxChainParamsChanged;
 }
 
 void AudioContext::processInput(const TrackId trackId) const
 {
     ONLY_AUDIO_ENGINE_THREAD;
     if (const Track* t = track(trackId)) {
-        if (t->source) {
-            t->source->processInput();
+        if (auto source = std::dynamic_pointer_cast<AudioSourceNode>(t->chain->source())) {
+            source->processInput();
         }
     }
 }
@@ -449,9 +598,9 @@ RetVal<InputProcessingProgress> AudioContext::inputProcessingProgress(const Trac
 {
     ONLY_AUDIO_ENGINE_THREAD;
     if (const Track* t = track(trackId)) {
-        return RetVal<InputProcessingProgress>::make_ok(t->source
-                                                        ? t->source->inputProcessingProgress()
-                                                        : InputProcessingProgress());
+        if (auto source = std::dynamic_pointer_cast<AudioSourceNode>(t->chain->source())) {
+            return RetVal<InputProcessingProgress>::make_ok(source->inputProcessingProgress());
+        }
     }
 
     return make_ret(Err::InvalidTrackId);
@@ -461,8 +610,8 @@ void AudioContext::clearCache(const TrackId trackId) const
 {
     ONLY_AUDIO_ENGINE_THREAD;
     if (const Track* t = track(trackId)) {
-        if (t->source) {
-            t->source->clearCache();
+        if (auto source = std::dynamic_pointer_cast<AudioSourceNode>(t->chain->source())) {
+            source->clearCache();
         }
     }
 }
@@ -473,77 +622,29 @@ void AudioContext::clearSources()
     audioFactory()->clearSynthSources();
 }
 
-// Outputs
 AudioResourceMetaList AudioContext::availableOutputResources() const
 {
     ONLY_AUDIO_ENGINE_THREAD;
     return audioFactory()->availableOutputResources();
 }
 
-RetVal<AudioOutputParams> AudioContext::outputParams(const TrackId trackId) const
-{
-    ONLY_AUDIO_ENGINE_THREAD;
-    if (const Track* t = track(trackId)) {
-        return RetVal<AudioOutputParams>::make_ok(t->output ? t->output->outputParams() : AudioOutputParams());
-    }
-
-    return make_ret(Err::InvalidTrackId);
-}
-
-void AudioContext::setOutputParams(const TrackId trackId, const AudioOutputParams& params)
-{
-    ONLY_AUDIO_ENGINE_THREAD;
-    if (const Track* t = track(trackId)) {
-        if (t->output) {
-            t->output->applyOutputParams(params);
-        }
-    }
-}
-
-async::Channel<TrackId, AudioOutputParams> AudioContext::outputParamsChanged() const
-{
-    ONLY_AUDIO_ENGINE_THREAD;
-    return m_outputParamsChanged;
-}
-
 RetVal<AudioSignalChanges> AudioContext::signalChanges(const TrackId trackId) const
 {
     ONLY_AUDIO_ENGINE_THREAD;
     if (const Track* t = track(trackId)) {
-        return RetVal<AudioSignalChanges>::make_ok(t->output ? t->output->audioSignalChanges() : AudioSignalChanges());
+        if (auto signal = t->chain->signal()) {
+            return RetVal<AudioSignalChanges>::make_ok(signal->audioSignalChanges());
+        }
     }
 
-    return make_ret(Err::InvalidTrackId);
-}
-
-RetVal<AudioOutputParams> AudioContext::masterOutputParams() const
-{
-    ONLY_AUDIO_ENGINE_THREAD;
-    return RetVal<AudioOutputParams>::make_ok(m_mixer->masterOutputParams());
-}
-
-void AudioContext::setMasterOutputParams(const AudioOutputParams& params)
-{
-    ONLY_AUDIO_ENGINE_THREAD;
-    m_mixer->setMasterOutputParams(params);
+    return RetVal<AudioSignalChanges>::make_ret(Err::InvalidTrackId);
 }
 
 void AudioContext::clearMasterOutputParams()
 {
     ONLY_AUDIO_ENGINE_THREAD;
-    m_mixer->clearMasterOutputParams();
-}
-
-async::Channel<AudioOutputParams> AudioContext::masterOutputParamsChanged() const
-{
-    ONLY_AUDIO_ENGINE_THREAD;
-    return m_mixer->masterOutputParamsChanged();
-}
-
-RetVal<AudioSignalChanges> AudioContext::masterSignalChanges() const
-{
-    ONLY_AUDIO_ENGINE_THREAD;
-    return RetVal<AudioSignalChanges>::make_ok(m_mixer->masterAudioSignalChanges());
+    setControlParams(MASTER_TRACK_ID, ControlParams());
+    setFxChainParams(MASTER_TRACK_ID, AudioFxChain());
 }
 
 void AudioContext::clearAllFx()
@@ -561,6 +662,8 @@ async::Promise<Ret> AudioContext::prepareToPlay()
 
 void AudioContext::play(const secs_t delay)
 {
+    LOGD() << "\nAudioContext chain: " << m_playheadNode->dump();
+
     ONLY_AUDIO_ENGINE_THREAD;
     m_player->play(delay);
 }
@@ -665,7 +768,9 @@ bool AudioContext::hasPendingChunks(const TrackId trackId) const
     ONLY_AUDIO_ENGINE_THREAD;
 
     if (const Track* t = track(trackId)) {
-        return t->source ? t->source->hasPendingChunks() : false;
+        if (auto source = std::dynamic_pointer_cast<AudioSourceNode>(t->chain->source())) {
+            return source->hasPendingChunks();
+        }
     }
 
     return false;
@@ -691,7 +796,7 @@ void AudioContext::listenInputProcessing(std::function<void(const Ret&)> complet
     auto soundsInProgress = std::make_shared<size_t>(0);
 
     for (TrackId trackId : trackIdList().val) {
-        if (!isOnlineAudioResource(inputParams(trackId).val.resourceMeta)) {
+        if (!isOnlineAudioResource(params(trackId).val.source.resourceMeta)) {
             continue;
         }
 
@@ -741,7 +846,7 @@ void AudioContext::listenInputProcessing(std::function<void(const Ret&)> complet
         m_saveSoundTracksProgress.aborted.disconnect(this);
 
         for (TrackId trackId : trackIdList().val) {
-            if (isOnlineAudioResource(inputParams(trackId).val.resourceMeta)) {
+            if (isOnlineAudioResource(params(trackId).val.source.resourceMeta)) {
                 inputProcessingProgress(trackId).val.processedChannel.disconnect(this);
             }
         }
@@ -778,11 +883,16 @@ Ret AudioContext::doSaveSoundTrack(io::IODevice& dstDevice, const SoundTrackForm
     //! NOTE Restore source (mixer) state
     // Changes to the source and audio engine state
     // must be performed via execOperation - so that synchronization with the audio driver process works
-    IAudioEngine::Operation func = [this]() {
-        m_mixer->setOutputSpec(audioEngine()->outputSpec());
+    Operation func = [this]() {
+        m_mixer->setOutputSpec(outputSpec());
         setMode(ProcessMode::Idle);
     };
-    audioEngine()->execOperation(OperationType::LongOperation, func);
+
+    if (m_execOperation) {
+        m_execOperation->execOperation(OperationType::LongOperation, func);
+    } else {
+        func();
+    }
 
     m_player->seek(TimePosition::zero(m_outputSpec.sampleRate));
 
@@ -811,5 +921,5 @@ SaveSoundTrackProgress AudioContext::saveSoundTrackProgressChanged() const
 void AudioContext::doSelfProcess(float* buffer, samples_t samplesPerChannel)
 {
     ONLY_AUDIO_PROC_THREAD;
-    m_mixer->process(buffer, samplesPerChannel);
+    m_playheadNode->process(buffer, samplesPerChannel);
 }

@@ -1835,12 +1835,7 @@ void TRead::read(ActionIcon* i, XmlReader& e, ReadContext&)
 {
     while (e.readNextStartElement()) {
         const AsciiStringView tag(e.name());
-        if (tag == "subtype") {
-            // This is fragile, see https://github.com/musescore/MuseScore/issues/24060#issuecomment-2299665318.
-            // Keeping it here for compatbility in case an ActionIcon from some old version doesn't have an <action> tag.
-            // If the <action> tag is present, it will override this value, see below.
-            i->setActionType(static_cast<ActionIconType>(e.readInt()));
-        } else if (tag == "action") {
+        if (tag == "action") {
             const std::string actionCode = e.readText().toStdString();
             i->setAction(actionCode, 0);
             setActionIconTypeFromAction(i, actionCode);
@@ -2861,7 +2856,7 @@ void TRead::read(GuitarBend* g, XmlReader& e, ReadContext& ctx)
     while (e.readNextStartElement()) {
         const AsciiStringView tag = e.name();
         if (tag == "guitarBendType") {
-            g->setBendType(static_cast<GuitarBendType>(e.readInt()));
+            g->setBendType(TConv::fromXml(e.readAsciiText(), GuitarBendType::BEND));
         } else if (tag == "GuitarBendHold") {
             GuitarBendHold* hold = new GuitarBendHold(g);
             TRead::read(hold, e, ctx);
@@ -2974,9 +2969,9 @@ void TRead::read(Harmony* h, XmlReader& e, ReadContext& ctx)
     while (e.readNextStartElement()) {
         const AsciiStringView tag(e.name());
         if (tag == "bassCase") {
-            h->setBassCase(static_cast<NoteCaseType>(e.readInt()));
+            h->setBassCase(TConv::fromXml(e.readAsciiText(), NoteCaseType::AUTO));
         } else if (tag == "rootCase") {
-            h->setRootCase(static_cast<NoteCaseType>(e.readInt()));
+            h->setRootCase(TConv::fromXml(e.readAsciiText(), NoteCaseType::AUTO));
         } else if (tag == "harmonyInfo") {
             HarmonyInfo* info = new HarmonyInfo(ctx.score());
             readHarmonyInfo(info, e);

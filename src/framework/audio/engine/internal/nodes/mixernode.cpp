@@ -40,18 +40,24 @@ void MixerNode::onModeChanged(const ProcessMode mode)
     }
 }
 
-void MixerNode::doAddNode(std::shared_ptr<AudioNode> other)
+bool MixerNode::doAddNode(std::shared_ptr<IAudioNode> other)
 {
     m_inputs.emplace_back(other);
+    return true;
 }
 
-void MixerNode::doRemoveNode(std::shared_ptr<AudioNode> other)
+bool MixerNode::doRemoveNode(std::shared_ptr<IAudioNode> other)
 {
     muse::remove(m_inputs, other);
+    return true;
 }
 
-void MixerNode::doProcess(float* buffer, samples_t samplesPerChannel)
+void MixerNode::process(float* buffer, samples_t samplesPerChannel)
 {
+    if (!m_enabled) {
+        return;
+    }
+
     const audioch_t audioChannelCount = m_outputSpec.audioChannelCount;
     const size_t outBufferSize = samplesPerChannel * audioChannelCount;
 

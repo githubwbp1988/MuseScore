@@ -5,7 +5,7 @@
  * MuseScore Studio
  * Music Composition & Notation
  *
- * Copyright (C) 2025 MuseScore Limited
+ * Copyright (C) 2025 MuseScore Limited and others
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3 as
@@ -27,12 +27,14 @@
 
 #include "modularity/ioc.h"
 #include "async/asyncable.h"
+
 #include "audio/main/iaudioconfiguration.h"
 #include "audio/iaudiodrivercontroller.h"
 #include "midi/imidiconfiguration.h"
 #include "midi/imidioutport.h"
 #include "midi/imidiinport.h"
 #include "playback/iplaybackconfiguration.h"
+#include "interactive/iinteractive.h"
 
 namespace mu::preferences {
 class AudioMidiPreferencesModel : public QObject, public muse::Contextable, public muse::async::Asyncable
@@ -67,6 +69,7 @@ class AudioMidiPreferencesModel : public QObject, public muse::Contextable, publ
     muse::GlobalInject<muse::midi::IMidiOutPort> midiOutPort;
     muse::GlobalInject<muse::midi::IMidiInPort> midiInPort;
     muse::GlobalInject<muse::audio::IAudioDriverController> audioDriverController;
+    muse::ContextInject<muse::IInteractive> interactive = { this };
 
 public:
     explicit AudioMidiPreferencesModel(QObject* parent = nullptr);

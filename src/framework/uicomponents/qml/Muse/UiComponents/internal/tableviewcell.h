@@ -47,6 +47,8 @@ public:
     Val value() const;
     void setValue(const Val& value);
 
+    virtual Val sortValue() const { return m_val; }
+
     void setRequestChangeFunction(const std::function<bool(int, int, const Val&)>& func);
 
     QVariant value_property() const;

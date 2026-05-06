@@ -24,8 +24,15 @@
 
 #include "audionode.h"
 
+namespace muse::audio {
+struct ControlTag
+{
+    static constexpr const char* name = "Control";
+};
+}
+
 namespace muse::audio::engine {
-class ControlNode : public AudioNode
+class ControlNode : public AudioNode<ControlTag>
 {
 public:
 
@@ -33,16 +40,20 @@ public:
     float volume() const;
     void setPan(float pan);
     float pan() const;
-    void setMute(bool mute);
-    bool mute() const;
+    void setMuted(bool muted);
+    bool muted() const;
 
 protected:
 
+    void updateChannelGains();
+
+    void onOutputSpecChanged(const OutputSpec& spec) override;
     void doSelfProcess(float* buffer, samples_t samplesPerChannel) override;
+
+    std::vector<float> m_channelGains;
 
     float m_volume = 1.0f;
     float m_pan = 0.0f;
-    bool m_mute = false;
 };
 
 using ControlNodePtr = std::shared_ptr<ControlNode>;

@@ -5,7 +5,7 @@
  * MuseScore Studio
  * Music Composition & Notation
  *
- * Copyright (C) 2021 MuseScore Limited
+ * Copyright (C) 2021 MuseScore Limited and others
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3 as
@@ -2039,6 +2039,44 @@ AccidentalRole TConv::fromXml(const AsciiStringView& tag, AccidentalRole def)
     bool ok = false;
     int r = tag.toInt(&ok);
     return ok ? static_cast<AccidentalRole>(r) : def;
+}
+
+static const std::vector<Item<GuitarBendType> > GUITAR_BEND_TYPES = {
+    { GuitarBendType::BEND,            "bend" },
+    { GuitarBendType::PRE_BEND,        "pre-bend" },
+    { GuitarBendType::GRACE_NOTE_BEND, "grace-note-bend" },
+    { GuitarBendType::SLIGHT_BEND,     "slight-bend" },
+    { GuitarBendType::DIVE,            "dive" },
+    { GuitarBendType::PRE_DIVE,        "pre-dive" },
+    { GuitarBendType::DIP,             "dip" },
+    { GuitarBendType::SCOOP,           "scoop" },
+};
+
+AsciiStringView TConv::toXml(GuitarBendType v)
+{
+    return findXmlTagByType(GUITAR_BEND_TYPES, v);
+}
+
+GuitarBendType TConv::fromXml(const AsciiStringView& tag, GuitarBendType def)
+{
+    return findTypeByXmlTag(GUITAR_BEND_TYPES, tag, def);
+}
+
+static const std::vector<Item<NoteCaseType> > NOTE_CASE_TYPES = {
+    { NoteCaseType::AUTO,    "auto" },
+    { NoteCaseType::CAPITAL, "capital" },
+    { NoteCaseType::LOWER,   "lower" },
+    { NoteCaseType::UPPER,   "upper" },
+};
+
+AsciiStringView TConv::toXml(NoteCaseType v)
+{
+    return findXmlTagByType(NOTE_CASE_TYPES, v);
+}
+
+NoteCaseType TConv::fromXml(const AsciiStringView& tag, NoteCaseType def)
+{
+    return findTypeByXmlTag(NOTE_CASE_TYPES, tag, def);
 }
 
 String TConv::toXml(BeatsPerSecond v, int precision)
