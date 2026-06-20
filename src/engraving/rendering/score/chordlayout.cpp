@@ -56,7 +56,6 @@
 #include "dom/tremolosinglechord.h"
 #include "dom/tremolotwochord.h"
 #include "dom/utils.h"
-#include "editing/undo.h"
 #include "editing/editchord.h"
 
 #include "accidentalslayout.h"
@@ -163,12 +162,6 @@ void ChordLayout::layoutPitched(Chord* item, LayoutContext& ctx)
                     f->setbbox(RectF());
                 }
             }
-        }
-    }
-
-    for (EngravingItem* e : item->el()) {
-        if (e->isChordBracket()) {
-            TLayout::layoutItem(e, ctx);
         }
     }
 
@@ -296,7 +289,9 @@ void ChordLayout::layoutPitched(Chord* item, LayoutContext& ctx)
     }
 
     for (EngravingItem* e : item->el()) {
-        if (e->isSlur()) {       // we cannot at this time as chordpositions are not fixed
+        // Cannot layout slurs as chord positions are not fixed
+        // Chord brackets should be the outermost element
+        if (e->isSlur() || e->isChordBracket()) {
             continue;
         }
         TLayout::layoutItem(e, ctx);
@@ -340,6 +335,12 @@ void ChordLayout::layoutPitched(Chord* item, LayoutContext& ctx)
 
     createParenGroups(item);
     ParenthesisLayout::layoutChordParentheses(item, ctx);
+
+    for (EngravingItem* e : item->el()) {
+        if (e->isChordBracket()) {
+            TLayout::layoutItem(e, ctx);
+        }
+    }
 
     fillShape(item, item->mutldata(), ctx.conf());
 }

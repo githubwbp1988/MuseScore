@@ -47,10 +47,6 @@ public:
     virtual muse::ValCh<int> pianoKeyboardNumberOfKeys() const = 0;
     virtual void setPianoKeyboardNumberOfKeys(int number) = 0;
 
-    virtual bool useNewPercussionPanel() const = 0;
-    virtual void setUseNewPercussionPanel(bool use) = 0;
-    virtual muse::async::Notification useNewPercussionPanelChanged() const = 0;
-
     virtual bool percussionPanelUseNotationPreview() const = 0;
     virtual void setPercussionPanelUseNotationPreview(bool use) = 0;
     virtual muse::async::Notification percussionPanelUseNotationPreviewChanged() const = 0;

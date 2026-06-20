@@ -1606,6 +1606,7 @@ std::vector<Staff*> Staff::staffList() const
 {
     std::vector<Staff*> staffList;
     if (m_links) {
+        staffList.reserve(m_links->size());
         for (EngravingObject* e : *m_links) {
             staffList.push_back(toStaff(e));
         }
@@ -1794,7 +1795,6 @@ bool Staff::setProperty(Pid id, const PropertyValue& v)
     case Pid::VISIBLE:
         setVisible(v.toBool());
         masterScore()->rebuildMidiMapping();
-        score()->setPlaylistDirty();
         break;
     case Pid::STAFF_CUTAWAY:
         setCutaway(v.toBool());

@@ -225,6 +225,7 @@ void EditChord::undoAddParenthesesToNotes(Chord* chord, std::vector<Note*> notes
         linkedParenRight->setTrack(linkedChord->track());
 
         std::vector<Note*> linkedNotes;
+        linkedNotes.reserve(notes.size());
         for (Note* note : notes) {
             Note* linkedNote = toNote(note->findLinkedInStaff(linkedStaff));
             linkedNotes.push_back(linkedNote);
@@ -286,6 +287,7 @@ void EditChord::undoClearParenthesisGroup(Chord* chord, std::vector<Note*> notes
         }
 
         std::vector<Note*> linkedNotes;
+        linkedNotes.reserve(notes.size());
         for (Note* note : notes) {
             Note* linkedNote = toNote(note->findLinkedInStaff(linkedStaff));
             linkedNotes.push_back(linkedNote);
@@ -324,7 +326,7 @@ void EditChord::doRemoveAllNoteParentheses(Chord* chord, Parenthesis* leftParen)
         const NoteParenthesisInfo* noteParenInfo = chord->findNoteParenthesisInfo(leftParen);
 
         chord->removeNoteParenthesisInfo(noteParenInfo);
-        //! HACK: don't delete as it may still be used in Inspector - see Score::doUndoRemoveElement
+        //! HACK: don't delete as it may still be used in PropertiesPanel - see Score::doUndoRemoveElement
         // delete noteParenInfo
 
         chord->triggerLayout();
@@ -416,9 +418,9 @@ void mu::engraving::AddNoteParenthesisInfo::undo(EditData*)
     m_chord->triggerLayout();
 }
 
-void AddNoteParenthesisInfo::cleanup(bool undo)
+void AddNoteParenthesisInfo::cleanup(bool wasDone)
 {
-    if (!undo) {
+    if (!wasDone) {
         delete m_noteParenInfo;
         m_noteParenInfo = nullptr;
     }
@@ -438,9 +440,9 @@ void RemoveNoteParenthesisInfo::undo(EditData*)
     m_chord->triggerLayout();
 }
 
-void RemoveNoteParenthesisInfo::cleanup(bool undo)
+void RemoveNoteParenthesisInfo::cleanup(bool wasDone)
 {
-    if (undo) {
+    if (wasDone) {
         delete m_noteParenInfo;
         m_noteParenInfo = nullptr;
     }

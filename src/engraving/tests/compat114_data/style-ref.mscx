@@ -91,8 +91,9 @@
     <metaTag name="workNumber"></metaTag>
     <metaTag name="workTitle"></metaTag>
     <Part id="1">
+      <eid>C_C</eid>
       <Staff>
-        <eid>C_C</eid>
+        <eid>D_D</eid>
         <StaffType group="pitched">
           </StaffType>
         </Staff>
@@ -132,25 +133,16 @@
       </Part>
     <Staff id="1">
       <Measure>
-        <eid>D_D</eid>
+        <eid>E_E</eid>
         <voice>
           <Clef>
             <concertClefType>G</concertClefType>
             <transposingClefType>G</transposingClefType>
             <isHeader>1</isHeader>
-            <eid>E_E</eid>
-            </Clef>
-          <KeySig>
             <eid>F_F</eid>
-            <concertKey>0</concertKey>
-            </KeySig>
-          <TimeSig>
-            <eid>G_G</eid>
-            <sigN>4</sigN>
-            <sigD>4</sigD>
-            </TimeSig>
+            </Clef>
           <Rest>
-            <eid>H_H</eid>
+            <eid>G_G</eid>
             <durationType>measure</durationType>
             <duration>4/4</duration>
             </Rest>
@@ -158,11 +150,14 @@
         </Measure>
       <Measure len="128/4">
         <multiMeasureRest>32</multiMeasureRest>
-        <eid>I_I</eid>
+        <eid>H_H</eid>
         <voice>
+          <KeySig>
+            <eid>I_I</eid>
+            <concertKey>0</concertKey>
+            </KeySig>
           <TimeSig>
             <eid>J_J</eid>
-            <linkedTo>G_G</linkedTo>
             <sigN>4</sigN>
             <sigD>4</sigD>
             </TimeSig>
@@ -486,11 +481,6 @@
             <durationType>measure</durationType>
             <duration>4/4</duration>
             </Rest>
-          <BarLine>
-            <subtype>end</subtype>
-            <eid>KB_KB</eid>
-            <linkedTo>L_L</linkedTo>
-            </BarLine>
           </voice>
         </Measure>
       </Staff>

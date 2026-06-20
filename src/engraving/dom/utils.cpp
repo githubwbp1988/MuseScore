@@ -300,7 +300,7 @@ Segment* nextSeg1(Segment* seg)
 {
     Segment* nextSeg = seg;
     while (nextSeg && nextSeg->rtick() == seg->rtick()) {
-        nextSeg = nextSeg->next1(Segment::CHORD_REST_OR_TIME_TICK_TYPE);
+        nextSeg = nextSeg->next1(SegmentType::Duration);
     }
     return nextSeg;
 }
@@ -313,7 +313,7 @@ Segment* prevSeg1(Segment* seg)
 {
     Segment* prevSeg = seg;
     while (prevSeg && prevSeg->rtick() == seg->rtick()) {
-        prevSeg = prevSeg->prev1(Segment::CHORD_REST_OR_TIME_TICK_TYPE);
+        prevSeg = prevSeg->prev1(SegmentType::Duration);
     }
     return prevSeg;
 }
@@ -1102,7 +1102,7 @@ bool dragPositionToSegment(const PointF& pos, const Measure* measure, const staf
     const track_idx_t etrack = strack + VOICES;
 
     const double x = pos.x() - measure->canvasPos().x();
-    const SegmentType st = allowTimeAnchor ? Segment::CHORD_REST_OR_TIME_TICK_TYPE : SegmentType::ChordRest;
+    const SegmentType st = allowTimeAnchor ? SegmentType::Duration : SegmentType::ChordRest;
     Segment* s = measure->searchSegment(x, st, strack, etrack, *segment, spacingFactor);
     if (!s) {
         return false;
@@ -1281,7 +1281,7 @@ std::vector<EngravingItem*> collectSystemObjects(const Score* score, const std::
         }
 
         for (const Segment& seg : measure->segments()) {
-            if (seg.isType(Segment::CHORD_REST_OR_TIME_TICK_TYPE | SegmentType::EndBarLine)) {
+            if (seg.isType(SegmentType::Duration | SegmentType::EndBarLine)) {
                 for (EngravingItem* annotation : seg.annotations()) {
                     if (!annotation || !annotation->systemFlag()) {
                         continue;
@@ -1297,7 +1297,7 @@ std::vector<EngravingItem*> collectSystemObjects(const Score* score, const std::
                 }
             }
 
-            if (isOnStaffTimeSig && seg.isType(SegmentType::TimeSigType)) {
+            if (isOnStaffTimeSig && seg.isType(SegmentType::TimeSigTypes)) {
                 for (EngravingItem* item : seg.elist()) {
                     if (!item || !item->isTimeSig()) {
                         continue;
@@ -1530,7 +1530,7 @@ std::vector<Measure*> findFollowingRepeatMeasures(const Measure* measure)
     const MasterScore* master = measure->masterScore();
     const Score* score = measure->score();
 
-    const Measure* masterMeasure = master->tick2measure(measure->tick());
+    const Measure* masterMeasure = master->tick2measureMM(measure->tick());
 
     const RepeatList& repeatList = master->repeatList(true, false);
 
@@ -1546,7 +1546,7 @@ std::vector<Measure*> findFollowingRepeatMeasures(const Measure* measure)
         // Get next segment
         const RepeatSegment* nextSeg = *nextSegIt;
         const Measure* firstMasterMeasure = nextSeg->firstMeasure();
-        Measure* firstMeasure = firstMasterMeasure ? score->tick2measure(firstMasterMeasure->tick()) : nullptr;
+        Measure* firstMeasure = firstMasterMeasure ? score->tick2measureMM(firstMasterMeasure->tick()) : nullptr;
         if (!firstMeasure) {
             continue;
         }
@@ -1720,7 +1720,7 @@ bool isValidBarLineForRepeatSection(const Segment* firstSeg, const Segment* seco
     if (!firstSeg || !secondSeg) {
         return false;
     }
-    if (!firstSeg->isType(SegmentType::BarLineType)) {
+    if (!firstSeg->isType(SegmentType::BarLineTypes)) {
         return false;
     }
 
@@ -1832,16 +1832,11 @@ std::vector<EngravingItem*> filterTargetElements(const Selection& sel, Engraving
         uniqueMeasures = toMeasureRepeat(dropElement)->numMeasures() == 1;
         break;
 
-    // Add these elements only once per staff in range selections, else once per staff per measure:
-    case ElementType::SPACER:
-    case ElementType::STAFFTYPE_CHANGE:
-        uniqueStaves = true;
-        uniqueMeasures = !sel.isRange();
-        break;
-
     // Add these elements once per measure in list selections, else once total:
     case ElementType::MARKER:
     case ElementType::JUMP:
+    case ElementType::SPACER:  //! HACK - these should be applied "per staff" in range selections (see issue #33486)
+    case ElementType::STAFFTYPE_CHANGE:  //! HACK - these should be applied "per staff" in range selections (see issue #33486)
     case ElementType::VBOX:
     case ElementType::HBOX:
     case ElementType::TBOX:
@@ -1862,10 +1857,7 @@ std::vector<EngravingItem*> filterTargetElements(const Selection& sel, Engraving
     case ElementType::ACTION_ICON: {
         const ActionIconType actionType = toActionIcon(dropElement)->actionType();
         switch (actionType) {
-        case ActionIconType::STAFF_TYPE_CHANGE:
-            uniqueStaves = true;
-            uniqueMeasures = !sel.isRange();
-            break;
+        case ActionIconType::STAFF_TYPE_CHANGE: //! HACK - these should be applied "per staff" in range selections (see issue #33486)
         case ActionIconType::VFRAME:
         case ActionIconType::HFRAME:
         case ActionIconType::TFRAME:

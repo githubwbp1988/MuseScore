@@ -8,6 +8,8 @@
       <vocalsNameByGroup>0</vocalsNameByGroup>
       <dividerLeftAlignToSystemBarline>0</dividerLeftAlignToSystemBarline>
       <dividerRightAlignToSystemBarline>0</dividerRightAlignToSystemBarline>
+      <maskSlurs>0</maskSlurs>
+      <maskTies>0</maskTies>
       <spatium>1.74978</spatium>
       </Style>
     <showInvisible>1</showInvisible>
@@ -73,6 +75,7 @@
       <unsorted/>
       </Order>
     <Part id="1">
+      <eid>7/Td8tNCX9P_7/Td8tNCX9P</eid>
       <Staff>
         <eid>+5XUqCgm/hJ_SIav7Kc8UvE</eid>
         <StaffType group="pitched">

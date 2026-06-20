@@ -713,8 +713,6 @@ void Note::setPitch(int val, bool notifyAboutChanged)
         m_pitch = val;
 
         if (notifyAboutChanged) {
-            score()->setPlaylistDirty();
-
 #ifndef ENGRAVING_NO_ACCESSIBILITY
             notifyAboutNameChanged();
 #endif
@@ -1527,6 +1525,11 @@ void Note::setVisible(bool v)
     }
 }
 
+bool Note::isExactUnison(Note* other)
+{
+    return other->pitch() == m_pitch && other->tpc() == tpc();
+}
+
 void Note::setupAfterRead(const Fraction& ctxTick, bool pasteMode)
 {
     // ensure sane values:
@@ -2008,7 +2011,7 @@ EngravingItem* Note::drop(EditData& data)
         NoteVal nval;
         nval.pitch = n->pitch();
         nval.headGroup = n->headGroup();
-        ChordRest* cr = nullptr;
+        const ChordRest* cr = nullptr;
         if (data.modifiers & ShiftModifier) {
             // add note to chord
             score()->addNote(ch, nval);
@@ -3031,7 +3034,6 @@ bool Note::setProperty(Pid propertyId, const PropertyValue& v)
     switch (propertyId) {
     case Pid::PITCH:
         setPitch(v.toInt());
-        score()->setPlaylistDirty();
         break;
     case Pid::CENT_OFFSET:
         setCentOffset(v.toDouble());
@@ -3072,11 +3074,9 @@ bool Note::setProperty(Pid propertyId, const PropertyValue& v)
         break;
     case Pid::USER_VELOCITY:
         setUserVelocity(v.toInt());
-        score()->setPlaylistDirty();
         break;
     case Pid::TUNING:
         setTuning(v.toDouble());
-        score()->setPlaylistDirty();
         break;
     case Pid::FRET:
         setFret(v.toInt());
@@ -3100,7 +3100,6 @@ bool Note::setProperty(Pid propertyId, const PropertyValue& v)
         break;
     case Pid::VELO_TYPE:
         m_veloType = v.value<VeloType>();
-        score()->setPlaylistDirty();
         break;
     case Pid::VISIBLE: {
         setVisible(v.toBool());
@@ -3111,7 +3110,6 @@ bool Note::setProperty(Pid propertyId, const PropertyValue& v)
     }
     case Pid::PLAY:
         setPlay(v.toBool());
-        score()->setPlaylistDirty();
         break;
     case Pid::FIXED:
         setFixed(v.toBool());
@@ -4128,5 +4126,11 @@ bool Note::transpose(Interval interval, bool useDoubleSharpsFlats)
     }
     EditNote::undoChangePitch(score(), this, npitch, ntpc1, ntpc2);
     return true;
+}
+
+staff_idx_t Note::vStaffIdx() const
+{
+    const Chord* c = chord();
+    return c ? c->vStaffIdx() : EngravingItem::vStaffIdx();
 }
 }

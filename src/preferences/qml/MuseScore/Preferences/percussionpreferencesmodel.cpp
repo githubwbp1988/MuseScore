@@ -33,10 +33,6 @@ PercussionPreferencesModel::PercussionPreferencesModel(QObject* parent)
 
 void PercussionPreferencesModel::init()
 {
-    configuration()->useNewPercussionPanelChanged().onNotify(this, [this]() {
-        emit useNewPercussionPanelChanged();
-    });
-
     configuration()->percussionPanelAutoShowModeChanged().onNotify(this, [this]() {
         emit percussionPanelAutoShowModeChanged();
     });
@@ -103,16 +99,6 @@ bool PercussionPreferencesModel::autoClosePercussionPanel() const
 void PercussionPreferencesModel::setAutoClosePercussionPanel(bool autoClose)
 {
     configuration()->setAutoClosePercussionPanel(autoClose);
-}
-
-bool PercussionPreferencesModel::useNewPercussionPanel() const
-{
-    return configuration()->useNewPercussionPanel();
-}
-
-void PercussionPreferencesModel::setUseNewPercussionPanel(bool use)
-{
-    configuration()->setUseNewPercussionPanel(use);
 }
 
 bool PercussionPreferencesModel::showPercussionPanelPadSwapDialog() const

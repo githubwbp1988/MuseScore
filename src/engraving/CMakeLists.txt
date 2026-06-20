@@ -144,6 +144,8 @@ target_sources(engraving PRIVATE
     editing/editspanner.h
     editing/editstaff.cpp
     editing/editstaff.h
+    editing/editstavesharing.cpp
+    editing/editstavesharing.h
     editing/editstyle.cpp
     editing/editstyle.h
     editing/editsystemlocks.cpp
@@ -165,10 +167,12 @@ target_sources(engraving PRIVATE
     editing/splitjoinmeasure.h
     editing/textedit.cpp
     editing/textedit.h
+    editing/transaction/undoablecommand.cpp
+    editing/transaction/undoablecommand.h
+    editing/transaction/undostack.cpp
+    editing/transaction/undostack.h
     editing/transpose.cpp
     editing/transpose.h
-    editing/undo.cpp
-    editing/undo.h
 
     rw/ireader.h
     rw/iwriter.h
@@ -350,7 +354,7 @@ endif()
 if (ENGRAVING_NO_INTERNAL)
     target_compile_definitions(engraving PUBLIC ENGRAVING_NO_INTERNAL ENGRAVING_NO_INTERACTIVE ENGRAVING_NO_API)
 else()
-    include(${CMAKE_CURRENT_LIST_DIR}/api/v1/api_v1.cmake)
+    include(api/v1/api_v1.cmake)
     target_sources(engraving PRIVATE
         internal/engravingconfiguration.cpp
         internal/engravingconfiguration.h
@@ -381,7 +385,7 @@ set_source_files_properties(
     dom/transpose.cpp
     editing/transpose.cpp
     style/style.cpp
-    #${CMAKE_CURRENT_LIST_DIR}/api/vi/style.cpp
+    #api/vi/style.cpp
 
     infrastructure/mscreader.cpp
     infrastructure/mscwriter.cpp
@@ -439,7 +443,7 @@ endif()
 
 target_include_directories(engraving PRIVATE
     infrastructure
-    ${PROJECT_SOURCE_DIR}/thirdparty/dtl
+    thirdparty/dtl
 )
 
 target_link_libraries(engraving PRIVATE muse::draw)

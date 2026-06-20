@@ -126,6 +126,10 @@ void PageLayout::collectPage(LayoutContext& ctx)
 
     LAYOUT_CALL() << "pageNumber: " << page->pageNumber();
 
+    /* The page count will be wrong unless this is the final page, but we need to
+     * take into account the space taken up by headers/footers, when positioning
+     * other elements. If there was a page count involved, all headers/footers will
+     * be re-computed after all pages are laid out */
     HeaderFooterLayout::layoutHeaderFooter(ctx, page);
 
     const double slb = conf.styleAbsolute(Sid::staffLowerBorder);
@@ -380,7 +384,7 @@ void PageLayout::collectPage(LayoutContext& ctx)
     MeasureBase* firstOfNextPage = lastOfThisPage ? lastOfThisPage->next() : nullptr;
     if (firstOfNextPage && firstOfNextPage->isMeasure() && firstOfNextPage->tick() > ctx.state().endTick()) {
         for (Segment& segment : toMeasure(firstOfNextPage)->segments()) {
-            if (!segment.isType(SegmentType::BarLineType)) {
+            if (!segment.isType(SegmentType::BarLineTypes)) {
                 continue;
             }
             for (EngravingItem* item : segment.elist()) {

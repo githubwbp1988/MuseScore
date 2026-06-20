@@ -486,6 +486,7 @@ static constexpr PropertyMetaData propertyList[] = {
 
     { Pid::TIE_PLACEMENT,                       P_TYPE::TIE_PLACEMENT,             PropertyGroup::APPEARANCE, true,  "tiePlacement",                    QT_TRANSLATE_NOOP("engraving/propertyName", "tie placement") },
     { Pid::MIN_LENGTH,                          P_TYPE::SPATIUM,                   PropertyGroup::APPEARANCE, true,  "minLength",                       QT_TRANSLATE_NOOP("engraving/propertyName", "minimum length") },
+    { Pid::MASK_SLURTIE,                        P_TYPE::AUTO_ON_OFF,               PropertyGroup::APPEARANCE, true,  "maskSlurTie",                     QT_TRANSLATE_NOOP("engraving/propertyName", "mask slur/tie") },
     { Pid::PARTIAL_SPANNER_DIRECTION,           P_TYPE::PARTIAL_SPANNER_DIRECTION, PropertyGroup::NONE,       true,  "partialSpannerDirection",         QT_TRANSLATE_NOOP("engraving/propertyName", "partial spanner direction") },
 
     { Pid::POSITION_LINKED_TO_MASTER,           P_TYPE::BOOL,                      PropertyGroup::NONE,       false, "positionLinkedToMaster",          QT_TRANSLATE_NOOP("engraving/propertyName", "position linked to main score") },
@@ -516,6 +517,8 @@ static constexpr PropertyMetaData propertyList[] = {
     { Pid::STAFF_HIDE_SYSTEM_BARLINE,           P_TYPE::BOOL,                      PropertyGroup::APPEARANCE, false, "",                                QT_TRANSLATE_NOOP("engraving/propertyName", "hide system barline") },
     { Pid::STAFF_MERGE_MATCHING_RESTS,          P_TYPE::INT,                       PropertyGroup::APPEARANCE, false, "",                                QT_TRANSLATE_NOOP("engraving/propertyName", "merge matching rests") },
     { Pid::STAFF_REFLECT_TRANSPOSITION,         P_TYPE::BOOL,                      PropertyGroup::APPEARANCE, false, "",                                QT_TRANSLATE_NOOP("engraving/propertyName", "reflect transposition") },
+
+    { Pid::SHARED_PART_ENABLED,                 P_TYPE::BOOL,                      PropertyGroup::NONE,       false, "sharedPartEnabled",               QT_TRANSLATE_NOOP("engraving/propertyName", "shared part enabled") },
 
     { Pid::END,                                 P_TYPE::INT,                       PropertyGroup::NONE,       false, "++end++",                         nullptr }
 };

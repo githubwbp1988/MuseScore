@@ -291,6 +291,7 @@ EngravingItem* Factory::doCreateItem(ElementType type, EngravingItem* parent)
     case ElementType::MAXTYPE:
     case ElementType::INVALID:
     case ElementType::PART:
+    case ElementType::SHARED_PART:
     case ElementType::STAFF:
     case ElementType::SCORE:
     case ElementType::BRACKET_ITEM:

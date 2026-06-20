@@ -44,12 +44,17 @@ TimeEditor::TimeEditor(QWidget* parent)
     : QWidget(parent), muse::Contextable(muse::iocCtxForQWidget(this))
 {
     setupUi(this);
+}
+
+void TimeEditor::classBegin()
+{
+    groups->classBegin();
 
     QLayout* l = new QVBoxLayout();
     l->setContentsMargins(0, 0, 0, 0);
     frame->setLayout(l);
 
-    sp = new PaletteWidget(this);
+    sp = new PaletteWidget(this, true /*setIocContext*/);
     sp->setPalette(PaletteCreator(iocContext()).newTimePalette());
     sp->setReadOnly(false);
     sp->setSelectable(true);
@@ -290,9 +295,12 @@ TimeEditorDialog::TimeEditorDialog(QWidget* parent)
 void TimeEditorDialog::classBegin()
 {
     m_timeEditor = new TimeEditor(this);
+    m_timeEditor->classBegin();
+
+    this->resize(m_timeEditor->size());
+
     QVBoxLayout* layout = new QVBoxLayout(this);
     layout->setContentsMargins(0, 0, 0, 0);
-    layout->setSizeConstraint(QLayout::SetFixedSize);
     layout->addWidget(m_timeEditor);
 }
 

@@ -75,8 +75,6 @@ target_sources(palette PRIVATE
     widgets/specialcharactersdialog.h
     widgets/customizekitdialog.h
     widgets/customizekitdialog.cpp
-    widgets/drumsetpalette.cpp
-    widgets/drumsetpalette.h
 )
 
 target_link_libraries(palette PRIVATE

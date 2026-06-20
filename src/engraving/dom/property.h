@@ -491,6 +491,7 @@ enum class Pid : short {
 
     TIE_PLACEMENT,
     MIN_LENGTH,
+    MASK_SLURTIE,
 
     PARTIAL_SPANNER_DIRECTION,
 
@@ -525,6 +526,8 @@ enum class Pid : short {
     STAFF_HIDE_SYSTEM_BARLINE,
     STAFF_MERGE_MATCHING_RESTS,
     STAFF_REFLECT_TRANSPOSITION,
+
+    SHARED_PART_ENABLED,
 
     END
 };

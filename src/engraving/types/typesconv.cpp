@@ -156,6 +156,7 @@ std::vector<int> TConv::fromXml(const String& tag, const std::vector<int>& def)
 String TConv::toXml(const std::vector<string_idx_t>& v)
 {
     std::vector<int> _v;
+    _v.reserve(v.size());
     for (string_idx_t string : v) {
         _v.push_back(static_cast<int>(string));
     }
@@ -166,12 +167,14 @@ String TConv::toXml(const std::vector<string_idx_t>& v)
 std::vector<string_idx_t> TConv::fromXml(const String& tag, const std::vector<string_idx_t>& def)
 {
     std::vector<int> _def;
+    _def.reserve(def.size());
     for (string_idx_t string : def) {
         _def.push_back(static_cast<int>(string));
     }
 
     std::vector<string_idx_t> v;
     std::vector<int> _v = fromXml(tag, _def);
+    v.reserve(_v.size());
 
     for (int string : _v) {
         v.push_back(static_cast<string_idx_t>(string));
@@ -190,6 +193,9 @@ static const std::array ELEMENT_TYPES {
     Item{ ElementType::PART, "Part",
           TranslatableString("engraving", "part(s)", nullptr, 1),
           TranslatableString("engraving", "Part(s)", nullptr, 1) },
+    Item{ ElementType::SHARED_PART, "SharedPart",
+          TranslatableString("engraving", "shared part(s)", nullptr, 1),
+          TranslatableString("engraving", "Shared part(s)", nullptr, 1) },
     Item{ ElementType::STAFF, "Staff",
           TranslatableString("engraving", "staff/staves", nullptr, 1),
           TranslatableString("engraving", "Staff/Staves", nullptr, 1) },
@@ -1087,6 +1093,27 @@ AsciiStringView TConv::toXml(Orientation v)
 Orientation TConv::fromXml(const AsciiStringView& tag, Orientation def)
 {
     return findTypeByXmlTag<Orientation>(ORIENTATION, tag, def);
+}
+
+static const std::array<Item<SharedLabelOrientation>, 3> SHARED_LABEL_ORIENTATION = { {
+    { SharedLabelOrientation::VERTICAL,    "vertical",     muse::TranslatableString("engraving", "Vertical") },
+    { SharedLabelOrientation::HORIZONTAL,  "horizontal",   muse::TranslatableString("engraving", "Horizontal") },
+    { SharedLabelOrientation::VOICE,       "voice",        muse::TranslatableString("engraving", "Voice") },
+} };
+
+String TConv::translatedUserName(SharedLabelOrientation v)
+{
+    return findCapitalizedUserNameByType(SHARED_LABEL_ORIENTATION, v).translated();
+}
+
+AsciiStringView TConv::toXml(SharedLabelOrientation v)
+{
+    return findXmlTagByType<SharedLabelOrientation>(SHARED_LABEL_ORIENTATION, v);
+}
+
+SharedLabelOrientation TConv::fromXml(const AsciiStringView& tag, SharedLabelOrientation def)
+{
+    return findTypeByXmlTag<SharedLabelOrientation>(SHARED_LABEL_ORIENTATION, tag, def);
 }
 
 static const std::array<Item<NoteHeadType>, 5> NOTEHEAD_TYPES = { {

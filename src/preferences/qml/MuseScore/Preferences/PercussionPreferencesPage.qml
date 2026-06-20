@@ -50,8 +50,6 @@ PreferencesPage {
         BaseSection {
             id: autoShowSection
 
-            enabled: percussionPreferencesModel.useNewPercussionPanel
-
             width: parent.width
             rowSpacing: 16
 
@@ -124,8 +122,6 @@ PreferencesPage {
             }
         }
 
-        SeparatorLine {}
-
         //! NOTE: "Pad swap options" and the associated dialog were dropped from percussion panel MVP (version 4.5).
         //! See PR #25810 when re-implementing...
         // BaseSection {
@@ -134,31 +130,5 @@ PreferencesPage {
         // }
 
         // SeparatorLine {}
-
-        BaseSection {
-            id: legacyToggleSection
-
-            width: parent.width
-            rowSpacing: 20
-
-            title: qsTrc("preferences", "Legacy panel")
-
-            navigation.section: root.navigationSection
-            navigation.order: autoShowSection.navigation.order + 1
-
-            ToggleButton {
-                id: useLegacyToggle
-
-                text: qsTrc("notation/percussion", "Use legacy percussion panel")
-                checked: !percussionPreferencesModel.useNewPercussionPanel
-
-                navigation.name: "UseLegacyPercussionPanel"
-                navigation.panel: legacyToggleSection.navigation
-
-                onToggled: {
-                    percussionPreferencesModel.useNewPercussionPanel = !percussionPreferencesModel.useNewPercussionPanel
-                }
-            }
-        }
     }
 }

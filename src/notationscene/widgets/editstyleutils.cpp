@@ -433,6 +433,7 @@ QString EditStyleUtils::subPageCodeForElement(const EngravingItem* element)
 
         case TextStyleType::DYNAMICS:
         case TextStyleType::DEFAULT:
+        case TextStyleType::GROUP_BRACKET:
         case TextStyleType::TEXT_TYPES:
         case TextStyleType::IGNORED_TYPES:
             return QString();

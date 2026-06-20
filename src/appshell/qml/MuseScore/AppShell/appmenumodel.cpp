@@ -300,7 +300,7 @@ MenuItem* AppMenuModel::makeViewMenu()
         makeMenuItem("toggle-palettes"),
         makeMenuItem("masterpalette"),
         makeMenuItem("toggle-instruments"),
-        makeMenuItem("inspector"),
+        makeMenuItem("toggle-properties-panel"),
         makeMenuItem("toggle-selection-filter"),
         historyItem,
         makeMenuItem("toggle-navigator"),
@@ -512,6 +512,7 @@ MenuItem* AppMenuModel::makeDiagnosticsMenu()
     if (globalConfiguration()->devModeEnabled()) {
         MenuItemList actionsItems {
             makeMenuItem("diagnostic-show-actions"),
+            makeMenuItem("diagnostic-show-rcommands"),
             makeMenuItem("action://diagnostic/actions/query"),
             makeMenuItem("action://diagnostic/actions/query_params1?param1=val1"),
             makeMenuItem("action://diagnostic/actions/query_params2?param1=val1")
@@ -538,6 +539,7 @@ MenuItem* AppMenuModel::makeDiagnosticsMenu()
             makeMenuItem("show-gap-rests"),
             makeMenuItem("show-line-attach-points"),
             makeMenuItem("mark-empty-staff-visibility-overrides"),
+            makeMenuItem("show-both-origin-and-combined"),
             makeMenuItem("mark-corrupted-measures"),
             makeMenuItem("check-for-score-corruptions")
         };

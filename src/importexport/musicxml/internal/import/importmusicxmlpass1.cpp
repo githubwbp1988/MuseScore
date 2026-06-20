@@ -711,6 +711,7 @@ static void addBreak(Score* const, MeasureBase* const mb, const LayoutBreakType 
 {
     LayoutBreak* lb = Factory::createLayoutBreak(mb);
     lb->setLayoutBreakType(type);
+    lb->setTrack(0);
     mb->add(lb);
 }
 
@@ -1001,7 +1002,7 @@ static void resizeTitleBox(VBox* vbox)
         score->renderer()->layoutItem(e);
     }
 
-    double padding = vbox->spatium();
+    const double padding = vbox->sizeIsSpatiumDependent() ? vbox->style().spatium() : vbox->style().defaultSpatium();
 
     for (EngravingItem* e : elist) {
         if (e->isText()) {

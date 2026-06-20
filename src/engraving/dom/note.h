@@ -167,6 +167,8 @@ public:
     void scanElements(std::function<void(EngravingItem*)> func) override;
     void setTrack(track_idx_t val) override;
 
+    staff_idx_t vStaffIdx() const override;
+
     int playTicks() const;
     Fraction playTicksFraction() const;
 
@@ -448,6 +450,8 @@ public:
 
     TieJumpPointList* tieJumpPoints() { return &m_jumpPoints; }
     const TieJumpPointList* tieJumpPoints() const { return &m_jumpPoints; }
+
+    bool isExactUnison(Note* other);
 
     struct LayoutData : public EngravingItem::LayoutData {
         ld_field<bool> useTablature = { "[Note] useTablature", false };

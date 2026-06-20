@@ -24,8 +24,6 @@ qt_add_qml_module(palette_qml
     URI MuseScore.Palette
     VERSION 1.0
     SOURCES
-        internal/drumsetpanelview.cpp
-        internal/drumsetpanelview.h
         internal/palettepropertiesmodel.cpp
         internal/palettepropertiesmodel.h
         internal/paletterootmodel.cpp
@@ -37,7 +35,6 @@ qt_add_qml_module(palette_qml
         internal/palettecellpropertiesmodel.h
         internal/palettecellpropertiesmodel.cpp
     QML_FILES
-        DrumsetPanel.qml
         internal/AddPalettesPopup.qml
         internal/CreateCustomPalettePopup.qml
         internal/MoreElementsPopup.qml

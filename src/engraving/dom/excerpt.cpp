@@ -481,7 +481,7 @@ void Excerpt::createExcerpt(Excerpt* excerpt)
     }
 
     // second layout of score
-    score->setPlaylistDirty();
+    score->invalidateRepeatList();
     masterScore->rebuildMidiMapping();
     masterScore->updateChannel();
     score->remapBracketsAndBarlines();
@@ -1546,8 +1546,8 @@ void Excerpt::cloneStaff2(Staff* srcStaff, Staff* dstStaff, const Fraction& star
                     EngravingItem* linkedElement = e->findLinkedInScore(score);
                     Segment* linkedParent = linkedElement ? toSegment(linkedElement->parent()) : nullptr;
                     bool alreadyCloned = linkedParent && (linkedParent == ns
-                                                          || (linkedParent->isType(Segment::CHORD_REST_OR_TIME_TICK_TYPE)
-                                                              && ns->isType(Segment::CHORD_REST_OR_TIME_TICK_TYPE)
+                                                          || (linkedParent->isType(SegmentType::Duration)
+                                                              && ns->isType(SegmentType::Duration)
                                                               && linkedParent->tick() == ns->tick()));
                     bool cloneAnnotation = !alreadyCloned && (e->elementAppliesToTrack(srcTrack) || systemObject);
 
@@ -1731,11 +1731,13 @@ void Excerpt::promoteGapRestsToRealRests(const Measure* measure, staff_idx_t sta
 std::vector<Excerpt*> Excerpt::createExcerptsFromParts(const std::vector<Part*>& parts, MasterScore* score)
 {
     StringList allExcerptLowerNames;
+    allExcerptLowerNames.reserve(score->excerpts().size() + parts.size());
     for (const Excerpt* e : score->excerpts()) {
         allExcerptLowerNames.push_back(e->name().toLower());
     }
 
     std::vector<Excerpt*> result;
+    result.reserve(parts.size());
 
     for (Part* part : parts) {
         Excerpt* excerpt = new Excerpt(score);

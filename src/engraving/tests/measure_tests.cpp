@@ -26,11 +26,10 @@
 #include "engraving/dom/excerpt.h"
 #include "engraving/dom/masterscore.h"
 #include "engraving/dom/measure.h"
-#include "engraving/dom/measurenumber.h"
 #include "engraving/dom/rest.h"
 #include "engraving/dom/segment.h"
 #include "engraving/editing/splitjoinmeasure.h"
-#include "engraving/editing/undo.h"
+#include "engraving/editing/transaction/undostack.h"
 
 #include "utils/scorerw.h"
 #include "utils/scorecomp.h"
@@ -618,7 +617,7 @@ TEST_F(Engraving_MeasureTests, MMRestEndOfMeasureTS) {
     EXPECT_TRUE(m3MMR && m3MMR->isMMRest());
     Segment* tsSegMMR = m3MMR->findSegmentR(SegmentType::TimeSig, m3MMR->ticks());
     EXPECT_TRUE(tsSegMMR && tsSegMMR->endOfMeasureChange());
-    EngravingItem* tsItemMMR = tsSeg->element(0);
+    EngravingItem* tsItemMMR = tsSegMMR->element(0);
     EXPECT_TRUE(tsItemMMR && tsItemMMR->isTimeSig());
 }
 

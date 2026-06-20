@@ -43,8 +43,6 @@ class PercussionPreferencesModel : public QObject, public muse::Contextable, pub
     Q_PROPERTY(bool autoClosePercussionPanel READ autoClosePercussionPanel
                WRITE setAutoClosePercussionPanel NOTIFY autoClosePercussionPanelChanged)
 
-    Q_PROPERTY(bool useNewPercussionPanel READ useNewPercussionPanel WRITE setUseNewPercussionPanel NOTIFY useNewPercussionPanelChanged)
-
     Q_PROPERTY(bool showPercussionPanelPadSwapDialog READ showPercussionPanelPadSwapDialog
                WRITE setShowPercussionPanelPadSwapDialog NOTIFY showPercussionPanelPadSwapDialogChanged)
 
@@ -67,9 +65,6 @@ public:
     bool autoClosePercussionPanel() const;
     void setAutoClosePercussionPanel(bool autoClose);
 
-    bool useNewPercussionPanel() const;
-    void setUseNewPercussionPanel(bool use);
-
     bool showPercussionPanelPadSwapDialog() const;
     void setShowPercussionPanelPadSwapDialog(bool show);
 
@@ -77,7 +72,6 @@ public:
     void setPercussionPanelMoveMidiNotesAndShortcuts(bool move);
 
 signals:
-    void useNewPercussionPanelChanged();
     void percussionPanelAutoShowModeChanged();
     void autoClosePercussionPanelChanged();
     void showPercussionPanelPadSwapDialogChanged();

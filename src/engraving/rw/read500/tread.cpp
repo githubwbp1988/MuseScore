@@ -92,7 +92,6 @@
 #include "../../dom/palmmute.h"
 #include "../../dom/parenthesis.h"
 #include "../../dom/part.h"
-#include "../../dom/part.h"
 #include "../../dom/partialtie.h"
 #include "../../dom/pedal.h"
 #include "../../dom/playcounttext.h"
@@ -102,11 +101,13 @@
 #include "../../dom/rest.h"
 #include "../../dom/score.h"
 #include "../../dom/segment.h"
+#include "../../dom/sharedpart.h"
 #include "../../dom/slur.h"
 #include "../../dom/slurtie.h"
 #include "../../dom/soundflag.h"
 #include "../../dom/spacer.h"
 #include "../../dom/spanner.h"
+#include "../../dom/staff.h"
 #include "../../dom/staffstate.h"
 #include "../../dom/stafftext.h"
 #include "../../dom/stafftextbase.h"
@@ -785,7 +786,7 @@ void TRead::read(Dynamic* d, XmlReader& e, ReadContext& ctx)
         } else if (tag == "play") {
             d->setPlayDynamic(e.readBool());
         } else if (ctx.mscVersion() < 470 && tag == "dynamicsSize") {
-            d->setSymbolScale(e.readDouble());
+            readProperty(d, e, ctx, Pid::MUSICAL_SYMBOLS_SCALE);
         } else if (readProperty(d, tag, e, ctx, Pid::AVOID_BARLINES)) {
         } else if (readProperty(d, tag, e, ctx, Pid::CENTER_ON_NOTEHEAD)) {
         } else if (readProperty(d, tag, e, ctx, Pid::ANCHOR_TO_END_OF_PREVIOUS)) {
@@ -2257,6 +2258,7 @@ bool TRead::readProperties(MeasureBase* b, XmlReader& e, ReadContext& ctx)
     if (tag == "LayoutBreak") {
         LayoutBreak* lb = Factory::createLayoutBreak(b);
         TRead::read(lb, e, ctx);
+        lb->setTrack(0);
         bool doAdd = true;
         switch (lb->layoutBreakType()) {
         case LayoutBreakType::LINE:
@@ -3547,6 +3549,20 @@ void TRead::read(Part* p, XmlReader& e, ReadContext& ctx)
     }
 }
 
+void TRead::read(SharedPart* p, XmlReader& e, ReadContext& ctx)
+{
+    p->setId(e.intAttribute("id", 0));
+
+    while (e.readNextStartElement()) {
+        const AsciiStringView tag(e.name());
+        if (tag == "sharedPartEnabled") {
+            p->setProperty(Pid::SHARED_PART_ENABLED, e.readBool());
+        } else if (!readProperties(p, e, ctx)) {
+            e.unknown();
+        }
+    }
+}
+
 void TRead::read(PartialLyricsLine* p, XmlReader& xml, ReadContext& ctx)
 {
     while (xml.readNextStartElement()) {
@@ -3577,6 +3593,17 @@ bool TRead::readProperties(Part* p, XmlReader& e, ReadContext& ctx)
     const AsciiStringView tag(e.name());
     if (tag == "id") {
         p->setId(e.readInt());
+    } else if (tag == "eid") {
+        readItemEID(p, e);
+    } else if (tag == "sharedPart") {
+        AsciiStringView s = e.readAsciiText();
+        EID eid = EID::fromStdString(s);
+        DO_ASSERT(eid.isValid());
+        EIDRegister* eidRegister = ctx.score()->masterScore()->eidRegister();
+        EngravingObject* obj = eidRegister->itemFromEID(eid);
+        DO_ASSERT(obj && obj->isSharedPart());
+        SharedPart* sharedPart = toSharedPart(obj);
+        sharedPart->addOriginPart(p);
     } else if (tag == "Staff") {
         Staff* staff = Factory::createStaff(p);
         p->score()->appendStaff(staff);

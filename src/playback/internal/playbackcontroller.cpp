@@ -26,8 +26,6 @@
 #include "modularity/ioc.h"
 #include "onlinesoundscontroller.h"
 
-#include "playbacktypes.h"
-
 #include "engraving/dom/masterscore.h"
 #include "engraving/dom/stafftext.h"
 #include "engraving/dom/utils.h"
@@ -36,9 +34,13 @@
 #include "audio/common/audioutils.h"
 #include "audio/devtools/inputlag.h"
 
+#include "../playbacktypes.h"
+#include "../playbackcommands.h"
+
 #include "containers.h"
 #include "defer.h"
 #include "log.h"
+#include "types/ret.h"
 
 using namespace muse;
 using namespace muse::actions;
@@ -131,6 +133,21 @@ void PlaybackController::init()
     dispatcher()->reg(this, "playback-reload-cache", this, &PlaybackController::reloadPlaybackCache);
 
     m_onlineSoundsController->regActions();
+
+    commandsDispatcher()->onRequest(this, PLAY_COMMAND, [this](const rcommand::Request& request) {
+        togglePlay();
+        return rcommand::make_response(request, make_ok());
+    });
+
+    commandsDispatcher()->onRequest(this, STOP_COMMAND, [this](const rcommand::Request& request) {
+        stop();
+        return rcommand::make_response(request, make_ok());
+    });
+
+    commandsDispatcher()->onRequest(this, PAUSE_COMMAND, [this](const rcommand::Request& request) {
+        pause(/*select*/ false);
+        return rcommand::make_response(request, make_ok());
+    });
 
     globalContext()->currentNotationChanged().onNotify(this, [this]() {
         onNotationChanged();
@@ -268,11 +285,6 @@ void PlaybackController::seek(const audio::secs_t secs, const bool flushSound)
     }
 
     currentPlayer()->seek(secs, flushSound);
-}
-
-muse::async::Channel<secs_t, tick_t> PlaybackController::currentPlaybackPositionChanged() const
-{
-    return m_currentPlaybackPositionChanged;
 }
 
 bool PlaybackController::isPlaybackInited() const
@@ -1502,7 +1514,6 @@ void PlaybackController::setupPlayer()
     });
 
     currentPlayer()->playbackStatusChanged().onReceive(this, [this](PlaybackStatus) {
-        m_isPlayingChanged.notify();
         onPlaybackStatusChanged();
     });
 

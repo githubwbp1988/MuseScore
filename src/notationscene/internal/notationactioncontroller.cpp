@@ -76,7 +76,8 @@ const std::unordered_map<ActionCode, bool EngravingDebuggingOptions::*> Notation
     { "show-line-attach-points", &EngravingDebuggingOptions::showLineAttachPoints },
     { "mark-empty-staff-visibility-overrides", &EngravingDebuggingOptions::markEmptyStaffVisibilityOverrides },
     { "mark-corrupted-measures", &EngravingDebuggingOptions::markCorruptedMeasures },
-    { "show-gap-rests", &EngravingDebuggingOptions::showGapRests }
+    { "show-gap-rests", &EngravingDebuggingOptions::showGapRests },
+    { "show-both-origin-and-combined", &EngravingDebuggingOptions::showOriginAndCombinedStaves },
 };
 
 //! NOTE Just for more readable
@@ -154,7 +155,10 @@ void NotationActionController::init()
     registerAction("prev-beat-TEXT", &Controller::prevBeatTextElement, &Controller::textNavigationByBeatsAvailable);
 
     for (auto it = DURATIONS_FOR_TEXT_NAVIGATION.cbegin(); it != DURATIONS_FOR_TEXT_NAVIGATION.cend(); ++it) {
-        registerAction(it.key(), [=]() { navigateToTextElementByFraction(it.value()); }, &Controller::textNavigationByFractionAvailable);
+        registerAction(it.key(), [this, fraction = it.value()]() {
+            navigateToTextElementByFraction(
+                fraction);
+        }, &Controller::textNavigationByFractionAvailable);
     }
 
     registerAction("next-lyric-verse", &Interaction::navigateToLyricsVerse, MoveDirection::Down, PlayMode::NoPlay,
@@ -587,7 +591,7 @@ bool NotationActionController::canReceiveAction(const ActionCode& code) const
         return false;
     }
 
-    if (playbackController()->isPlaying()) {
+    if (globalContext()->playbackState()->isPlaying()) {
         if (!muse::contains(m_isAllowedDuringPlayback, code)) {
             return false;
         }
@@ -710,8 +714,8 @@ void NotationActionController::resetState()
 {
     TRACEFUNC;
 
-    if (playbackController()->isPlaying()) {
-        playbackController()->reset();
+    if (globalContext()->playbackState()->isPlaying()) {
+        dispatcher()->dispatch("stop");
     }
 
     auto noteInput = currentNotationNoteInput();
@@ -1147,7 +1151,7 @@ void NotationActionController::move(MoveDirection direction, bool quickly)
         break;
     case MoveDirection::Right:
     case MoveDirection::Left:
-        if (playbackController()->isPlaying()) {
+        if (globalContext()->playbackState()->isPlaying()) {
             MeasureBeat beat = playbackController()->currentBeat();
             int targetBeatIdx = static_cast<int>(beat.beat);
             int targetMeasureIdx = beat.measureIndex;
@@ -2240,7 +2244,7 @@ void NotationActionController::playSelectedElement(bool playChord)
 
 bool NotationActionController::toggleNoteInputAllowed() const
 {
-    if (playbackController()->isPlaying() || qApp->applicationState() != Qt::ApplicationActive) {
+    if (globalContext()->playbackState()->isPlaying() || qApp->applicationState() != Qt::ApplicationActive) {
         return false;
     }
 
