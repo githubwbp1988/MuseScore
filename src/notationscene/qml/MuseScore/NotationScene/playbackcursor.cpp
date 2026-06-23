@@ -22,25 +22,25 @@
 #include "playbackcursor.h"
 
 #include "engraving/dom/system.h"
-#include "src/notation/notationtypes.h"
-#include "src/engraving/dom/ornament.h"
-#include "src/engraving/dom/trill.h"
-#include "src/engraving/dom/tremolobar.h"
-#include "src/engraving/dom/arpeggio.h"
-#include "src/engraving/dom/ottava.h"
-#include "src/engraving/dom/spanner.h"
-#include "src/engraving/dom/rest.h"
-#include "src/engraving/dom/mmrest.h"
-#include "src/engraving/dom/notedot.h"
-#include "src/engraving/dom/accidental.h"
-#include "src/engraving/dom/stem.h"
-#include "src/engraving/dom/hook.h"
-#include "src/engraving/dom/beam.h"
-#include "src/engraving/dom/dynamic.h"
-#include "src/engraving/dom/hairpin.h"
-#include "src/engraving/dom/glissando.h"
-#include "src/engraving/dom/keysig.h"
-#include "src/engraving/dom/tremolotwochord.h"
+#include "notation/notationtypes.h"
+#include "engraving/dom/ornament.h"
+#include "engraving/dom/trill.h"
+#include "engraving/dom/tremolobar.h"
+#include "engraving/dom/arpeggio.h"
+#include "engraving/dom/ottava.h"
+#include "engraving/dom/spanner.h"
+#include "engraving/dom/rest.h"
+#include "engraving/dom/mmrest.h"
+#include "engraving/dom/notedot.h"
+#include "engraving/dom/accidental.h"
+#include "engraving/dom/stem.h"
+#include "engraving/dom/hook.h"
+#include "engraving/dom/beam.h"
+#include "engraving/dom/dynamic.h"
+#include "engraving/dom/hairpin.h"
+#include "engraving/dom/glissando.h"
+#include "engraving/dom/keysig.h"
+#include "engraving/dom/tremolotwochord.h"
 
 using namespace mu::engraving;
 using namespace mu::notation;
@@ -1765,7 +1765,7 @@ void PlaybackCursor::processOttavaAsync(mu::engraving::Score* score, bool scoreP
         }
         int staff_count = 0;
         for (const Measure* measure = score->firstMeasure(); measure; measure = measure->nextMeasure()) {
-            for (mu::engraving::Segment* segment = measure->first(mu::engraving::SegmentType::ClefType); segment;) {
+            for (mu::engraving::Segment* segment = measure->first(mu::engraving::SegmentType::ClefTypes); segment;) {
                 std::vector<EngravingItem*> clefItemList = segment->elist();
                 for (size_t i = 0; i < clefItemList.size(); i++) {
                     EngravingItem* clefItem = clefItemList[i];
@@ -1803,7 +1803,7 @@ void PlaybackCursor::processOttavaAsync(mu::engraving::Score* score, bool scoreP
                         }
                     }   
                 }
-                mu::engraving::Segment* next_segment = segment->next(mu::engraving::SegmentType::ClefType);
+                mu::engraving::Segment* next_segment = segment->next(mu::engraving::SegmentType::ClefTypes);
                 segment = next_segment;
             }
         }
@@ -2052,7 +2052,7 @@ void PlaybackCursor::processOttavaAsync(mu::engraving::Score* score, bool scoreP
         for (const Measure* measure = score->firstMeasure(); measure; measure = measure->nextMeasure()) {
             std::vector<std::set<mu::engraving::Key>> seg_keySigKeys;
             std::vector<int> seg_tag_ticks;
-            for (mu::engraving::Segment* segment = measure->first(mu::engraving::SegmentType::KeySigType); segment;) {
+            for (mu::engraving::Segment* segment = measure->first(mu::engraving::SegmentType::KeySigTypes); segment;) {
                 std::vector<EngravingItem*> keySigItemList = segment->elist();
                 seg_keySigKeys.push_back({});
                 for (size_t i = 0; i < keySigItemList.size(); i++) {

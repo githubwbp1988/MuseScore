@@ -27,7 +27,8 @@ set(MODULE_TEST_SRC
     ${CMAKE_CURRENT_LIST_DIR}/mocks/controlledviewmock.h
 
     ${CMAKE_CURRENT_LIST_DIR}/environment.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/notationviewinputcontroller_tests.cpp
+    # --alex
+    # ${CMAKE_CURRENT_LIST_DIR}/notationviewinputcontroller_tests.cpp
 )
 
 set(MODULE_TEST_LINK

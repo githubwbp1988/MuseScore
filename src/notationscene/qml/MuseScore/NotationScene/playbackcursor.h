@@ -37,7 +37,7 @@
 class QColor;
 
 namespace mu::notation {
-class PlaybackCursor : public muse::Contextable, public muse::async::Asyncable
+class PlaybackCursor : public QObject, public muse::Contextable, public muse::async::Asyncable
 {
     muse::GlobalInject<INotationConfiguration> configuration;
 
@@ -231,7 +231,5 @@ private:
     bool pianoKeyboardPlaybackEnable = true;
 
     bool _scorePartChaged = false;
-
-    mu::notation::INotationPtr m_notation;
 };
 }

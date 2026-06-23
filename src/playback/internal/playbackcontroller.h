@@ -70,13 +70,13 @@ public:
     muse::async::Notification isPlayAllowedChanged() const override;
 
     bool isPlaying() const override;
-    muse::async::Notification isPlayingChanged() const override;
+    // muse::async::Notification isPlayingChanged() const override;
 
     muse::async::Notification isPlayingScorePartChanged() override;
 
     void reset() override;
 
-    muse::async::Channel<muse::audio::secs_t, muse::midi::tick_t> currentPlaybackPositionChanged() const override;
+    // muse::async::Channel<muse::audio::secs_t, muse::midi::tick_t> currentPlaybackPositionChanged() const override;
 
     bool isPlaybackInited() const override;
     muse::async::Channel<bool> playbackInitedChanged() const override;
@@ -247,11 +247,11 @@ private:
 
     muse::async::Notification m_isPlayingScorePartChanged;
 
-    muse::audio::TrackSequenceId m_currentSequenceId = -1;
+    // muse::audio::TrackSequenceId m_currentSequenceId = -1;
 
-    muse::async::Notification m_currentSequenceIdChanged;
+    // muse::async::Notification m_currentSequenceIdChanged;
     muse::midi::tick_t m_currentTick = 0;
-    muse::audio::secs_t m_currentPos = 0;
+    // muse::audio::secs_t m_currentPos = 0;
     notation::Tempo m_currentTempo;
 
     muse::async::Channel<muse::audio::TrackId> m_trackAdded;

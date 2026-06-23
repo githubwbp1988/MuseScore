@@ -216,13 +216,21 @@ bool ScoreComp::compareFiles(const String& fullPath1, const String& fullPath2)
         const size_t headerStart1 = start1Set ? start1 + 1 : 0;
         const size_t headerStart2 = start2Set ? start2 + 1 : 0;
 
-        ts << "@@ -" << headerStart1;
+        // --alex
+        // ts << "@@ -" << headerStart1;
+        ts << "@@ -" << static_cast<uint64_t>(headerStart1);
         if (count1 != 1) {
-            ts << "," << count1;
+            // -- alex
+            // ts << "," << count1;
+            ts << "," << static_cast<uint64_t>(count1);
         }
-        ts << " +" << headerStart2;
+        // --alex
+        // ts << " +" << headerStart2;
+        ts << "," << static_cast<uint64_t>(headerStart2);
         if (count2 != 1) {
-            ts << "," << count2;
+            // -- alex
+            // ts << "," << count2;
+            ts << "," << static_cast<uint64_t>(count2);
         }
         ts << " @@\n";
 

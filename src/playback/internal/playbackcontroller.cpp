@@ -249,10 +249,10 @@ bool PlaybackController::loopBoundariesSet() const
     return notationPlayback() && !notationPlayback()->loopBoundaries().isNull();
 }
 
-Notification PlaybackController::isPlayingChanged() const
-{
-    return m_isPlayingChanged;
-}
+// Notification PlaybackController::isPlayingChanged() const
+// {
+//     return m_isPlayingChanged;
+// }
 
 Notification PlaybackController::isPlayingScorePartChanged()
 {
@@ -1502,8 +1502,8 @@ void PlaybackController::setupPlayer()
 {
     currentPlayer()->playbackPositionChanged().onReceive(this, [this](const audio::secs_t pos) {
         m_currentTick = notationPlayback()->secToTick(pos);
-        // LOGALEX() << "playbackPositionChanged, currentTick: " <<  m_currentTick << ", pos: " << pos << ", endSecs: " << playbackEndSecs();
-        m_currentPlaybackPositionChanged.send(pos, m_currentTick);
+        // // LOGALEX() << "playbackPositionChanged, currentTick: " <<  m_currentTick << ", pos: " << pos << ", endSecs: " << playbackEndSecs();
+        // m_currentPlaybackPositionChanged.send(pos, m_currentTick);
 
         updateCurrentTempo();
 

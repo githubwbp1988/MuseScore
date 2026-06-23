@@ -796,18 +796,18 @@ void AbstractNotationPaintView::onNotationSetup()
         onCurrentNotationChanged();
     });
 
-    playbackController()->isPlayingChanged().onNotify(this, [this]() {
-        onPlayingChanged();
-    });
+    // playbackController()->isPlayingChanged().onNotify(this, [this]() {
+    //     onPlayingChanged();
+    // });
 
     playbackController()->isPlayingScorePartChanged().onNotify(this, [this]() {
         m_playbackCursor->playingScorePartChange();
     });
 
-    playbackController()->currentPlaybackPositionChanged().onReceive(this, [this](audio::secs_t, midi::tick_t tick) {
-        // LOGALEX() << "tick: " << tick;
-        movePlaybackCursor(tick);
-    });
+    // playbackController()->currentPlaybackPositionChanged().onReceive(this, [this](audio::secs_t, midi::tick_t tick) {
+    //     // LOGALEX() << "tick: " << tick;
+    //     movePlaybackCursor(tick);
+    // });
 
     notationConfiguration()->foregroundChanged().onNotify(this, [this]() {
         scheduleRedraw();
@@ -1636,7 +1636,7 @@ bool AbstractNotationPaintView::isInited() const
 
 void AbstractNotationPaintView::onPlayingChanged()
 {
-    LOGALEX();
+    // LOGALEX();
     TRACEFUNC;
 
     bool isPlaying = globalContext()->playbackState()->isPlaying();
@@ -1707,7 +1707,7 @@ void AbstractNotationPaintView::movePlaybackCursor(muse::midi::tick_t tick)
             const bool m_adjust_nm_rect = m_playbackCursor->adjust_nm_rect();
             const RectF& newNMCursorRect = m_playbackCursor->nm_rect();
             if (m_adjust_nm_rect) {
-                adjustVertically = needAdjustCanvasVerticallyWhilePlayback(newNMCursorRect);
+                adjustVertically = shouldAdjustCanvasVerticallyDuringPlayback(newNMCursorRect);
                 if (adjustCanvasPosition1(newCursorRect, newNMCursorRect, adjustVertically)) {
                     return;
                 }

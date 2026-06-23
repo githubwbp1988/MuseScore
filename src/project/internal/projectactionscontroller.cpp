@@ -291,7 +291,7 @@ Ret ProjectActionsController::openProject(const muse::io::path_t& givenPath, con
 
 RetVal<INotationProjectPtr> ProjectActionsController::loadProject(const muse::io::path_t& filePath)
 {
-    LOGALEX() << "filePath: " << filePath;
+    // LOGALEX() << "filePath: " << filePath;
     TRACEFUNC;
 
     const auto project = projectCreator()->newProject(iocContext());
@@ -346,7 +346,7 @@ Ret ProjectActionsController::doOpenProject(const muse::io::path_t& filePath)
 {
     TRACEFUNC;
 
-    LOGALEX();
+    // LOGALEX();
 
     RetVal<INotationProjectPtr> rv = loadProject(filePath);
     if (!rv.ret) {
@@ -412,7 +412,7 @@ muse::Ret ProjectActionsController::doOpenCloudProjectOffline(const muse::io::pa
 
 Ret ProjectActionsController::doFinishOpenProject()
 {
-    LOGALEX();
+    // LOGALEX();
     extensionsProvider()->performPointAsync(EXEC_ONPOST_PROJECT_OPENED);
 
     //! Show MuseSounds / MuseSampler update if need

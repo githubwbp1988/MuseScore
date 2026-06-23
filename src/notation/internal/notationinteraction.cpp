@@ -5884,7 +5884,7 @@ void NotationInteraction::addBoxes(BoxType boxType, int count, AddBoxesTarget ta
 
 void NotationInteraction::addBoxes(BoxType boxType, int count, int beforeBoxIndex, bool moveSignaturesClef)
 {
-    LOGALEX();
+    // LOGALEX();
     if (count < 1) {
         return;
     }
