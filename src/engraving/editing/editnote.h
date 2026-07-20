@@ -30,11 +30,14 @@
 namespace mu::engraving {
 enum class SymId;
 enum class AccidentalType : unsigned char;
-enum class UpDownMode : char;
 enum class Key : signed char;
 class Score;
 class EngravingItem;
 class Articulation;
+
+enum class UpDownMode : char {
+    CHROMATIC, OCTAVE, DIATONIC
+};
 
 class EditNote
 {
@@ -59,7 +62,7 @@ class ChangeVelocity : public UndoableCommand
     Note* note = nullptr;
     int userVelocity = 0;
 
-    void flip(EditData*) override;
+    void flip() override;
 
 public:
     ChangeVelocity(Note*, int);
@@ -77,7 +80,7 @@ class ChangeNoteEventList : public UndoableCommand
     NoteEventList newEvents;
     PlayEventType newPetype;
 
-    void flip(EditData*) override;
+    void flip() override;
 
 public:
     ChangeNoteEventList(Note* n, NoteEventList& ne)
@@ -95,7 +98,7 @@ class ChangeNoteEvent : public UndoableCommand
     NoteEvent newEvent;
     PlayEventType newPetype;
 
-    void flip(EditData*) override;
+    void flip() override;
 
 public:
     ChangeNoteEvent(Note* n, NoteEvent* oe, const NoteEvent& ne)
@@ -112,7 +115,7 @@ class ChangeChordPlayEventType : public UndoableCommand
     PlayEventType petype;
     std::vector<NoteEventList> events;
 
-    void flip(EditData*) override;
+    void flip() override;
 
 public:
     ChangeChordPlayEventType(Chord* c, PlayEventType pet)

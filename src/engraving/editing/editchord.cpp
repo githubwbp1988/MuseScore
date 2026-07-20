@@ -47,8 +47,6 @@ void EditChord::addChordParentheses(Chord* chord, std::vector<Note*> notes, bool
 //---------------------------------------------------------
 //   toggleArticulation
 ///   Toggle attribute \a attr for all selected notes/rests.
-///
-///   Called from padToggle() to add note prefix/accent.
 //---------------------------------------------------------
 
 void EditChord::toggleArticulation(Score* score, SymId attr)
@@ -342,7 +340,7 @@ void EditChord::doRemoveAllNoteParentheses(Chord* chord, Parenthesis* leftParen)
 //   ChangeChordStaffMove
 //---------------------------------------------------------
 
-void ChangeChordStaffMove::flip(EditData*)
+void ChangeChordStaffMove::flip()
 {
     int v = chordRest->staffMove();
     staff_idx_t oldStaff = chordRest->vStaffIdx();
@@ -370,7 +368,7 @@ void ChangeChordStaffMove::flip(EditData*)
 //   SwapCR
 //---------------------------------------------------------
 
-void SwapCR::flip(EditData*)
+void SwapCR::flip()
 {
     Segment* s1 = cr1->segment();
     Segment* s2 = cr2->segment();
@@ -396,7 +394,7 @@ void SwapCR::flip(EditData*)
 //   ChangeSpanArpeggio
 //---------------------------------------------------------
 
-void ChangeSpanArpeggio::flip(EditData*)
+void ChangeSpanArpeggio::flip()
 {
     Arpeggio* f_spanArp = m_chord->spanArpeggio();
 
@@ -404,14 +402,14 @@ void ChangeSpanArpeggio::flip(EditData*)
     m_spanArpeggio = f_spanArp;
 }
 
-void AddNoteParenthesisInfo::redo(EditData*)
+void AddNoteParenthesisInfo::redo()
 {
     m_chord->addNoteParenthesisInfo(m_noteParenInfo);
 
     m_chord->triggerLayout();
 }
 
-void mu::engraving::AddNoteParenthesisInfo::undo(EditData*)
+void mu::engraving::AddNoteParenthesisInfo::undo()
 {
     m_chord->removeNoteParenthesisInfo(m_noteParenInfo);
 
@@ -426,14 +424,14 @@ void AddNoteParenthesisInfo::cleanup(bool wasDone)
     }
 }
 
-void RemoveNoteParenthesisInfo::redo(EditData*)
+void RemoveNoteParenthesisInfo::redo()
 {
     m_chord->removeNoteParenthesisInfo(m_noteParenInfo);
 
     m_chord->triggerLayout();
 }
 
-void RemoveNoteParenthesisInfo::undo(EditData*)
+void RemoveNoteParenthesisInfo::undo()
 {
     m_chord->addNoteParenthesisInfo(m_noteParenInfo);
 
@@ -448,14 +446,14 @@ void RemoveNoteParenthesisInfo::cleanup(bool wasDone)
     }
 }
 
-void RemoveSingleNoteParentheses::redo(EditData*)
+void RemoveSingleNoteParentheses::redo()
 {
     m_chord->removeNoteFromParenthesisInfo(m_note, m_paren);
 
     m_chord->triggerLayout();
 }
 
-void RemoveSingleNoteParentheses::undo(EditData*)
+void RemoveSingleNoteParentheses::undo()
 {
     m_chord->addNoteToParenthesisInfo(m_note, m_paren);
 

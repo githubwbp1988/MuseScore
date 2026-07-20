@@ -481,6 +481,7 @@ void LyricsLayout::createOrRemoveLyricsLine(Lyrics* item, LayoutContext& ctx)
         if (!item->separator()) {
             LyricsLine* separator = Factory::createLyricsLine(ctx.mutDom().dummyParent());
             separator->setTick(cr->tick());
+            separator->setVisible(item->visible());
             item->setSeparator(separator);
             ctx.mutDom().addUnmanagedSpanner(item->separator());
         }
@@ -776,6 +777,9 @@ double LyricsLayout::lyricsLineEndX(const LyricsLineSegment* item, const Lyrics*
     const System* system = item->system();
     const LyricsLine* lyricsLine = item->lyricsLine();
     const ChordRest* endChordRest = toChordRest(lyricsLine->endElement());
+    if (!endChordRest) {
+        return system->endingXForOpenEndedLines();
+    }
     const double systemPageX = system->pageX();
     const MStyle& style = item->style();
     const bool melisma = lyricsLine->isEndMelisma();

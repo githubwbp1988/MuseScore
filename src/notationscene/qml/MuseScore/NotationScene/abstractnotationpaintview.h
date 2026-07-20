@@ -42,6 +42,7 @@
 
 #include "notationscene/inotationsceneconfiguration.h"
 #include "notationviewinputcontroller.h"
+#include "notationautomationcontroller.h"
 #include "noteinputcursor.h"
 #include "notationruler.h"
 #include "playbackcursor.h"
@@ -64,8 +65,6 @@ class AbstractNotationPaintView : public muse::uicomponents::QuickPaintedView, p
 
     Q_PROPERTY(QVariant matrix READ matrix NOTIFY matrixChanged)
     Q_PROPERTY(QRectF viewport READ viewport_property NOTIFY viewportChanged)
-
-    Q_PROPERTY(QVariant automationLinesData READ automationLinesData NOTIFY automationLinesDataChanged)
 
     Q_PROPERTY(bool publishMode READ publishMode WRITE setPublishMode NOTIFY publishModeChanged)
     Q_PROPERTY(bool automationMode READ automationMode NOTIFY automationModeChanged)
@@ -105,8 +104,6 @@ public:
     Q_INVOKABLE void onElementPopupIsOpenChanged(const PopupModelType& popupType = PopupModelType::TYPE_UNDEFINED);
 
     Q_INVOKABLE void setPlaybackCursorItem(QQuickItem* cursor);
-
-    Q_INVOKABLE void requestChangeAutomationPoint(qsizetype lineIdx, qsizetype pointIdx, qreal x, qreal y);
 
     qreal width() const override;
     qreal height() const override;
@@ -156,8 +153,6 @@ public:
     muse::RectF viewport() const;
     QRectF viewport_property() const;
 
-    QVariant automationLinesData() const;
-
     bool publishMode() const;
     void setPublishMode(bool arg);
 
@@ -182,8 +177,6 @@ signals:
     void viewportChanged();
     void publishModeChanged();
     void automationModeChanged();
-
-    void automationLinesDataChanged();
 
     void activeFocusRequested();
 
@@ -297,6 +290,8 @@ private:
 
     bool m_loadCalled = false;
     std::unique_ptr<NotationViewInputController> m_inputController;
+    QQuickItem* m_automationLinesContainer = nullptr;
+    std::unique_ptr<NotationAutomationController> m_notationAutomationController;
     std::unique_ptr<PlaybackCursor> m_playbackCursor;
     std::unique_ptr<NoteInputCursor> m_noteInputCursor;
     std::unique_ptr<NotationRuler> m_ruler;

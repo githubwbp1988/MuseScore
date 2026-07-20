@@ -19,8 +19,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+
 #include "playbackcursor.h"
 
+#include "draw/painter.h"
+
+#include "engraving/dom/measure.h"
+#include "engraving/dom/score.h"
+#include "engraving/dom/staff.h"
 #include "engraving/dom/system.h"
 #include "notation/notationtypes.h"
 #include "engraving/dom/ornament.h"
@@ -41,6 +47,10 @@
 #include "engraving/dom/glissando.h"
 #include "engraving/dom/keysig.h"
 #include "engraving/dom/tremolotwochord.h"
+
+#include "notation/inotation.h"
+#include "notation/inotationelements.h" // IWYU pragma: keep
+#include "notation/inotationinteraction.h"
 
 using namespace mu::engraving;
 using namespace mu::notation;

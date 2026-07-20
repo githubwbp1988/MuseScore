@@ -27,8 +27,13 @@
 #include "modularity/ioc.h"
 #include "context/iglobalcontext.h"
 #include "notation/inotationconfiguration.h"
+#include "notation/notationtypes.h"
 
 #include "pianokeyboardtypes.h"
+
+namespace mu::engraving {
+class Note;
+}
 
 namespace mu::notation {
 class PianoKeyboardController : public muse::Contextable, public muse::async::Asyncable
@@ -78,7 +83,7 @@ private:
     INotationPtr currentNotation() const;
 
     void onNotationChanged();
-    void updateNotesKeys(const std::vector<const Note*>& receivedNotes);
+    void updateNotesKeys(const std::vector<const engraving::Note*>& receivedNotes);
     void updatePlaybackNotesKeys(const std::vector<const Note*>& receivedNotes, std::map<const Note*, bool> hitTsMap);
 
     void updateGlissandoNotesKeys(const std::vector<const Note*>& receivedNotes, const mu::engraving::Note* glissandoNote);

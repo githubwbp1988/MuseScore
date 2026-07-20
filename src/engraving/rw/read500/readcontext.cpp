@@ -359,3 +359,44 @@ void ReadContext::addPartAudioSettingCompat(PartAudioSettingsCompat partAudioSet
         _settingsCompat.audioSettings.insert({ partAudioSetting.instrumentId.partId, partAudioSetting });
     }
 }
+
+void ReadContext::addMMRestEndMeasureEID(Measure* mmrest, EID lastMeasureEID)
+{
+    DO_ASSERT(lastMeasureEID.isValid());
+    m_mmRestEndMeasures.emplace(mmrest, lastMeasureEID);
+}
+
+void ReadContext::setMMRestEndMeasures()
+{
+    EIDRegister* eidRegister = score()->masterScore()->eidRegister();
+    for (auto& [mmrest, lastMeasureEID] : m_mmRestEndMeasures) {
+        EngravingObject* linkedElement = eidRegister->itemFromEID(lastMeasureEID);
+        IF_ASSERT_FAILED(linkedElement && linkedElement->isMeasure()) {
+            LOGE() << "No valid end measure found for MMRest at " << mmrest->tick().toString();
+            continue;
+        }
+
+        Measure* lastMeasure = toMeasure(linkedElement);
+        MeasureBase* nextMB = lastMeasure->next();
+        mmrest->setNext(nextMB);
+    }
+}
+
+void ReadContext::registerPastedEID(const EID& clipboardEid, const EID& fileEid)
+{
+    m_pastedEIDs.emplace(clipboardEid, fileEid);
+}
+
+EID ReadContext::resolvePastedEID(const EID& clipboardEid) const
+{
+    if (!_pasteMode) {
+        return clipboardEid;
+    }
+
+    auto it = m_pastedEIDs.find(clipboardEid);
+    IF_ASSERT_FAILED(it != m_pastedEIDs.end()) {
+        return clipboardEid;
+    }
+
+    return it->second;
+}
