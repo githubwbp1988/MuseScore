@@ -47,6 +47,7 @@
 #include "engraving/types/symid.h"
 #include "previewmeasure.h"
 #include "scorecallbacks.h"
+#include "notationselection.h"
 
 class QDrag;
 
@@ -59,9 +60,9 @@ enum class HarmonyType : unsigned char;
 
 namespace mu::notation {
 class Notation;
-class NotationSelection;
 class NotationSelectionFilter;
-class NotationInteraction : public INotationInteraction, public muse::Contextable, public muse::async::Asyncable
+class NotationInteraction : public INotationInteraction, public IInteractionForSelection, public muse::Contextable,
+    public muse::async::Asyncable
 {
     muse::GlobalInject<INotationConfiguration> configuration;
     muse::GlobalInject<engraving::rendering::ISingleRenderer> engravingRenderer;
@@ -101,15 +102,10 @@ public:
     // Select
     INotationSelectionPtr selection() const override;
     void select(const std::vector<EngravingItem*>& elements, SelectType type = SelectType::REPLACE, staff_idx_t staffIndex = 0) override;
+    void doSelect(const std::vector<EngravingItem*>& elements, SelectType type, staff_idx_t staffIndex);
     void select(SelectionTarget target) override;
 
-    void moveChordNoteSelection(MoveDirection d) override;
-
     void selectAndStartEditIfNeeded(EngravingItem* element) override;
-    void selectAll() override;
-    void selectSection() override;
-    void selectFirstElement(bool frame = false) override;
-    void selectLastElement() override;
 
     void clearSelection() override;
     muse::async::Notification selectionChanged() const override;
@@ -222,15 +218,9 @@ public:
     void findAndSelectChordRest(const Fraction& tick) override;
     void moveSegmentSelection(MoveDirection d) override;
 
-    FilterElementsOptions elementsFilterOptions(const EngravingItem* element) const;
-    void selectAllSimilarElements();
-    void selectAllSimilarElementsInStaff();
-    void selectAllSimilarElementsInRange();
-    void selectAllNotesInChord();
-
     // Change selection
     bool moveSelectionAvailable(MoveSelectionType type) const override;
-    void moveSelection(MoveDirection d, MoveSelectionType type) override;
+    void moveSelectionDeprecated(MoveDirection d, MoveSelectionType type) override;
     void expandSelection(ExpandSelectionMode mode) override;
     void addToSelection(MoveDirection d, MoveSelectionType type) override;
     void selectTopStaff() override;
@@ -240,6 +230,8 @@ public:
 
     // SelectionFilter
     INotationSelectionFilterPtr selectionFilter() const override;
+
+    INotationElementsPtr elements() const override;
 
     // Drag
     bool isDragStarted() const override;
@@ -293,6 +285,7 @@ public:
     void endEditText() override;
     void changeTextCursorPosition(const muse::PointF& newCursorPos) override;
     void selectText(mu::engraving::SelectTextType type) override;
+    void selectAllText() override;
     const TextBase* editedText() const override;
     muse::async::Notification textEditingStarted() const override;
     muse::async::Notification textEditingChanged() const override;
@@ -511,9 +504,6 @@ private:
 
     void onElementDestroyed(EngravingItem* element);
 
-    void doSelect(const std::vector<EngravingItem*>& elements, SelectType type, engraving::staff_idx_t staffIndex = 0);
-    void selectElementsWithSameTypeOnSegment(mu::engraving::ElementType elementType, mu::engraving::Segment* segment);
-
     void notifyAboutDragChanged();
     void notifyAboutDropChanged();
     void notifyAboutSelectionChangedIfNeed();
@@ -578,9 +568,6 @@ private:
     void drawLasso(muse::draw::Painter* painter, const engraving::rendering::PaintOptions& opt);
     void drawDrop(muse::draw::Painter* painter);
 
-    void moveElementSelection(MoveDirection d);
-    void moveStringSelection(MoveDirection d);
-
     EngravingItem* dropTarget(mu::engraving::EditData& ed) const;
     bool prepareDropStandardElement(const muse::PointF& pos, Qt::KeyboardModifiers modifiers);
     bool prepareDropMeasureAnchorElement(const muse::PointF& pos);
@@ -608,7 +595,7 @@ private:
     bool needEndElementEditing(const std::vector<EngravingItem*>& newSelectedElements) const;
 
     void resetGripEdit();
-    void resetHitElementContext();
+    void resetHitElementContext() override;
 
     template<typename P>
     void execute(void (mu::engraving::Score::* function)(P), P param, const muse::TranslatableString& actionName);
