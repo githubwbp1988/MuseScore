@@ -268,6 +268,7 @@ void GPConverter::convertGP()
     clearDefectedSpanner();
     fixPercussion();
     addCapos();
+    utils::addPlayCountTexts(_score);
 }
 
 void GPConverter::fixPercussion()
@@ -664,6 +665,7 @@ void GPConverter::convertNotes(const std::vector<std::shared_ptr<GPNote> >& note
     if (cr->isChord()) {
         Chord* ch = toChord(cr);
         ch->sortNotes();
+        mu::iex::guitarpro::utils::createGhostNoteParenGroups(ch);
     }
 }
 

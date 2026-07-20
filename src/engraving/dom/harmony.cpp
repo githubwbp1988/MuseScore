@@ -5,7 +5,7 @@
  * MuseScore Studio
  * Music Composition & Notation
  *
- * Copyright (C) 2021 MuseScore Limited
+ * Copyright (C) 2021 MuseScore Limited and others
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3 as
@@ -26,11 +26,7 @@
 #include "translation.h"
 
 #include "draw/fontmetrics.h"
-#include "draw/types/brush.h"
-#include "draw/types/pen.h"
 
-#include "../editing/textedit.h"
-#include "../editing/undo.h"
 #include "../editing/transpose.h"
 
 #include "chordlist.h"
@@ -683,6 +679,19 @@ NoteCaseType Harmony::bassRenderCase() const
     }
 
     return noteCase;
+}
+
+bool Harmony::collectForDrawing() const
+{
+    if (!visible() && !score()->isShowInvisible()) {
+        return false;
+    }
+
+    if (Segment* parentSeg = getParentSeg()) {
+        return systemFlag() || (parentSeg->measure() && parentSeg->measure()->visible(staffIdx()));
+    }
+
+    return true;
 }
 
 //---------------------------------------------------------
@@ -1467,6 +1476,28 @@ void Harmony::undoChangeProperty(Pid id, const PropertyValue& v, PropertyFlags p
 {
     if (id == Pid::FONT_STYLE || id == Pid::FONT_FACE || id == Pid::FONT_SIZE) {
         EngravingItem::undoChangeProperty(id, v, ps);
+    } else if (id == Pid::EXCLUDE_VERTICAL_ALIGN) {
+        TextBase::undoChangeProperty(id, v, ps);
+
+        bool val = v.toBool();
+        FretDiagram* fd = getParentFretDiagram();
+        if (fd && fd->excludeVerticalAlign() != val) {
+            fd->undoChangeProperty(Pid::EXCLUDE_VERTICAL_ALIGN, val, ps);
+        }
+        Segment* parentSeg = getParentSeg();
+        if (!parentSeg) {
+            return;
+        }
+        for (EngravingItem* item : parentSeg->annotations()) {
+            if ((!item->isFretDiagram() && !item->isHarmony()) || item == this || track2staff(item->track()) != staffIdx()) {
+                continue;
+            }
+
+            if (item->excludeVerticalAlign() != val) {
+                item->undoChangeProperty(Pid::EXCLUDE_VERTICAL_ALIGN, val, ps);
+            }
+        }
+        return;
     }
 
     TextBase::undoChangeProperty(id, v, ps);
@@ -1530,25 +1561,7 @@ bool Harmony::setProperty(Pid pid, const PropertyValue& v)
         m_realizedHarmony.setDuration(HDuration(v.toInt()));
         break;
     case Pid::EXCLUDE_VERTICAL_ALIGN: {
-        bool val = v.toBool();
-        setExcludeVerticalAlign(val);
-        FretDiagram* fd = getParentFretDiagram();
-        if (fd && fd->excludeVerticalAlign() != val) {
-            fd->setExcludeVerticalAlign(val);
-        }
-        Segment* parentSeg = getParentSeg();
-        if (!parentSeg) {
-            break;
-        }
-        for (EngravingItem* item : parentSeg->annotations()) {
-            if (!item->isFretDiagram() || !item->isHarmony() || item == this || track2staff(item->track()) != staffIdx()) {
-                continue;
-            }
-
-            if (item->excludeVerticalAlign() != val) {
-                item->setProperty(Pid::EXCLUDE_VERTICAL_ALIGN, val);
-            }
-        }
+        setExcludeVerticalAlign(v.toBool());
         break;
     }
     case Pid::HARMONY_DO_NOT_STACK_MODIFIERS:
@@ -1609,13 +1622,6 @@ PropertyValue Harmony::propertyDefault(Pid id) const
     case Pid::PLAY:
         v = true;
         break;
-    case Pid::OFFSET: {
-        const FretDiagram* fd = explicitParent() && explicitParent()->isFretDiagram() ? toFretDiagram(explicitParent()) : nullptr;
-        if (fd && fd->visible()) {
-            v = PropertyValue::fromValue(PointF(0.0, 0.0));
-            break;
-        }
-    }
     // fall-through
     default:
         v = TextBase::propertyDefault(id);
@@ -1635,21 +1641,6 @@ bool Harmony::positionRelativeToNoteheadRest() const
 
 Sid Harmony::getPropertyStyle(Pid pid) const
 {
-    if (pid == Pid::OFFSET) {
-        const FretDiagram* fd = explicitParent() && explicitParent()->isFretDiagram() ? toFretDiagram(explicitParent()) : nullptr;
-
-        if (fd && fd->visible()) {
-            return Sid::NOSTYLE;
-        } else if (textStyleType() == TextStyleType::HARMONY_A) {
-            return placeAbove() ? Sid::chordSymbolAPosAbove : Sid::chordSymbolAPosBelow;
-        } else if (textStyleType() == TextStyleType::HARMONY_B) {
-            return placeAbove() ? Sid::chordSymbolBPosAbove : Sid::chordSymbolBPosBelow;
-        } else if (textStyleType() == TextStyleType::HARMONY_ROMAN) {
-            return placeAbove() ? Sid::romanNumeralPosAbove : Sid::romanNumeralPosBelow;
-        } else if (textStyleType() == TextStyleType::HARMONY_NASHVILLE) {
-            return placeAbove() ? Sid::nashvilleNumberPosAbove : Sid::nashvilleNumberPosBelow;
-        }
-    }
     if (pid == Pid::PLACEMENT) {
         switch (m_harmonyType) {
         case HarmonyType::STANDARD:

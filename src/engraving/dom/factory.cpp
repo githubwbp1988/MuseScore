@@ -5,7 +5,7 @@
  * MuseScore Studio
  * Music Composition & Notation
  *
- * Copyright (C) 2021 MuseScore Limited
+ * Copyright (C) 2021 MuseScore Limited and others
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3 as
@@ -291,6 +291,7 @@ EngravingItem* Factory::doCreateItem(ElementType type, EngravingItem* parent)
     case ElementType::MAXTYPE:
     case ElementType::INVALID:
     case ElementType::PART:
+    case ElementType::SHARED_PART:
     case ElementType::STAFF:
     case ElementType::SCORE:
     case ElementType::BRACKET_ITEM:

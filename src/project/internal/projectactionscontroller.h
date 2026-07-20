@@ -5,7 +5,7 @@
  * MuseScore Studio
  * Music Composition & Notation
  *
- * Copyright (C) 2021 MuseScore Limited
+ * Copyright (C) 2021 MuseScore Limited and others
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3 as
@@ -37,7 +37,6 @@
 #include "multiwindows/iprojectprovider.h"
 #include "cloud/musescorecom/imusescorecomservice.h"
 #include "cloud/audiocom/iaudiocomservice.h"
-#include "playback/iplaybackcontroller.h"
 #include "print/iprintprovider.h"
 #include "iexportprojectscenario.h"
 #include "inotationreadersregister.h"
@@ -80,7 +79,6 @@ class ProjectActionsController : public IProjectFilesController, public muse::mi
     muse::ContextInject<muse::actions::IActionsDispatcher> dispatcher = { this };
     muse::ContextInject<muse::IInteractive> interactive = { this };
     muse::ContextInject<context::IGlobalContext> globalContext = { this };
-    muse::ContextInject<playback::IPlaybackController> playbackController = { this };
     muse::ContextInject<print::IPrintProvider> printProvider = { this };
 
 public:

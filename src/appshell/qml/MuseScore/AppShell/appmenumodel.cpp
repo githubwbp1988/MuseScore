@@ -5,7 +5,7 @@
  * MuseScore Studio
  * Music Composition & Notation
  *
- * Copyright (C) 2021 MuseScore Limited
+ * Copyright (C) 2021 MuseScore Limited and others
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3 as
@@ -300,7 +300,7 @@ MenuItem* AppMenuModel::makeViewMenu()
         makeMenuItem("toggle-palettes"),
         makeMenuItem("masterpalette"),
         makeMenuItem("toggle-instruments"),
-        makeMenuItem("inspector"),
+        makeMenuItem("toggle-properties-panel"),
         makeMenuItem("toggle-selection-filter"),
         historyItem,
         makeMenuItem("toggle-navigator"),
@@ -512,6 +512,7 @@ MenuItem* AppMenuModel::makeDiagnosticsMenu()
     if (globalConfiguration()->devModeEnabled()) {
         MenuItemList actionsItems {
             makeMenuItem("diagnostic-show-actions"),
+            makeMenuItem("diagnostic-show-rcommands"),
             makeMenuItem("action://diagnostic/actions/query"),
             makeMenuItem("action://diagnostic/actions/query_params1?param1=val1"),
             makeMenuItem("action://diagnostic/actions/query_params2?param1=val1")
@@ -538,6 +539,7 @@ MenuItem* AppMenuModel::makeDiagnosticsMenu()
             makeMenuItem("show-gap-rests"),
             makeMenuItem("show-line-attach-points"),
             makeMenuItem("mark-empty-staff-visibility-overrides"),
+            makeMenuItem("show-both-origin-and-combined"),
             makeMenuItem("mark-corrupted-measures"),
             makeMenuItem("check-for-score-corruptions")
         };
@@ -558,9 +560,8 @@ MenuItem* AppMenuModel::makeDiagnosticsMenu()
 #endif
 
         MenuItemList audioItems {
-            makeMenuItem("action://audio/dev/use-workermode"),
             makeMenuItem("action://audio/dev/use-drivermode"),
-            makeMenuItem("action://audio/dev/use-workerrpcmode"),
+            makeMenuItem("action://audio/dev/use-hybridmode"),
         };
 
         items << makeMenu(TranslatableString("appshell/menu/diagnostics", "A&ctions"), actionsItems, "menu-actions")

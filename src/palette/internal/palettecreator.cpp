@@ -5,7 +5,7 @@
  * MuseScore Studio
  * Music Composition & Notation
  *
- * Copyright (C) 2021 MuseScore Limited
+ * Copyright (C) 2021 MuseScore Limited and others
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3 as
@@ -75,6 +75,7 @@
 #include "engraving/dom/segment.h"
 #include "engraving/dom/slur.h"
 #include "engraving/dom/spacer.h"
+#include "engraving/dom/staff.h"
 #include "engraving/dom/stafftext.h"
 #include "engraving/dom/stringtunings.h"
 #include "engraving/dom/systemtext.h"
@@ -1221,6 +1222,7 @@ PalettePtr PaletteCreator::newLinesPalette(bool defaultPalette)
 
     pedal = makeElement<Pedal>(paletteScore());
     pedal->setLineVisible(false);
+    pedal->setEndHookType(HookType::ROSETTE);
     pedal->setBeginText(pedal->propertyDefault(Pid::BEGIN_TEXT).value<String>());
     pedal->setContinueText(pedal->propertyDefault(Pid::CONTINUE_TEXT).value<String>());
     pedal->setEndText(pedal->propertyDefault(Pid::END_TEXT).value<String>());
@@ -1873,6 +1875,7 @@ PalettePtr PaletteCreator::newKeyboardPalette()
 
     auto pedal = makeElement<Pedal>(paletteScore());
     pedal->setLineVisible(false);
+    pedal->setEndHookType(HookType::ROSETTE);
     pedal->setBeginText(pedal->propertyDefault(Pid::BEGIN_TEXT).value<String>());
     pedal->setContinueText(pedal->propertyDefault(Pid::CONTINUE_TEXT).value<String>());
     pedal->setEndText(pedal->propertyDefault(Pid::END_TEXT).value<String>());

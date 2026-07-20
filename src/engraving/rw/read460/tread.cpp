@@ -5,7 +5,7 @@
  * MuseScore Studio
  * Music Composition & Notation
  *
- * Copyright (C) 2021 MuseScore Limited
+ * Copyright (C) 2021 MuseScore Limited and others
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3 as
@@ -92,7 +92,6 @@
 #include "../../dom/palmmute.h"
 #include "../../dom/parenthesis.h"
 #include "../../dom/part.h"
-#include "../../dom/part.h"
 #include "../../dom/partialtie.h"
 #include "../../dom/pedal.h"
 #include "../../dom/playcounttext.h"
@@ -107,6 +106,7 @@
 #include "../../dom/soundflag.h"
 #include "../../dom/spacer.h"
 #include "../../dom/spanner.h"
+#include "../../dom/staff.h"
 #include "../../dom/staffstate.h"
 #include "../../dom/stafftext.h"
 #include "../../dom/stafftextbase.h"
@@ -137,6 +137,7 @@
 
 #include "../xmlreader.h"
 #include "../read206/read206.h"
+#include "../read500/tread.h"
 #include "../compat/compatutils.h"
 #include "../compat/tremolocompat.h"
 #include "readcontext.h"
@@ -515,6 +516,10 @@ void TRead::readProperty(EngravingItem* item, XmlReader& xml, ReadContext& ctx, 
         v = v.value<PlacementV>() == PlacementV::ABOVE ? PropertyValue(DirectionV::UP) : PropertyValue(DirectionV::DOWN);
     }
 
+    if (pid == Pid::OFFSET) {
+        compat::CompatUtils::migrateOffset500(item, v);
+    }
+
     if (!ctx.shouldSkipProperty(pid)) {
         item->setProperty(pid, v);
         if (item->isStyled(pid)) {
@@ -781,7 +786,7 @@ void TRead::read(Dynamic* d, XmlReader& e, ReadContext& ctx)
         } else if (tag == "play") {
             d->setPlayDynamic(e.readBool());
         } else if (ctx.mscVersion() < 470 && tag == "dynamicsSize") {
-            d->setSymbolScale(e.readDouble());
+            readProperty(d, e, ctx, Pid::MUSICAL_SYMBOLS_SCALE);
         } else if (readProperty(d, tag, e, ctx, Pid::AVOID_BARLINES)) {
         } else if (readProperty(d, tag, e, ctx, Pid::CENTER_ON_NOTEHEAD)) {
         } else if (readProperty(d, tag, e, ctx, Pid::ANCHOR_TO_END_OF_PREVIOUS)) {
@@ -975,11 +980,9 @@ bool TRead::readProperties(Instrument* item, XmlReader& e, ReadContext& ctx, Par
     if (tag == "soundId") {
         item->setSoundId(e.readText());
     } else if (tag == "longName") {
-        item->setLongName(readLegacyStaffName(e)); // Old implementation
+        item->setLongName(read500::TRead::readLegacyStaffName(e)); // Old implementation
     } else if (tag == "shortName") {
-        item->setShortName(readLegacyStaffName(e)); // Old implementation
-    } else if (tag == "InstrumentLabel") {
-        readInstrumentLabel(item->instrumentLabel(), e); // New implementation
+        item->setShortName(read500::TRead::readLegacyStaffName(e)); // Old implementation
     } else if (tag == "trackName") {
         item->setTrackName(e.readText());
     } else if (tag == "minPitchA") {
@@ -2258,6 +2261,7 @@ bool TRead::readProperties(MeasureBase* b, XmlReader& e, ReadContext& ctx)
     if (tag == "LayoutBreak") {
         LayoutBreak* lb = Factory::createLayoutBreak(b);
         TRead::read(lb, e, ctx);
+        lb->setTrack(0);
         bool doAdd = true;
         switch (lb->layoutBreakType()) {
         case LayoutBreakType::LINE:
@@ -3708,8 +3712,8 @@ bool TRead::readProperties(SLine* l, XmlReader& e, ReadContext& ctx)
     } else if (tag == "Segment") {
         LineSegment* ls = l->createLineSegment(l->score()->dummy()->system());
         ls->setTrack(l->track());     // needed in read to get the right staff mag
-        TRead::read(ls, e, ctx);
         l->add(ls);
+        TRead::read(ls, e, ctx);
         ls->setVisible(l->visible());
     } else if (TRead::readProperty(l, tag, e, ctx, Pid::DIAGONAL)) {
     } else if (TRead::readProperty(l, tag, e, ctx, Pid::ANCHOR)) {
@@ -3759,6 +3763,7 @@ bool TRead::readProperties(SlurTie* s, XmlReader& e, ReadContext& ctx)
     const AsciiStringView tag(e.name());
 
     if (TRead::readProperty(s, tag, e, ctx, Pid::SLUR_DIRECTION)) {
+    } else if (TRead::readProperty(s, tag, e, ctx, Pid::MASK_SLURTIE)) {
     } else if (tag == "lineType") {
         s->setStyleType(static_cast<SlurStyleType>(e.readInt()));
     } else if (tag == "SlurSegment" || tag == "TieSegment" || tag == "LaissezVibSegment" || tag == "PartialTieSegment"
@@ -3769,8 +3774,8 @@ bool TRead::readProperties(SlurTie* s, XmlReader& e, ReadContext& ctx)
             s->add(s->newSlurTieSegment(s->score()->dummy()->system()));
         }
         SlurTieSegment* sts = s->newSlurTieSegment(s->score()->dummy()->system());
-        TRead::read(sts, e, ctx);
         s->add(sts);
+        TRead::read(sts, e, ctx);
     } else if (!readProperties(toSpanner(s), e, ctx)) {
         return false;
     }
@@ -3935,9 +3940,6 @@ void TRead::read(StaffType* t, XmlReader& e, ReadContext& ctx)
         const AsciiStringView tag(e.name());
         if (tag == "name") {
             t->setXmlName(e.readText());
-        } else if (tag == "StaffLabel") {
-            StaffLabel& staffLabel = t->staffLabel();
-            readStaffLabel(staffLabel, e);
         } else if (tag == "lines") {
             t->setLines(e.readInt());
         } else if (tag == "lineDistance") {
@@ -4085,11 +4087,6 @@ bool TRead::readProperties(Staff* s, XmlReader& e, ReadContext& ctx)
             bi->setColor(color);
         }
         e.readNext();
-    } else if (tag == "BracketItem") {
-        BracketItem* b = Factory::createBracketItem(s);
-        b->setStaff(s);
-        read(b, e, ctx);
-        s->insertBracket(b);
     } else if (tag == "barLineSpan") {
         const int barLineSpan = e.readInt();
         if (barLineSpan < 0) {
@@ -4132,114 +4129,6 @@ bool TRead::readProperties(Staff* s, XmlReader& e, ReadContext& ctx)
     } else {
         return false;
     }
-    return true;
-}
-
-void TRead::read(BracketItem* b, XmlReader& xml, ReadContext& ctx)
-{
-    while (xml.readNextStartElement()) {
-        const AsciiStringView& tag = xml.name();
-        if (tag == "type") {
-            b->setBracketType(TConv::fromXml(xml.readAsciiText(), BracketType::NORMAL));
-        } else if (readProperty(b, tag, xml, ctx, Pid::BRACKET_SPAN)) {
-        } else if (tag == "level") {
-            b->setColumn(xml.readInt());
-        } else if (readProperty(b, tag, xml, ctx, Pid::VISIBLE)) {
-        } else if (readProperty(b, tag, xml, ctx, Pid::GROUP_BRACKET_SHOW_TEXT)) {
-        } else if (readProperty(b, tag, xml, ctx, Pid::GROUP_BRACKET_SHOW_BRACKET)) {
-        } else if (tag == "StaffLabel") {
-            StaffLabel& label = b->label();
-            readStaffLabel(label, xml);
-        } else {
-            xml.unknown();
-        }
-    }
-}
-
-String TRead::readLegacyStaffName(XmlReader& xml)
-{
-    String name = lineBreakFromTag(xml.readXml());
-    if (name.startsWith(u"<html>")) {
-        // compatibility to old html implementation:
-        name = HtmlParser::parse(name);
-    }
-    return name;
-}
-
-void TRead::readStaffLabel(StaffLabel& item, XmlReader& xml)
-{
-    while (xml.readNextStartElement()) {
-        if (!readProperties(item, xml)) {
-            xml.unknown();
-        }
-    }
-}
-
-bool TRead::readProperties(StaffLabel& item, XmlReader& xml)
-{
-    AsciiStringView tag = xml.name();
-
-    if (tag == "longName") {
-        item.setLongName(lineBreakFromTag(xml.readXml()));
-    } else if (tag == "shortName") {
-        item.setShortName(lineBreakFromTag(xml.readXml()));
-    } else {
-        return false;
-    }
-
-    return true;
-}
-
-void TRead::readInstrumentLabel(InstrumentLabel& item, XmlReader& xml)
-{
-    while (xml.readNextStartElement()) {
-        if (!readProperties(item, xml)) {
-            xml.unknown();
-        }
-    }
-}
-
-bool TRead::readProperties(InstrumentLabel& item, XmlReader& xml)
-{
-    AsciiStringView tag = xml.name();
-
-    if (readProperties(static_cast<StaffLabel&>(item), xml)) {
-    } else if (tag == "transposition") {
-        item.setTransposition(lineBreakFromTag(xml.readXml()));
-    } else if (tag == "showTranspositionLong") {
-        item.setShowTranspositionLong(xml.readBool());
-    } else if (tag == "showTranspositionShort") {
-        item.setShowTranspositionShort(xml.readBool());
-    } else if (tag == "number") {
-        item.setNumber(xml.readInt());
-    } else if (tag == "showNumberLong") {
-        item.setShowNumberLong(xml.readBool());
-    } else if (tag == "showNumberShort") {
-        item.setShowNumberLong(xml.readBool());
-    } else if (tag == "useCustomName") {
-        item.setUseCustomName(xml.readBool());
-    } else if (tag == "customNameLong") {
-        item.setCustomNameLong(lineBreakFromTag(xml.readXml()));
-    } else if (tag == "customNameShort") {
-        item.setCustomNameShort(lineBreakFromTag(xml.readXml()));
-    } else if (tag == "allowGroupName") {
-        item.setAllowGroupName(xml.readBool());
-    } else if (tag == "customNameLongGroup") {
-        item.setCustomNameLongGroup(lineBreakFromTag(xml.readXml()));
-    } else if (tag == "customNameShortGroup") {
-        item.setCustomNameShortGroup(lineBreakFromTag(xml.readXml()));
-    } else if (tag == "useCustomGroupName") {
-        item.setUseCustomGroupName(xml.readBool());
-    } else if (tag == "customNameLongIndividual") {
-        item.setCustomNameLongIndividual(lineBreakFromTag(xml.readXml()));
-    } else if (tag == "customNameShortIndividual") {
-        item.setCustomNameShortIndividual(lineBreakFromTag(xml.readXml()));
-    } else if (tag == "useCustomIndividualName") {
-        item.setUseCustomIndividualName(xml.readBool());
-    } else {
-        return false;
-    }
-
     return true;
 }
 

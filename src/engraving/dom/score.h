@@ -5,7 +5,7 @@
  * MuseScore Studio
  * Music Composition & Notation
  *
- * Copyright (C) 2021 MuseScore Limited
+ * Copyright (C) 2021 MuseScore Limited and others
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3 as
@@ -92,6 +92,10 @@ namespace mu::engraving::read460 {
 class Read460;
 }
 
+namespace mu::engraving::read500 {
+class Read500;
+}
+
 namespace mu::engraving::write {
 class Writer;
 }
@@ -144,7 +148,7 @@ class Text;
 class TimeSig;
 class TimeSigMap;
 class Tuplet;
-class UndoCommand;
+class UndoableCommand;
 class UndoStack;
 
 class ShadowNote;
@@ -499,7 +503,7 @@ public:
                              PropertyFlags propFlags = PropertyFlags::NOSTYLE);
     void undoPropertyChanged(EngravingObject*, Pid, const PropertyValue& v, PropertyFlags ps = PropertyFlags::NOSTYLE);
     virtual UndoStack* undoStack() const;
-    void undo(UndoCommand*, EditData* = nullptr) const;
+    void undo(UndoableCommand*, EditData* = nullptr) const;
     void undoRemoveMeasures(Measure*, Measure*, bool preserveTies = false, bool moveStaffTypeChanges = true);
     void undoChangeMeasureRepeatCount(Measure* m, int count, staff_idx_t staffIdx);
     void undoAddBracket(Staff* staff, size_t level, BracketType type, size_t span);
@@ -508,12 +512,14 @@ public:
     void undoChangeStyleVal(Sid idx, const PropertyValue& v);
     void undoChangeStyleValues(std::unordered_map<Sid, PropertyValue> values);
     void undoChangePageNumberOffset(int po);
-    void undoChangeParent(EngravingItem* element, EngravingItem* parent, staff_idx_t _staff);
+    void undoChangeParent(EngravingItem* element, EngravingItem* parent, staff_idx_t _staff, bool changeLinksParents = true);
     void undoResetPlayCountTextSettings(BarLine* bl);
     void undoUpdatePlayCountText(Measure* m);
     void undoChangeBarLineType(BarLine* bl, BarLineType barType, bool allStaves, bool replace = false);
 
     void updateInstrumentChangeTranspositions(KeySigEvent& key, Staff* staff, const Fraction& tick);
+
+    Measure* undoGetMeasure(const Fraction& tick);
 
     Note* setGraceNote(Chord*,  int pitch, NoteType type, int len);
 
@@ -526,9 +532,8 @@ public:
     void changeCRlen(ChordRest* cr, const Fraction&, bool fillWithRest=true);
     void createCRSequence(const Fraction& f, ChordRest* cr, const Fraction& tick);
 
-    Fraction makeGap(Segment*, track_idx_t track, const Fraction&, Tuplet*, bool keepChord = false);
-    bool makeGap1(const Fraction& baseTick, staff_idx_t staffIdx, const Fraction& len, const Fraction voiceOffset[VOICES]);
-    bool makeGapVoice(Segment* seg, track_idx_t track, Fraction len, const Fraction& tick);
+    Fraction makeGap(Segment*, track_idx_t track, const Fraction&, Tuplet*, bool keepChord = false, bool deleteAnnotations = true);
+    bool makeGapVoice(Segment* seg, track_idx_t track, Fraction len, const Fraction& tick, bool deleteAnnotations = true);
 
     Rest* addRest(const Fraction& tick, track_idx_t track, TDuration, Tuplet*);
     Rest* addRest(Segment* seg, track_idx_t track, TDuration d, Tuplet*);
@@ -579,8 +584,7 @@ public:
 
     void startCmd(const TranslatableString& actionName);             // start undoable command
     void endCmd(bool rollback = false, bool layoutAllParts = false); // end undoable command
-    void update() { update(true); }
-    void lockUpdates(bool locked);
+    void update();
     void undoRedo(bool undo, EditData*);
 
     virtual muse::async::Channel<ScoreChanges> changesChannel() const;
@@ -596,7 +600,6 @@ public:
     virtual const CmdState& cmdState() const;
     virtual void addLayoutFlags(LayoutFlags);
     virtual void setInstrumentsChanged(bool);
-    void addRefresh(const RectF&);
 
     void cmdToggleAutoplace(bool all);
 
@@ -607,14 +610,18 @@ public:
     bool selectionEmpty() const { return m_selection.staffStart() == m_selection.staffEnd(); }
     bool selectionChanged() const { return m_updateState.selectionChanged; }
     void setSelectionChanged(bool val) { m_updateState.selectionChanged = val; }
-    void deleteLater(EngravingObject* e) { m_updateState.deleteList.push_back(e); }
-    void deletePostponed();
+    const RectF& refreshRect() const { return m_updateState.refresh; }
+    void addRefresh(const RectF&);
+    void clearRefreshRect() { m_updateState.refresh = RectF(); }
 
     void changeSelectedElementsVoice(voice_idx_t);
     void changeSelectedElementsVoiceAssignment(VoiceAssignment);
 
     const std::vector<Part*>& parts() const;
     size_t visiblePartCount() const;
+    std::vector<Part*> visibleParts() const;
+    std::vector<SharedPart*> sharedParts() const;
+    bool hasSharedParts() const;
 
     using StaffAccepted = std::function<bool (const Staff&)>;
     std::set<staff_idx_t> staffIdxSetFromRange(const track_idx_t trackFrom, const track_idx_t trackTo,
@@ -680,6 +687,7 @@ public:
 
     void setUpTempoMapLater();
     void setUpTempoMap();
+    bool needSetUpTempoMap() const { return m_needSetUpTempoMap; }
 
     EngravingItem* nextElement();
     EngravingItem* prevElement();
@@ -697,8 +705,6 @@ public:
     void setSavedCapture(bool v) { m_savedCapture = v; }
     bool printing() const { return m_printing; }
     void setPrinting(bool val) { m_printing = val; }
-    virtual bool playlistDirty() const;
-    virtual void setPlaylistDirty();
     bool hasCorruptedMeasures() const { return m_corrupted; }
     void setHasCorruptedMeasures(bool val) { m_corrupted = val; }
 
@@ -804,7 +810,6 @@ public:
     bool getPosition(Position* pos, const PointF&, voice_idx_t voice) const;
 
     void cmdDeleteTuplet(Tuplet*, bool replaceWithRest);
-    Measure* getCreateMeasure(const Fraction& tick);
 
     void adjustBracketsDel(size_t sidx, size_t eidx);
     void adjustBracketsIns(size_t sidx, size_t eidx);
@@ -814,14 +819,16 @@ public:
     /// To be used together with setExpandRepeats.
     /// For bigger operations, where suboperations might also use it,
     /// where those need to have the same value for expandRepeats.
-    virtual const RepeatList& repeatList() const;
+    const RepeatList& repeatList() const;
     /// For small, one-step operations, where you need to get the relevant repeatList just once
-    virtual const RepeatList& repeatList(bool expandRepeats, bool updateTies = true) const;
+    const RepeatList& repeatList(bool expandRepeats, bool updateTies = true) const;
+
+    void invalidateRepeatList();
 
     double utick2utime(int tick) const;
     int utime2utick(double utime) const;
 
-    void nextInputPos(ChordRest* cr, bool);
+    void nextInputPos(const ChordRest* cr, bool);
     void cmdMirrorNoteHead();
 
     virtual size_t npages() const { return m_pages.size(); }
@@ -931,6 +938,8 @@ public:
     MeasureBase* insertMeasure(ElementType type, MeasureBase* beforeMeasure = nullptr,
                                const InsertMeasureOptions& options = InsertMeasureOptions());
     MeasureBase* insertBox(ElementType type, MeasureBase* beforeMeasure = nullptr,
+                           const InsertMeasureOptions& options = InsertMeasureOptions());
+    MeasureBase* insertBox(MeasureBase* box, MeasureBase* beforeMeasure = nullptr,
                            const InsertMeasureOptions& options = InsertMeasureOptions());
 
     Audio* audio() const { return m_audio; }
@@ -1079,6 +1088,7 @@ private:
     friend class read400::Read400;
     friend class read410::Read410;
     friend class read460::Read460;
+    friend class read500::Read500;
     friend class write::Writer;
 
     static std::set<Score*> validScores;
@@ -1107,7 +1117,7 @@ private:
     bool tryExtendSingleSelectionToRange(EngravingItem* e, staff_idx_t staffIdx);
 
     muse::Ret putNote(const Position&, bool replace);
-    void handleOverlappingChordRest(InputState& inputState);
+    void truncateChordRest(ChordRest* cr, const Fraction& tick, bool fillWithRest);
 
     void resetTempo();
     void resetTempoRange(const Fraction& tick1, const Fraction& tick2);
@@ -1126,8 +1136,6 @@ private:
 
     void deleteRangeAtTrack(std::vector<ChordRest*>& crsToSelect, const track_idx_t track, Segment* startSeg, const Fraction& endTick,
                             Tuplet* currentTuplet, const SelectionFilter& filter, bool selectionContainsMultiNoteChords);
-
-    void update(bool resetCmdState, bool layoutAllParts = false);
 
     muse::ID newStaffId() const;
     muse::ID newPartId() const;
@@ -1220,8 +1228,6 @@ private:
 
     PaddingTable m_paddingTable;
     double m_minimumPaddingUnit = 0.0;
-
-    bool m_updatesLocked = false;
 };
 
 static inline Score* toScore(EngravingObject* e)

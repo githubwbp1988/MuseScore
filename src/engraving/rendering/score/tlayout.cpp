@@ -5,7 +5,7 @@
  * MuseScore Studio
  * Music Composition & Notation
  *
- * Copyright (C) 2023 MuseScore Limited
+ * Copyright (C) 2023 MuseScore Limited and others
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3 as
@@ -1553,9 +1553,10 @@ void TLayout::layoutBreath(const Breath* item, Breath::LayoutData* ldata, const 
     LAYOUT_CALL_ITEM(item);
     LD_INDEPENDENT;
 
-    if (ldata->isValid()) {
-        return;
-    }
+    // TODO review with all other instances of this
+    // if (ldata->isValid()) {
+    // return;
+    // }
 
     const double voiceOffset = item->placeBelow() ? item->staff()->staffHeight(item->tick()) : 0.0;
     if (item->isCaesura()) {
@@ -1974,10 +1975,6 @@ void TLayout::layoutFermata(const Fermata* item, Fermata::LayoutData* ldata)
     ldata->setIsSkipDraw(false);
     ldata->setPos(PointF());
 
-    if (item->isStyled(Pid::OFFSET)) {
-        const_cast<Fermata*>(item)->setOffset(item->propertyDefault(Pid::OFFSET).value<PointF>());
-    }
-
     double x = 0.0;
     double y = item->placeAbove() ? 0.0 : item->staff()->staffHeight(item->tick());
     const Segment* s = item->segment();
@@ -2014,23 +2011,10 @@ void TLayout::layoutFermata(const Fermata* item, Fermata::LayoutData* ldata)
     ldata->setShape(Shape(item->symBbox(item->symId()), item));
     x -= 0.5 * ldata->bbox().width();
 
-    if (item->isStyled(Pid::OFFSET)) {
-        y += item->offset().y();
-    }
-    Shape staffShape = item->segment()->staffShape(item->staffIdx());
-    staffShape.removeTypes({ ElementType::FERMATA });
-    if (item->placeAbove()) {
-        double minDist = ldata->shape().minVerticalDistance(staffShape) + item->absoluteFromSpatium(item->minDistance());
-        y = std::min(y, -minDist);
-    } else {
-        double minDist = staffShape.minVerticalDistance(ldata->shape()) + item->absoluteFromSpatium(item->minDistance());
-        y = std::max(y, minDist);
-    }
-    if (item->isStyled(Pid::OFFSET)) {
-        y -= item->offset().y();
-    }
-
     ldata->setPos(x, y);
+
+    PointF defaultPos = item->defaultPos();
+    ldata->move(defaultPos);
 
     if (item->autoplace()) {
         const Segment* s2 = item->segment();
@@ -2854,6 +2838,7 @@ void TLayout::manageTempoChangeSnapping(GradualTempoChangeSegment* item, LayoutC
 void TLayout::doLayoutGradualTempoChangeSegment(GradualTempoChangeSegment* item, LayoutContext& ctx)
 {
     GradualTempoChangeSegment::LayoutData* ldata = item->mutldata();
+    ldata->setPosY(0.0);
 
     auto extendLineToSnappedItemAfter = [item](EngravingItem* itemAfter) {
         assert(itemAfter->isGradualTempoChangeSegment() || itemAfter->isTempoText());
@@ -2891,10 +2876,6 @@ void TLayout::doLayoutGradualTempoChangeSegment(GradualTempoChangeSegment* item,
     }
 
     layoutTextLineBaseSegment(item, ctx);
-
-    if (item->isStyled(Pid::OFFSET)) {
-        item->roffset() = item->tempoChange()->propertyDefault(Pid::OFFSET).value<PointF>();
-    }
 
     Autoplace::autoplaceSpannerSegment(item, ldata, ctx.conf().spatium());
 }
@@ -3100,10 +3081,6 @@ void TLayout::layoutHairpinSegment(HairpinSegment* item, LayoutContext& ctx)
         return;
     }
 
-    if (item->isStyled(Pid::OFFSET)) {
-        item->roffset() = item->hairpin()->propertyDefault(Pid::OFFSET).value<PointF>();
-    }
-
     // rebase vertical offset on drag
     if (ldata->offsetChanged() != OffsetChange::NONE) {
         Autoplace::rebaseOffset(item, ldata);
@@ -3223,7 +3200,7 @@ void TLayout::layoutHammerOnPullOffSegment(HammerOnPullOffSegment* item, LayoutC
             endX = endChord->systemPos().x();
         } else {
             // The last endChord of this segment is in next system. Use end barline instead.
-            Segment* endSeg = system->lastMeasure()->last(SegmentType::BarLineType);
+            Segment* endSeg = system->lastMeasure()->last(SegmentType::BarLineTypes);
             endX = endSeg ? endSeg->systemPos().x() : endX;
         }
         if (startChord->stem() && endChord->stem() && startChord->up() == above && endChord->up() == above) {
@@ -3603,7 +3580,7 @@ void TLayout::layoutKeySig(const KeySig* item, KeySig::LayoutData* ldata, const 
         // AND we're not force hiding naturals (continuous mode)
         // AND key sig is CMaj/Amin OR style says they are on
         const Measure* pm = item->measure() ? item->measure()->prevMeasureMM() : nullptr;
-        const bool isCourtesy = s && (s->isType(SegmentType::CourtesyKeySigType) || !s->rtick().isZero());
+        const bool isCourtesy = s && (s->isType(SegmentType::CourtesyKeySigTypes) || !s->rtick().isZero());
         const bool prevTrailerCourtesy = pm && !pm->sectionBreak() && (!pm->trailer() || !pm->hasCourtesyKeySig());
         if (!item->hideNaturals() && track != muse::nidx
             && (conf.styleI(Sid::keySigNaturals) != int(KeySigNatural::NONE) || (t1 == 0))
@@ -3688,7 +3665,10 @@ void TLayout::layoutKeySig(const KeySig* item, KeySig::LayoutData* ldata, const 
     for (const KeySym& ks : ldata->keySymbols) {
         double x = ks.xPos.toAbsolute(spatium);
         double y = ks.line * step;
-        keySigShape.add(item->symBbox(ks.sym).translated(x, y), item);
+        Shape ksShape = item->symShapeWithCutouts(ks.sym);
+        for (const ShapeElement& ksElem : ksShape.elements()) {
+            keySigShape.add(ksElem.translated(x, y), item);
+        }
     }
     ldata->setShape(keySigShape);
 }
@@ -4401,9 +4381,6 @@ void TLayout::layoutPedalSegment(PedalSegment* item, LayoutContext& ctx)
     PedalSegment::LayoutData* ldata = item->mutldata();
 
     layoutTextLineBaseSegment(item, ctx);
-    if (item->isStyled(Pid::OFFSET)) {
-        item->roffset() = item->pedal()->propertyDefault(Pid::OFFSET).value<PointF>();
-    }
 
     Text* endText = item->endText();
     if (endText && !endText->empty() && ldata->npoints > 0) { // Rosette
@@ -4526,7 +4503,7 @@ void TLayout::layoutRehearsalMark(const RehearsalMark* item, RehearsalMark::Layo
     // align with barline, point just after header, or start of measure depending on context
     const Measure* m = s->measure();
     const Segment* header = s->prev();                // possibly just a start repeat
-    while (header && header->isType(Segment::CHORD_REST_OR_TIME_TICK_TYPE)) {
+    while (header && header->isType(SegmentType::Duration)) {
         header = header->prev();
     }
     double measureX = -s->x();
@@ -4578,7 +4555,7 @@ void TLayout::checkRehearsalMarkVSBigTimeSig(const RehearsalMark* item, TextBase
     const Segment* s = item->segment();
     TimeSig* bigTimeSig = nullptr;
     for (const Segment* segment = s; segment && segment->tick() == s->tick(); segment = segment->prevActive()) {
-        if (!segment->isType(SegmentType::TimeSigType)) {
+        if (!segment->isType(SegmentType::TimeSigTypes)) {
             continue;
         }
         TimeSig* timeSig = toTimeSig(segment->element(item->track()));
@@ -5500,12 +5477,14 @@ void TLayout::layoutSymbol(const Symbol* item, Symbol::LayoutData* ldata, const 
 
     LD_INDEPENDENT;
 
-    if (ldata->isValid()) {
+    double expectedMag = item->staff() ? item->staff()->staffMag(item->tick()) : ldata->mag();
+
+    if (ldata->isValid() && RealIsEqual(ldata->mag(), expectedMag)) {
         return;
     }
 
     if (item->staff()) {
-        ldata->setMag(item->staff()->staffMag(item->tick()));
+        ldata->setMag(expectedMag);
     }
     ldata->setBbox(item->scoreFont()
                    ? item->scoreFont()->bbox(item->sym(), item->magS() * item->symbolsSize())
@@ -5750,9 +5729,6 @@ void TLayout::layoutTextLineSegment(TextLineSegment* item, LayoutContext& ctx)
     LAYOUT_CALL_ITEM(item);
     TextLineSegment::LayoutData* ldata = item->mutldata();
     layoutTextLineBaseSegment(item, ctx);
-    if (item->isStyled(Pid::OFFSET)) {
-        item->roffset() = item->textLine()->propertyDefault(Pid::OFFSET).value<PointF>();
-    }
 
     Autoplace::autoplaceSpannerSegment(item, ldata, ctx.conf().spatium());
 }
@@ -5927,6 +5903,9 @@ void TLayout::layoutTextLineBaseSegment(TextLineBaseSegment* item, LayoutContext
         item->text()->setSize(item->text()->size() * item->defaultSpatium() / item->spatium());
         item->endText()->setSize(item->endText()->size() * item->defaultSpatium() / item->spatium());
     }
+
+    PointF defaultPos = tl->defaultPos();
+    ldata->move(defaultPos);
 
     PointF pp1;
     PointF pp2(item->pos2());
@@ -6404,6 +6383,9 @@ void TLayout::layoutTrillSegment(TrillSegment* item, LayoutContext& ctx)
     const double yOff = item->staffOffsetY();
     ldata->moveY(yOff);
 
+    PointF defaultPos = item->defaultPos();
+    ldata->move(defaultPos);
+
     bool accidentalGoesBelow = trill->trillType() == TrillType::DOWNPRALL_LINE;
     Ornament* ornament = trill->ornament();
     if (ornament) {
@@ -6464,10 +6446,6 @@ void TLayout::layoutTrillSegment(TrillSegment* item, LayoutContext& ctx)
                              SymId::ornamentZigZagLineNoRightEnd, SymId::ornamentZigZagLineWithRightEnd);
             break;
         }
-    }
-
-    if (item->isStyled(Pid::OFFSET)) {
-        item->roffset() = trill->propertyDefault(Pid::OFFSET).value<PointF>();
     }
 
     Autoplace::autoplaceSpannerSegment(item, ldata, ctx.conf().spatium());
@@ -6571,10 +6549,6 @@ void TLayout::layoutVibratoSegment(VibratoSegment* item, LayoutContext& ctx)
         break;
     default:
         break;
-    }
-
-    if (item->isStyled(Pid::OFFSET)) {
-        item->roffset() = item->vibrato()->propertyDefault(Pid::OFFSET).value<PointF>();
     }
 
     Autoplace::autoplaceSpannerSegment(item, ldata, ctx.conf().spatium());

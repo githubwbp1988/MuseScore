@@ -5,7 +5,7 @@
  * MuseScore Studio
  * Music Composition & Notation
  *
- * Copyright (C) 2021 MuseScore Limited
+ * Copyright (C) 2021 MuseScore Limited and others
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3 as
@@ -124,6 +124,7 @@
 
 #include "dom/sig.h"
 #include "dom/segment.h"
+#include "dom/sharedpart.h"
 #include "dom/slur.h"
 #include "dom/spacer.h"
 #include "dom/staffstate.h"
@@ -570,10 +571,14 @@ void TWrite::writeItemProperties(const EngravingItem* item, XmlWriter& xml, Writ
         xml.tag("track", t);
     }
 
-    for (Pid pid : { Pid::OFFSET, Pid::COLOR, Pid::VISIBLE, Pid::Z }) {
+    for (Pid pid : { Pid::COLOR, Pid::VISIBLE, Pid::Z }) {
         if (item->propertyFlags(pid) == PropertyFlags::NOSTYLE) {
             writeProperty(item, xml, pid);
         }
+    }
+
+    if (!item->offset().isNull()) {
+        writeProperty(item, xml, Pid::OFFSET);
     }
 
     if (!item->hasVoiceAssignmentProperties() && item->propertyFlags(Pid::PLACEMENT) == PropertyFlags::NOSTYLE) {
@@ -612,7 +617,6 @@ void TWrite::write(const Accidental* item, XmlWriter& xml, WriteContext& ctx)
 void TWrite::write(const ActionIcon* item, XmlWriter& xml, WriteContext&)
 {
     xml.startElement(item);
-    xml.tag("subtype", int(item->actionType()));
     xml.tag("action", String::fromStdString(item->actionCode()));
     xml.endElement();
 }
@@ -957,9 +961,6 @@ void TWrite::write(const Breath* item, XmlWriter& xml, WriteContext& ctx)
 
 void TWrite::write(const Chord* item, XmlWriter& xml, WriteContext& ctx)
 {
-    // HACK: foundNotes is a workaround introduced with the "notes in chords" selection filter. A substantial overhaul of our
-    // copy/paste logic would be required to make this fully compatible with de-selected chords - for now we'll simply replace
-    // these chords with a rest of the same duration...
     bool foundNotes = false;
     const size_t noteCount = item->notes().size();
     for (size_t noteIdx = 0; noteIdx < noteCount; ++noteIdx) {
@@ -969,13 +970,35 @@ void TWrite::write(const Chord* item, XmlWriter& xml, WriteContext& ctx)
         }
     }
     if (!foundNotes) {
-        Rest* dummyRest = Factory::createRest(item->segment());
-        dummyRest->setDurationType(item->durationType());
-        dummyRest->setTuplet(item->tuplet());
-        dummyRest->setTicks(item->ticks());
-        dummyRest->setTrack(item->track());
-        write(dummyRest, xml, ctx);
-        dummyRest->deleteLater();
+        if (item->tuplet()) {
+            // HACK: See PR #30178 - deselected chords still not fully handled in tuplets...
+            Rest* dummyRest = Factory::createRest(item->segment());
+            dummyRest->setDurationType(item->durationType());
+            dummyRest->setTuplet(item->tuplet());
+            dummyRest->setTicks(item->ticks());
+            dummyRest->setTrack(item->track());
+            write(dummyRest, xml, ctx);
+            dummyRest->deleteLater();
+        } else {
+            // No writable notes found, write a Location instead (skip this chord)...
+
+            const Fraction tick = item->tick();
+            const track_idx_t track = item->track();
+
+            Location curr = Location::absolute();
+            curr.setFrac(ctx.curTick());
+            curr.setTrack(static_cast<int>(ctx.curTrack()));
+
+            Location dest = Location::absolute();
+            dest.setFrac(tick);
+            dest.setTrack(static_cast<int>(track));
+
+            dest.toRelative(curr);
+            TWrite::write(&dest, xml, ctx);
+
+            ctx.setCurTick(tick);
+            ctx.setCurTrack(track);
+        }
         return;
     }
 
@@ -1027,7 +1050,7 @@ void TWrite::write(const Chord* item, XmlWriter& xml, WriteContext& ctx)
     if (item->hook() && item->hook()->isUserModified()) {
         write(item->hook(), xml, ctx);
     }
-    if (item->showStemSlash() && item->isUserModified()) {
+    if (item->showStemSlash() != item->propertyDefault(Pid::SHOW_STEM_SLASH).toBool()) {
         xml.tag("showStemSlash", item->showStemSlash());
     }
     if (item->stemSlash() && item->stemSlash()->isUserModified()) {
@@ -1361,9 +1384,6 @@ void TWrite::write(const Fermata* item, XmlWriter& xml, WriteContext& ctx)
     writeProperty(item, xml, Pid::TIME_STRETCH);
     writeProperty(item, xml, Pid::PLAY);
     writeProperty(item, xml, Pid::MIN_DISTANCE);
-    if (!item->isStyled(Pid::OFFSET)) {
-        writeProperty(item, xml, Pid::OFFSET);
-    }
     writeItemProperties(item, xml, ctx);
     xml.endElement();
 }
@@ -1546,7 +1566,7 @@ void TWrite::write(const GuitarBend* item, XmlWriter& xml, WriteContext& ctx)
         return;
     }
     xml.startElement(item);
-    xml.tag("guitarBendType", static_cast<int>(item->bendType()));
+    xml.tag("guitarBendType", TConv::toXml(item->bendType()));
     xml.tag("bendStartTimeFactor", item->startTimeFactor());
     xml.tag("bendEndTimeFactor", item->endTimeFactor());
 
@@ -1799,11 +1819,11 @@ void TWrite::write(const Harmony* item, XmlWriter& xml, WriteContext& ctx)
 
     // check tpcs valid?
     if (item->rootCase() != NoteCaseType::CAPITAL) {
-        xml.tag("rootCase", static_cast<int>(item->rootCase()));
+        xml.tag("rootCase", TConv::toXml(item->rootCase()));
     }
 
     if (item->bassCase() != NoteCaseType::CAPITAL) {
-        xml.tag("bassCase", static_cast<int>(item->bassCase()));
+        xml.tag("bassCase", TConv::toXml(item->bassCase()));
     }
 
     for (const HarmonyInfo* info : item->chords()) {
@@ -2562,8 +2582,40 @@ void TWrite::write(const Parenthesis* item, XmlWriter& xml, WriteContext& ctx)
 
 void TWrite::write(const Part* item, XmlWriter& xml, WriteContext& ctx)
 {
+    if (item->isSharedPart()) {
+        write(toSharedPart(item), xml, ctx);
+        return;
+    }
+
     xml.startElement(item, { { "id", item->id().toUint64() } });
 
+    writeItemEid(item, xml, ctx);
+
+    writeProperties(item, xml, ctx);
+
+    if (SharedPart* sharedPart = item->sharedPart()) {
+        DO_ASSERT(sharedPart->eid().isValid());
+        xml.tag("sharedPart", sharedPart->eid().toStdString());
+    }
+
+    xml.endElement();
+}
+
+void TWrite::write(const SharedPart* item, XmlWriter& xml, WriteContext& ctx)
+{
+    xml.startElement(item, { { "id", item->id().toUint64() } });
+
+    writeItemEid(item, xml, ctx);
+
+    xml.tag(propertyName(Pid::SHARED_PART_ENABLED), item->getProperty(Pid::SHARED_PART_ENABLED).toBool());
+
+    writeProperties(item, xml, ctx);
+
+    xml.endElement();
+}
+
+void TWrite::writeProperties(const Part* item, XmlWriter& xml, WriteContext& ctx)
+{
     auto shouldWriteStaff = [&ctx](const Staff* staff) {
         if (!ctx.shouldWriteRange()) {
             return true;
@@ -2581,8 +2633,8 @@ void TWrite::write(const Part* item, XmlWriter& xml, WriteContext& ctx)
         }
     }
 
-    if (!item->show()) {
-        xml.tag("show", item->show());
+    if (bool show = item->getProperty(Pid::VISIBLE).toBool(); !show) {
+        xml.tag("show", show);
     }
 
     if (item->soloist()) {
@@ -2620,8 +2672,6 @@ void TWrite::write(const Part* item, XmlWriter& xml, WriteContext& ctx)
     }
 
     write(item->instrument(), xml, ctx, item);
-
-    xml.endElement();
 }
 
 void TWrite::write(const PartialTie* item, XmlWriter& xml, WriteContext& ctx)
@@ -2785,6 +2835,7 @@ void TWrite::writeProperties(const SlurTie* item, XmlWriter& xml, WriteContext& 
     }
     writeProperty(item, xml, Pid::SLUR_DIRECTION);
     writeProperty(item, xml, Pid::SLUR_STYLE_TYPE);
+    writeProperty(item, xml, Pid::MASK_SLURTIE);
 }
 
 void TWrite::writeSlur(const SlurTieSegment* seg, XmlWriter& xml, WriteContext& ctx, int no)
@@ -3515,6 +3566,8 @@ static void writeTimeSig(Score* score, const Fraction& tick, XmlWriter& xml, Wri
     TimeSig* ts = Factory::createTimeSig(score->dummy()->segment());
     ts->setSig(tsf);
     TWrite::write(ts, xml, ctx);
+    ts->masterScore()->eidRegister()->removeItem(ts);
+    delete ts;
 }
 
 //---------------------------------------------------------
@@ -3696,6 +3749,7 @@ void TWrite::writeSegments(XmlWriter& xml, WriteContext& ctx, track_idx_t strack
                     KeySig* ks = Factory::createKeySig(score->dummy()->segment());
                     ks->setKey(ck, tk);
                     TWrite::write(ks, xml, ctx);
+                    ks->masterScore()->eidRegister()->removeItem(ks);
                     delete ks;
                     keySigWritten = true;
                 }

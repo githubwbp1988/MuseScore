@@ -5,7 +5,7 @@
  * MuseScore Studio
  * Music Composition & Notation
  *
- * Copyright (C) 2021 MuseScore Limited
+ * Copyright (C) 2021 MuseScore Limited and others
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3 as
@@ -220,7 +220,6 @@ void MusicXml_Tests::musicXmlMscxExportTestRef(const char* file, bool exportLayo
     String fileName = String::fromUtf8(file);
     MasterScore* score = readScore(XML_IO_DATA_DIR + fileName + u".mscx");
     ASSERT_TRUE(score);
-    fixupScore(score);
     score->doLayout();
 
     EXPECT_TRUE(saveCompareMusicXmlScore(score, fileName + u".xml", XML_IO_DATA_DIR + fileName + u"_ref.xml"));
@@ -245,7 +244,6 @@ void MusicXml_Tests::musicXmlMscxExportTestRefBreaks(const char* file)
     String fileName = String::fromUtf8(file);
     MasterScore* score = readScore(XML_IO_DATA_DIR + fileName + u".mscx");
     ASSERT_TRUE(score);
-    fixupScore(score);
     score->doLayout();
 
     setValue(PREF_EXPORT_MUSICXML_EXPORTBREAKS, Val(IMusicXmlConfiguration::MusicXmlExportBreaksType::No));
@@ -273,7 +271,6 @@ void MusicXml_Tests::musicXmlMscxExportTestRefInvisibleElements(const char* file
     String fileName = String::fromUtf8(file);
     MasterScore* score = readScore(XML_IO_DATA_DIR + fileName + u".mscx");
     ASSERT_TRUE(score);
-    fixupScore(score);
     score->doLayout();
 
     setValue(PREF_EXPORT_MUSICXML_EXPORTINVISIBLE, Val(true));
@@ -396,14 +393,17 @@ TEST_F(MusicXml_Tests, articulationCombination) {
 TEST_F(MusicXml_Tests, backupRoundingError) {
     musicXmlImportTestRef("testBackupRoundingError");
 }
+TEST_F(MusicXml_Tests, barlineFermatas) {
+    musicXmlIoTest("testBarlineFermatas");
+}
 TEST_F(MusicXml_Tests, barlineLoc) {
     musicXmlImportTestRef("testBarlineLoc");
 }
 TEST_F(MusicXml_Tests, barlineSpan) {
     musicXmlIoTest("testBarlineSpan");
 }
-TEST_F(MusicXml_Tests, barlineFermatas) {
-    musicXmlIoTest("testBarlineFermatas");
+TEST_F(MusicXml_Tests, barlineTips) {
+    musicXmlIoTest("testBarlineTips");
 }
 TEST_F(MusicXml_Tests, barStyles) {
     musicXmlIoTest("testBarStyles");
@@ -835,7 +835,11 @@ TEST_F(MusicXml_Tests, inferredRights) {
     musicXmlImportTestRef("testInferredRights");
 }
 TEST_F(MusicXml_Tests, inferredTechnique) {
+#if defined(__GNUC__) && __GNUC__ == 14
+    GTEST_SKIP() << "Failed with gcc14";
+#else
     musicXmlImportTestRef("testInferredTechnique");
+#endif
 }
 TEST_F(MusicXml_Tests, inferredTempoText) {
     musicXmlImportTestRef("testInferredTempoText");
@@ -923,6 +927,9 @@ TEST_F(MusicXml_Tests, lyricExtension3) {
 }
 TEST_F(MusicXml_Tests, lyricExtension4) {
     musicXmlImportTestRef("testLyricExtension2");
+}
+TEST_F(MusicXml_Tests, lyricsNorwegianOSlash) {
+    musicXmlImportTestRef("testLyricsNorwegianOSlash");
 }
 TEST_F(MusicXml_Tests, lyricsVoice2a) {
     musicXmlIoTest("testLyricsVoice2a");

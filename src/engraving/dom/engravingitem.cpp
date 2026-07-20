@@ -5,7 +5,7 @@
  * MuseScore Studio
  * Music Composition & Notation
  *
- * Copyright (C) 2021 MuseScore Limited
+ * Copyright (C) 2021 MuseScore Limited and others
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3 as
@@ -291,6 +291,29 @@ bool EngravingItem::offsetIsSpatiumDependent() const
     return sizeIsSpatiumDependent() || (m_flags & ElementFlag::ON_STAFF);
 }
 
+Sid EngravingItem::defaultPosSid() const
+{
+    return Sid::NOSTYLE;
+}
+
+PointF EngravingItem::defaultPos() const
+{
+    Sid styleId = defaultPosSid();
+
+    if (styleId == Sid::NOSTYLE) {
+        return PointF();
+    }
+
+    PointF offsetPos = style().value(styleId).value<PointF>();
+    if (offsetIsSpatiumDependent()) {
+        offsetPos *= spatium();
+    } else {
+        offsetPos *= DPMM;
+    }
+
+    return offsetPos;
+}
+
 PlacementV EngravingItem::placement() const
 {
     return flag(ElementFlag::PLACE_ABOVE) && !isSystemObjectBelowBottomStaff() ? PlacementV::ABOVE : PlacementV::BELOW;
@@ -339,7 +362,7 @@ void EngravingItem::deleteLater()
     if (selected()) {
         score()->deselect(this);
     }
-    masterScore()->deleteLater(this);
+    masterScore()->cmdState().deleteLater(this);
 }
 
 //---------------------------------------------------------
@@ -1302,6 +1325,54 @@ void EngravingItem::manageExclusionFromParts(bool exclude)
     }
 }
 
+void EngravingItem::connectSharedItem(EngravingItem* sharedItem, EngravingItem* originItem)
+{
+    if (originItem->ldata()->m_sharedItem == sharedItem) {
+        return;
+    }
+
+    IF_ASSERT_FAILED(sharedItem->type() == originItem->type()) {
+        return;
+    }
+
+    IF_ASSERT_FAILED(sharedItem->ldata()->m_sharedItem == nullptr && originItem->ldata()->m_originItems.empty()) {
+        return;
+    }
+
+    if ((originItem->ldata()->m_sharedItem && originItem->ldata()->m_sharedItem != sharedItem)) {
+        disconnectSharedItem(originItem->ldata()->m_sharedItem, originItem);
+    }
+
+    originItem->mutldata()->m_sharedItem = sharedItem;
+
+    std::vector<EngravingItem*>& curOriginItems = sharedItem->mutldata()->m_originItems;
+    auto it = std::lower_bound(curOriginItems.begin(), curOriginItems.end(), originItem, [](EngravingItem* item1, EngravingItem* item2) {
+        return item1->track() < item2->track();
+    });
+
+    curOriginItems.insert(it, originItem);
+}
+
+void EngravingItem::disconnectSharedItem(EngravingItem* sharedItem, EngravingItem* originItem)
+{
+    IF_ASSERT_FAILED(originItem->m_layoutData->m_sharedItem == sharedItem) {
+        return;
+    }
+
+    originItem->m_layoutData->m_sharedItem = nullptr;
+
+    DO_ASSERT(muse::remove(sharedItem->m_layoutData->m_originItems, originItem));
+}
+
+void EngravingItem::disconnectAllOriginItems(EngravingItem* sharedItem)
+{
+    for (EngravingItem* originItem : sharedItem->originItems()) {
+        originItem->m_layoutData->m_sharedItem = nullptr;
+    }
+
+    sharedItem->m_layoutData->m_originItems.clear();
+}
+
 bool EngravingItem::isBefore(const EngravingItem* item) const
 {
     if (!item) {
@@ -1370,8 +1441,6 @@ bool EngravingItem::elementAppliesToTrack(const track_idx_t refTrack) const
 void EngravingItem::setPlacementBasedOnVoiceAssignment(DirectionV styledDirection)
 {
     PlacementV oldPlacement = placement();
-    bool offsetIsStyled = isStyled(Pid::OFFSET);
-
     PlacementV newPlacement = PlacementV::BELOW;
 
     DirectionV internalDirectionProperty = getProperty(Pid::DIRECTION).value<DirectionV>();
@@ -1402,7 +1471,7 @@ void EngravingItem::setPlacementBasedOnVoiceAssignment(DirectionV styledDirectio
                 if (segment && segment->isTimeTickType() && segment->measure() != measure) {
                     // Edge case: this is a TimeTick segment at the end of previous measure. Happens only
                     // when dynamic is anchorToEndOfPrevious. In this case look for preceding segment.
-                    segment = segment->prev1(Segment::CHORD_REST_OR_TIME_TICK_TYPE);
+                    segment = segment->prev1(SegmentType::Duration);
                     assert(segment);
                     measure = segment->measure();
                 }
@@ -1424,9 +1493,6 @@ void EngravingItem::setPlacementBasedOnVoiceAssignment(DirectionV styledDirectio
 
     if (newPlacement != oldPlacement) {
         setPlacement(newPlacement);
-        if (offsetIsStyled) {
-            resetProperty(Pid::OFFSET);
-        }
     }
 }
 
@@ -1585,10 +1651,6 @@ PropertyValue EngravingItem::propertyDefault(Pid pid) const
     case Pid::SELECTED:
         return false;
     case Pid::OFFSET: {
-        PropertyValue v = EngravingObject::propertyDefault(pid);
-        if (v.isValid()) {        // if it's a styled property
-            return v;
-        }
         return PropertyValue::fromValue(PointF());
     }
     case Pid::MIN_DISTANCE: {

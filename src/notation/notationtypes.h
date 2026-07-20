@@ -5,7 +5,7 @@
  * MuseScore Studio
  * Music Composition & Notation
  *
- * Copyright (C) 2021 MuseScore Limited
+ * Copyright (C) 2021 MuseScore Limited and others
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3 as
@@ -47,6 +47,7 @@
 #include "engraving/dom/ottava.h"
 #include "engraving/dom/page.h"
 #include "engraving/dom/part.h"
+#include "engraving/dom/sharedpart.h"
 #include "engraving/dom/realizedharmony.h"
 #include "engraving/dom/rest.h"
 #include "engraving/dom/score.h"
@@ -84,6 +85,7 @@ using KeyMode = mu::engraving::KeyMode;
 using TimeSigType = mu::engraving::TimeSigType;
 using TimeSignature = mu::engraving::TimeSig;
 using Part = mu::engraving::Part;
+using SharedPart = mu::engraving::SharedPart;
 using Staff = mu::engraving::Staff;
 using NoteHead = mu::engraving::NoteHead;
 using SharpFlat = mu::engraving::PreferSharpFlat;

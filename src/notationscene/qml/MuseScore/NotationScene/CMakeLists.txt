@@ -4,7 +4,7 @@
 # MuseScore Studio
 # Music Composition & Notation
 #
-# Copyright (C) 2025 MuseScore Limited
+# Copyright (C) 2025 MuseScore Limited and others
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License version 3 as
@@ -151,6 +151,8 @@ qt_add_qml_module(notationscene_qml
         styledialog/restspagemodel.h
         styledialog/slursandtiespagemodel.cpp
         styledialog/slursandtiespagemodel.h
+        styledialog/stavesharingpagemodel.cpp
+        styledialog/stavesharingpagemodel.h
         styledialog/styleitem.cpp
         styledialog/styleitem.h
         styledialog/tupletcenteringselectormodel.cpp
@@ -224,6 +226,7 @@ qt_add_qml_module(notationscene_qml
         styledialog/SelectableStyledImage.qml
         styledialog/SlursAndTiesPage.qml
         styledialog/SlursSection.qml
+        styledialog/StaveSharingPage.qml
         styledialog/StyleControlRowWithReset.qml
         styledialog/StyleDialogPage.qml
         styledialog/StyledImage.qml

@@ -41,18 +41,18 @@ public:
 
     virtual ~IProjectWriter() = default;
 
-    // enum class UnitType {
-    //     PER_PAGE,
-    //     PER_PART,
-    //     MULTI_PART
-    // };
+    enum class UnitType {
+        PER_PAGE,
+        PER_PART,
+        MULTI_PART
+    };
 
-    // enum class OptionKey {
-    //     UNIT_TYPE,
-    //     PAGE_NUMBER,
-    //     TRANSPARENT_BACKGROUND,
-    //     NOTES_COLORS
-    // };
+    enum class OptionKey {
+        UNIT_TYPE,
+        PAGE_NUMBER,
+        TRANSPARENT_BACKGROUND,
+        NOTES_COLORS
+    };
 
     using Options = QMap<OptionKey, muse::Val>;
 

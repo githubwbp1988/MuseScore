@@ -5,7 +5,7 @@
  * MuseScore Studio
  * Music Composition & Notation
  *
- * Copyright (C) 2021 MuseScore Limited
+ * Copyright (C) 2021 MuseScore Limited and others
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3 as
@@ -25,6 +25,8 @@
 #include <QObject>
 
 #include "modularity/ioc.h"
+#include "async/asyncable.h"
+
 #include "notation/inotationconfiguration.h"
 #include "draw/types/geometry.h"
 #include "midi/miditypes.h"
@@ -35,7 +37,7 @@
 class QColor;
 
 namespace mu::notation {
-class PlaybackCursor : public QObject, public muse::Contextable
+class PlaybackCursor : public QObject, public muse::Contextable, public muse::async::Asyncable
 {
     muse::GlobalInject<INotationConfiguration> configuration;
 
@@ -75,7 +77,26 @@ signals:
 
 private:
     QColor color() const;
-    muse::RectF resolveCursorRectByTick(muse::midi::tick_t tick) const;
+    muse::RectF resolveCursorRectByTick(int tick) const;
+
+    struct PlaybackCursorCache {
+        const System* system = nullptr;
+        const Measure* measure = nullptr;
+        const Segment* segment = nullptr;
+
+        Fraction segmentStartTick;
+        Fraction segmentEndTick;
+
+        double segmentStartX = 0.0;
+        double segmentEndX = 0.0;
+        double systemBottomY = 0.0;
+
+        void clear()
+        {
+            *this = PlaybackCursorCache();
+        }
+    } mutable m_cache;
+
     muse::RectF resolveCursorRectByTick1(muse::midi::tick_t tick, bool isPlaying = true);
     void processOttava(mu::engraving::Score* score, bool isPlaying = true);
     void processOttavaAsync(mu::engraving::Score* score, bool scorePartChaged = false, bool isPlaying = false);

@@ -5,7 +5,7 @@
  * MuseScore Studio
  * Music Composition & Notation
  *
- * Copyright (C) 2021 MuseScore Limited
+ * Copyright (C) 2021 MuseScore Limited and others
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3 as
@@ -503,7 +503,7 @@ void MsScWriter::doTriplet(mu::engraving::Chord* cr, StartStop triplet)
         tuplet = new mu::engraving::Tuplet(currentMeasure);
         tuplet->setTrack(0);
         tuplet->setRatio(mu::engraving::Fraction(3, 2));
-//            tuplet->setTick(tick);
+        tuplet->setTick(tick);
         currentMeasure->add(tuplet);
     } else if (triplet == StartStop::ST_STOP) {
         if (tuplet) {

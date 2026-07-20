@@ -5,7 +5,7 @@
  * MuseScore Studio
  * Music Composition & Notation
  *
- * Copyright (C) 2021 MuseScore Limited
+ * Copyright (C) 2021 MuseScore Limited and others
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3 as
@@ -293,7 +293,7 @@ void EngravingContext::onInit(const muse::IApplication::RunMode&)
 #endif
 }
 
-void EngravingContext::onDeinit()
+void EngravingContext::onDestroy()
 {
 #ifndef ENGRAVING_NO_INTERNAL
     m_paletteScoreProvider->deinit();

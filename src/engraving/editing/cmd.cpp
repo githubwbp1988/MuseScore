@@ -5,7 +5,7 @@
  * MuseScore Studio
  * Music Composition & Notation
  *
- * Copyright (C) 2021 MuseScore Limited
+ * Copyright (C) 2021 MuseScore Limited and others
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3 as
@@ -91,38 +91,17 @@
 #include "editspanner.h"
 #include "editstaff.h"
 #include "editsystemlocks.h"
-#include "transpose.h"
 #include "mscoreview.h"
+#include "transaction/undostack.h"
+#include "transpose.h"
 
 #include "log.h"
 
-using namespace mu;
 using namespace muse::io;
 using namespace mu::engraving;
 
 namespace mu::engraving {
-static UndoMacro::ChangesInfo changesInfo(const UndoStack* stack, bool undo = false)
-{
-    IF_ASSERT_FAILED(stack) {
-        static UndoMacro::ChangesInfo empty;
-        return empty;
-    }
-
-    const UndoMacro* actualMacro = stack->activeCommand();
-
-    if (!actualMacro) {
-        actualMacro = stack->last();
-    }
-
-    if (!actualMacro) {
-        static UndoMacro::ChangesInfo empty;
-        return empty;
-    }
-
-    return actualMacro->changesInfo(undo);
-}
-
-static ScoreChanges buildScoreChanges(const CmdState& cmdState, const UndoMacro::ChangesInfo& changes)
+static ScoreChanges buildScoreChanges(const CmdState& cmdState, const UndoableTransaction::ChangesInfo& changes)
 {
     int startTick = cmdState.startTick().ticks();
     int endTick = cmdState.endTick().ticks();
@@ -336,6 +315,38 @@ void CmdState::setUpdateMode(UpdateMode m)
 }
 
 //---------------------------------------------------------
+//   deleteLater
+//---------------------------------------------------------
+
+void CmdState::deleteLater(EngravingObject* e)
+{
+    m_postponedDeletions.push_back(e);
+}
+
+std::vector<EngravingObject*> CmdState::takePostponedDeletions()
+{
+    std::vector<EngravingObject*> result;
+    result.swap(m_postponedDeletions);
+    return result;
+}
+
+static void deletePostponed(CmdState& cmdState)
+{
+    for (EngravingObject* e : cmdState.takePostponedDeletions()) {
+        if (e->isSystem()) {
+            System* s = toSystem(e);
+            std::list<SpannerSegment*> spanners = s->spannerSegments();
+            for (SpannerSegment* ss : spanners) {
+                if (ss->system() == s) {
+                    ss->setSystem(0);
+                }
+            }
+        }
+        delete e;
+    }
+}
+
+//---------------------------------------------------------
 //   startCmd
 ///   Start a GUI command by clearing the redraw area
 ///   and starting a user-visible undo.
@@ -343,16 +354,17 @@ void CmdState::setUpdateMode(UpdateMode m)
 
 void Score::startCmd(const TranslatableString& actionName)
 {
+    masterScore()->startCmd(actionName);
+}
+
+void MasterScore::startCmd(const TranslatableString& actionName)
+{
     if (undoStack()->isLocked()) {
         return;
     }
 
-    if (MScore::debugMode) {
-        LOGD("===startCmd()");
-    }
-
-    if (undoStack()->hasActiveCommand()) {
-        LOGD("Score::startCmd(): cmd already active");
+    if (undoStack()->hasActiveTransaction()) {
+        LOGD() << "cmd already active";
         return;
     }
 
@@ -360,9 +372,8 @@ void Score::startCmd(const TranslatableString& actionName)
 
     cmdState().reset();
 
-    // Start collecting low-level undo operations for a
-    // user-visible undo action.
-    undoStack()->beginMacro(this, actionName);
+    // Start collecting low-level undoable operations for a user-visible undoable transaction.
+    undoStack()->beginTransaction(this, actionName);
 }
 
 //---------------------------------------------------------
@@ -371,26 +382,49 @@ void Score::startCmd(const TranslatableString& actionName)
 
 void Score::undoRedo(bool undo, EditData* ed)
 {
+    masterScore()->undoRedo(undo, ed);
+}
+
+void MasterScore::undoRedo(bool undo, EditData* ed)
+{
     if (readOnly()) {
         return;
     }
 
+    IF_ASSERT_FAILED(!undoStack()->hasActiveTransaction()) {
+        LOGW() << "cannot undo/redo while transaction is active";
+        return;
+    }
+
+    if (undo) {
+        IF_ASSERT_FAILED(undoStack()->canUndo()) {
+            LOGW() << "cannot undo";
+            return;
+        }
+    } else {
+        IF_ASSERT_FAILED(undoStack()->canRedo()) {
+            LOGW() << "cannot redo";
+            return;
+        }
+    }
+
+    cmdState().reset();
+
     //! NOTE: the order of operations is very important here
     //! 1. for the undo operation, the list of changed elements is available before undo()
     //! 2. for the redo operation, the list of changed elements will be available after redo()
-    UndoMacro::ChangesInfo changes;
+    UndoableTransaction::ChangesInfo changes;
 
-    cmdState().reset();
     if (undo) {
-        changes = changesInfo(undoStack(), undo);
+        changes = undoStack()->last()->changesInfo(true);
         undoStack()->undo(ed);
     } else {
         undoStack()->redo(ed);
-        changes = changesInfo(undoStack());
+        changes = undoStack()->last()->changesInfo(false);
     }
 
     update(false);
-    masterScore()->setPlaylistDirty();    // TODO: flag all individual operations
+    invalidateRepeatList();    // TODO: flag individual operations
     updateSelection();
 
     ScoreChanges result = buildScoreChanges(cmdState(), changes);
@@ -405,11 +439,16 @@ void Score::undoRedo(bool undo, EditData* ed)
 
 void Score::endCmd(bool rollback, bool layoutAllParts)
 {
+    masterScore()->endCmd(rollback, layoutAllParts);
+}
+
+void MasterScore::endCmd(bool rollback, bool layoutAllParts)
+{
     if (undoStack()->isLocked()) {
         return;
     }
 
-    if (!undoStack()->hasActiveCommand()) {
+    if (!undoStack()->hasActiveTransaction()) {
         LOGW() << "no command active";
         update();
         return;
@@ -420,28 +459,28 @@ void Score::endCmd(bool rollback, bool layoutAllParts)
     }
 
     if (rollback) {
-        undoStack()->activeCommand()->unwind();
+        undoStack()->activeTransaction()->unwind();
     }
 
     update(false, layoutAllParts);
 
     ScoreChanges changes;
     if (!rollback) {
-        changes = buildScoreChanges(cmdState(), changesInfo(undoStack()));
+        changes = buildScoreChanges(cmdState(), undoStack()->activeTransaction()->changesInfo());
     }
 
-    LOGD() << "Undo stack current macro child count: " << undoStack()->activeCommand()->childCount();
+    LOGD() << "Undo stack current transaction commands count: " << undoStack()->activeTransaction()->commands().size();
 
-    const bool isCurrentCommandEmpty = undoStack()->activeCommand()->empty(); // nothing to undo?
-    undoStack()->endMacro(isCurrentCommandEmpty);
+    const bool isCurrentTransactionEmpty = undoStack()->activeTransaction()->empty(); // nothing to undo?
+    undoStack()->endTransaction(isCurrentTransactionEmpty);
 
     if (dirty()) {
-        masterScore()->setPlaylistDirty(); // TODO: flag individual operations
+        invalidateRepeatList(); // TODO: flag individual operations
     }
 
     cmdState().reset();
 
-    if (!isCurrentCommandEmpty && !rollback) {
+    if (!isCurrentTransactionEmpty && !rollback) {
         changesChannel().send(changes);
     }
 }
@@ -465,7 +504,12 @@ void CmdState::dump()
 //    layout & update
 //---------------------------------------------------------
 
-void Score::update(bool resetCmdState, bool layoutAllParts)
+void Score::update()
+{
+    masterScore()->update();
+}
+
+void MasterScore::update(bool resetCmdState, bool layoutAllParts)
 {
     if (m_updatesLocked) {
         return;
@@ -473,53 +517,52 @@ void Score::update(bool resetCmdState, bool layoutAllParts)
 
     TRACEFUNC;
 
+    deletePostponed(m_cmdState);
+
     bool updateAll = false;
-    {
-        MasterScore* ms = masterScore();
-        CmdState& cs = ms->cmdState();
-        ms->deletePostponed();
-
-        if (cs.layoutRange()) {
-            for (Score* s : ms->scoreList()) {
-                if (s != this && !s->isOpen() && ms->scoreList().size() > 1 && !layoutAllParts) {
-                    continue;
-                }
-                s->doLayoutRange(cs.startTick(), cs.endTick());
-            }
-            updateAll = true;
-        }
-    }
-
-    if (m_needSetUpTempoMap) {
-        setUpTempoMap();
-        m_needSetUpTempoMap = false;
-    }
-
-    MasterScore* ms = masterScore();
-    CmdState& cs = ms->cmdState();
-    if (updateAll || cs.updateAll()) {
+    if (m_cmdState.layoutRange()) {
         for (Score* s : scoreList()) {
-            for (MuseScoreView* v : s->m_viewer) {
+            if (s != this && !s->isOpen() && scoreList().size() > 1 && !layoutAllParts) {
+                continue;
+            }
+            s->doLayoutRange(m_cmdState.startTick(), m_cmdState.endTick());
+        }
+        updateAll = true;
+    }
+
+    if (needSetUpTempoMap()) {
+        setUpTempoMap();
+    }
+
+    if (updateAll || m_cmdState.updateAll()) {
+        for (Score* s : scoreList()) {
+            for (MuseScoreView* v : s->getViewer()) {
                 v->updateAll();
             }
         }
-    } else if (cs.updateRange()) {
-        // updateRange updates only current score
-        double d = style().spatium() * .5;
-        m_updateState.refresh.adjust(-d, -d, 2 * d, 2 * d);
-        for (MuseScoreView* v : m_viewer) {
-            v->dataChanged(m_updateState.refresh);
+    } else if (m_cmdState.updateRange()) {
+        // Any score that accumulated a refresh rect via addRefresh() calls dataChanged() on its viewers.
+        for (Score* s : scoreList()) {
+            if (s->refreshRect().isNull()) {
+                continue;
+            }
+            const std::list<MuseScoreView*>& viewers = s->getViewer();
+            if (!viewers.empty()) {
+                double d = s->style().spatium() * .5;
+                RectF rect = s->refreshRect().adjusted(-d, -d, 2 * d, 2 * d);
+                for (MuseScoreView* v : viewers) {
+                    v->dataChanged(rect);
+                }
+            }
+            s->clearRefreshRect();
         }
-        m_updateState.refresh = RectF();
-    }
-    if (playlistDirty()) {
-        masterScore()->setPlaylistClean();
-    }
-    if (resetCmdState) {
-        cs.reset();
     }
 
-    for (Score* score : ms->scoreList()) {
+    if (resetCmdState) {
+        m_cmdState.reset();
+    }
+
+    for (Score* score : scoreList()) {
         Selection& sel = score->selection();
         if (sel.isRange() && !sel.isLocked()) {
             sel.updateSelectedElements();
@@ -527,30 +570,9 @@ void Score::update(bool resetCmdState, bool layoutAllParts)
     }
 }
 
-void Score::lockUpdates(bool locked)
+void MasterScore::lockUpdates(bool locked)
 {
     m_updatesLocked = locked;
-}
-
-//---------------------------------------------------------
-//   deletePostponed
-//---------------------------------------------------------
-
-void Score::deletePostponed()
-{
-    for (EngravingObject* e : m_updateState.deleteList) {
-        if (e->isSystem()) {
-            System* s = toSystem(e);
-            std::list<SpannerSegment*> spanners = s->spannerSegments();
-            for (SpannerSegment* ss : spanners) {
-                if (ss->system() == s) {
-                    ss->setSystem(0);
-                }
-            }
-        }
-    }
-    muse::DeleteAll(m_updateState.deleteList);
-    m_updateState.deleteList.clear();
 }
 
 //---------------------------------------------------------
@@ -1310,7 +1332,7 @@ Segment* Score::setNoteRest(Segment* segment, track_idx_t track, NoteVal nval, F
 //    return size of actual gap in local time
 //---------------------------------------------------------
 
-Fraction Score::makeGap(Segment* segment, track_idx_t track, const Fraction& _sd, Tuplet* tuplet, bool keepChord)
+Fraction Score::makeGap(Segment* segment, track_idx_t track, const Fraction& _sd, Tuplet* tuplet, bool keepChord, bool deleteAnnotations)
 {
     assert(_sd.numerator());
 
@@ -1467,7 +1489,8 @@ Fraction Score::makeGap(Segment* segment, track_idx_t track, const Fraction& _sd
         // Delete annotations that require an anchor to the previous segment
         Segment* s1 = tick2rightSegment(t1);
         Segment* s2 = tick2rightSegment(t2);
-        if (s1 && s2 && (*s2) > (*s1)) {
+        const bool segsValid = s1 && s2 && (*s2) > (*s1);
+        if (segsValid && deleteAnnotations) {
             for (Segment* s = s1; s && s != s2; s = s->next1()) {
                 const auto annotations = s->annotations(); // make a copy since we alter the list
                 for (EngravingItem* annotation : annotations) {
@@ -1485,59 +1508,7 @@ Fraction Score::makeGap(Segment* segment, track_idx_t track, const Fraction& _sd
     return accumulated;
 }
 
-//---------------------------------------------------------
-//   makeGap1
-//    make time gap for each voice
-//    starting at tick+voiceOffset[voice] by removing/shortening
-//    chord/rest
-//    - cr is top level (not part of a tuplet)
-//    - do not stop at measure end
-//    - len and voiceOffset are in local (stretched) time
-//---------------------------------------------------------
-
-bool Score::makeGap1(const Fraction& baseTick, staff_idx_t staffIdx, const Fraction& len, const Fraction voiceOffset[VOICES])
-{
-    Measure* m = tick2measure(baseTick);
-    if (!m) {
-        LOGD() << "No measure to paste at tick " << baseTick.toString();
-        return false;
-    }
-
-    track_idx_t strack = staffIdx * VOICES;
-    for (track_idx_t track = strack; track < strack + VOICES; track++) {
-        if (!voiceOffset[track - strack].isValid()) {
-            continue;
-        }
-        Fraction tick = baseTick + actualTicks(voiceOffset[track - strack], nullptr, staff(staffIdx)->timeStretch(baseTick));
-        Measure* tm   = tick2measure(tick);
-        if ((track % VOICES) && !tm->hasVoices(staffIdx)) {
-            continue;
-        }
-
-        Fraction newLen = len - voiceOffset[track - strack];
-        assert(newLen.numerator() != 0);
-
-        if (newLen > Fraction(0, 1)) {
-            const Fraction endTick = tick + actualTicks(newLen, nullptr, staff(staffIdx)->timeStretch(tick));
-
-            SelectionFilter filter;
-            // chord symbols can exist without chord/rest so they should not be removed
-            filter.setFiltered(ElementsSelectionFilterTypes::CHORD_SYMBOL, false);
-
-            deleteAnnotationsFromRange(tick2rightSegment(tick), tick2rightSegment(endTick), track, track + 1, filter);
-            deleteOrShortenOutSpannersFromRange(tick, endTick, track, track + 1, filter);
-        }
-
-        Segment* seg = tm->undoGetSegment(SegmentType::ChordRest, tick);
-        bool result = makeGapVoice(seg, track, newLen, tick);
-        if (track == strack && !result) {   // makeGap failed for first voice
-            return false;
-        }
-    }
-    return true;
-}
-
-bool Score::makeGapVoice(Segment* seg, track_idx_t track, Fraction len, const Fraction& tick)
+bool Score::makeGapVoice(Segment* seg, track_idx_t track, Fraction len, const Fraction& tick, bool deleteAnnotations)
 {
     ChordRest* cr = 0;
     cr = toChordRest(seg->element(track));
@@ -1551,7 +1522,7 @@ bool Score::makeGapVoice(Segment* seg, track_idx_t track, Fraction len, const Fr
                 }
                 // this happens only for voices other than voice 1
                 expandVoice(seg, track);
-                return makeGapVoice(seg, track, len, tick);
+                return makeGapVoice(seg, track, len, tick, deleteAnnotations);
             }
             if (seg1->element(track)) {
                 break;
@@ -1614,7 +1585,7 @@ bool Score::makeGapVoice(Segment* seg, track_idx_t track, Fraction len, const Fr
             LOGD("cannot make gap");
             return false;
         }
-        Fraction l = makeGap(cr->segment(), cr->track(), len, 0);
+        Fraction l = makeGap(cr->segment(), cr->track(), len, nullptr, /*keepChord*/ false, deleteAnnotations);
         if (l.isZero()) {
             LOGD("returns zero gap");
             return false;
@@ -2820,6 +2791,16 @@ void Score::cmdIncDecDuration(int nSteps, bool stepDotted)
                 select(toEngravingItem(n), SelectType::ADD);
             }
         }
+        if (m_is.noteEntryMode()) {
+            const ChordRest* cr = crs.size() == 1 ? crs.front() : nullptr;
+            IF_ASSERT_FAILED(cr) {
+                // (At time of writing) it shouldn't be possible to have more than
+                // one CR selected during note entry...
+                return;
+            }
+            m_is.setDuration(cr->durationType());
+            nextInputPos(cr, false);
+        }
     }
 }
 
@@ -2957,7 +2938,6 @@ static std::map<Chord*, std::set<Note*, NoteComparator> > getNotesByChord(std::l
     if (notes.empty()) {
         return notesByChord;
     }
-    std::set<Note*> additionalNotes;
     for (Note* noteToAdd : notes) {
         Chord* chord = noteToAdd->chord();
         auto notesByChordIt = notesByChord.find(chord);
@@ -4019,17 +3999,13 @@ void Score::cmdToggleLayoutBreak(LayoutBreakType type)
                 break;
             default: {
                 // find measure
-                Measure* measure = toMeasure(el->findMeasure());
+                mb = toMeasure(el->findMeasure());
                 // for start repeat, attach break to previous measure
-                if (measure && el->isBarLine()) {
+                if (mb && el->isBarLine()) {
                     BarLine* bl = toBarLine(el);
                     if (bl->barLineType() == BarLineType::START_REPEAT) {
-                        measure = measure->prevMeasure();
+                        mb = mb->prevMeasure();
                     }
-                }
-                // if measure is mmrest, then propagate to last original measure
-                if (measure) {
-                    mb = measure->isMMRest() ? measure->mmRestLast() : measure;
                 }
 
                 if (mb) {

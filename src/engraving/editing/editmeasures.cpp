@@ -5,7 +5,7 @@
  * MuseScore Studio
  * Music Composition & Notation
  *
- * Copyright (C) 2021 MuseScore Limited
+ * Copyright (C) 2021 MuseScore Limited and others
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3 as
@@ -85,7 +85,7 @@ void InsertRemoveMeasures::insertMeasures()
     Segment* fs = nullptr;
     Segment* ls = nullptr;
     if (fm->isMeasure()) {
-        score->setPlaylistDirty();
+        score->invalidateRepeatList();
         fs = toMeasure(fm)->first();
         ls = toMeasure(lm)->last();
         for (Segment* s = fs; s && s != ls; s = s->next1()) {
@@ -294,7 +294,7 @@ void InsertRemoveMeasures::removeMeasures()
 
     if (fm->isMeasure()) {
         score->setUpTempoMap();
-        score->setPlaylistDirty();
+        score->invalidateRepeatList();
 
         // check if there is a clef at the end of last measure
         // remove clef from staff cleflist
@@ -339,10 +339,16 @@ void InsertRemoveMeasures::removeMeasures()
             if (page) {
                 // erase system from page
                 muse::remove(page->systems(), s);
-                // erase system from score
-                muse::remove(score->systems(), s);
-                // finally delete system
-                score->deleteLater(s);
+            }
+            // erase system from score
+            muse::remove(score->systems(), s);
+            // finally delete system
+            s->deleteLater();
+
+            if (page && page->systems().empty()) {
+                // if page is empty, delete it as well
+                muse::remove(score->pages(), page);
+                page->deleteLater();
             }
         }
     }

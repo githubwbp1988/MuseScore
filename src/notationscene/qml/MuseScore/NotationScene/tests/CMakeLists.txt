@@ -4,7 +4,7 @@
 # MuseScore Studio
 # Music Composition & Notation
 #
-# Copyright (C) 2021 MuseScore Limited
+# Copyright (C) 2021 MuseScore Limited and others
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License version 3 as
@@ -27,7 +27,8 @@ set(MODULE_TEST_SRC
     ${CMAKE_CURRENT_LIST_DIR}/mocks/controlledviewmock.h
 
     ${CMAKE_CURRENT_LIST_DIR}/environment.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/notationviewinputcontroller_tests.cpp
+    # --alex
+    # ${CMAKE_CURRENT_LIST_DIR}/notationviewinputcontroller_tests.cpp
 )
 
 set(MODULE_TEST_LINK

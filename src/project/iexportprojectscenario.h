@@ -5,7 +5,7 @@
  * MuseScore Studio
  * Music Composition & Notation
  *
- * Copyright (C) 2021 MuseScore Limited
+ * Copyright (C) 2021 MuseScore Limited and others
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3 as
@@ -44,10 +44,6 @@ public:
     virtual bool exportScores(notation::INotationPtrList notations, const muse::io::path_t destinationPath,
                               INotationWriter::UnitType unitType = INotationWriter::UnitType::PER_PART,
                               bool openDestinationFolderOnExport = false) const = 0;
-
-    virtual bool exportScoresVideo(const project::INotationProjectPtr& project, const muse::io::path_t destinationPath,
-                                INotationWriter::UnitType unitType = INotationWriter::UnitType::PER_PART,
-                                bool openDestinationFolderOnExport = false) const = 0;
 
     virtual const ExportInfo& exportInfo() const = 0;
     virtual void setExportInfo(const ExportInfo& exportInfo) = 0;

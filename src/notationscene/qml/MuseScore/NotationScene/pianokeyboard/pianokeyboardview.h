@@ -5,7 +5,7 @@
  * MuseScore Studio
  * Music Composition & Notation
  *
- * Copyright (C) 2022 MuseScore Limited
+ * Copyright (C) 2022 MuseScore Limited and others
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3 as
@@ -31,8 +31,9 @@
 #include "ui/iuiconfiguration.h"
 
 #include "pianokeyboardtypes.h"
-#include "src/project/iprojectrwregister.h"
-#include "src/project/iprojectwriter.h"
+// #include "project/iprojectrwregister.h"
+#include "project/inotationwritersregister.h"
+#include "project/iprojectwriter.h"
 
 namespace mu::notation {
 class PianoKeyboardController;
@@ -49,7 +50,8 @@ class PianoKeyboardView : public muse::uicomponents::QuickPaintedView, public mu
 
     muse::GlobalInject<INotationConfiguration> configuration;
     muse::GlobalInject<muse::ui::IUiConfiguration> uiConfiguration;
-    muse::GlobalInject<mu::project::IProjectRWRegister> videoWriters;
+    // muse::GlobalInject<mu::project::IProjectRWRegister> videoWriters;
+    muse::GlobalInject<project::INotationWritersRegister> videoWriters;
 
 public:
     explicit PianoKeyboardView(QQuickItem* parent = nullptr);
@@ -115,7 +117,7 @@ private:
 
     bool m_isInitialized = false;
     
-    mu::project::IProjectWriterPtr m_videowriter;
+    mu::project::INotationWriterPtr m_videowriter;
 
     piano_key_t m_lowestKey = MIN_KEY;
     piano_key_t m_numberOfKeys = MAX_NUM_KEYS;

@@ -5,7 +5,7 @@
  * MuseScore Studio
  * Music Composition & Notation
  *
- * Copyright (C) 2021 MuseScore Limited
+ * Copyright (C) 2021 MuseScore Limited and others
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3 as
@@ -2016,7 +2016,11 @@ void NotationInteraction::endDrag()
 
     if (m_editData.isHairpinDragCreatedFromDynamic) {
         // Merge the two actions of hairpin creation + hairpin drag
-        m_undoStack->mergeCommands(m_undoStack->currentStateIndex() - 2);
+        assert(m_undoStack->currentStateIndex() >= 2);
+        if (m_undoStack->currentStateIndex() >= 2) {
+            m_undoStack->mergeTransactions(m_undoStack->currentStateIndex() - 2);
+        }
+        m_editData.isHairpinDragCreatedFromDynamic = false;
     }
 
     notifyAboutDragChanged();
@@ -2388,7 +2392,7 @@ static Segment* rangeEndSegment(Score* score, const Fraction& endTick)
 {
     Segment* endSegment = score->tick2rightSegment(endTick,
                                                    true,
-                                                   Segment::CHORD_REST_OR_TIME_TICK_TYPE);
+                                                   SegmentType::Duration);
 
     if (endSegment && !endSegment->enabled()) {
         endSegment = endSegment->next1MMenabled();
@@ -2467,7 +2471,7 @@ static bool dropRangePosition(Score* score, const PointF& pos,
 
     if (preserveMeasureAlignment) {
         *targetStartSegment = segmentOrChordRestSegmentAtSameTick(
-            targetStartMeasure->findSegment(Segment::CHORD_REST_OR_TIME_TICK_TYPE, targetStartTick));
+            targetStartMeasure->findSegment(SegmentType::Duration, targetStartTick));
     } else {
         static constexpr double spacingFactor = 0.5;
         static constexpr bool useTimeAnchors = true;
@@ -5160,6 +5164,8 @@ bool NotationInteraction::handleKeyPress(QKeyEvent* event)
     m_editData.hRaster = hRaster;
     m_editData.vRaster = vRaster;
 
+    m_editData.isEditMode = isEditingElement();
+
     //: Means: an editing operation triggered by a keystroke
     startEdit(TranslatableString("undoableAction", "Keystroke edit"));
 
@@ -5603,17 +5609,19 @@ void NotationInteraction::editElement(QKeyEvent* event)
     m_editData.key = event->key();
     m_editData.s = event->text();
 
-    // Brackets may be deleted and replaced
+    // Brackets get deleted during layout with their system, so the best we can do to maintain
+    // the bracket selected is to store their indices and use them to find the new ones
     bool isBracket = m_editData.element->isBracket();
-    const mu::engraving::System* system = nullptr;
     size_t bracketIndex = muse::nidx;
+    size_t systemIndex = muse::nidx;
 
     if (isBracket) {
-        const mu::engraving::Bracket* bracket = mu::engraving::toBracket(m_editData.element);
-        system = bracket->system();
+        const Bracket* bracket = toBracket(m_editData.element);
+        System* system = bracket->system();
 
         if (system) {
             bracketIndex = muse::indexOf(system->brackets(), bracket);
+            systemIndex = muse::indexOf(score()->systems(), system);
         }
     } else if (m_editData.element->isHarmony()) {
         if (isTextEditingStarted() && (event->key() == Qt::Key_Return || event->key() == Qt::Key_Enter)) {
@@ -5627,10 +5635,14 @@ void NotationInteraction::editElement(QKeyEvent* event)
     }
 
     if (handleKeyPress(event)) {
-        if (isBracket && system && bracketIndex != muse::nidx) {
-            mu::engraving::EngravingItem* bracket = system->brackets().at(bracketIndex);
-            m_editData.element = bracket;
-            select({ bracket }, SelectType::SINGLE);
+        if (isBracket && bracketIndex != muse::nidx && systemIndex != muse::nidx) {
+            // Try to restore selected bracket
+            System* system = systemIndex < score()->systems().size() ? score()->systems().at(systemIndex) : nullptr;
+            EngravingItem* bracket = system && bracketIndex < system->brackets().size() ? system->brackets().at(bracketIndex) : nullptr;
+            if (bracket) {
+                m_editData.element = bracket;
+                select({ bracket }, SelectType::SINGLE);
+            }
         }
 
         if (isGripEditStarted()) {
@@ -5872,7 +5884,7 @@ void NotationInteraction::addBoxes(BoxType boxType, int count, AddBoxesTarget ta
 
 void NotationInteraction::addBoxes(BoxType boxType, int count, int beforeBoxIndex, bool moveSignaturesClef)
 {
-    LOGALEX();
+    // LOGALEX();
     if (count < 1) {
         return;
     }

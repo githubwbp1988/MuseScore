@@ -5,7 +5,7 @@
  * MuseScore Studio
  * Music Composition & Notation
  *
- * Copyright (C) 2021 MuseScore Limited
+ * Copyright (C) 2021 MuseScore Limited and others
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3 as
@@ -269,6 +269,7 @@ std::vector<int> Chord::noteDistances() const
     int staffMiddleLine = staffType->middleLine();
 
     std::vector<int> distances;
+    distances.reserve(m_notes.size());
     for (Note* note : m_notes) {
         int noteLine = isTabStaff ? note->string() : note->line();
         distances.push_back(noteLine - staffMiddleLine);
@@ -411,6 +412,7 @@ Chord::Chord(const Chord& c, bool link)
             }
 
             std::vector<Note*> newNotes;
+            newNotes.reserve(info->notes().size());
             for (Note* note : info->notes()) {
                 newNotes.push_back(findNote(note->pitch()));
             }
@@ -656,8 +658,7 @@ void Chord::add(EngravingItem* e)
             measure()->setHasVoices(staffIdx(), true);
         }
     }
-        score()->setPlaylistDirty();
-        break;
+    break;
     case ElementType::ARPEGGIO:
         m_arpeggio = toArpeggio(e);
         break;
@@ -759,7 +760,6 @@ void Chord::remove(EngravingItem* e)
         if (voice() && measure() && note->visible()) {
             measure()->checkMultiVoices(staffIdx());
         }
-        score()->setPlaylistDirty();
     }
     break;
 
@@ -800,6 +800,9 @@ void Chord::remove(EngravingItem* e)
     case ElementType::CHORD:
     {
         auto i = std::find(m_graceNotes.begin(), m_graceNotes.end(), toChord(e));
+        IF_ASSERT_FAILED(i != m_graceNotes.end()) {
+            break;
+        }
         Chord* grace = *i;
         grace->setGraceIndex(i - m_graceNotes.begin());
         m_graceNotes.erase(i);
@@ -1398,7 +1401,7 @@ void Chord::removeNoteFromParenthesisInfo(Note* note, const Parenthesis* paren)
 //---------------------------------------------------------
 //   isChordPlayable
 //   @note Now every related to chord element has it's own "PLAY" property,
-//         However, there is no way to control these properties outside the scope of the chord since the new inspector.
+//         However, there is no way to control these properties outside the scope of the chord since the new Properties panel.
 //         So we'll use a chord as a proxy entity for "PLAY" property handling
 //---------------------------------------------------------
 
@@ -1988,7 +1991,6 @@ void Chord::setSlash(bool flag, bool stemless)
         // for non-drum staves, add an additional offset
         // for drum staves, no offset, but use normal head
         if (!staffType->isDrumStaff()) {
-            // undoChangeProperty(Pid::OFFSET, PointF(0.0, y));
             mutldata()->moveY(y);
         } else {
             head = NoteHeadGroup::HEAD_NORMAL;
@@ -2713,6 +2715,7 @@ std::vector<NoteEventList> Chord::getNoteEventLists()
     if (notes().empty()) {
         return ell;
     }
+    ell.reserve(notes().size());
     for (size_t i = 0; i < notes().size(); ++i) {
         ell.push_back(NoteEventList(notes()[i]->playEvents()));
     }

@@ -5,7 +5,7 @@
  * MuseScore Studio
  * Music Composition & Notation
  *
- * Copyright (C) 2021 MuseScore Limited
+ * Copyright (C) 2021 MuseScore Limited and others
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3 as
@@ -57,7 +57,6 @@ static const ElementStyle letRingStyle {
     { Sid::letRingEndHookType,                   Pid::END_HOOK_TYPE },
     { Sid::letRingLineWidth,                     Pid::LINE_WIDTH },
     { Sid::letRingPlacement,                     Pid::PLACEMENT },
-    //{ Sid::letRingPosBelow,                      Pid::OFFSET                 },
     { Sid::letRingMusicalSymbolSize,             Pid::BEGIN_TEXT_MUSIC_SYMBOLS_SIZE },
     { Sid::letRingMusicalSymbolSize,             Pid::CONTINUE_TEXT_MUSIC_SYMBOLS_SIZE },
     { Sid::letRingMusicalSymbolSize,             Pid::END_TEXT_MUSIC_SYMBOLS_SIZE },
@@ -92,7 +91,6 @@ LetRing::LetRing(EngravingItem* parent)
 }
 
 static const ElementStyle letRingSegmentStyle {
-    //{ Sid::letRingPosBelow,       Pid::OFFSET       },
     { Sid::letRingMinDistance,    Pid::MIN_DISTANCE },
 };
 
@@ -198,5 +196,10 @@ Sid LetRing::getPropertyStyle(Pid id) const
         break;
     }
     return TextLineBase::getPropertyStyle(id);
+}
+
+Sid LetRing::defaultPosSid() const
+{
+    return placeAbove() ? Sid::letRingPosAbove : Sid::letRingPosBelow;
 }
 }

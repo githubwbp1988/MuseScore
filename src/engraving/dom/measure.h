@@ -5,7 +5,7 @@
  * MuseScore Studio
  * Music Composition & Notation
  *
- * Copyright (C) 2021 MuseScore Limited
+ * Copyright (C) 2021 MuseScore Limited and others
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3 as
@@ -40,6 +40,10 @@ class MeasureRead;
 }
 
 namespace mu::engraving::read460 {
+class MeasureRead;
+}
+
+namespace mu::engraving::read500 {
 class MeasureRead;
 }
 
@@ -396,6 +400,15 @@ public:
     bool canAddStringTunings(staff_idx_t staffIdx) const;
     bool canAddStaffTypeChange(staff_idx_t staffIdx) const;
 
+    struct LayoutData : public MeasureBase::LayoutData {
+    private:
+        bool m_needLayout = true;
+    public:
+        bool needLayout() const { return m_needLayout; }
+        void setNeedLayout(bool v) { m_needLayout = v; }
+    };
+    DECLARE_LAYOUTDATA_METHODS(Measure)
+
 private:
 
     friend class Factory;
@@ -418,9 +431,7 @@ private:
 
     Fraction m_timesig;
 
-    int m_mmRestCount = 0;      // > 0 if this is a multimeasure rest
-                                // 0 if this is the start of am mmrest (m_mmRest != 0)
-                                // < 0 if this measure is covered by an mmrest
+    int m_mmRestCount = 0;      // number of measures an mmrest spans
 
     int m_playbackCount = 0;    // temp. value used in RepeatList
                                 // counts how many times this measure was already played

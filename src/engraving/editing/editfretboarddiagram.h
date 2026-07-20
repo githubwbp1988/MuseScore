@@ -5,7 +5,7 @@
  * MuseScore Studio
  * Music Composition & Notation
  *
- * Copyright (C) 2025 MuseScore Limited
+ * Copyright (C) 2025 MuseScore Limited and others
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3 as
@@ -22,7 +22,7 @@
 
 #pragma once
 
-#include "undo.h"
+#include "transaction/undoablecommand.h"
 
 #include "../dom/fret.h"
 
@@ -51,7 +51,7 @@ private:
     double m_userMag = 1.0;
 };
 
-class FretDataChange : public UndoCommand
+class FretDataChange : public UndoableCommand
 {
     OBJECT_ALLOCATOR(engraving, FretDataChange)
 
@@ -73,7 +73,7 @@ public:
     UNDO_CHANGED_OBJECTS({ m_diagram })
 };
 
-class FretDot : public UndoCommand
+class FretDot : public UndoableCommand
 {
     OBJECT_ALLOCATOR(engraving, FretDot)
 
@@ -96,7 +96,7 @@ public:
     UNDO_CHANGED_OBJECTS({ diagram })
 };
 
-class FretMarker : public UndoCommand
+class FretMarker : public UndoableCommand
 {
     OBJECT_ALLOCATOR(engraving, FretMarker)
 
@@ -117,7 +117,7 @@ public:
     UNDO_CHANGED_OBJECTS({ diagram })
 };
 
-class FretBarre : public UndoCommand
+class FretBarre : public UndoableCommand
 {
     OBJECT_ALLOCATOR(engraving, FretBarre)
 
@@ -139,7 +139,7 @@ public:
     UNDO_CHANGED_OBJECTS({ diagram })
 };
 
-class FretClear : public UndoCommand
+class FretClear : public UndoableCommand
 {
     OBJECT_ALLOCATOR(engraving, FretClear)
 
@@ -158,7 +158,7 @@ public:
     UNDO_CHANGED_OBJECTS({ diagram })
 };
 
-class AddFretDiagramToFretBox : public UndoCommand
+class AddFretDiagramToFretBox : public UndoableCommand
 {
     OBJECT_ALLOCATOR(engraving, AddFretDiagramToFretBox)
 
@@ -176,7 +176,7 @@ public:
     UNDO_CHANGED_OBJECTS({ m_fretDiagram })
 };
 
-class RemoveFretDiagramFromFretBox : public UndoCommand
+class RemoveFretDiagramFromFretBox : public UndoableCommand
 {
     OBJECT_ALLOCATOR(engraving, RemoveFretDiagramFromFretBox)
 

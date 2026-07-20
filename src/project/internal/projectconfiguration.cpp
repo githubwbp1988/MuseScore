@@ -5,7 +5,7 @@
  * MuseScore Studio
  * Music Composition & Notation
  *
- * Copyright (C) 2021 MuseScore Limited
+ * Copyright (C) 2021 MuseScore Limited and others
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3 as
@@ -67,7 +67,6 @@ static const Settings::Key DISABLE_VERSION_CHECKING(module_name, "project/disabl
 static const Settings::Key CREATE_BACKUP_BEFORE_SAVING(module_name, "project/createBackupBeforeSaving");
 
 static const std::string DEFAULT_FILE_SUFFIX(".mscz");
-static const std::string DEFAULT_FILE_FILTER("*.mscz");
 
 ProjectConfiguration::ProjectConfiguration(const muse::modularity::ContextPtr& iocCtx)
     : muse::Contextable(iocCtx)

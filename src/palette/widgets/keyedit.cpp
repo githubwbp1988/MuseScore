@@ -5,7 +5,7 @@
  * MuseScore Studio
  * Music Composition & Notation
  *
- * Copyright (C) 2021 MuseScore Limited
+ * Copyright (C) 2021 MuseScore Limited and others
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3 as
@@ -324,7 +324,7 @@ KeyEditor::KeyEditor(QWidget* parent)
     layout->setContentsMargins(0, 0, 0, 0);
     keySigframe->setLayout(layout);
 
-    m_keySigPaletteWidget = new PaletteWidget(this);
+    m_keySigPaletteWidget = new PaletteWidget(this, true /*setIocContext*/);
     m_keySigPaletteWidget->setPalette(PaletteCreator(iocContext()).newKeySigPalette());
     m_keySigPaletteWidget->setReadOnly(false);
 
@@ -342,7 +342,7 @@ KeyEditor::KeyEditor(QWidget* parent)
     layout->setContentsMargins(0, 0, 0, 0);
     accidentalsFrame->setLayout(layout);
 
-    m_accidentalsPaletteWidget = new PaletteWidget(this);
+    m_accidentalsPaletteWidget = new PaletteWidget(this, true /*setIocContext*/);
     m_accidentalsPaletteWidget->setPalette(PaletteCreator(iocContext()).newAccidentalsPalette());
     qreal adj = m_accidentalsPaletteWidget->mag();
     m_accidentalsPaletteWidget->setGridSize(m_accidentalsPaletteWidget->gridWidth() / adj, m_accidentalsPaletteWidget->gridHeight() / adj);

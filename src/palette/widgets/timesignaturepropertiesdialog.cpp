@@ -5,7 +5,7 @@
  * MuseScore Studio
  * Music Composition & Notation
  *
- * Copyright (C) 2021 MuseScore Limited
+ * Copyright (C) 2021 MuseScore Limited and others
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3 as
@@ -56,8 +56,10 @@ TimeSignaturePropertiesDialog::~TimeSignaturePropertiesDialog()
     delete m_editedTimeSig;
 }
 
-void TimeSignaturePropertiesDialog::componentComplete()
+void TimeSignaturePropertiesDialog::classBegin()
 {
+    groups->classBegin();
+
     QString musicalFontFamily = QString::fromStdString(uiConfiguration()->musicalFontFamily());
     int musicalFontSize = uiConfiguration()->musicalFontSize();
 

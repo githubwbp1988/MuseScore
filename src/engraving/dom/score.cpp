@@ -5,7 +5,7 @@
  * MuseScore Studio
  * Music Composition & Notation
  *
- * Copyright (C) 2021 MuseScore Limited
+ * Copyright (C) 2021 MuseScore Limited and others
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3 as
@@ -34,8 +34,10 @@
 #include "containers.h"
 
 #include "editing/addremoveelement.h"
+#include "editing/editstavesharing.h"
 #include "editing/mscoreview.h"
 #include "editing/splitjoinmeasure.h"
+#include "editing/transaction/undostack.h"
 #include "editing/transpose.h"
 
 #include "style/style.h"
@@ -824,22 +826,9 @@ bool Score::dirty() const
     return !undoStack()->isClean();
 }
 
-//---------------------------------------------------------
-//   playlistDirty
-//---------------------------------------------------------
-
-bool Score::playlistDirty() const
+void Score::invalidateRepeatList()
 {
-    return masterScore()->playlistDirty();
-}
-
-//---------------------------------------------------------
-//   setPlaylistDirty
-//---------------------------------------------------------
-
-void Score::setPlaylistDirty()
-{
-    masterScore()->setPlaylistDirty();
+    masterScore()->invalidateRepeatList();
 }
 
 bool Score::isOpen() const
@@ -1345,31 +1334,6 @@ void Score::styleChanged()
 }
 
 //---------------------------------------------------------
-//   getCreateMeasure
-//    - return Measure for tick
-//    - create Factory::createMeasure(s) if there is no measure for
-//      this tick
-//---------------------------------------------------------
-
-Measure* Score::getCreateMeasure(const Fraction& tick)
-{
-    Measure* last = lastMeasure();
-    if (!last || last->endTick() <= tick) {
-        Fraction lastTick  = last ? last->endTick() : Fraction(0, 1);
-        while (tick >= lastTick) {
-            Measure* m = Factory::createMeasure(this->dummy()->system());
-            Fraction ts = sigmap()->timesig(lastTick).timesig();
-            m->setTick(lastTick);
-            m->setTimesig(ts);
-            m->setTicks(ts);
-            measures()->append(toMeasureBase(m));
-            lastTick += m->ticks();
-        }
-    }
-    return tick2measure(tick);
-}
-
-//---------------------------------------------------------
 //   addElement
 //---------------------------------------------------------
 
@@ -1458,13 +1422,8 @@ void Score::addElement(EngravingItem* element)
             }
         }
         o->staff()->updateOttava();
-        setPlaylistDirty();
     }
     break;
-
-    case ElementType::DYNAMIC:
-        setPlaylistDirty();
-        break;
 
     case ElementType::INSTRUMENT_CHANGE: {
         InstrumentChange* ic = toInstrumentChange(element);
@@ -1476,7 +1435,6 @@ void Score::addElement(EngravingItem* element)
 
     case ElementType::CHORD:
     {
-        setPlaylistDirty();
         // May need to reconnect slur when inserting new chord
         SpannerMap& smap = spannerMap();
         Fraction tick = element->tick();
@@ -1520,7 +1478,7 @@ void Score::addElement(EngravingItem* element)
     }
 
     if (element->isTextBase() && toTextBase(element)->hasParentSegment()
-        && toSegment(element->parent())->isType(Segment::CHORD_REST_OR_TIME_TICK_TYPE)) {
+        && toSegment(element->parent())->isType(SegmentType::Duration)) {
         MoveElementAnchors::checkMeasureBoundariesAndMoveIfNeed(element);
     }
 
@@ -1562,28 +1520,37 @@ void Score::removeElement(EngravingItem* element)
         ) {
         MeasureBase* mb = toMeasureBase(element);
         measures()->remove(mb);
-        System* system = mb->system();
 
+        System* system = mb->system();
         if (!system) {
-            // vertical boxes are not shown in continuous view so no system
 #ifndef NDEBUG
-            bool noSystemMode = lineMode() && element->isVBoxBase();
-#endif
+            // vertical boxes are not shown in continuous view so no system
+            const bool noSystemMode = lineMode() && element->isVBoxBase();
             assert(noSystemMode || !isOpen());
+#endif
             return;
         }
 
-        Page* page = system->page();
-        if (element->isBox() && system->measures().size() == 1) {
-            auto i = std::find(page->systems().begin(), page->systems().end(), system);
-            page->systems().erase(i);
-            mb->resetExplicitParent();
-            if (page->systems().empty()) {
+        system->removeMeasure(mb);
+
+        // See also InsertRemoveMeasures::removeMeasures()
+        if (element->isBox() && system->measures().empty()) {
+            Page* page = system->page();
+            if (page) {
+                muse::remove(page->systems(), system);
+            }
+
+            muse::remove(m_systems, system);
+            system->deleteLater();
+
+            if (page && page->systems().empty()) {
                 // Remove this page, since it is now empty.
                 // This involves renumbering and repositioning all subsequent pages.
                 PointF pos = page->pos();
                 auto ii = std::find(pages().begin(), pages().end(), page);
                 pages().erase(ii);
+                page->deleteLater();
+
                 while (ii != pages().end()) {
                     page = *ii;
                     page->setPageNumber(page->pageNumber() - 1);
@@ -1594,7 +1561,6 @@ void Score::removeElement(EngravingItem* element)
                 }
             }
         }
-//            setLayout(mb->tick());
         return;
     }
 
@@ -1668,13 +1634,8 @@ void Score::removeElement(EngravingItem* element)
         o->triggerLayout();
         removeSpanner(o);
         o->staff()->updateOttava();
-        setPlaylistDirty();
     }
     break;
-
-    case ElementType::DYNAMIC:
-        setPlaylistDirty();
-        break;
 
     case ElementType::CHORD:
     case ElementType::REST:
@@ -1712,7 +1673,7 @@ void Score::doUndoRemoveElement(EngravingItem* element)
 {
     if (element->generated()) {
         removeElement(element);
-        //! HACK: don't delete as it may still be used in Inspector
+        //! HACK: don't delete as it may still be used in PropertiesPanel
         // element->deleteLater();
     } else {
         undo(new RemoveElement(element));
@@ -2387,6 +2348,8 @@ void Score::cmdRemovePart(Part* part)
         return;
     }
 
+    EditStaveSharing::handleRemovePart(part);
+
     staff_idx_t sidx = staffIdx(part);
     size_t n = part->nstaves();
 
@@ -2395,6 +2358,10 @@ void Score::cmdRemovePart(Part* part)
     }
 
     undoRemovePart(part, muse::indexOf(m_parts, part));
+
+    if (!hasSharedParts()) {
+        undoChangeStyleVal(Sid::enableStaveSharing, false);
+    }
 }
 
 //---------------------------------------------------------
@@ -3121,6 +3088,7 @@ void Score::padToggle(Pad p, bool toggleForSelectionOnly)
 
                     for (const NoteVal& nval : m_is.notes()) {
                         if (chord && chord->findNote(nval.pitch)) {
+                            m_is.moveToNextInputPos();
                             continue;
                         }
 
@@ -3469,12 +3437,12 @@ void Score::selectAdd(EngravingItem* e)
 static Segment* findElementStartSegment(Score* score, EngravingItem* e)
 {
     if (Segment* ancestor = toSegment(e->findAncestor(ElementType::SEGMENT))) {
-        if (ancestor->isType(Segment::CHORD_REST_OR_TIME_TICK_TYPE)) {
+        if (ancestor->isType(SegmentType::Duration)) {
             return ancestor;
         }
     }
 
-    return score->tick2segmentMM(e->tick(), true, Segment::CHORD_REST_OR_TIME_TICK_TYPE);
+    return score->tick2segmentMM(e->tick(), true, SegmentType::Duration);
 }
 
 /// Returns `nullptr` when the end segment is the end of the score;
@@ -3499,16 +3467,16 @@ static Segment* findElementEndSegment(Score* score, EngravingItem* e, Segment* d
 
     if (e->isSpanner() || e->isSpannerSegment()) {
         Spanner* sp = e->isSpanner() ? toSpanner(e) : toSpannerSegment(e)->spanner();
-        return score->tick2segmentMM(sp->tick2(), true, Segment::CHORD_REST_OR_TIME_TICK_TYPE);
+        return score->tick2segmentMM(sp->tick2(), true, SegmentType::Duration);
     }
 
     if (Segment* seg = toSegment(e->findAncestor(ElementType::SEGMENT))) {
-        if (seg->isType(Segment::CHORD_REST_OR_TIME_TICK_TYPE)) {
+        if (seg->isType(SegmentType::Duration)) {
             // https://github.com/musescore/MuseScore/pull/25821#issuecomment-2617369881
             return seg->nextCR(e->track(), true);
         }
         // Strictly speaking redundant, but more efficient than `tick2segmentMM`
-        else if (Segment* crSegAtSameTick = seg->measure()->findSegmentR(Segment::CHORD_REST_OR_TIME_TICK_TYPE, seg->rtick())) {
+        else if (Segment* crSegAtSameTick = seg->measure()->findSegmentR(SegmentType::Duration, seg->rtick())) {
             return crSegAtSameTick;
         }
     }
@@ -3518,7 +3486,7 @@ static Segment* findElementEndSegment(Score* score, EngravingItem* e, Segment* d
         return nullptr;
     }
 
-    if (Segment* seg = score->tick2segmentMM(tick, true, Segment::CHORD_REST_OR_TIME_TICK_TYPE)) {
+    if (Segment* seg = score->tick2segmentMM(tick, true, SegmentType::Duration)) {
         return seg;
     }
 
@@ -4213,7 +4181,6 @@ void Score::setTempo(Segment* segment, BeatsPerSecond tempo)
 void Score::setTempo(const Fraction& tick, BeatsPerSecond tempo)
 {
     tempomap()->setTempo(tick.ticks(), roundTempo(tempo));
-    setPlaylistDirty();
 }
 
 //---------------------------------------------------------
@@ -4223,7 +4190,6 @@ void Score::setTempo(const Fraction& tick, BeatsPerSecond tempo)
 void Score::removeTempo(const Fraction& tick)
 {
     tempomap()->delTempo(tick.ticks());
-    setPlaylistDirty();
 }
 
 //---------------------------------------------------------
@@ -4264,7 +4230,6 @@ void Score::resetTempoRange(const Fraction& tick1, const Fraction& tick2)
 void Score::setPause(const Fraction& tick, double seconds)
 {
     tempomap()->setPause(tick.ticks(), seconds);
-    setPlaylistDirty();
 }
 
 //---------------------------------------------------------
@@ -4349,7 +4314,7 @@ void Score::cmdSelectSection()
 //   undo
 //---------------------------------------------------------
 
-void Score::undo(UndoCommand* cmd, EditData* ed) const
+void Score::undo(UndoableCommand* cmd, EditData* ed) const
 {
     undoStack()->pushAndPerform(cmd, ed);
 }
@@ -4428,6 +4393,7 @@ std::vector<Spanner*> Score::spannerList() const
 {
     std::vector<Spanner*> result;
     const std::multimap<int, Spanner*>& spannerMap = m_spanner.map();
+    result.reserve(spannerMap.size());
     for (auto it = spannerMap.begin(); it != spannerMap.end(); ++it) {
         result.push_back(it->second);
     }
@@ -5779,6 +5745,43 @@ size_t Score::visiblePartCount() const
         }
     }
     return count;
+}
+
+std::vector<Part*> Score::visibleParts() const
+{
+    std::vector<Part*> result;
+    result.reserve(m_parts.size());
+
+    for (Part* p : m_parts) {
+        if (p->show()) {
+            result.push_back(p);
+        }
+    }
+
+    return result;
+}
+
+std::vector<SharedPart*> Score::sharedParts() const
+{
+    std::vector<SharedPart*> sharedParts;
+    for (Part* part : m_parts) {
+        if (part->isSharedPart()) {
+            sharedParts.push_back(toSharedPart(part));
+        }
+    }
+
+    return sharedParts;
+}
+
+bool Score::hasSharedParts() const
+{
+    for (Part* part : m_parts) {
+        if (part->isSharedPart()) {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 size_t Score::visibleStavesCount() const

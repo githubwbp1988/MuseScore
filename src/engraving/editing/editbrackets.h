@@ -5,7 +5,7 @@
  * MuseScore Studio
  * Music Composition & Notation
  *
- * Copyright (C) 2025 MuseScore Limited
+ * Copyright (C) 2025 MuseScore Limited and others
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3 as
@@ -22,12 +22,12 @@
 
 #pragma once
 
-#include "undo.h"
+#include "transaction/undoablecommand.h"
 
 #include "../dom/staff.h"
 
 namespace mu::engraving {
-class RemoveBracket : public UndoCommand
+class RemoveBracket : public UndoableCommand
 {
     OBJECT_ALLOCATOR(engraving, RemoveBracket)
 
@@ -48,7 +48,7 @@ public:
     UNDO_CHANGED_OBJECTS({ staff })
 };
 
-class AddBracket : public UndoCommand
+class AddBracket : public UndoableCommand
 {
     OBJECT_ALLOCATOR(engraving, AddBracket)
 

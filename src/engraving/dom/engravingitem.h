@@ -5,7 +5,7 @@
  * MuseScore Studio
  * Music Composition & Notation
  *
- * Copyright (C) 2021 MuseScore Limited
+ * Copyright (C) 2021 MuseScore Limited and others
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3 as
@@ -224,6 +224,9 @@ public:
     void setSizeIsSpatiumDependent(bool v) { setFlag(ElementFlag::SIZE_SPATIUM_DEPENDENT, !v); }
     bool offsetIsSpatiumDependent() const override;
 
+    virtual PointF defaultPos() const;
+    virtual Sid defaultPosSid() const;
+
     PlacementV placement() const;
     void setPlacement(PlacementV val) { setFlag(ElementFlag::PLACE_ABOVE, !bool(val)); }
     bool placeAbove() const { return placement() == PlacementV::ABOVE; }
@@ -324,7 +327,7 @@ public:
     virtual void setTrack(track_idx_t val);
 
     int z() const;
-    void setZ(int val);
+    virtual void setZ(int val);
 
     staff_idx_t staffIdx() const;
     void setStaffIdx(staff_idx_t val);
@@ -645,6 +648,10 @@ public:
         EngravingItem* m_itemSnappedAfter = nullptr;
 
         StaffCenteringInfo m_staffCenteringInfo;
+
+        // STAVE SHARING
+        EngravingItem* m_sharedItem = nullptr;
+        std::vector<EngravingItem*> m_originItems;
     };
 
     const LayoutData* ldata() const;
@@ -668,6 +675,12 @@ public:
     PropertyPropagation propertyPropagation(const EngravingItem* destinationItem, Pid propertyId) const;
     virtual bool canBeExcludedFromOtherParts() const { return false; }
     virtual void manageExclusionFromParts(bool exclude);
+
+    EngravingItem* sharedItem() const { return m_layoutData->m_sharedItem; }
+    const std::vector<EngravingItem*>& originItems() const { return m_layoutData->m_originItems; }
+    static void connectSharedItem(EngravingItem* sharedItem, EngravingItem* originItem);
+    static void disconnectSharedItem(EngravingItem* sharedItem, EngravingItem* originItem);
+    static void disconnectAllOriginItems(EngravingItem* sharedItem);
 
     virtual bool isBefore(const EngravingItem* item) const;
 

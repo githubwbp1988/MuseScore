@@ -5,7 +5,7 @@
  * MuseScore Studio
  * Music Composition & Notation
  *
- * Copyright (C) 2021 MuseScore Limited
+ * Copyright (C) 2021 MuseScore Limited and others
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3 as
@@ -882,13 +882,13 @@ enum class SegmentType {
     //--
     All                        = int(mu::engraving::SegmentType::All),
     /// Alias for `BeginBarLine | StartRepeatBarLine | BarLine | EndBarLine`
-    BarLineType                = int(mu::engraving::SegmentType::BarLineType),
-    CourtesyTimeSigType        = int(mu::engraving::SegmentType::CourtesyTimeSigType),
-    CourtesyKeySigType         = int(mu::engraving::SegmentType::CourtesyKeySigType),
-    CourtesyClefType           = int(mu::engraving::SegmentType::CourtesyClefType),
-    TimeSigType                = int(mu::engraving::SegmentType::TimeSigType),
-    KeySigType                 = int(mu::engraving::SegmentType::KeySigType),
-    ClefType                   = int(mu::engraving::SegmentType::ClefType),
+    BarLineType                = int(mu::engraving::SegmentType::BarLineTypes),
+    CourtesyTimeSigType        = int(mu::engraving::SegmentType::CourtesyTimeSigTypes),
+    CourtesyKeySigType         = int(mu::engraving::SegmentType::CourtesyKeySigTypes),
+    CourtesyClefType           = int(mu::engraving::SegmentType::CourtesyClefTypes),
+    TimeSigType                = int(mu::engraving::SegmentType::TimeSigTypes),
+    KeySigType                 = int(mu::engraving::SegmentType::KeySigTypes),
+    ClefType                   = int(mu::engraving::SegmentType::ClefTypes),
     ///\}
 };
 Q_ENUM_NS(SegmentType);

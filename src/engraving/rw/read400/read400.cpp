@@ -5,7 +5,7 @@
  * MuseScore Studio
  * Music Composition & Notation
  *
- * Copyright (C) 2021 MuseScore Limited
+ * Copyright (C) 2021 MuseScore Limited and others
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3 as
@@ -293,8 +293,6 @@ bool Read400::readScoreTag(Score* score, XmlReader& e, ReadContext& ctx)
         return false;
     }
 
-    score->connectTies();
-
     score->m_fileDivision = Constants::DIVISION;
 
     // Make sure every instrument has an instrumentId set.
@@ -305,8 +303,20 @@ bool Read400::readScoreTag(Score* score, XmlReader& e, ReadContext& ctx)
     }
 
     score->setUpTempoMap();
+    if (score->isMaster()) {
+        // While reading the score, some elements might use `score->repeatList()` (which is incorrect
+        // anyway, because the repeatList will be incomplete because the score is incomplete, but some
+        // elements still do it).
+        // `score->repeatList()` calls `_repeatList->update()`; the repeat list then thinks that it is
+        // up-to-date from that point. But we weren't finished reading the score, so the score will still
+        // change. We need to tell the repeat list about that, so that it will be updated next time
+        // someone uses it.
+        static_cast<MasterScore*>(score)->invalidateRepeatList();
+    }
+    score->connectTies();
+    score->undoRemoveStaleTieJumpPoints(false);
 
-    for (Part* p : score->m_parts) {
+    for (Part* p : score->parts()) {
         p->updateHarmonyChannels(false);
     }
 
@@ -318,6 +328,34 @@ bool Read400::readScoreTag(Score* score, XmlReader& e, ReadContext& ctx)
     }
     for (int idx : sysStaves) {
         score->addSystemObjectStaff(score->staff(idx));
+    }
+
+    return true;
+}
+
+bool Read400::preparePasteDurationElement(Score* score, const Fraction& tick, const Fraction& ticks, const track_idx_t track)
+{
+    Measure* destinationMeasure = score->undoGetMeasure(tick);
+    IF_ASSERT_FAILED(destinationMeasure) {
+        return false;
+    }
+
+    Segment* pasteDestinationSeg = destinationMeasure->undoGetSegment(SegmentType::ChordRest, tick);
+    IF_ASSERT_FAILED(pasteDestinationSeg) {
+        return false;
+    }
+
+    // First make a gap for as long as we need...
+    IF_ASSERT_FAILED(score->makeGapVoice(pasteDestinationSeg, track, ticks, tick, /*deleteAnnotations*/ false)) {
+        return false;
+    }
+
+    // And shorten any segments that overlap with our destination...
+    if (Segment* leftSeg = score->tick2leftSegment(tick)) {
+        ChordRest* prevCr = leftSeg->nextChordRest(track, /*backwards*/ true, /*stopAtMeasureBoundary*/ true);
+        if (prevCr && prevCr->endTick() > tick) {
+            score->truncateChordRest(prevCr, tick, /*fillWithRest*/ false);
+        }
     }
 
     return true;
@@ -421,22 +459,6 @@ bool Read400::pasteStaff(XmlReader& e, Segment* dst, staff_idx_t dstStaff, Fract
                     ctx.setTransposeChromatic(static_cast<int8_t>(e.readInt()));
                 } else if (tag == "transposeDiatonic") {
                     ctx.setTransposeDiatonic(static_cast<int8_t>(e.readInt()));
-                } else if (tag == "voiceOffset") {
-                    Fraction voiceOffset[VOICES];
-                    std::fill(voiceOffset, voiceOffset + VOICES, Fraction(1, 0));
-                    while (e.readNextStartElement()) {
-                        if (e.name() != "voice") {
-                            e.unknown();
-                        }
-                        voice_idx_t voiceId = static_cast<voice_idx_t>(e.intAttribute("id", -1));
-                        assert(voiceId < VOICES);
-                        voiceOffset[voiceId] = Fraction::fromTicks(e.readInt());
-                    }
-                    if (!score->makeGap1(dstTick, dstStaffIdx, tickLen, voiceOffset)) {
-                        LOGD() << "cannot make gap in staff " << dstStaffIdx << " at tick " << dstTick.ticks();
-                        done = true;             // break main loop, cannot make gap
-                        break;
-                    }
                 } else if (tag == "location") {
                     Location loc = Location::relative();
                     TRead::read(&loc, e, ctx);
@@ -467,6 +489,12 @@ bool Read400::pasteStaff(XmlReader& e, Segment* dst, staff_idx_t dstStaff, Fract
                         }
                         MScore::setError(MsError::TUPLET_CROSSES_BAR);
                         return false;
+                    }
+                    if (!tuplet->tuplet()) {
+                        IF_ASSERT_FAILED(preparePasteDurationElement(score, tick, tuplet->actualTicksAt(tick), tuplet->track())) {
+                            e.skipCurrentElement();
+                            continue;
+                        }
                     }
                     if (oldTuplet) {
                         tuplet->readAddTuplet(oldTuplet);
@@ -599,6 +627,12 @@ bool Read400::pasteStaff(XmlReader& e, Segment* dst, staff_idx_t dstStaff, Fract
                                 // TODO: figure out a reasonable fudge factor to make sure shorten tuplets appropriately if we do ever copy a partial tuplet
                                 cr->setTicks(newLength);
                                 cr->setDurationType(newLength);
+                            }
+                        }
+                        if (!cr->tuplet()) {
+                            IF_ASSERT_FAILED(preparePasteDurationElement(score, tick, cr->actualTicksAt(tick), cr->track())) {
+                                e.skipCurrentElement();
+                                continue;
                             }
                         }
                         score->pasteChordRest(cr, tick);

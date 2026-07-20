@@ -35,6 +35,7 @@
     <metaTag name="workNumber"></metaTag>
     <metaTag name="workTitle">slurs</metaTag>
     <Part id="1">
+      <eid>YC_YC</eid>
       <Staff>
         <eid>C_C</eid>
         <StaffType group="pitched">
@@ -196,10 +197,6 @@
               <Slur>
                 <eid>T_T</eid>
                 <color r="170" g="0" b="0" a="255"/>
-                <SlurSegment no="0">
-                  <eid>U_U</eid>
-                  <color r="170" g="0" b="0" a="255"/>
-                  </SlurSegment>
                 <lineType>2</lineType>
                 </Slur>
               <next>

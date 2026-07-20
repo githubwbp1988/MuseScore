@@ -5,7 +5,7 @@
  * MuseScore Studio
  * Music Composition & Notation
  *
- * Copyright (C) 2021 MuseScore Limited
+ * Copyright (C) 2021 MuseScore Limited and others
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3 as
@@ -335,7 +335,6 @@ void Chord::setPlayEventType(mu::engraving::PlayEventType v)
 {
     // Only create undo operation if the value has changed.
     if (v != chord()->playEventType()) {
-        chord()->score()->setPlaylistDirty();
         chord()->score()->undo(new ChangeChordPlayEventType(chord(), v));
     }
 }

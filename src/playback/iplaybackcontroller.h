@@ -5,7 +5,7 @@
  * MuseScore Studio
  * Music Composition & Notation
  *
- * Copyright (C) 2025 MuseScore Limited
+ * Copyright (C) 2025 MuseScore Limited and others
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3 as
@@ -47,7 +47,7 @@ public:
     virtual muse::async::Notification isPlayAllowedChanged() const = 0;
 
     virtual bool isPlaying() const = 0;
-    virtual muse::async::Notification isPlayingChanged() const = 0;
+    // virtual muse::async::Notification isPlayingChanged() const = 0;
 
     virtual muse::async::Notification isPlayingScorePartChanged() {
         return muse::async::Notification();
@@ -55,7 +55,7 @@ public:
 
     virtual void reset() = 0;
 
-    virtual muse::async::Channel<muse::audio::secs_t, muse::midi::tick_t> currentPlaybackPositionChanged() const = 0;
+    // virtual muse::async::Channel<muse::audio::secs_t, muse::midi::tick_t> currentPlaybackPositionChanged() const = 0;
 
     virtual bool isPlaybackInited() const = 0;
     virtual muse::async::Channel<bool> playbackInitedChanged() const = 0;
@@ -72,9 +72,7 @@ public:
     virtual std::string auxChannelName(muse::audio::aux_channel_idx_t index) const = 0;
     virtual muse::async::Channel<muse::audio::aux_channel_idx_t, std::string> auxChannelNameChanged() const = 0;
 
-    virtual muse::async::Promise<muse::audio::SoundPresetList> availableSoundPresets(const engraving::InstrumentTrackId& instrumentTrackId)
-    const
-        = 0;
+    virtual muse::async::Promise<muse::audio::SoundPresetList> availableSoundPresets(const engraving::InstrumentTrackId& instrumentTrackId) const = 0;
 
     using SoloMuteState = notation::INotationSoloMuteState::SoloMuteState;
 

@@ -5,7 +5,7 @@
  * MuseScore Studio
  * Music Composition & Notation
  *
- * Copyright (C) 2021 MuseScore Limited
+ * Copyright (C) 2021 MuseScore Limited and others
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3 as
@@ -336,7 +336,7 @@ class Score : public apiv1::ScoreElement, public muse::Contextable
      * @q_property {Boolean}
      * @since 4.6
      */
-    Q_PROPERTY(bool markIrregularMeasures READ showSoundFlags WRITE setMarkIrregularMeasures)
+    Q_PROPERTY(bool markIrregularMeasures READ markIrregularMeasures WRITE setMarkIrregularMeasures)
 
     /** APIDOC
      * Whether instrument names are displayed

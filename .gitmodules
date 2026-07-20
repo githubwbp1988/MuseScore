@@ -1,0 +1,3 @@
+[submodule "muse_framework"]
+	path = muse
+	url = git@github.com:githubwbp1988/muse_framework.git

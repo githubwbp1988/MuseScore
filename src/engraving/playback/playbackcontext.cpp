@@ -5,7 +5,7 @@
  * MuseScore Studio
  * Music Composition & Notation
  *
- * Copyright (C) 2021 MuseScore Limited
+ * Copyright (C) 2021 MuseScore Limited and others
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3 as
@@ -24,18 +24,18 @@
 
 #include "dom/dynamic.h"
 #include "dom/hairpin.h"
+#include "dom/lyrics.h"
 #include "dom/measure.h"
+#include "dom/measurerepeat.h"
 #include "dom/part.h"
 #include "dom/playtechannotation.h"
-#include "dom/stafftext.h"
-#include "dom/soundflag.h"
 #include "dom/repeatlist.h"
 #include "dom/score.h"
 #include "dom/segment.h"
+#include "dom/soundflag.h"
 #include "dom/spanner.h"
-#include "dom/measurerepeat.h"
-#include "dom/lyrics.h"
-#include "dom/sticking.h"
+#include "dom/staff.h"
+#include "dom/stafftext.h"
 
 #include "utils/arrangementutils.h"
 #include "utils/expressionutils.h"

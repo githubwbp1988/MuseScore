@@ -5,7 +5,7 @@
  * MuseScore Studio
  * Music Composition & Notation
  *
- * Copyright (C) 2021 MuseScore Limited
+ * Copyright (C) 2021 MuseScore Limited and others
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3 as
@@ -157,7 +157,7 @@ EditStaffType::EditStaffType(const muse::modularity::ContextPtr& ctx, QWidget* p
     connect(templateReset,  &QPushButton::clicked, this, &EditStaffType::resetToTemplateClicked);
     connect(addToTemplates, &QPushButton::clicked, this, &EditStaffType::addToTemplatesClicked);
 
-    connect(editTextStyleButton, &QPushButton::clicked, this, [=]() {
+    connect(editTextStyleButton, &QPushButton::clicked, this, [this]() {
         UriQuery uri("musescore://notation/style");
         uri.addParam("currentPageCode", Val("text-styles"));
         uri.addParam("currentSubPageCode", Val("tab-fret-number"));
@@ -268,7 +268,6 @@ Ret EditStaffType::loadScore(mu::engraving::MasterScore* score, const muse::io::
     }
     score->rebuildMidiMapping();
     for (mu::engraving::Score* s : score->scoreList()) {
-        s->setPlaylistDirty();
         s->setLayoutAll();
     }
     score->updateChannel();

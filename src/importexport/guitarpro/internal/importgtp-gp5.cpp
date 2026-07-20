@@ -5,7 +5,7 @@
  * MuseScore Studio
  * Music Composition & Notation
  *
- * Copyright (C) 2021 MuseScore Limited
+ * Copyright (C) 2021 MuseScore Limited and others
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3 as
@@ -386,6 +386,11 @@ Fraction GuitarPro5::readBeat(const Fraction& tick, int voice, Measure* measure,
                 cr = nullptr;
             }
             delnote.clear();
+        }
+        if (cr && cr->isChord()) {
+            Chord* chord = toChord(cr);
+            chord->sortNotes();
+            mu::iex::guitarpro::utils::createGhostNoteParenGroups(chord);
         }
         createSlur(hasSlur, staffIdx, cr);
         if (lyrics) {
@@ -1110,6 +1115,7 @@ bool GuitarPro5::read(IODevice* io)
     m_continiousElementsBuilder->addElementsToScore();
     m_guitarBendImporter->applyBendsToChords();
     addGlissandos();
+    utils::addPlayCountTexts(score);
 
     return true;
 }

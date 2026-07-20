@@ -5,7 +5,7 @@
  * MuseScore Studio
  * Music Composition & Notation
  *
- * Copyright (C) 2021 MuseScore Limited
+ * Copyright (C) 2021 MuseScore Limited and others
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3 as
@@ -156,6 +156,7 @@ void CommandLineParser::init()
     m_parser.addOption(QCommandLineOption("fps", "Frame per second [60, 30, 24]", "24"));
     m_parser.addOption(QCommandLineOption("ls", "Pause before playback in seconds (3.0)", "3.0"));
     m_parser.addOption(QCommandLineOption("ts", "Pause before end of video in seconds (3.0)", "3.0"));
+    m_parser.addOption(QCommandLineOption("no-audio", "Export video without audio"));
 #endif
 
     m_parser.addOption(QCommandLineOption("gp-linked", "create tabulature linked staves for guitar pro"));
@@ -449,6 +450,10 @@ void CommandLineParser::parse(int argc, char** argv)
 
         if (m_parser.isSet("ts")) {
             m_options->exportVideo.trailingSec = doubleValue("ts");
+        }
+
+        if (m_parser.isSet("no-audio")) {
+            m_options->converterTask.params[MuseScoreCmdOptions::ParamKey::NoAudio] = true;
         }
     }
 #endif

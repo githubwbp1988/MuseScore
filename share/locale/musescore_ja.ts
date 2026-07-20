@@ -4,37 +4,37 @@
     <message>
         <location filename="../../src/notationscene/widgets/align_select.ui" line="64"/>
         <source>Left-align text within its bounding box</source>
-        <translation type="unfinished"/>
+        <translation>テキストを境界ボックス内で左揃え</translation>
     </message>
     <message>
         <location filename="../../src/notationscene/widgets/align_select.ui" line="89"/>
         <source>Horizontally center text within its bounding box</source>
-        <translation type="unfinished"/>
+        <translation>テキストを境界ボックス内で横方向に中央揃え</translation>
     </message>
     <message>
         <location filename="../../src/notationscene/widgets/align_select.ui" line="114"/>
         <source>Right-align text within its bounding box</source>
-        <translation type="unfinished"/>
+        <translation>テキストを境界ボックス内で右揃え</translation>
     </message>
     <message>
         <location filename="../../src/notationscene/widgets/align_select.ui" line="139"/>
         <source>Justify text to fill the available width</source>
-        <translation type="unfinished"/>
+        <translation>テキストを両端揃えして利用可能な幅を埋める</translation>
     </message>
     <message>
         <location filename="../../src/notationscene/widgets/align_select.ui" line="164"/>
         <source>Left-align text box to reference point</source>
-        <translation type="unfinished"/>
+        <translation>テキストボックスを基準点に左揃え</translation>
     </message>
     <message>
         <location filename="../../src/notationscene/widgets/align_select.ui" line="189"/>
         <source>Horizontally center text box to reference point</source>
-        <translation type="unfinished"/>
+        <translation>テキストボックスを基準点に横方向に中央揃え</translation>
     </message>
     <message>
         <location filename="../../src/notationscene/widgets/align_select.ui" line="214"/>
         <source>Right-align text box to reference point</source>
-        <translation type="unfinished"/>
+        <translation>テキストボックスを基準点に右揃え</translation>
     </message>
     <message>
         <location filename="../../src/notationscene/widgets/align_select.ui" line="262"/>
@@ -183,7 +183,7 @@
     <message>
         <location filename="../../src/palette/widgets/customizekitdialog.ui" line="281"/>
         <source>Staff line:</source>
-        <translation>五線:</translation>
+        <translation>譜線:</translation>
     </message>
     <message>
         <location filename="../../src/palette/widgets/customizekitdialog.ui" line="307"/>
@@ -1147,7 +1147,7 @@
         <location filename="../../src/notationscene/widgets/editstyle.ui" line="127"/>
         <location filename="../../src/notationscene/widgets/editstyle.ui" line="6943"/>
         <source>Chord brackets</source>
-        <translation type="unfinished"/>
+        <translation>和音の括弧</translation>
     </message>
     <message>
         <location filename="../../src/notationscene/widgets/editstyle.ui" line="132"/>
@@ -1196,7 +1196,7 @@
     <message>
         <location filename="../../src/notationscene/widgets/editstyle.ui" line="172"/>
         <source>Bends &amp; dives</source>
-        <translation type="unfinished"/>
+        <translation>ベンドとダイブ</translation>
     </message>
     <message>
         <location filename="../../src/notationscene/widgets/editstyle.ui" line="177"/>
@@ -1301,7 +1301,7 @@
     <message>
         <location filename="../../src/notationscene/widgets/editstyle.ui" line="390"/>
         <source>Musical text font:</source>
-        <translation>音楽用文字フォント:</translation>
+        <translation>音楽テキストフォント:</translation>
     </message>
     <message>
         <location filename="../../src/notationscene/widgets/editstyle.ui" line="434"/>
@@ -1640,7 +1640,7 @@ space unit</extracomment>
     <message>
         <location filename="../../src/notationscene/widgets/editstyle.ui" line="558"/>
         <source>Automatically hide all empty staves</source>
-        <translation>すべての空の譜表を自動的に隠す</translation>
+        <translation>すべての空の譜表を自動で隠す</translation>
     </message>
     <message>
         <location filename="../../src/notationscene/widgets/editstyle.ui" line="570"/>
@@ -1728,12 +1728,12 @@ space unit</extracomment>
     <message>
         <location filename="../../src/notationscene/widgets/editstyle.ui" line="757"/>
         <source>Sixteenth</source>
-        <translation type="unfinished"/>
+        <translation>16分</translation>
     </message>
     <message>
         <location filename="../../src/notationscene/widgets/editstyle.ui" line="781"/>
         <source>Swing ratio:</source>
-        <translation type="unfinished"/>
+        <translation>スウィング比率:</translation>
     </message>
     <message>
         <location filename="../../src/notationscene/widgets/editstyle.ui" line="831"/>
@@ -1839,7 +1839,7 @@ space unit</extracomment>
     <message>
         <location filename="../../src/notationscene/widgets/editstyle.ui" line="1477"/>
         <source>Reset &apos;Max. page fill distance&apos; value</source>
-        <translation>「ページ埋め時の譜表間隔の最大拡張量」の値をリセット</translation>
+        <translation>「最大のページ埋め間隔」の値をリセット</translation>
     </message>
     <message>
         <location filename="../../src/notationscene/widgets/editstyle.ui" line="1506"/>
@@ -1855,7 +1855,7 @@ space unit</extracomment>
     <message>
         <location filename="../../src/notationscene/widgets/editstyle.ui" line="1529"/>
         <source>Max. page fill distance:</source>
-        <translation>ページ埋め時の譜表間隔の最大拡張量:</translation>
+        <translation>最大のページ埋め間隔:</translation>
     </message>
     <message>
         <location filename="../../src/notationscene/widgets/editstyle.ui" line="1555"/>
@@ -2137,12 +2137,12 @@ space unit</extracomment>
     <message>
         <location filename="../../src/notationscene/widgets/editstyle.ui" line="2899"/>
         <source>Last system fill threshold:</source>
-        <translation>最後の段を右端まで延長するしきい値:</translation>
+        <translation>最後の段埋めしきい値:</translation>
     </message>
     <message>
         <location filename="../../src/notationscene/widgets/editstyle.ui" line="2934"/>
         <source>Reset &apos;Last system fill threshold&apos; value</source>
-        <translation>「最後の段を右端まで延長するしきい値」の値をリセット</translation>
+        <translation>「最後の段埋めしきい値」の値をリセット</translation>
     </message>
     <message>
         <location filename="../../src/notationscene/widgets/editstyle.ui" line="2957"/>
@@ -2350,7 +2350,7 @@ space unit</extracomment>
         <location filename="../../src/notationscene/widgets/editstyle.ui" line="4177"/>
         <location filename="../../src/notationscene/widgets/editstyle.ui" line="4401"/>
         <source>Symbol size:</source>
-        <translation type="unfinished"/>
+        <translation>記号の大きさ:</translation>
     </message>
     <message>
         <location filename="../../src/notationscene/widgets/editstyle.ui" line="4187"/>
@@ -2363,27 +2363,27 @@ space unit</extracomment>
         <location filename="../../src/notationscene/widgets/editstyle.ui" line="4249"/>
         <location filename="../../src/notationscene/widgets/editstyle.ui" line="4472"/>
         <source>Horizontal alignment:</source>
-        <translation type="unfinished"/>
+        <translation>横方向の整列:</translation>
     </message>
     <message>
         <location filename="../../src/notationscene/widgets/editstyle.ui" line="4259"/>
         <source>Center on the leftmost system barline</source>
-        <translation type="unfinished"/>
+        <translation>最左の段の縦線に中央揃え</translation>
     </message>
     <message>
         <location filename="../../src/notationscene/widgets/editstyle.ui" line="4266"/>
         <source>Align to the left page margin</source>
-        <translation type="unfinished"/>
+        <translation>左ページ余白に揃える</translation>
     </message>
     <message>
         <location filename="../../src/notationscene/widgets/editstyle.ui" line="4479"/>
         <source>Center on the rightmost system barline</source>
-        <translation type="unfinished"/>
+        <translation>最右の段の縦線に中央揃え</translation>
     </message>
     <message>
         <location filename="../../src/notationscene/widgets/editstyle.ui" line="4486"/>
         <source>Align to the right page margin</source>
-        <translation type="unfinished"/>
+        <translation>右ページ余白に揃える</translation>
     </message>
     <message>
         <location filename="../../src/notationscene/widgets/editstyle.ui" line="4574"/>
@@ -3449,7 +3449,7 @@ space unit</extracomment>
     <message>
         <location filename="../../src/notationscene/widgets/editstyle.ui" line="10434"/>
         <source>Reset &apos;Min. space between lyrics&apos; value</source>
-        <translation type="unfinished"/>
+        <translation>「歌詞間の最小間隔」の値をリセット</translation>
     </message>
     <message>
         <location filename="../../src/notationscene/widgets/editstyle.ui" line="10457"/>
@@ -3464,7 +3464,7 @@ space unit</extracomment>
     <message>
         <location filename="../../src/notationscene/widgets/editstyle.ui" line="10506"/>
         <source>Min. margin to other staves:</source>
-        <translation>他の譜表への最小のマージン:</translation>
+        <translation>他の譜表への最小の余白:</translation>
     </message>
     <message>
         <location filename="../../src/notationscene/widgets/editstyle.ui" line="10532"/>
@@ -3474,7 +3474,7 @@ space unit</extracomment>
     <message>
         <location filename="../../src/notationscene/widgets/editstyle.ui" line="10554"/>
         <source>Min. margin to current staff:</source>
-        <translation>現在の譜表への最小のマージン:</translation>
+        <translation>現在の譜表への最小の余白:</translation>
     </message>
     <message>
         <location filename="../../src/notationscene/widgets/editstyle.ui" line="10592"/>
@@ -3891,22 +3891,22 @@ followed by dashes</source>
     <message>
         <location filename="../../src/notationscene/widgets/editstyle.ui" line="12582"/>
         <source>Symbol font scale:</source>
-        <translation type="unfinished"/>
+        <translation>記号フォントの大きさ:</translation>
     </message>
     <message>
         <location filename="../../src/notationscene/widgets/editstyle.ui" line="12611"/>
         <source>Reset &apos;Symbol font scale&apos; value</source>
-        <translation type="unfinished"/>
+        <translation>「記号フォントの大きさ」の値をリセット</translation>
     </message>
     <message>
         <location filename="../../src/notationscene/widgets/editstyle.ui" line="12621"/>
         <source>Text font size:</source>
-        <translation type="unfinished"/>
+        <translation>テキストフォントサイズ:</translation>
     </message>
     <message>
         <location filename="../../src/notationscene/widgets/editstyle.ui" line="12647"/>
         <source>Reset &apos;Text font size&apos; value</source>
-        <translation type="unfinished"/>
+        <translation>「テキストフォントサイズ」の値をリセット</translation>
     </message>
     <message>
         <location filename="../../src/notationscene/widgets/editstyle.ui" line="12887"/>
@@ -3977,7 +3977,7 @@ followed by dashes</source>
         <location filename="../../src/notationscene/widgets/editstyle.ui" line="13039"/>
         <location filename="../../src/notationscene/widgets/editstyle.ui" line="13075"/>
         <source>Reset &apos;Border&apos; value</source>
-        <translation>「枠線」の値をリセット</translation>
+        <translation>「枠」の値をリセット</translation>
     </message>
     <message>
         <location filename="../../src/notationscene/widgets/editstyle.ui" line="13026"/>
@@ -3997,7 +3997,7 @@ followed by dashes</source>
     <message>
         <location filename="../../src/notationscene/widgets/editstyle.ui" line="12974"/>
         <source>Border:</source>
-        <translation>枠線:</translation>
+        <translation>枠:</translation>
     </message>
     <message>
         <location filename="../../src/notationscene/widgets/editstyle.ui" line="12984"/>
@@ -4125,7 +4125,7 @@ followed by dashes</source>
     <message>
         <location filename="../../src/palette/widgets/keyedit.ui" line="131"/>
         <source>Add time signature to master palette</source>
-        <translation>拍子記号をマスターパレットに追加</translation>
+        <translation>マスターパレットに拍子記号を追加</translation>
     </message>
     <message>
         <location filename="../../src/palette/widgets/keyedit.ui" line="134"/>
@@ -4738,12 +4738,12 @@ followed by dashes</source>
     <message>
         <location filename="../../src/notationscene/widgets/stafftextpropertiesdialog.ui" line="93"/>
         <source>Sixteenth</source>
-        <translation type="unfinished"/>
+        <translation>16分</translation>
     </message>
     <message>
         <location filename="../../src/notationscene/widgets/stafftextpropertiesdialog.ui" line="112"/>
         <source>Swing ratio:</source>
-        <translation type="unfinished"/>
+        <translation>スウィング比率:</translation>
     </message>
 </context>
 <context>
@@ -4836,7 +4836,7 @@ followed by dashes</source>
     <message>
         <location filename="../../src/palette/widgets/timedialog.ui" line="293"/>
         <source>Add time signature to master palette</source>
-        <translation>マスターパレットに拍子記号を追加　</translation>
+        <translation>マスターパレットに拍子記号を追加</translation>
     </message>
     <message>
         <location filename="../../src/palette/widgets/timedialog.ui" line="296"/>
@@ -5430,7 +5430,7 @@ followed by dashes</source>
     <message>
         <location filename="../../src/appshell/internal/applicationuiactions.cpp" line="92"/>
         <source>Accessibility &amp;statement</source>
-        <translation>アクセシビリティステートメント(&amp;S)</translation>
+        <translation>アクセシビリティに関する声明(&amp;S)</translation>
     </message>
     <message>
         <location filename="../../src/appshell/internal/applicationuiactions.cpp" line="97"/>
@@ -5708,7 +5708,7 @@ followed by dashes</source>
     <message>
         <location filename="../../src/appshell/qml/MuseScore/AppShell/appmenumodel.cpp" line="215"/>
         <source>Parts…</source>
-        <translation>パート譜…</translation>
+        <translation>パート…</translation>
     </message>
     <message>
         <location filename="../../src/appshell/qml/MuseScore/AppShell/appmenumodel.cpp" line="282"/>
@@ -5747,7 +5747,7 @@ followed by dashes</source>
     <message>
         <location filename="../../src/framework/diagnostics/internal/diagnosticsactions.cpp" line="43"/>
         <source>Show paths</source>
-        <translation type="unfinished"/>
+        <translation>パスを表示</translation>
     </message>
     <message>
         <location filename="../../src/framework/diagnostics/internal/diagnosticsactions.cpp" line="48"/>
@@ -5757,7 +5757,7 @@ followed by dashes</source>
     <message>
         <location filename="../../src/framework/diagnostics/internal/diagnosticsactions.cpp" line="49"/>
         <source>Show profiler</source>
-        <translation type="unfinished"/>
+        <translation>プロファイラを表示</translation>
     </message>
     <message>
         <location filename="../../src/framework/diagnostics/internal/diagnosticsactions.cpp" line="54"/>
@@ -5767,7 +5767,7 @@ followed by dashes</source>
     <message>
         <location filename="../../src/framework/diagnostics/internal/diagnosticsactions.cpp" line="55"/>
         <source>Show graphics info</source>
-        <translation type="unfinished"/>
+        <translation>グラフィックの情報を表示</translation>
     </message>
     <message>
         <location filename="../../src/framework/diagnostics/internal/diagnosticsactions.cpp" line="60"/>
@@ -5777,7 +5777,7 @@ followed by dashes</source>
     <message>
         <location filename="../../src/framework/diagnostics/internal/diagnosticsactions.cpp" line="61"/>
         <source>Show navigation tree</source>
-        <translation type="unfinished"/>
+        <translation>ナビゲーションツリーを表示</translation>
     </message>
     <message>
         <location filename="../../src/framework/diagnostics/internal/diagnosticsactions.cpp" line="66"/>
@@ -5787,7 +5787,7 @@ followed by dashes</source>
     <message>
         <location filename="../../src/framework/diagnostics/internal/diagnosticsactions.cpp" line="67"/>
         <source>Show accessibility tree</source>
-        <translation type="unfinished"/>
+        <translation>アクセシビリティツリーを表示</translation>
     </message>
     <message>
         <location filename="../../src/framework/diagnostics/internal/diagnosticsactions.cpp" line="72"/>
@@ -5797,7 +5797,7 @@ followed by dashes</source>
     <message>
         <location filename="../../src/framework/diagnostics/internal/diagnosticsactions.cpp" line="73"/>
         <source>Dump accessibility tree to console</source>
-        <translation type="unfinished"/>
+        <translation>アクセシビリティツリーをコンソールにダンプ</translation>
     </message>
     <message>
         <location filename="../../src/framework/diagnostics/internal/diagnosticsactions.cpp" line="78"/>
@@ -5807,37 +5807,37 @@ followed by dashes</source>
     <message>
         <location filename="../../src/framework/diagnostics/internal/diagnosticsactions.cpp" line="79"/>
         <source>Show engraving elements</source>
-        <translation type="unfinished"/>
+        <translation>浄書要素を表示</translation>
     </message>
     <message>
         <location filename="../../src/framework/diagnostics/internal/diagnosticsactions.cpp" line="84"/>
         <source>Show engraving &amp;undo stack</source>
-        <translation type="unfinished"/>
+        <translation>浄書元に戻すスタックを表示 (&amp;U)</translation>
     </message>
     <message>
         <location filename="../../src/framework/diagnostics/internal/diagnosticsactions.cpp" line="85"/>
         <source>Show engraving undo stack</source>
-        <translation type="unfinished"/>
+        <translation>浄書元に戻すスタックを表示</translation>
     </message>
     <message>
         <location filename="../../src/framework/diagnostics/internal/diagnosticsactions.cpp" line="90"/>
         <source>Show engraving &amp;style options list</source>
-        <translation type="unfinished"/>
+        <translation>浄書スタイルオプション一覧を表示(&amp;S)</translation>
     </message>
     <message>
         <location filename="../../src/framework/diagnostics/internal/diagnosticsactions.cpp" line="91"/>
         <source>Show engraving style options list</source>
-        <translation type="unfinished"/>
+        <translation>浄書スタイルオプション一覧を表示</translation>
     </message>
     <message>
         <location filename="../../src/framework/diagnostics/internal/diagnosticsactions.cpp" line="96"/>
         <source>Show &amp;actions list</source>
-        <translation>操作リストを表示(&amp;A)</translation>
+        <translation>操作一覧を表示(&amp;A)</translation>
     </message>
     <message>
         <location filename="../../src/framework/diagnostics/internal/diagnosticsactions.cpp" line="97"/>
         <source>Show actions list</source>
-        <translation type="unfinished"/>
+        <translation>操作一覧を表示</translation>
     </message>
     <message>
         <location filename="../../src/framework/extensions/internal/extensionsuiactions.cpp" line="39"/>
@@ -6444,7 +6444,7 @@ followed by dashes</source>
     <message>
         <location filename="../../src/notationscene/internal/notationuiactions.cpp" line="397"/>
         <source>Select similar elements with more options</source>
-        <translation type="unfinished"/>
+        <translation>より多くのオプションで類似した要素を選択</translation>
     </message>
     <message>
         <location filename="../../src/notationscene/internal/notationuiactions.cpp" line="402"/>
@@ -6454,7 +6454,7 @@ followed by dashes</source>
     <message>
         <location filename="../../src/notationscene/internal/notationuiactions.cpp" line="403"/>
         <source>Format style</source>
-        <translation type="unfinished"/>
+        <translation>スタイルをフォーマット</translation>
     </message>
     <message>
         <location filename="../../src/notationscene/internal/notationuiactions.cpp" line="408"/>
@@ -6540,7 +6540,7 @@ followed by dashes</source>
         <location filename="../../src/notationscene/internal/notationuiactions.cpp" line="457"/>
         <location filename="../../src/notationscene/internal/notationuiactions.cpp" line="458"/>
         <source>Extend to next note</source>
-        <translation type="unfinished"/>
+        <translation>次の音符まで延長</translation>
     </message>
     <message>
         <location filename="../../src/notationscene/internal/notationuiactions.cpp" line="463"/>
@@ -6555,7 +6555,7 @@ followed by dashes</source>
     <message>
         <location filename="../../src/notationscene/internal/notationuiactions.cpp" line="470"/>
         <source>Fill with &amp;slashes</source>
-        <translation type="unfinished"/>
+        <translation>スラッシュで埋める(&amp;S)</translation>
     </message>
     <message>
         <location filename="../../src/notationscene/internal/notationuiactions.cpp" line="471"/>
@@ -6585,22 +6585,22 @@ followed by dashes</source>
     <message>
         <location filename="../../src/notationscene/internal/notationuiactions.cpp" line="488"/>
         <source>Respell pitches with &amp;sharps</source>
-        <translation type="unfinished"/>
+        <translation>音高をシャープで再表記(&amp;S)</translation>
     </message>
     <message>
         <location filename="../../src/notationscene/internal/notationuiactions.cpp" line="489"/>
         <source>Respell pitches with sharps</source>
-        <translation type="unfinished"/>
+        <translation>音高をシャープで再表記</translation>
     </message>
     <message>
         <location filename="../../src/notationscene/internal/notationuiactions.cpp" line="494"/>
         <source>Respell pitches with &amp;flats</source>
-        <translation type="unfinished"/>
+        <translation>音高をフラットで再表記(&amp;F)</translation>
     </message>
     <message>
         <location filename="../../src/notationscene/internal/notationuiactions.cpp" line="495"/>
         <source>Respell pitches with flats</source>
-        <translation type="unfinished"/>
+        <translation>音高をフラットで再表記</translation>
     </message>
     <message>
         <location filename="../../src/notationscene/internal/notationuiactions.cpp" line="500"/>
@@ -6625,7 +6625,7 @@ followed by dashes</source>
     <message>
         <location filename="../../src/notationscene/internal/notationuiactions.cpp" line="512"/>
         <source>U&amp;nroll repeats</source>
-        <translation type="unfinished"/>
+        <translation>繰り返しを展開 (&amp;N)</translation>
     </message>
     <message>
         <location filename="../../src/notationscene/internal/notationuiactions.cpp" line="513"/>
@@ -6875,7 +6875,7 @@ followed by dashes</source>
     <message>
         <location filename="../../src/notationscene/internal/notationuiactions.cpp" line="693"/>
         <source>&amp;Insert one measure before selection</source>
-        <translation type="unfinished"/>
+        <translation>選択範囲の前に小節を1つ挿入(&amp;I)</translation>
     </message>
     <message>
         <location filename="../../src/notationscene/internal/notationuiactions.cpp" line="694"/>
@@ -6885,17 +6885,17 @@ followed by dashes</source>
     <message>
         <location filename="../../src/notationscene/internal/notationuiactions.cpp" line="701"/>
         <source>Insert measures before selection</source>
-        <translation type="unfinished"/>
+        <translation>選択範囲の前に小節を挿入</translation>
     </message>
     <message>
         <location filename="../../src/notationscene/internal/notationuiactions.cpp" line="707"/>
         <source>Insert measures after selection</source>
-        <translation type="unfinished"/>
+        <translation>選択範囲の後に小節を挿入</translation>
     </message>
     <message>
         <location filename="../../src/notationscene/internal/notationuiactions.cpp" line="713"/>
         <source>Insert measures at start of score</source>
-        <translation type="unfinished"/>
+        <translation>スコアの始めに小節を挿入</translation>
     </message>
     <message>
         <location filename="../../src/notationscene/internal/notationuiactions.cpp" line="719"/>
@@ -6920,7 +6920,7 @@ followed by dashes</source>
     <message>
         <location filename="../../src/notationscene/internal/notationuiactions.cpp" line="718"/>
         <source>Insert &amp;one measure at end of score</source>
-        <translation type="unfinished"/>
+        <translation>スコアの終わりに小節を1つ挿入(&amp;O)</translation>
     </message>
     <message>
         <location filename="../../src/notationscene/internal/notationuiactions.cpp" line="724"/>
@@ -6930,7 +6930,7 @@ followed by dashes</source>
     <message>
         <location filename="../../src/notationscene/internal/notationuiactions.cpp" line="725"/>
         <source>Insert measures at end of score</source>
-        <translation type="unfinished"/>
+        <translation>スコアの終わりに小節を挿入</translation>
     </message>
     <message>
         <location filename="../../src/notationscene/internal/notationuiactions.cpp" line="730"/>
@@ -7526,7 +7526,7 @@ followed by dashes</source>
     <message>
         <location filename="../../src/notationscene/internal/notationuiactions.cpp" line="1350"/>
         <source>E&amp;xpression text</source>
-        <translation>発想標語(&amp;X)</translation>
+        <translation>発想標語テキスト(&amp;X)</translation>
     </message>
     <message>
         <location filename="../../src/notationscene/internal/notationuiactions.cpp" line="1351"/>
@@ -7721,7 +7721,7 @@ followed by dashes</source>
     <message>
         <location filename="../../src/notationscene/internal/notationuiactions.cpp" line="1465"/>
         <source>Enter tuplet: other</source>
-        <translation type="unfinished"/>
+        <translation>連符を入力: その他</translation>
     </message>
     <message>
         <location filename="../../src/notationscene/internal/notationuiactions.cpp" line="1470"/>
@@ -9147,7 +9147,7 @@ followed by dashes</source>
         <location filename="../../src/notationscene/internal/notationuiactions.cpp" line="2555"/>
         <location filename="../../src/notationscene/internal/notationuiactions.cpp" line="2556"/>
         <source>Pre-bend</source>
-        <translation>プリベンド</translation>
+        <translation>プレベンド</translation>
     </message>
     <message>
         <location filename="../../src/notationscene/internal/notationuiactions.cpp" line="2562"/>
@@ -9166,14 +9166,14 @@ followed by dashes</source>
         <location filename="../../src/notationscene/internal/notationuiactions.cpp" line="2578"/>
         <source>Dive</source>
         <extracomment>Standard guitar dive, i.e. a movement of the tremolo bar between two pitches</extracomment>
-        <translation>ドライブ</translation>
+        <translation>ダイブ</translation>
     </message>
     <message>
         <location filename="../../src/notationscene/internal/notationuiactions.cpp" line="2585"/>
         <location filename="../../src/notationscene/internal/notationuiactions.cpp" line="2586"/>
         <source>Pre-dive</source>
         <extracomment>Pre-dive, i.e. a movement of the tremolo bar prepared before picking the note</extracomment>
-        <translation type="unfinished"/>
+        <translation>プレダイブ</translation>
     </message>
     <message>
         <location filename="../../src/notationscene/internal/notationuiactions.cpp" line="2593"/>
@@ -9345,7 +9345,7 @@ followed by dashes</source>
         <location filename="../../src/notationscene/internal/notationuiactions.cpp" line="2747"/>
         <location filename="../../src/notationscene/internal/notationuiactions.cpp" line="2748"/>
         <source>Show gap rests</source>
-        <translation type="unfinished"/>
+        <translation>ギャップ休符を表示</translation>
     </message>
     <message>
         <location filename="../../src/notationscene/internal/notationuiactions.cpp" line="2754"/>
@@ -9355,12 +9355,12 @@ followed by dashes</source>
     <message>
         <location filename="../../src/palette/internal/paletteuiactions.cpp" line="41"/>
         <source>&amp;Master palette…</source>
-        <translation type="unfinished"/>
+        <translation>マスターパレット…(&amp;M)</translation>
     </message>
     <message>
         <location filename="../../src/palette/internal/paletteuiactions.cpp" line="42"/>
         <source>Open master palette</source>
-        <translation type="unfinished"/>
+        <translation>マスターパレットを開く</translation>
     </message>
     <message>
         <location filename="../../src/palette/internal/paletteuiactions.cpp" line="48"/>
@@ -9418,7 +9418,7 @@ followed by dashes</source>
         <location filename="../../src/playback/internal/playbackuiactions.cpp" line="49"/>
         <location filename="../../src/playback/internal/playbackuiactions.cpp" line="50"/>
         <source>Play from selection</source>
-        <translation type="unfinished"/>
+        <translation>選択範囲から再生</translation>
     </message>
     <message>
         <location filename="../../src/playback/internal/playbackuiactions.cpp" line="70"/>
@@ -9443,7 +9443,7 @@ followed by dashes</source>
     <message>
         <location filename="../../src/playback/internal/playbackuiactions.cpp" line="57"/>
         <source>Pause playback</source>
-        <translation type="unfinished"/>
+        <translation>再生を一時停止</translation>
     </message>
     <message>
         <location filename="../../src/playback/internal/playbackuiactions.cpp" line="64"/>
@@ -9639,7 +9639,7 @@ followed by dashes</source>
     <message>
         <location filename="../../src/project/internal/projectuiactions.cpp" line="71"/>
         <source>Save a copy</source>
-        <translation type="unfinished"/>
+        <translation>コピーを保存</translation>
     </message>
     <message>
         <location filename="../../src/project/internal/projectuiactions.cpp" line="76"/>
@@ -9649,7 +9649,7 @@ followed by dashes</source>
     <message>
         <location filename="../../src/project/internal/projectuiactions.cpp" line="77"/>
         <source>Save selection</source>
-        <translation>選択内容の保存</translation>
+        <translation>選択範囲を保存</translation>
     </message>
     <message>
         <location filename="../../src/project/internal/projectuiactions.cpp" line="82"/>
@@ -9699,7 +9699,7 @@ followed by dashes</source>
     <message>
         <location filename="../../src/project/internal/projectuiactions.cpp" line="111"/>
         <source>Import PDF</source>
-        <translation>PDFのインポート</translation>
+        <translation>PDFをインポート</translation>
     </message>
     <message>
         <location filename="../../src/project/internal/projectuiactions.cpp" line="117"/>
@@ -9937,12 +9937,12 @@ This action will not delete any of your scores.</source>
         <translation>再起動</translation>
     </message>
     <message>
-        <location filename="../../src/appshell/internal/startupscenario.cpp" line="337"/>
+        <location filename="../../src/appshell/internal/startupscenario.cpp" line="332"/>
         <source>The previous session quit unexpectedly.</source>
         <translation>前回のセッションは予期せず終了しました。</translation>
     </message>
     <message>
-        <location filename="../../src/appshell/internal/startupscenario.cpp" line="338"/>
+        <location filename="../../src/appshell/internal/startupscenario.cpp" line="333"/>
         <source>Do you want to restore the session?</source>
         <translation>セッションを復元しますか？</translation>
     </message>
@@ -9967,12 +9967,7 @@ This action will not delete any of your scores.</source>
         <translation>開発ツール</translation>
     </message>
     <message>
-        <location filename="../../src/appshell/widgets/splashscreen/loadingscreenview.cpp" line="54"/>
-        <source>Loading…‎</source>
-        <translation>ロード中…</translation>
-    </message>
-    <message>
-        <location filename="../../src/appshell/widgets/splashscreen/loadingscreenview.cpp" line="99"/>
+        <location filename="../../src/appshell/widgets/splashscreen/loadingscreenview.cpp" line="93"/>
         <source>Version %1</source>
         <translation>バージョン %1</translation>
     </message>
@@ -9984,7 +9979,7 @@ This action will not delete any of your scores.</source>
     <message>
         <location filename="../../src/appshell/widgets/splashscreen/newinstanceloadingscreenview.cpp" line="44"/>
         <source>Loading “%1”…‎</source>
-        <translation>「%1」をロード中…</translation>
+        <translation>『%1』をロード中…</translation>
     </message>
     <message>
         <location filename="../../src/appshell/widgets/splashscreen/newinstanceloadingscreenview.cpp" line="50"/>
@@ -10046,9 +10041,10 @@ This action cannot be undone.</source>
     </message>
     <message>
         <location filename="../../src/appshell/qml/MuseScore/AppShell/AboutDialog.qml" line="141"/>
-        <source>Copyright © 1999-2026 MuseScore Limited.
+        <source>Copyright © 1999-2026 MuseScore Limited and others.
 Published under the &lt;a href=&quot;%1&quot;&gt;GNU General Public License version 3&lt;/a&gt;.</source>
-        <translation type="unfinished"/>
+        <translation>Copyright © 1999-2026 MuseScore Limited and others.
+&lt;a href=&quot;%1&quot;&gt;GNU一般公衆ライセンスバージョン3&lt;/a&gt; の下で公開。</translation>
     </message>
     <message>
         <location filename="../../src/appshell/qml/MuseScore/AppShell/AboutMusicXMLDialog.qml" line="33"/>
@@ -10261,42 +10257,42 @@ Published under the &lt;a href=&quot;%1&quot;&gt;GNU General Public License vers
         <translation>&amp;MuseSampler</translation>
     </message>
     <message>
-        <location filename="../../src/appshell/qml/MuseScore/AppShell/appmenumodel.cpp" line="564"/>
+        <location filename="../../src/appshell/qml/MuseScore/AppShell/appmenumodel.cpp" line="566"/>
         <source>A&amp;ctions</source>
         <translation>操作(&amp;C)</translation>
     </message>
     <message>
-        <location filename="../../src/appshell/qml/MuseScore/AppShell/appmenumodel.cpp" line="565"/>
+        <location filename="../../src/appshell/qml/MuseScore/AppShell/appmenumodel.cpp" line="567"/>
         <source>&amp;Accessibility</source>
         <translation>アクセシビリティ(&amp;A)</translation>
     </message>
     <message>
-        <location filename="../../src/appshell/qml/MuseScore/AppShell/appmenumodel.cpp" line="566"/>
+        <location filename="../../src/appshell/qml/MuseScore/AppShell/appmenumodel.cpp" line="568"/>
         <source>&amp;Engraving</source>
         <translation>浄書(&amp;E)</translation>
     </message>
     <message>
-        <location filename="../../src/appshell/qml/MuseScore/AppShell/appmenumodel.cpp" line="567"/>
+        <location filename="../../src/appshell/qml/MuseScore/AppShell/appmenumodel.cpp" line="569"/>
         <source>E&amp;xtensions</source>
         <translation>拡張機能(&amp;X)</translation>
     </message>
     <message>
-        <location filename="../../src/appshell/qml/MuseScore/AppShell/appmenumodel.cpp" line="568"/>
+        <location filename="../../src/appshell/qml/MuseScore/AppShell/appmenumodel.cpp" line="570"/>
         <source>Auto&amp;bot</source>
         <translation>自動ボット(&amp;B)</translation>
     </message>
     <message>
-        <location filename="../../src/appshell/qml/MuseScore/AppShell/appmenumodel.cpp" line="569"/>
+        <location filename="../../src/appshell/qml/MuseScore/AppShell/appmenumodel.cpp" line="573"/>
         <source>&amp;VST</source>
         <translation>VST(&amp;V)</translation>
     </message>
     <message>
-        <location filename="../../src/appshell/qml/MuseScore/AppShell/appmenumodel.cpp" line="570"/>
+        <location filename="../../src/appshell/qml/MuseScore/AppShell/appmenumodel.cpp" line="576"/>
         <source>&amp;Audio</source>
-        <translation type="unfinished"/>
+        <translation>&amp;オーディオ</translation>
     </message>
     <message>
-        <location filename="../../src/appshell/qml/MuseScore/AppShell/appmenumodel.cpp" line="574"/>
+        <location filename="../../src/appshell/qml/MuseScore/AppShell/appmenumodel.cpp" line="580"/>
         <location filename="../../src/web/appshell/view/appmenumodel.cpp" line="291"/>
         <source>&amp;Diagnostics</source>
         <translation>診断(&amp;D)</translation>
@@ -10383,7 +10379,7 @@ Published under the &lt;a href=&quot;%1&quot;&gt;GNU General Public License vers
     <message>
         <location filename="../../src/appshell/qml/MuseScore/AppShell/appmenumodel.cpp" line="412"/>
         <source>Enharmonic spelling</source>
-        <translation type="unfinished"/>
+        <translation>異名同音表記</translation>
     </message>
     <message>
         <location filename="../../src/appshell/qml/MuseScore/AppShell/appmenumodel.cpp" line="425"/>
@@ -10424,10 +10420,10 @@ Published under the &lt;a href=&quot;%1&quot;&gt;GNU General Public License vers
     <message>
         <location filename="../../src/preferences/qml/MuseScore/Preferences/internal/MidiSection.qml" line="63"/>
         <source>Round tempos to nearest whole number</source>
-        <translation type="unfinished"/>
+        <translation>テンポを最も近い整数に丸める</translation>
     </message>
     <message>
-        <location filename="../../src/preferences/qml/MuseScore/Preferences/commonaudioapiconfigurationmodel.cpp" line="97"/>
+        <location filename="../../src/preferences/qml/MuseScore/Preferences/commonaudioapiconfigurationmodel.cpp" line="99"/>
         <source>The driver for this device could not be opened.</source>
         <translation type="unfinished"/>
     </message>
@@ -10455,62 +10451,62 @@ Published under the &lt;a href=&quot;%1&quot;&gt;GNU General Public License vers
         <translation>起動時にようこそダイアログを表示しない</translation>
     </message>
     <message>
-        <location filename="../../src/appshell/qml/MuseScore/AppShell/welcomedialogmodel.cpp" line="33"/>
+        <location filename="../../src/appshell/qml/MuseScore/AppShell/welcomedialogmodel.cpp" line="41"/>
         <source>Enjoy free cloud storage</source>
         <translation>無料のクラウドストレージを活用する</translation>
     </message>
     <message>
-        <location filename="../../src/appshell/qml/MuseScore/AppShell/welcomedialogmodel.cpp" line="35"/>
+        <location filename="../../src/appshell/qml/MuseScore/AppShell/welcomedialogmodel.cpp" line="43"/>
         <source>Save your scores privately on MuseScore.com to revisit past versions and invite others to view and comment – and when you’re ready, share your music with the world.</source>
         <translation>楽譜を MuseScore.com にプライベート保存すれば、過去のバージョンを振り返ったり、他の人を招待して閲覧やコメントをもらったりすることができます。そして準備ができたら、あなたの音楽を世界中に公開しましょう。</translation>
     </message>
     <message>
-        <location filename="../../src/appshell/qml/MuseScore/AppShell/welcomedialogmodel.cpp" line="37"/>
+        <location filename="../../src/appshell/qml/MuseScore/AppShell/welcomedialogmodel.cpp" line="45"/>
         <source>View my scores online</source>
         <translation>オンラインで自分の楽譜を見る</translation>
     </message>
     <message>
-        <location filename="../../src/appshell/qml/MuseScore/AppShell/welcomedialogmodel.cpp" line="42"/>
+        <location filename="../../src/appshell/qml/MuseScore/AppShell/welcomedialogmodel.cpp" line="33"/>
         <source>What’s new in MuseScore Studio</source>
         <translation>MuseScore Studio の新着情報</translation>
     </message>
     <message>
-        <location filename="../../src/appshell/qml/MuseScore/AppShell/welcomedialogmodel.cpp" line="44"/>
-        <source>Includes a new system for hiding empty staves, a new text editing widget, guitar notation improvements, engraving improvements and more.</source>
-        <translation>空の譜表を非表示にする新しいシステム、新しいテキスト編集ウィジェット、ギター記譜の改善、浄書機能の改善など、さまざまな機能が加わりました。</translation>
+        <location filename="../../src/appshell/qml/MuseScore/AppShell/welcomedialogmodel.cpp" line="35"/>
+        <source>Includes essential new engraving tools, major improvements to playback, video export, dive notation for guitar, and features to speed up your workflow.</source>
+        <translation>主要な新しい浄書ツール、再生機能の大幅な改善、動画エクスポート、ギター用のダイブ記譜、およびワークフローを高速化する機能が含まれています。</translation>
     </message>
     <message>
-        <location filename="../../src/appshell/qml/MuseScore/AppShell/welcomedialogmodel.cpp" line="46"/>
+        <location filename="../../src/appshell/qml/MuseScore/AppShell/welcomedialogmodel.cpp" line="37"/>
         <source>Watch video</source>
         <translation>動画を見る</translation>
     </message>
     <message>
-        <location filename="../../src/appshell/qml/MuseScore/AppShell/welcomedialogmodel.cpp" line="51"/>
+        <location filename="../../src/appshell/qml/MuseScore/AppShell/welcomedialogmodel.cpp" line="50"/>
         <source>Install our free MuseSounds libraries</source>
         <translation>無料の MuseSounds ライブラリをインストール</translation>
     </message>
     <message>
-        <location filename="../../src/appshell/qml/MuseScore/AppShell/welcomedialogmodel.cpp" line="53"/>
+        <location filename="../../src/appshell/qml/MuseScore/AppShell/welcomedialogmodel.cpp" line="52"/>
         <source>Explore our collection of realistic sample libraries, including solo instruments, marching percussion, and full orchestra - available for free on MuseHub.</source>
         <translation>ソロ楽器、マーチング打楽器、フルオーケストラなど、リアルなサンプルライブラリのコレクションをお試しください。MuseHub から無料で取得できます。</translation>
     </message>
     <message>
-        <location filename="../../src/appshell/qml/MuseScore/AppShell/welcomedialogmodel.cpp" line="55"/>
+        <location filename="../../src/appshell/qml/MuseScore/AppShell/welcomedialogmodel.cpp" line="54"/>
         <source>Get it on MuseHub</source>
         <translation>MuseHub で取得</translation>
     </message>
     <message>
-        <location filename="../../src/appshell/qml/MuseScore/AppShell/welcomedialogmodel.cpp" line="60"/>
+        <location filename="../../src/appshell/qml/MuseScore/AppShell/welcomedialogmodel.cpp" line="59"/>
         <source>Explore our tutorials</source>
         <translation>チュートリアルを探す</translation>
     </message>
     <message>
-        <location filename="../../src/appshell/qml/MuseScore/AppShell/welcomedialogmodel.cpp" line="62"/>
+        <location filename="../../src/appshell/qml/MuseScore/AppShell/welcomedialogmodel.cpp" line="61"/>
         <source>We’ve put together a playlist of tutorials to help both beginners and experienced users get the most out of MuseScore Studio.</source>
         <translation>初心者から経験者まで、すべてのユーザーが MuseScore Studio を最大限に活用できるよう、チュートリアルの再生リストをご用意しました。</translation>
     </message>
     <message>
-        <location filename="../../src/appshell/qml/MuseScore/AppShell/welcomedialogmodel.cpp" line="64"/>
+        <location filename="../../src/appshell/qml/MuseScore/AppShell/welcomedialogmodel.cpp" line="63"/>
         <source>View tutorials</source>
         <translation>チュートリアルを見る</translation>
     </message>
@@ -10529,7 +10525,7 @@ Published under the &lt;a href=&quot;%1&quot;&gt;GNU General Public License vers
     <message>
         <location filename="../../src/framework/audio/main/platform/general/generalsoundfontcontroller.cpp" line="52"/>
         <source>Do you want to add SoundFont %1?</source>
-        <translation type="unfinished"/>
+        <translation>サウンドフォント %1 を追加しますか？</translation>
     </message>
     <message>
         <location filename="../../src/framework/audio/main/platform/general/generalsoundfontcontroller.cpp" line="72"/>
@@ -10554,8 +10550,8 @@ Published under the &lt;a href=&quot;%1&quot;&gt;GNU General Public License vers
         <translation>ミキサーパネルで楽器にサウンドフォントを割り当てることができます。</translation>
     </message>
     <message>
-        <location filename="../../src/framework/audioplugins/internal/registeraudiopluginsscenario.cpp" line="123"/>
-        <location filename="../../src/framework/audioplugins/tests/registeraudiopluginsscenariotest.cpp" line="162"/>
+        <location filename="../../src/framework/audioplugins/internal/registeraudiopluginsscenario.cpp" line="121"/>
+        <location filename="../../src/framework/audioplugins/tests/registeraudiopluginsscenariotest.cpp" line="161"/>
         <source>Scanning audio plugins</source>
         <translation>オーディオプラグインをスキャン中</translation>
     </message>
@@ -10659,9 +10655,9 @@ Published under the &lt;a href=&quot;%1&quot;&gt;GNU General Public License vers
 <context>
     <name>debugOption</name>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="8416"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="8424"/>
         <source>Toggle show gap rests</source>
-        <translation type="unfinished"/>
+        <translation>ギャップ休符を表示を切り替え</translation>
     </message>
 </context>
 <context>
@@ -10733,20 +10729,20 @@ Published under the &lt;a href=&quot;%1&quot;&gt;GNU General Public License vers
     </message>
     <message>
         <location filename="../../src/engraving/dom/barline.cpp" line="1030"/>
-        <location filename="../../src/engraving/dom/chordrest.cpp" line="1095"/>
-        <location filename="../../src/engraving/dom/chordrest.cpp" line="1106"/>
-        <location filename="../../src/engraving/dom/note.cpp" line="3425"/>
-        <location filename="../../src/engraving/dom/note.cpp" line="3437"/>
+        <location filename="../../src/engraving/dom/chordrest.cpp" line="1131"/>
+        <location filename="../../src/engraving/dom/chordrest.cpp" line="1142"/>
+        <location filename="../../src/engraving/dom/note.cpp" line="3436"/>
+        <location filename="../../src/engraving/dom/note.cpp" line="3448"/>
         <location filename="../../src/engraving/dom/segment.cpp" line="2540"/>
         <source>Start of %1</source>
         <translation>%1の始め</translation>
     </message>
     <message>
         <location filename="../../src/engraving/dom/barline.cpp" line="1033"/>
-        <location filename="../../src/engraving/dom/chordrest.cpp" line="1098"/>
-        <location filename="../../src/engraving/dom/chordrest.cpp" line="1108"/>
-        <location filename="../../src/engraving/dom/note.cpp" line="3429"/>
-        <location filename="../../src/engraving/dom/note.cpp" line="3445"/>
+        <location filename="../../src/engraving/dom/chordrest.cpp" line="1134"/>
+        <location filename="../../src/engraving/dom/chordrest.cpp" line="1144"/>
+        <location filename="../../src/engraving/dom/note.cpp" line="3440"/>
+        <location filename="../../src/engraving/dom/note.cpp" line="3456"/>
         <location filename="../../src/engraving/dom/segment.cpp" line="2555"/>
         <source>End of %1</source>
         <translation>%1の終わり</translation>
@@ -10868,7 +10864,7 @@ Fret %1 on strings %2</source>
         <translation>複々々付点%1</translation>
     </message>
     <message>
-        <location filename="../../src/engraving/dom/chordrest.cpp" line="1104"/>
+        <location filename="../../src/engraving/dom/chordrest.cpp" line="1140"/>
         <source>Start and end of %1</source>
         <translation>%1の始めと終わり</translation>
     </message>
@@ -10967,18 +10963,18 @@ Fret %1 on strings %2</source>
         <translation><numerusform>合計 %n 弦</numerusform></translation>
     </message>
     <message>
-        <location filename="../../src/engraving/dom/harmony.cpp" line="1290"/>
+        <location filename="../../src/engraving/dom/harmony.cpp" line="1303"/>
         <source>Roman numeral</source>
         <translation>ローマ数字</translation>
     </message>
     <message>
-        <location filename="../../src/engraving/dom/harmony.cpp" line="1292"/>
+        <location filename="../../src/engraving/dom/harmony.cpp" line="1305"/>
         <location filename="../../src/engraving/types/typesconv.cpp" line="1737"/>
         <source>Nashville number</source>
         <translation>ナッシュビルナンバー</translation>
     </message>
     <message>
-        <location filename="../../src/engraving/dom/harmony.cpp" line="1342"/>
+        <location filename="../../src/engraving/dom/harmony.cpp" line="1355"/>
         <source>lower case</source>
         <translation>小文字</translation>
     </message>
@@ -10996,12 +10992,12 @@ Fret %1 on strings %2</source>
     <message numerus="yes">
         <location filename="../../src/engraving/dom/measurerepeat.cpp" line="193"/>
         <source>%1; Duration: %Ln measure(s)</source>
-        <translation type="unfinished"><numerusform></numerusform></translation>
+        <translation><numerusform>%1; 長さ: %Ln小節</numerusform></translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/engraving/dom/measurerepeat.cpp" line="202"/>
         <source>%Ln measure(s)</source>
-        <translation type="unfinished"><numerusform></numerusform></translation>
+        <translation><numerusform>%Ln小節</numerusform></translation>
     </message>
     <message>
         <location filename="../../src/engraving/dom/note.cpp" line="864"/>
@@ -11035,7 +11031,7 @@ Fret %1 on strings %2</source>
     </message>
     <message>
         <location filename="../../src/engraving/dom/note.cpp" line="3332"/>
-        <location filename="../../src/engraving/dom/note.cpp" line="3370"/>
+        <location filename="../../src/engraving/dom/note.cpp" line="3382"/>
         <location filename="../../src/engraving/dom/rest.cpp" line="506"/>
         <location filename="../../src/engraving/dom/rest.cpp" line="518"/>
         <source>Voice: %1</source>
@@ -11049,19 +11045,19 @@ Fret %1 on strings %2</source>
     </message>
     <message>
         <location filename="../../src/engraving/dom/note.cpp" line="3346"/>
-        <location filename="../../src/engraving/dom/note.cpp" line="3375"/>
+        <location filename="../../src/engraving/dom/note.cpp" line="3386"/>
         <source>Beat slash</source>
         <translation>拍 スラッシュ</translation>
     </message>
     <message>
         <location filename="../../src/engraving/dom/note.cpp" line="3346"/>
-        <location filename="../../src/engraving/dom/note.cpp" line="3375"/>
+        <location filename="../../src/engraving/dom/note.cpp" line="3386"/>
         <source>Rhythm slash</source>
         <translation>リズムスラッシュ</translation>
     </message>
     <message>
         <location filename="../../src/engraving/dom/note.cpp" line="3350"/>
-        <location filename="../../src/engraving/dom/note.cpp" line="3379"/>
+        <location filename="../../src/engraving/dom/note.cpp" line="3390"/>
         <source>%1; String: %2; Fret: %3</source>
         <translation>%1; 弦: %2; フレット: %3</translation>
     </message>
@@ -11071,40 +11067,40 @@ Fret %1 on strings %2</source>
         <translation>%1; 音高: %2; 音価: %3%4%5</translation>
     </message>
     <message>
-        <location filename="../../src/engraving/dom/note.cpp" line="3385"/>
+        <location filename="../../src/engraving/dom/note.cpp" line="3396"/>
         <source>%1 head %2</source>
         <extracomment>head as in note head. %1 is head type (circle, cross, etc.). %2 is pitch (e.g. Db4).</extracomment>
         <translation>%1符頭%2</translation>
     </message>
     <message>
-        <location filename="../../src/engraving/dom/note.cpp" line="3387"/>
+        <location filename="../../src/engraving/dom/note.cpp" line="3398"/>
         <location filename="../../src/engraving/dom/rest.cpp" line="521"/>
         <source>Cross-staff above</source>
         <translation>譜表を上にまたぐ</translation>
     </message>
     <message>
-        <location filename="../../src/engraving/dom/note.cpp" line="3389"/>
+        <location filename="../../src/engraving/dom/note.cpp" line="3400"/>
         <location filename="../../src/engraving/dom/rest.cpp" line="523"/>
         <source>Cross-staff below</source>
         <translation>譜表を下にまたぐ</translation>
     </message>
     <message>
-        <location filename="../../src/engraving/dom/note.cpp" line="3393"/>
+        <location filename="../../src/engraving/dom/note.cpp" line="3404"/>
         <source>too low</source>
         <translation>音が低すぎる</translation>
     </message>
     <message>
-        <location filename="../../src/engraving/dom/note.cpp" line="3395"/>
+        <location filename="../../src/engraving/dom/note.cpp" line="3406"/>
         <source>too high</source>
         <translation>音が高すぎる</translation>
     </message>
     <message>
-        <location filename="../../src/engraving/dom/note.cpp" line="3397"/>
+        <location filename="../../src/engraving/dom/note.cpp" line="3408"/>
         <source>too low for amateurs</source>
         <translation>アマチュアには低すぎる</translation>
     </message>
     <message>
-        <location filename="../../src/engraving/dom/note.cpp" line="3399"/>
+        <location filename="../../src/engraving/dom/note.cpp" line="3410"/>
         <source>too high for amateurs</source>
         <translation>アマチュアには高すぎる</translation>
     </message>
@@ -11139,37 +11135,37 @@ Fret %1 on strings %2</source>
         <translation>アノテーション:</translation>
     </message>
     <message>
-        <location filename="../../src/engraving/dom/spanner.cpp" line="1607"/>
+        <location filename="../../src/engraving/dom/spanner.cpp" line="1625"/>
         <location filename="../../src/notation/internal/notationaccessibility.cpp" line="155"/>
         <source>Start measure: %1</source>
         <translation>開始小節: %1</translation>
     </message>
     <message>
-        <location filename="../../src/engraving/dom/spanner.cpp" line="1610"/>
+        <location filename="../../src/engraving/dom/spanner.cpp" line="1628"/>
         <location filename="../../src/notation/internal/notationaccessibility.cpp" line="157"/>
         <source>Start displayed measure: %1</source>
         <translation>開始表示小節: %1</translation>
     </message>
     <message>
-        <location filename="../../src/engraving/dom/spanner.cpp" line="1613"/>
+        <location filename="../../src/engraving/dom/spanner.cpp" line="1631"/>
         <location filename="../../src/notation/internal/notationaccessibility.cpp" line="159"/>
         <source>Start beat: %1</source>
         <translation>開始拍: %1</translation>
     </message>
     <message>
-        <location filename="../../src/engraving/dom/spanner.cpp" line="1620"/>
+        <location filename="../../src/engraving/dom/spanner.cpp" line="1638"/>
         <location filename="../../src/notation/internal/notationaccessibility.cpp" line="162"/>
         <source>End measure: %1</source>
         <translation>終了小節: %1</translation>
     </message>
     <message>
-        <location filename="../../src/engraving/dom/spanner.cpp" line="1623"/>
+        <location filename="../../src/engraving/dom/spanner.cpp" line="1641"/>
         <location filename="../../src/notation/internal/notationaccessibility.cpp" line="164"/>
         <source>End displayed measure: %1</source>
         <translation>終了表示小節: %1</translation>
     </message>
     <message>
-        <location filename="../../src/engraving/dom/spanner.cpp" line="1626"/>
+        <location filename="../../src/engraving/dom/spanner.cpp" line="1644"/>
         <location filename="../../src/notation/internal/notationaccessibility.cpp" line="166"/>
         <source>End beat: %1</source>
         <translation>終了拍: %1</translation>
@@ -11378,7 +11374,7 @@ Fret %1 on strings %2</source>
         <source>“%1” volta</source>
         <comment>partial tie menu</comment>
         <extracomment>Used at %1 in the string &quot;Tie to %1 (m. %2)&quot;. %1 in this string represents the volta's text set by the user</extracomment>
-        <translation>「%1」番括弧</translation>
+        <translation>『%1』番括弧</translation>
     </message>
     <message>
         <location filename="../../src/engraving/dom/tiejumppointlist.cpp" line="124"/>
@@ -11408,12 +11404,12 @@ Fret %1 on strings %2</source>
         <translation>部分的なタイを切り替え</translation>
     </message>
     <message>
-        <location filename="../../src/engraving/editing/cmd.cpp" line="3869"/>
+        <location filename="../../src/engraving/editing/cmd.cpp" line="3879"/>
         <source>Current contents of measures will be replaced</source>
         <translation>現在の小節の内容は置き換えられます</translation>
     </message>
     <message>
-        <location filename="../../src/engraving/editing/cmd.cpp" line="3870"/>
+        <location filename="../../src/engraving/editing/cmd.cpp" line="3880"/>
         <source>Continue with inserting measure repeat?</source>
         <translation>小節の繰り返しを挿入して続行しますか？</translation>
     </message>
@@ -11423,18 +11419,18 @@ Fret %1 on strings %2</source>
         <translation>音価 %2 には比率 %1 の連符を作成できません</translation>
     </message>
     <message>
-        <location filename="../../src/engraving/editing/edit.cpp" line="7954"/>
-        <location filename="../../src/engraving/editing/edit.cpp" line="8102"/>
+        <location filename="../../src/engraving/editing/edit.cpp" line="7957"/>
+        <location filename="../../src/engraving/editing/edit.cpp" line="8105"/>
         <source>Remove stale partial tie</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../../src/engraving/editing/edit.cpp" line="8012"/>
+        <location filename="../../src/engraving/editing/edit.cpp" line="8015"/>
         <source>Reset incoming partial slur</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../../src/engraving/editing/edit.cpp" line="8022"/>
+        <location filename="../../src/engraving/editing/edit.cpp" line="8025"/>
         <source>Reset outgoing partial slur</source>
         <translation type="unfinished"/>
     </message>
@@ -11446,7 +11442,7 @@ Fret %1 on strings %2</source>
     <message>
         <location filename="../../src/engraving/engravingerrors.h" line="69"/>
         <source>File “%1” not found</source>
-        <translation>ファイル「%1」が見つかりません</translation>
+        <translation>ファイル『%1』が見つかりません</translation>
     </message>
     <message>
         <location filename="../../src/engraving/engravingerrors.h" line="72"/>
@@ -11481,12 +11477,12 @@ Fret %1 on strings %2</source>
     <message>
         <location filename="../../src/engraving/engravingerrors.h" line="96"/>
         <source>File “%1” is corrupted.</source>
-        <translation>ファイル「%1」は破損しています。</translation>
+        <translation>ファイル『%1』は破損しています。</translation>
     </message>
     <message>
         <location filename="../../src/engraving/engravingerrors.h" line="99"/>
         <source>File “%1” is critically corrupted and cannot be processed.</source>
-        <translation>ファイル「%1」は致命的に破損しているため処理出来ません。</translation>
+        <translation>ファイル『%1』は致命的に破損しているため処理出来ません。</translation>
     </message>
     <message>
         <location filename="../../src/engraving/internal/engravingconfiguration.cpp" line="91"/>
@@ -13306,7 +13302,7 @@ Fret %1 on strings %2</source>
     <message>
         <location filename="../../src/engraving/types/typesconv.cpp" line="1764"/>
         <source>Bends &amp; Dives</source>
-        <translation type="unfinished"/>
+        <translation>ベンドとダイブ</translation>
     </message>
     <message>
         <location filename="../../src/engraving/types/typesconv.cpp" line="1766"/>
@@ -16190,17 +16186,17 @@ Fret %1 on strings %2</source>
     <message>
         <location filename="../../src/engraving/dom/property.cpp" line="67"/>
         <source>hide when empty</source>
-        <translation type="unfinished"/>
+        <translation>空のときに非表示</translation>
     </message>
     <message>
         <location filename="../../src/engraving/dom/property.cpp" line="68"/>
         <source>hide staves when individually empty</source>
-        <translation type="unfinished"/>
+        <translation>個別に空のときに譜表を非表示</translation>
     </message>
     <message>
         <location filename="../../src/engraving/dom/property.cpp" line="69"/>
         <source>show if entire system empty</source>
-        <translation type="unfinished"/>
+        <translation>段全体が空のときは表示</translation>
     </message>
     <message>
         <location filename="../../src/engraving/dom/property.cpp" line="70"/>
@@ -16215,17 +16211,17 @@ Fret %1 on strings %2</source>
     <message>
         <location filename="../../src/engraving/dom/property.cpp" line="72"/>
         <source>line type</source>
-        <translation type="unfinished"/>
+        <translation>線の種類</translation>
     </message>
     <message>
         <location filename="../../src/engraving/dom/property.cpp" line="73"/>
         <source>pitch</source>
-        <translation type="unfinished"/>
+        <translation>音高</translation>
     </message>
     <message>
         <location filename="../../src/engraving/dom/property.cpp" line="74"/>
         <source>cent offset</source>
-        <translation type="unfinished"/>
+        <translation>セントオフセット</translation>
     </message>
     <message>
         <location filename="../../src/engraving/dom/property.cpp" line="76"/>
@@ -16240,7 +16236,7 @@ Fret %1 on strings %2</source>
     <message>
         <location filename="../../src/engraving/dom/property.cpp" line="78"/>
         <source>line</source>
-        <translation type="unfinished"/>
+        <translation>線</translation>
     </message>
     <message>
         <location filename="../../src/engraving/dom/property.cpp" line="79"/>
@@ -16265,13 +16261,13 @@ Fret %1 on strings %2</source>
     <message>
         <location filename="../../src/engraving/dom/property.cpp" line="83"/>
         <source>velocity type</source>
-        <translation>べロシティ タイプ</translation>
+        <translation>べロシティの種類</translation>
     </message>
     <message>
         <location filename="../../src/engraving/dom/property.cpp" line="84"/>
         <location filename="../../src/engraving/dom/property.cpp" line="206"/>
         <source>velocity</source>
-        <translation type="unfinished"/>
+        <translation>ベロシティ</translation>
     </message>
     <message>
         <location filename="../../src/engraving/dom/property.cpp" line="85"/>
@@ -16353,7 +16349,7 @@ Fret %1 on strings %2</source>
     <message>
         <location filename="../../src/engraving/dom/property.cpp" line="102"/>
         <source>barline type</source>
-        <translation type="unfinished"/>
+        <translation>縦線の種類</translation>
     </message>
     <message>
         <location filename="../../src/engraving/dom/property.cpp" line="103"/>
@@ -16418,12 +16414,12 @@ Fret %1 on strings %2</source>
     <message>
         <location filename="../../src/engraving/dom/property.cpp" line="116"/>
         <source>number type</source>
-        <translation type="unfinished"/>
+        <translation>数字の種類</translation>
     </message>
     <message>
         <location filename="../../src/engraving/dom/property.cpp" line="117"/>
         <source>bracket type</source>
-        <translation type="unfinished"/>
+        <translation>括弧の種類</translation>
     </message>
     <message>
         <location filename="../../src/engraving/dom/property.cpp" line="118"/>
@@ -16513,7 +16509,7 @@ Fret %1 on strings %2</source>
     <message>
         <location filename="../../src/engraving/dom/property.cpp" line="137"/>
         <source>layout break type</source>
-        <translation type="unfinished"/>
+        <translation>レイアウト区切りの種類</translation>
     </message>
     <message>
         <location filename="../../src/engraving/dom/property.cpp" line="138"/>
@@ -16524,7 +16520,7 @@ Fret %1 on strings %2</source>
         <location filename="../../src/engraving/dom/property.cpp" line="139"/>
         <location filename="../../src/engraving/dom/property.cpp" line="330"/>
         <source>size</source>
-        <translation type="unfinished"/>
+        <translation>大きさ</translation>
     </message>
     <message>
         <location filename="../../src/engraving/dom/property.cpp" line="141"/>
@@ -16635,7 +16631,7 @@ Fret %1 on strings %2</source>
     <message>
         <location filename="../../src/engraving/dom/property.cpp" line="167"/>
         <source>tempo</source>
-        <translation type="unfinished"/>
+        <translation>テンポ</translation>
     </message>
     <message>
         <location filename="../../src/engraving/dom/property.cpp" line="168"/>
@@ -16645,7 +16641,7 @@ Fret %1 on strings %2</source>
     <message>
         <location filename="../../src/engraving/dom/property.cpp" line="169"/>
         <source>tempo align right of rehearsal mark</source>
-        <translation type="unfinished"/>
+        <translation>テンポの練習番号の右揃え</translation>
     </message>
     <message>
         <location filename="../../src/engraving/dom/property.cpp" line="171"/>
@@ -16655,7 +16651,7 @@ Fret %1 on strings %2</source>
     <message>
         <location filename="../../src/engraving/dom/property.cpp" line="172"/>
         <source>accidental type</source>
-        <translation type="unfinished"/>
+        <translation>臨時記号の種類</translation>
     </message>
     <message>
         <location filename="../../src/engraving/dom/property.cpp" line="173"/>
@@ -16695,7 +16691,7 @@ Fret %1 on strings %2</source>
     <message>
         <location filename="../../src/engraving/dom/property.cpp" line="187"/>
         <source>ottava type</source>
-        <translation type="unfinished"/>
+        <translation>オッターヴァの種類</translation>
     </message>
     <message>
         <location filename="../../src/engraving/dom/property.cpp" line="188"/>
@@ -16705,12 +16701,12 @@ Fret %1 on strings %2</source>
     <message>
         <location filename="../../src/engraving/dom/property.cpp" line="189"/>
         <source>trill type</source>
-        <translation type="unfinished"/>
+        <translation>トリルの種類</translation>
     </message>
     <message>
         <location filename="../../src/engraving/dom/property.cpp" line="190"/>
         <source>vibrato type</source>
-        <translation type="unfinished"/>
+        <translation>ビブラートの種類</translation>
     </message>
     <message>
         <location filename="../../src/engraving/dom/property.cpp" line="191"/>
@@ -16720,7 +16716,7 @@ Fret %1 on strings %2</source>
     <message>
         <location filename="../../src/engraving/dom/property.cpp" line="193"/>
         <source>hairpin type</source>
-        <translation type="unfinished"/>
+        <translation>松葉の種類</translation>
     </message>
     <message>
         <location filename="../../src/engraving/dom/property.cpp" line="194"/>
@@ -16750,7 +16746,7 @@ Fret %1 on strings %2</source>
     <message>
         <location filename="../../src/engraving/dom/property.cpp" line="199"/>
         <source>dynamic type</source>
-        <translation type="unfinished"/>
+        <translation>強弱記号の種類</translation>
     </message>
     <message>
         <location filename="../../src/engraving/dom/property.cpp" line="201"/>
@@ -16800,12 +16796,12 @@ Fret %1 on strings %2</source>
     <message>
         <location filename="../../src/engraving/dom/property.cpp" line="211"/>
         <source>marker type</source>
-        <translation type="unfinished"/>
+        <translation>マーカーの種類</translation>
     </message>
     <message>
         <location filename="../../src/engraving/dom/property.cpp" line="212"/>
         <source>music symbol size</source>
-        <translation type="unfinished"/>
+        <translation>音楽記号の大きさ</translation>
     </message>
     <message>
         <location filename="../../src/engraving/dom/property.cpp" line="213"/>
@@ -16845,7 +16841,7 @@ Fret %1 on strings %2</source>
     <message>
         <location filename="../../src/engraving/dom/property.cpp" line="221"/>
         <source>glissando type</source>
-        <translation type="unfinished"/>
+        <translation>グリッサンドの種類</translation>
     </message>
     <message>
         <location filename="../../src/engraving/dom/property.cpp" line="223"/>
@@ -16905,12 +16901,12 @@ Fret %1 on strings %2</source>
     <message>
         <location filename="../../src/engraving/dom/property.cpp" line="234"/>
         <source>interval above</source>
-        <translation type="unfinished"/>
+        <translation>上音程</translation>
     </message>
     <message>
         <location filename="../../src/engraving/dom/property.cpp" line="235"/>
         <source>interval below</source>
-        <translation type="unfinished"/>
+        <translation>下音程</translation>
     </message>
     <message>
         <location filename="../../src/engraving/dom/property.cpp" line="236"/>
@@ -16940,7 +16936,7 @@ Fret %1 on strings %2</source>
     <message>
         <location filename="../../src/engraving/dom/property.cpp" line="242"/>
         <source>time signature type</source>
-        <translation type="unfinished"/>
+        <translation>拍子記号の種類</translation>
     </message>
     <message>
         <location filename="../../src/engraving/dom/property.cpp" line="243"/>
@@ -17068,7 +17064,7 @@ Fret %1 on strings %2</source>
     <message>
         <location filename="../../src/engraving/dom/property.cpp" line="273"/>
         <source>duration type</source>
-        <translation type="unfinished"/>
+        <translation>長さの種類</translation>
     </message>
     <message>
         <location filename="../../src/engraving/dom/property.cpp" line="274"/>
@@ -17288,7 +17284,7 @@ Fret %1 on strings %2</source>
     <message>
         <location filename="../../src/engraving/dom/property.cpp" line="326"/>
         <source>level</source>
-        <translation type="unfinished"/>
+        <translation>レベル</translation>
     </message>
     <message>
         <location filename="../../src/engraving/dom/property.cpp" line="327"/>
@@ -17378,27 +17374,27 @@ Fret %1 on strings %2</source>
     <message>
         <location filename="../../src/engraving/dom/property.cpp" line="347"/>
         <source>begin text</source>
-        <translation>開始テキスト</translation>
+        <translation>始端テキスト</translation>
     </message>
     <message>
         <location filename="../../src/engraving/dom/property.cpp" line="348"/>
         <source>begin text align</source>
-        <translation>開始テキストの整列</translation>
+        <translation>始端テキストの整列</translation>
     </message>
     <message>
         <location filename="../../src/engraving/dom/property.cpp" line="349"/>
         <source>begin text position</source>
-        <translation type="unfinished"/>
+        <translation>始端テキストの位置</translation>
     </message>
     <message>
         <location filename="../../src/engraving/dom/property.cpp" line="350"/>
         <source>begin text place</source>
-        <translation>開始テキストの配置</translation>
+        <translation>始端テキストの配置</translation>
     </message>
     <message>
         <location filename="../../src/engraving/dom/property.cpp" line="351"/>
         <source>begin hook type</source>
-        <translation type="unfinished"/>
+        <translation>始端フックの種類</translation>
     </message>
     <message>
         <location filename="../../src/engraving/dom/property.cpp" line="352"/>
@@ -17408,42 +17404,42 @@ Fret %1 on strings %2</source>
     <message>
         <location filename="../../src/engraving/dom/property.cpp" line="353"/>
         <source>begin line arrow height</source>
-        <translation type="unfinished"/>
+        <translation>始端線矢印の高さ</translation>
     </message>
     <message>
         <location filename="../../src/engraving/dom/property.cpp" line="354"/>
         <source>begin line arrow width</source>
-        <translation type="unfinished"/>
+        <translation>始端線矢印の幅</translation>
     </message>
     <message>
         <location filename="../../src/engraving/dom/property.cpp" line="355"/>
         <source>begin filled arrow height</source>
-        <translation type="unfinished"/>
+        <translation>始端塗りつぶし矢印の高さ</translation>
     </message>
     <message>
         <location filename="../../src/engraving/dom/property.cpp" line="356"/>
         <source>begin filled arrow width</source>
-        <translation type="unfinished"/>
+        <translation>始端塗りつぶし矢印の幅</translation>
     </message>
     <message>
         <location filename="../../src/engraving/dom/property.cpp" line="357"/>
         <source>begin font face</source>
-        <translation>開始フォントフェイス</translation>
+        <translation>始端フォントフェイス</translation>
     </message>
     <message>
         <location filename="../../src/engraving/dom/property.cpp" line="358"/>
         <source>begin font size</source>
-        <translation>開始フォントサイズ</translation>
+        <translation>始端フォントサイズ</translation>
     </message>
     <message>
         <location filename="../../src/engraving/dom/property.cpp" line="359"/>
         <source>begin font style</source>
-        <translation>開始フォントスタイル</translation>
+        <translation>始端フォントスタイル</translation>
     </message>
     <message>
         <location filename="../../src/engraving/dom/property.cpp" line="360"/>
         <source>begin text musical symbols scale</source>
-        <translation type="unfinished"/>
+        <translation>始端テキストの音楽記号の大きさ</translation>
     </message>
     <message>
         <location filename="../../src/engraving/dom/property.cpp" line="361"/>
@@ -17453,27 +17449,27 @@ Fret %1 on strings %2</source>
     <message>
         <location filename="../../src/engraving/dom/property.cpp" line="362"/>
         <source>end text musical symbols scale</source>
-        <translation type="unfinished"/>
+        <translation>終端テキストの音楽記号の大きさ</translation>
     </message>
     <message>
         <location filename="../../src/engraving/dom/property.cpp" line="363"/>
         <source>begin text music symbols size</source>
-        <translation type="unfinished"/>
+        <translation>始端テキストの音楽記号の大きさ</translation>
     </message>
     <message>
         <location filename="../../src/engraving/dom/property.cpp" line="364"/>
         <source>continue text music symbols size</source>
-        <translation type="unfinished"/>
+        <translation>継続テキストの音楽記号の大きさ</translation>
     </message>
     <message>
         <location filename="../../src/engraving/dom/property.cpp" line="365"/>
         <source>end text music symbols size</source>
-        <translation type="unfinished"/>
+        <translation>終端テキストの音楽記号の大きさ</translation>
     </message>
     <message>
         <location filename="../../src/engraving/dom/property.cpp" line="366"/>
         <source>begin text offset</source>
-        <translation>開始テキストのオフセット</translation>
+        <translation>始端テキストのオフセット</translation>
     </message>
     <message>
         <location filename="../../src/engraving/dom/property.cpp" line="367"/>
@@ -17523,27 +17519,27 @@ Fret %1 on strings %2</source>
     <message>
         <location filename="../../src/engraving/dom/property.cpp" line="378"/>
         <source>end text</source>
-        <translation>終了テキスト</translation>
+        <translation>終端テキスト</translation>
     </message>
     <message>
         <location filename="../../src/engraving/dom/property.cpp" line="379"/>
         <source>end text align</source>
-        <translation>終了テキストの整列</translation>
+        <translation>終端テキストの整列</translation>
     </message>
     <message>
         <location filename="../../src/engraving/dom/property.cpp" line="380"/>
         <source>end text position</source>
-        <translation type="unfinished"/>
+        <translation>終端テキストの位置</translation>
     </message>
     <message>
         <location filename="../../src/engraving/dom/property.cpp" line="381"/>
         <source>end text place</source>
-        <translation>終了テキストの配置</translation>
+        <translation>終端テキストの配置</translation>
     </message>
     <message>
         <location filename="../../src/engraving/dom/property.cpp" line="382"/>
         <source>end hook type</source>
-        <translation type="unfinished"/>
+        <translation>終端フックの種類</translation>
     </message>
     <message>
         <location filename="../../src/engraving/dom/property.cpp" line="383"/>
@@ -17553,42 +17549,42 @@ Fret %1 on strings %2</source>
     <message>
         <location filename="../../src/engraving/dom/property.cpp" line="384"/>
         <source>end line arrow height</source>
-        <translation type="unfinished"/>
+        <translation>終端線矢印の高さ</translation>
     </message>
     <message>
         <location filename="../../src/engraving/dom/property.cpp" line="385"/>
         <source>end line arrow width</source>
-        <translation type="unfinished"/>
+        <translation>終端線矢印の幅</translation>
     </message>
     <message>
         <location filename="../../src/engraving/dom/property.cpp" line="386"/>
         <source>end filled arrow height</source>
-        <translation type="unfinished"/>
+        <translation>終端塗りつぶし矢印の高さ</translation>
     </message>
     <message>
         <location filename="../../src/engraving/dom/property.cpp" line="387"/>
         <source>end filled arrow width</source>
-        <translation type="unfinished"/>
+        <translation>終端塗りつぶし矢印の幅</translation>
     </message>
     <message>
         <location filename="../../src/engraving/dom/property.cpp" line="388"/>
         <source>end font face</source>
-        <translation>終了フォントフェイス</translation>
+        <translation>終端フォントフェイス</translation>
     </message>
     <message>
         <location filename="../../src/engraving/dom/property.cpp" line="389"/>
         <source>end font size</source>
-        <translation>終了フォントサイズ</translation>
+        <translation>終端フォントサイズ</translation>
     </message>
     <message>
         <location filename="../../src/engraving/dom/property.cpp" line="390"/>
         <source>end font style</source>
-        <translation>終了フォントスタイル</translation>
+        <translation>終端フォントスタイル</translation>
     </message>
     <message>
         <location filename="../../src/engraving/dom/property.cpp" line="391"/>
         <source>end text offset</source>
-        <translation>終了テキストのオフセット</translation>
+        <translation>終端テキストのオフセット</translation>
     </message>
     <message>
         <location filename="../../src/engraving/dom/property.cpp" line="393"/>
@@ -17683,7 +17679,7 @@ Fret %1 on strings %2</source>
     <message>
         <location filename="../../src/engraving/dom/property.cpp" line="417"/>
         <source>position</source>
-        <translation type="unfinished"/>
+        <translation>位置</translation>
     </message>
     <message>
         <location filename="../../src/engraving/dom/property.cpp" line="419"/>
@@ -17778,7 +17774,7 @@ Fret %1 on strings %2</source>
     <message>
         <location filename="../../src/engraving/dom/property.cpp" line="443"/>
         <source>bend type</source>
-        <translation type="unfinished"/>
+        <translation>ベンドの種類</translation>
     </message>
     <message>
         <location filename="../../src/engraving/dom/property.cpp" line="444"/>
@@ -17853,7 +17849,7 @@ Fret %1 on strings %2</source>
     <message>
         <location filename="../../src/engraving/dom/property.cpp" line="460"/>
         <source>first system indentation</source>
-        <translation type="unfinished"/>
+        <translation>最初の段のインデント</translation>
     </message>
     <message>
         <location filename="../../src/engraving/dom/property.cpp" line="462"/>
@@ -17908,7 +17904,7 @@ Fret %1 on strings %2</source>
     <message>
         <location filename="../../src/engraving/dom/property.cpp" line="478"/>
         <source>automatically generate text</source>
-        <translation type="unfinished"/>
+        <translation>自動でテキストを生成</translation>
     </message>
     <message>
         <location filename="../../src/engraving/dom/property.cpp" line="479"/>
@@ -17973,7 +17969,7 @@ Fret %1 on strings %2</source>
     <message>
         <location filename="../../src/engraving/dom/property.cpp" line="495"/>
         <source>symbols size</source>
-        <translation type="unfinished"/>
+        <translation>記号の大きさ</translation>
     </message>
     <message>
         <location filename="../../src/engraving/dom/property.cpp" line="496"/>
@@ -17998,7 +17994,7 @@ Fret %1 on strings %2</source>
     <message>
         <location filename="../../src/engraving/dom/property.cpp" line="502"/>
         <source>show measure numbers</source>
-        <translation type="unfinished"/>
+        <translation>小節番号を表示</translation>
     </message>
     <message>
         <location filename="../../src/engraving/dom/property.cpp" line="503"/>
@@ -18013,7 +18009,7 @@ Fret %1 on strings %2</source>
     <message>
         <location filename="../../src/engraving/dom/property.cpp" line="506"/>
         <source>align with other rests in the same voice</source>
-        <translation type="unfinished"/>
+        <translation>同じ声部の他の休符と揃える</translation>
     </message>
     <message>
         <location filename="../../src/engraving/dom/property.cpp" line="508"/>
@@ -18023,7 +18019,7 @@ Fret %1 on strings %2</source>
     <message>
         <location filename="../../src/engraving/dom/property.cpp" line="509"/>
         <source>hide system barline</source>
-        <translation type="unfinished"/>
+        <translation>段の縦線を非表示</translation>
     </message>
     <message>
         <location filename="../../src/engraving/dom/property.cpp" line="510"/>
@@ -20330,29 +20326,29 @@ Fret %1 on strings %2</source>
     <name>engraving/timesig</name>
     <message>
         <location filename="../../src/engraving/dom/timesig.cpp" line="349"/>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1635"/>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1654"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1636"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1655"/>
         <location filename="../../src/project/qml/MuseScore/Project/internal/NewScore/additionalinfomodel.cpp" line="200"/>
         <source>Common time</source>
         <translation>4/4 拍子の省略記号</translation>
     </message>
     <message>
         <location filename="../../src/engraving/dom/timesig.cpp" line="351"/>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1636"/>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1655"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1637"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1656"/>
         <location filename="../../src/project/qml/MuseScore/Project/internal/NewScore/additionalinfomodel.cpp" line="202"/>
         <source>Cut time</source>
         <translation>2/2 拍子の省略記号</translation>
     </message>
     <message>
         <location filename="../../src/engraving/dom/timesig.cpp" line="353"/>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1659"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1660"/>
         <source>Cut time (Bach)</source>
         <translation>2/2 拍子の省略記号 (バッハ)</translation>
     </message>
     <message>
         <location filename="../../src/engraving/dom/timesig.cpp" line="355"/>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1660"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1661"/>
         <source>Cut triple time (9/8)</source>
         <translation>9/8 拍子の省略記号</translation>
     </message>
@@ -20593,7 +20589,7 @@ Fret %1 on strings %2</source>
     <message>
         <location filename="../../src/framework/extensions/internal/extensioninstaller.cpp" line="73"/>
         <source>Another version of the extension “%1” is already installed (version %2). Do you want to replace it with version %3?</source>
-        <translation>拡張機能「%1」の別のバージョン（バージョン %2）が既にインストールされています。バージョン %3に置き換えますか？</translation>
+        <translation>拡張機能『%1』の別のバージョン（バージョン %2）が既にインストールされています。バージョン %3に置き換えますか？</translation>
     </message>
     <message>
         <location filename="../../src/framework/extensions/internal/extensioninstaller.cpp" line="77"/>
@@ -20609,7 +20605,7 @@ Fret %1 on strings %2</source>
     <message>
         <location filename="../../src/framework/extensions/internal/extensionsactioncontroller.cpp" line="79"/>
         <source>The plugin “%1” is currently disabled. Do you want to enable it now?</source>
-        <translation>プラグイン「%1」は現在無効になっています。今すぐ有効にしますか？</translation>
+        <translation>プラグイン『%1』は現在無効になっています。今すぐ有効にしますか？</translation>
     </message>
     <message>
         <location filename="../../src/framework/extensions/internal/extensionsactioncontroller.cpp" line="80"/>
@@ -20658,7 +20654,7 @@ Fret %1 on strings %2</source>
         <location filename="../../src/framework/extensions/internal/extensionsuiactions.cpp" line="65"/>
         <source>Run plugin %1: %2</source>
         <extracomment>%1 is replaced with the name of the plugin; %2 is replaced with the name of the action</extracomment>
-        <translation type="unfinished"/>
+        <translation>プラグイン %1 を実行: %2</translation>
     </message>
 </context>
 <context>
@@ -20698,7 +20694,7 @@ Fret %1 on strings %2</source>
         <location filename="../../src/project/qml/MuseScore/Project/internal/ScoresPage/RecentScoresView.qml" line="145"/>
         <source>Size</source>
         <comment>file size</comment>
-        <translation>サイズ</translation>
+        <translation>大きさ</translation>
     </message>
     <message>
         <location filename="../../src/framework/cloud/qml/Muse/Cloud/internal/CloudScoresListView.qml" line="231"/>
@@ -20721,7 +20717,7 @@ Fret %1 on strings %2</source>
     </message>
     <message>
         <location filename="../../src/framework/midiremote/qml/Muse/MidiRemote/EditMidiMappingDialog.qml" line="134"/>
-        <location filename="../../src/notationscene/qml/MuseScore/NotationScene/noteinputbarmodel.cpp" line="552"/>
+        <location filename="../../src/notationscene/qml/MuseScore/NotationScene/noteinputbarmodel.cpp" line="562"/>
         <source>Add</source>
         <translation>追加</translation>
     </message>
@@ -21247,7 +21243,7 @@ Fret %1 on strings %2</source>
     </message>
     <message>
         <location filename="../../src/project/qml/MuseScore/Project/ProjectUploadedDialog.qml" line="108"/>
-        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1399"/>
+        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1403"/>
         <source>Success!</source>
         <translation>成功！</translation>
     </message>
@@ -21316,7 +21312,7 @@ Fret %1 on strings %2</source>
         <location filename="../../src/framework/global/dataformatter.cpp" line="104"/>
         <source>%Ln byte(s)</source>
         <extracomment>Used to indicate file size. Ideally, keep the translation short; feel free to use an abbreviation.</extracomment>
-        <translation type="unfinished"><numerusform></numerusform></translation>
+        <translation><numerusform>%Ln バイト</numerusform></translation>
     </message>
     <message>
         <location filename="../../src/framework/global/internal/interactive.cpp" line="57"/>
@@ -21536,102 +21532,102 @@ Fret %1 on strings %2</source>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="32"/>
         <source>C♯-1</source>
-        <translation type="unfinished"/>
+        <translation>C♯-1</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="33"/>
         <source>D♭-1</source>
-        <translation type="unfinished"/>
+        <translation>D♭-1</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="34"/>
         <source>D-1</source>
-        <translation type="unfinished"/>
+        <translation>D-1</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="35"/>
         <source>D♯-1</source>
-        <translation type="unfinished"/>
+        <translation>D♯-1</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="36"/>
         <source>E♭-1</source>
-        <translation type="unfinished"/>
+        <translation>E♭-1</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="37"/>
         <source>E-1</source>
-        <translation type="unfinished"/>
+        <translation>E-1</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="38"/>
         <source>E♯-1</source>
-        <translation type="unfinished"/>
+        <translation>E♯-1</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="39"/>
         <source>F♭-1</source>
-        <translation type="unfinished"/>
+        <translation>F♭-1</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="40"/>
         <source>F-1</source>
-        <translation type="unfinished"/>
+        <translation>F-1</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="41"/>
         <source>F♯-1</source>
-        <translation type="unfinished"/>
+        <translation>F♯-1</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="42"/>
         <source>G♭-1</source>
-        <translation type="unfinished"/>
+        <translation>G♭-1</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="43"/>
         <source>G-1</source>
-        <translation type="unfinished"/>
+        <translation>G-1</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="44"/>
         <source>G♯-1</source>
-        <translation type="unfinished"/>
+        <translation>G♯-1</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="45"/>
         <source>A♭-1</source>
-        <translation type="unfinished"/>
+        <translation>A♭-1</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="46"/>
         <source>A-1</source>
-        <translation type="unfinished"/>
+        <translation>A-1</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="47"/>
         <source>A♯-1</source>
-        <translation type="unfinished"/>
+        <translation>A♯-1</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="48"/>
         <source>B♭-1</source>
-        <translation type="unfinished"/>
+        <translation>B♭-1</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="49"/>
         <source>B-1</source>
-        <translation type="unfinished"/>
+        <translation>B-1</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="50"/>
         <source>B♯-1</source>
-        <translation type="unfinished"/>
+        <translation>B♯-1</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="52"/>
         <source>C♭0</source>
-        <translation type="unfinished"/>
+        <translation>C♭0</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="53"/>
@@ -21641,102 +21637,102 @@ Fret %1 on strings %2</source>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="54"/>
         <source>C♯0</source>
-        <translation type="unfinished"/>
+        <translation>C♯0</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="55"/>
         <source>D♭0</source>
-        <translation type="unfinished"/>
+        <translation>D♭0</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="56"/>
         <source>D0</source>
-        <translation type="unfinished"/>
+        <translation>D0</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="57"/>
         <source>D♯0</source>
-        <translation type="unfinished"/>
+        <translation>D♯0</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="58"/>
         <source>E♭0</source>
-        <translation type="unfinished"/>
+        <translation>E♭0</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="59"/>
         <source>E0</source>
-        <translation type="unfinished"/>
+        <translation>E0</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="60"/>
         <source>E♯0</source>
-        <translation type="unfinished"/>
+        <translation>E♯0</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="61"/>
         <source>F♭0</source>
-        <translation type="unfinished"/>
+        <translation>F♭0</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="62"/>
         <source>F0</source>
-        <translation type="unfinished"/>
+        <translation>F0</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="63"/>
         <source>F♯0</source>
-        <translation type="unfinished"/>
+        <translation>F♯0</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="64"/>
         <source>G♭0</source>
-        <translation type="unfinished"/>
+        <translation>G♭0</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="65"/>
         <source>G0</source>
-        <translation type="unfinished"/>
+        <translation>G0</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="66"/>
         <source>G♯0</source>
-        <translation type="unfinished"/>
+        <translation>G♯0</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="67"/>
         <source>A♭0</source>
-        <translation type="unfinished"/>
+        <translation>A♭0</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="68"/>
         <source>A0</source>
-        <translation type="unfinished"/>
+        <translation>A0</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="69"/>
         <source>A♯0</source>
-        <translation type="unfinished"/>
+        <translation>A♯0</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="70"/>
         <source>B♭0</source>
-        <translation type="unfinished"/>
+        <translation>B♭0</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="71"/>
         <source>B0</source>
-        <translation type="unfinished"/>
+        <translation>B0</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="72"/>
         <source>B♯0</source>
-        <translation type="unfinished"/>
+        <translation>B♯0</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="74"/>
         <source>C♭1</source>
-        <translation type="unfinished"/>
+        <translation>C♭1</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="75"/>
@@ -21746,102 +21742,102 @@ Fret %1 on strings %2</source>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="76"/>
         <source>C♯1</source>
-        <translation type="unfinished"/>
+        <translation>C♯1</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="77"/>
         <source>D♭1</source>
-        <translation type="unfinished"/>
+        <translation>D♭1</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="78"/>
         <source>D1</source>
-        <translation type="unfinished"/>
+        <translation>D1</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="79"/>
         <source>D♯1</source>
-        <translation type="unfinished"/>
+        <translation>D♯1</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="80"/>
         <source>E♭1</source>
-        <translation type="unfinished"/>
+        <translation>E♭1</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="81"/>
         <source>E1</source>
-        <translation type="unfinished"/>
+        <translation>E1</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="82"/>
         <source>E♯1</source>
-        <translation type="unfinished"/>
+        <translation>E♯1</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="83"/>
         <source>F♭1</source>
-        <translation type="unfinished"/>
+        <translation>F♭1</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="84"/>
         <source>F1</source>
-        <translation type="unfinished"/>
+        <translation>F1</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="85"/>
         <source>F♯1</source>
-        <translation type="unfinished"/>
+        <translation>F♯1</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="86"/>
         <source>G♭1</source>
-        <translation type="unfinished"/>
+        <translation>G♭1</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="87"/>
         <source>G1</source>
-        <translation type="unfinished"/>
+        <translation>G1</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="88"/>
         <source>G♯1</source>
-        <translation type="unfinished"/>
+        <translation>G♯1</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="89"/>
         <source>A♭1</source>
-        <translation type="unfinished"/>
+        <translation>A♭1</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="90"/>
         <source>A1</source>
-        <translation type="unfinished"/>
+        <translation>A1</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="91"/>
         <source>A♯1</source>
-        <translation type="unfinished"/>
+        <translation>A♯1</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="92"/>
         <source>B♭1</source>
-        <translation type="unfinished"/>
+        <translation>B♭1</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="93"/>
         <source>B1</source>
-        <translation type="unfinished"/>
+        <translation>B1</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="94"/>
         <source>B♯1</source>
-        <translation type="unfinished"/>
+        <translation>B♯1</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="96"/>
         <source>C♭2</source>
-        <translation type="unfinished"/>
+        <translation>C♭2</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="97"/>
@@ -21851,102 +21847,102 @@ Fret %1 on strings %2</source>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="98"/>
         <source>C♯2</source>
-        <translation type="unfinished"/>
+        <translation>C♯2</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="99"/>
         <source>D♭2</source>
-        <translation type="unfinished"/>
+        <translation>D♭2</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="100"/>
         <source>D2</source>
-        <translation type="unfinished"/>
+        <translation>D2</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="101"/>
         <source>D♯2</source>
-        <translation type="unfinished"/>
+        <translation>D♯2</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="102"/>
         <source>E♭2</source>
-        <translation type="unfinished"/>
+        <translation>E♭2</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="103"/>
         <source>E2</source>
-        <translation type="unfinished"/>
+        <translation>E2</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="104"/>
         <source>E♯2</source>
-        <translation type="unfinished"/>
+        <translation>E♯2</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="105"/>
         <source>F♭2</source>
-        <translation type="unfinished"/>
+        <translation>F♭2</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="106"/>
         <source>F2</source>
-        <translation type="unfinished"/>
+        <translation>F2</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="107"/>
         <source>F♯2</source>
-        <translation type="unfinished"/>
+        <translation>F♯2</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="108"/>
         <source>G♭2</source>
-        <translation type="unfinished"/>
+        <translation>G♭2</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="109"/>
         <source>G2</source>
-        <translation type="unfinished"/>
+        <translation>G2</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="110"/>
         <source>G♯2</source>
-        <translation type="unfinished"/>
+        <translation>G♯2</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="111"/>
         <source>A♭2</source>
-        <translation type="unfinished"/>
+        <translation>A♭2</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="112"/>
         <source>A2</source>
-        <translation type="unfinished"/>
+        <translation>A2</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="113"/>
         <source>A♯2</source>
-        <translation type="unfinished"/>
+        <translation>A♯2</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="114"/>
         <source>B♭2</source>
-        <translation type="unfinished"/>
+        <translation>B♭2</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="115"/>
         <source>B2</source>
-        <translation type="unfinished"/>
+        <translation>B2</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="116"/>
         <source>B♯2</source>
-        <translation type="unfinished"/>
+        <translation>B♯2</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="118"/>
         <source>C♭3</source>
-        <translation type="unfinished"/>
+        <translation>C♭3</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="119"/>
@@ -21956,102 +21952,102 @@ Fret %1 on strings %2</source>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="120"/>
         <source>C♯3</source>
-        <translation type="unfinished"/>
+        <translation>C♯3</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="121"/>
         <source>D♭3</source>
-        <translation type="unfinished"/>
+        <translation>D♭3</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="122"/>
         <source>D3</source>
-        <translation type="unfinished"/>
+        <translation>D3</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="123"/>
         <source>D♯3</source>
-        <translation type="unfinished"/>
+        <translation>D♯3</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="124"/>
         <source>E♭3</source>
-        <translation type="unfinished"/>
+        <translation>E♭3</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="125"/>
         <source>E3</source>
-        <translation type="unfinished"/>
+        <translation>E3</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="126"/>
         <source>E♯3</source>
-        <translation type="unfinished"/>
+        <translation>E♯3</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="127"/>
         <source>F♭3</source>
-        <translation type="unfinished"/>
+        <translation>F♭3</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="128"/>
         <source>F3</source>
-        <translation type="unfinished"/>
+        <translation>F3</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="129"/>
         <source>F♯3</source>
-        <translation type="unfinished"/>
+        <translation>F♯3</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="130"/>
         <source>G♭3</source>
-        <translation type="unfinished"/>
+        <translation>G♭3</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="131"/>
         <source>G3</source>
-        <translation type="unfinished"/>
+        <translation>G3</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="132"/>
         <source>G♯3</source>
-        <translation type="unfinished"/>
+        <translation>G♯3</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="133"/>
         <source>A♭3</source>
-        <translation type="unfinished"/>
+        <translation>A♭3</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="134"/>
         <source>A3</source>
-        <translation type="unfinished"/>
+        <translation>A3</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="135"/>
         <source>A♯3</source>
-        <translation type="unfinished"/>
+        <translation>A♯3</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="136"/>
         <source>B♭3</source>
-        <translation type="unfinished"/>
+        <translation>B♭3</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="137"/>
         <source>B3</source>
-        <translation type="unfinished"/>
+        <translation>B3</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="138"/>
         <source>B♯3</source>
-        <translation type="unfinished"/>
+        <translation>B♯3</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="140"/>
         <source>C♭4</source>
-        <translation type="unfinished"/>
+        <translation>C♭4</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="141"/>
@@ -22061,102 +22057,102 @@ Fret %1 on strings %2</source>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="142"/>
         <source>C♯4</source>
-        <translation type="unfinished"/>
+        <translation>C♯4</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="143"/>
         <source>D♭4</source>
-        <translation type="unfinished"/>
+        <translation>D♭4</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="144"/>
         <source>D4</source>
-        <translation type="unfinished"/>
+        <translation>D4</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="145"/>
         <source>D♯4</source>
-        <translation type="unfinished"/>
+        <translation>D♯4</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="146"/>
         <source>E♭4</source>
-        <translation type="unfinished"/>
+        <translation>E♭4</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="147"/>
         <source>E4</source>
-        <translation type="unfinished"/>
+        <translation>E4</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="148"/>
         <source>E♯4</source>
-        <translation type="unfinished"/>
+        <translation>E♯4</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="149"/>
         <source>F♭4</source>
-        <translation type="unfinished"/>
+        <translation>F♭4</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="150"/>
         <source>F4</source>
-        <translation type="unfinished"/>
+        <translation>F4</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="151"/>
         <source>F♯4</source>
-        <translation type="unfinished"/>
+        <translation>F♯4</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="152"/>
         <source>G♭4</source>
-        <translation type="unfinished"/>
+        <translation>G♭4</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="153"/>
         <source>G4</source>
-        <translation type="unfinished"/>
+        <translation>G4</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="154"/>
         <source>G♯4</source>
-        <translation type="unfinished"/>
+        <translation>G♯4</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="155"/>
         <source>A♭4</source>
-        <translation type="unfinished"/>
+        <translation>A♭4</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="156"/>
         <source>A4</source>
-        <translation type="unfinished"/>
+        <translation>A4</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="157"/>
         <source>A♯4</source>
-        <translation type="unfinished"/>
+        <translation>A♯4</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="158"/>
         <source>B♭4</source>
-        <translation type="unfinished"/>
+        <translation>B♭4</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="159"/>
         <source>B4</source>
-        <translation type="unfinished"/>
+        <translation>B4</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="160"/>
         <source>B♯4</source>
-        <translation type="unfinished"/>
+        <translation>B♯4</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="162"/>
         <source>C♭5</source>
-        <translation type="unfinished"/>
+        <translation>C♭5</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="163"/>
@@ -22166,102 +22162,102 @@ Fret %1 on strings %2</source>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="164"/>
         <source>C♯5</source>
-        <translation type="unfinished"/>
+        <translation>C♯5</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="165"/>
         <source>D♭5</source>
-        <translation type="unfinished"/>
+        <translation>D♭5</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="166"/>
         <source>D5</source>
-        <translation type="unfinished"/>
+        <translation>D5</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="167"/>
         <source>D♯5</source>
-        <translation type="unfinished"/>
+        <translation>D♯5</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="168"/>
         <source>E♭5</source>
-        <translation type="unfinished"/>
+        <translation>E♭5</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="169"/>
         <source>E5</source>
-        <translation type="unfinished"/>
+        <translation>E5</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="170"/>
         <source>E♯5</source>
-        <translation type="unfinished"/>
+        <translation>E♯5</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="171"/>
         <source>F♭5</source>
-        <translation type="unfinished"/>
+        <translation>F♭5</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="172"/>
         <source>F5</source>
-        <translation type="unfinished"/>
+        <translation>F5</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="173"/>
         <source>F♯5</source>
-        <translation type="unfinished"/>
+        <translation>F♯5</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="174"/>
         <source>G♭5</source>
-        <translation type="unfinished"/>
+        <translation>G♭5</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="175"/>
         <source>G5</source>
-        <translation type="unfinished"/>
+        <translation>G5</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="176"/>
         <source>G♯5</source>
-        <translation type="unfinished"/>
+        <translation>G♯5</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="177"/>
         <source>A♭5</source>
-        <translation type="unfinished"/>
+        <translation>A♭5</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="178"/>
         <source>A5</source>
-        <translation type="unfinished"/>
+        <translation>A5</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="179"/>
         <source>A♯5</source>
-        <translation type="unfinished"/>
+        <translation>A♯5</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="180"/>
         <source>B♭5</source>
-        <translation type="unfinished"/>
+        <translation>B♭5</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="181"/>
         <source>B5</source>
-        <translation type="unfinished"/>
+        <translation>B5</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="182"/>
         <source>B♯5</source>
-        <translation type="unfinished"/>
+        <translation>B♯5</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="184"/>
         <source>C♭6</source>
-        <translation type="unfinished"/>
+        <translation>C♭6</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="185"/>
@@ -22271,102 +22267,102 @@ Fret %1 on strings %2</source>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="186"/>
         <source>C♯6</source>
-        <translation type="unfinished"/>
+        <translation>C♯6</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="187"/>
         <source>D♭6</source>
-        <translation type="unfinished"/>
+        <translation>D♭6</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="188"/>
         <source>D6</source>
-        <translation type="unfinished"/>
+        <translation>D6</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="189"/>
         <source>D♯6</source>
-        <translation type="unfinished"/>
+        <translation>D♯6</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="190"/>
         <source>E♭6</source>
-        <translation type="unfinished"/>
+        <translation>E♭6</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="191"/>
         <source>E6</source>
-        <translation type="unfinished"/>
+        <translation>E6</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="192"/>
         <source>E♯6</source>
-        <translation type="unfinished"/>
+        <translation>E♯6</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="193"/>
         <source>F♭6</source>
-        <translation type="unfinished"/>
+        <translation>F♭6</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="194"/>
         <source>F6</source>
-        <translation type="unfinished"/>
+        <translation>F6</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="195"/>
         <source>F♯6</source>
-        <translation type="unfinished"/>
+        <translation>F♯6</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="196"/>
         <source>G♭6</source>
-        <translation type="unfinished"/>
+        <translation>G♭6</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="197"/>
         <source>G6</source>
-        <translation type="unfinished"/>
+        <translation>G6</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="198"/>
         <source>G♯6</source>
-        <translation type="unfinished"/>
+        <translation>G♯6</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="199"/>
         <source>A♭6</source>
-        <translation type="unfinished"/>
+        <translation>A♭6</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="200"/>
         <source>A6</source>
-        <translation type="unfinished"/>
+        <translation>A6</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="201"/>
         <source>A♯6</source>
-        <translation type="unfinished"/>
+        <translation>A♯6</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="202"/>
         <source>B♭6</source>
-        <translation type="unfinished"/>
+        <translation>B♭6</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="203"/>
         <source>B6</source>
-        <translation type="unfinished"/>
+        <translation>B6</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="204"/>
         <source>B♯6</source>
-        <translation type="unfinished"/>
+        <translation>B♯6</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="206"/>
         <source>C♭7</source>
-        <translation type="unfinished"/>
+        <translation>C♭7</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="207"/>
@@ -22376,12 +22372,12 @@ Fret %1 on strings %2</source>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="208"/>
         <source>C♯7</source>
-        <translation type="unfinished"/>
+        <translation>C♯7</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="209"/>
         <source>D♭7</source>
-        <translation type="unfinished"/>
+        <translation>D♭7</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="210"/>
@@ -22391,12 +22387,12 @@ Fret %1 on strings %2</source>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="211"/>
         <source>D♯7</source>
-        <translation type="unfinished"/>
+        <translation>D♯7</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="212"/>
         <source>E♭7</source>
-        <translation type="unfinished"/>
+        <translation>E♭7</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="213"/>
@@ -22406,12 +22402,12 @@ Fret %1 on strings %2</source>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="214"/>
         <source>E♯7</source>
-        <translation type="unfinished"/>
+        <translation>E♯7</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="215"/>
         <source>F♭7</source>
-        <translation type="unfinished"/>
+        <translation>F♭7</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="216"/>
@@ -22421,12 +22417,12 @@ Fret %1 on strings %2</source>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="217"/>
         <source>F♯7</source>
-        <translation type="unfinished"/>
+        <translation>F♯7</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="218"/>
         <source>G♭7</source>
-        <translation type="unfinished"/>
+        <translation>G♭7</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="219"/>
@@ -22436,12 +22432,12 @@ Fret %1 on strings %2</source>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="220"/>
         <source>G♯7</source>
-        <translation type="unfinished"/>
+        <translation>G♯7</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="221"/>
         <source>A♭7</source>
-        <translation type="unfinished"/>
+        <translation>A♭7</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="222"/>
@@ -22451,12 +22447,12 @@ Fret %1 on strings %2</source>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="223"/>
         <source>A♯7</source>
-        <translation type="unfinished"/>
+        <translation>A♯7</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="224"/>
         <source>B♭7</source>
-        <translation type="unfinished"/>
+        <translation>B♭7</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="225"/>
@@ -22466,12 +22462,12 @@ Fret %1 on strings %2</source>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="226"/>
         <source>B♯7</source>
-        <translation type="unfinished"/>
+        <translation>B♯7</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="228"/>
         <source>C♭8</source>
-        <translation type="unfinished"/>
+        <translation>C♭8</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="229"/>
@@ -22481,102 +22477,102 @@ Fret %1 on strings %2</source>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="230"/>
         <source>C♯8</source>
-        <translation type="unfinished"/>
+        <translation>C♯8</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="231"/>
         <source>D♭8</source>
-        <translation type="unfinished"/>
+        <translation>D♭8</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="232"/>
         <source>D8</source>
-        <translation type="unfinished"/>
+        <translation>D8</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="233"/>
         <source>D♯8</source>
-        <translation type="unfinished"/>
+        <translation>D♯8</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="234"/>
         <source>E♭8</source>
-        <translation type="unfinished"/>
+        <translation>E♭8</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="235"/>
         <source>E8</source>
-        <translation type="unfinished"/>
+        <translation>E8</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="236"/>
         <source>E♯8</source>
-        <translation type="unfinished"/>
+        <translation>E♯8</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="237"/>
         <source>F♭8</source>
-        <translation type="unfinished"/>
+        <translation>F♭8</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="238"/>
         <source>F8</source>
-        <translation type="unfinished"/>
+        <translation>F8</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="239"/>
         <source>F♯8</source>
-        <translation type="unfinished"/>
+        <translation>F♯8</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="240"/>
         <source>G♭8</source>
-        <translation type="unfinished"/>
+        <translation>G♭8</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="241"/>
         <source>G8</source>
-        <translation type="unfinished"/>
+        <translation>G8</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="242"/>
         <source>G♯8</source>
-        <translation type="unfinished"/>
+        <translation>G♯8</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="243"/>
         <source>A♭8</source>
-        <translation type="unfinished"/>
+        <translation>A♭8</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="244"/>
         <source>A8</source>
-        <translation type="unfinished"/>
+        <translation>A8</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="245"/>
         <source>A♯8</source>
-        <translation type="unfinished"/>
+        <translation>A♯8</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="246"/>
         <source>B♭8</source>
-        <translation type="unfinished"/>
+        <translation>B♭8</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="247"/>
         <source>B8</source>
-        <translation type="unfinished"/>
+        <translation>B8</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="248"/>
         <source>B♯8</source>
-        <translation type="unfinished"/>
+        <translation>B♯8</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="250"/>
         <source>C♭9</source>
-        <translation type="unfinished"/>
+        <translation>C♭9</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="251"/>
@@ -22586,68 +22582,68 @@ Fret %1 on strings %2</source>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="252"/>
         <source>C♯9</source>
-        <translation type="unfinished"/>
+        <translation>C♯9</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="253"/>
         <source>D♭9</source>
-        <translation type="unfinished"/>
+        <translation>D♭9</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="254"/>
         <source>D9</source>
-        <translation type="unfinished"/>
+        <translation>D9</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="255"/>
         <source>D♯9</source>
-        <translation type="unfinished"/>
+        <translation>D♯9</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="256"/>
         <source>E♭9</source>
-        <translation type="unfinished"/>
+        <translation>E♭9</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="257"/>
         <source>E9</source>
-        <translation type="unfinished"/>
+        <translation>E9</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="258"/>
         <source>E♯9</source>
-        <translation type="unfinished"/>
+        <translation>E♯9</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="259"/>
         <source>F♭9</source>
-        <translation type="unfinished"/>
+        <translation>F♭9</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="260"/>
         <source>F9</source>
-        <translation type="unfinished"/>
+        <translation>F9</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="261"/>
         <source>F♯9</source>
-        <translation type="unfinished"/>
+        <translation>F♯9</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="262"/>
         <source>G♭9</source>
-        <translation type="unfinished"/>
+        <translation>G♭9</translation>
     </message>
     <message>
         <location filename="../../src/framework/global/utils.cpp" line="263"/>
         <source>G9</source>
-        <translation type="unfinished"/>
+        <translation>G9</translation>
     </message>
 </context>
 <context>
     <name>iex_audio</name>
     <message>
-        <location filename="../../src/importexport/audioexport/internal/abstractaudiowriter.cpp" line="132"/>
+        <location filename="../../src/importexport/audioexport/internal/abstractaudiowriter.cpp" line="143"/>
         <source>Processing online sounds…</source>
         <translation>オンラインサウンドを処理中…</translation>
     </message>
@@ -22690,7 +22686,7 @@ Fret %1 on strings %2</source>
     <message numerus="yes">
         <location filename="../../src/importexport/mei/internal/meireader.cpp" line="64"/>
         <source>%Ln problem(s) occurred and the import may be incomplete.</source>
-        <translation type="unfinished"><numerusform></numerusform></translation>
+        <translation><numerusform>%Ln個の問題が発生し、インポートが不完全な可能性があります。</numerusform></translation>
     </message>
     <message>
         <location filename="../../src/importexport/mei/internal/meireader.cpp" line="80"/>
@@ -22925,7 +22921,7 @@ pickup measure</source>
     <message numerus="yes">
         <location filename="../../src/importexport/musicxml/internal/import/importmusicxml.cpp" line="117"/>
         <source>%Ln error(s) found, import may be incomplete.</source>
-        <translation type="unfinished"><numerusform></numerusform></translation>
+        <translation><numerusform>%Ln個のエラーが見つかり、インポートが不完全な可能性があります。</numerusform></translation>
     </message>
     <message>
         <location filename="../../src/importexport/musicxml/internal/import/musicxmlvalidation.cpp" line="96"/>
@@ -22955,7 +22951,7 @@ pickup measure</source>
     <message>
         <location filename="../../src/importexport/musicxml/internal/import/musicxmlvalidation.cpp" line="197"/>
         <source>File “%1” is not a valid MusicXML file.</source>
-        <translation>ファイル「%1」は有効な MusicXML ファイルではありません。</translation>
+        <translation>ファイル『%1』は有効な MusicXML ファイルではありません。</translation>
     </message>
     <message>
         <location filename="../../src/importexport/musicxml/internal/musicxmlconfiguration.cpp" line="60"/>
@@ -22989,12 +22985,12 @@ pickup measure</source>
     <message>
         <location filename="../../src/importexport/mnx/internal/notationmnxreader.cpp" line="62"/>
         <source>File is not a valid MNX document.</source>
-        <translation type="unfinished"/>
+        <translation>ファイルは有効な MNX ドキュメントではありません。</translation>
     </message>
     <message>
         <location filename="../../src/importexport/mnx/internal/notationmnxreader.cpp" line="68"/>
         <source>File contains no measures.</source>
-        <translation type="unfinished"/>
+        <translation>ファイルには小節が含まれていません。</translation>
     </message>
 </context>
 <context>
@@ -23123,7 +23119,7 @@ pickup measure</source>
     <message>
         <location filename="../../src/inspector/qml/MuseScore/Inspector/common/InspectorPropertyView.qml" line="134"/>
         <source>Reset “%1” to default value</source>
-        <translation>「%1」をデフォルトの値にリセット</translation>
+        <translation>『%1』をデフォルトの値にリセット</translation>
     </message>
     <message>
         <location filename="../../src/inspector/qml/MuseScore/Inspector/common/InspectorPropertyView.qml" line="135"/>
@@ -23134,7 +23130,7 @@ pickup measure</source>
         <location filename="../../src/inspector/qml/MuseScore/Inspector/common/InspectorPropertyView.qml" line="157"/>
         <source>Menu for “%1”</source>
         <extracomment>%1 is replaced with the name of the property</extracomment>
-        <translation type="unfinished"/>
+        <translation>『%1』のメニュー</translation>
     </message>
     <message>
         <location filename="../../src/inspector/qml/MuseScore/Inspector/common/InspectorPropertyView.qml" line="162"/>
@@ -23803,7 +23799,7 @@ pickup measure</source>
     <message>
         <location filename="../../src/inspector/qml/MuseScore/Inspector/notation/bends/BendSettings.qml" line="85"/>
         <source>Tremolo line</source>
-        <translation type="unfinished"/>
+        <translation>トレモロ線</translation>
     </message>
     <message>
         <location filename="../../src/inspector/qml/MuseScore/Inspector/notation/bends/BendSettings.qml" line="93"/>
@@ -23825,7 +23821,7 @@ pickup measure</source>
     <message>
         <location filename="../../src/inspector/qml/MuseScore/Inspector/notation/bends/BendSettings.qml" line="102"/>
         <source>Tablature staff layout</source>
-        <translation type="unfinished"/>
+        <translation>TAB譜のレイアウト</translation>
     </message>
     <message>
         <location filename="../../src/inspector/qml/MuseScore/Inspector/notation/bends/BendSettings.qml" line="111"/>
@@ -23867,7 +23863,7 @@ pickup measure</source>
     <message>
         <location filename="../../src/inspector/qml/MuseScore/Inspector/notation/bends/BendSettings.qml" line="135"/>
         <source>Customize dive</source>
-        <translation type="unfinished"/>
+        <translation>ダイブをカスタマイズ</translation>
     </message>
     <message>
         <location filename="../../src/inspector/qml/MuseScore/Inspector/notation/bends/BendSettings.qml" line="135"/>
@@ -24126,7 +24122,7 @@ pickup measure</source>
     <message>
         <location filename="../../src/inspector/qml/MuseScore/Inspector/notation/frames/internal/FretFrameChordsTab.qml" line="114"/>
         <source>Add chord symbols to your score and they’ll automatically appear in the legend.</source>
-        <translation>コード記号をスコアに追加すると自動的に凡例に現れます。</translation>
+        <translation>コード記号をスコアに追加すると自動で凡例に現れます。</translation>
     </message>
     <message>
         <location filename="../../src/inspector/qml/MuseScore/Inspector/notation/frames/internal/FretFrameGapsSection.qml" line="53"/>
@@ -24524,13 +24520,13 @@ pickup measure</source>
         <location filename="../../src/inspector/qml/MuseScore/Inspector/notation/lines/internal/HooksAndArrowsSection.qml" line="116"/>
         <location filename="../../src/inspector/qml/MuseScore/Inspector/notation/lines/internal/HooksSection.qml" line="74"/>
         <source>Line start</source>
-        <translation type="unfinished"/>
+        <translation>線の始端</translation>
     </message>
     <message>
         <location filename="../../src/inspector/qml/MuseScore/Inspector/notation/lines/internal/HooksAndArrowsSection.qml" line="190"/>
         <location filename="../../src/inspector/qml/MuseScore/Inspector/notation/lines/internal/HooksSection.qml" line="91"/>
         <source>Line end</source>
-        <translation type="unfinished"/>
+        <translation>線の終端</translation>
     </message>
     <message>
         <location filename="../../src/inspector/qml/MuseScore/Inspector/notation/lines/internal/HooksAndArrowsSection.qml" line="289"/>
@@ -24548,22 +24544,22 @@ pickup measure</source>
     <message>
         <location filename="../../src/inspector/qml/MuseScore/Inspector/notation/lines/internal/HooksAndArrowsSection.qml" line="374"/>
         <source>Start arrow height</source>
-        <translation type="unfinished"/>
+        <translation>始端矢印の高さ</translation>
     </message>
     <message>
         <location filename="../../src/inspector/qml/MuseScore/Inspector/notation/lines/internal/HooksAndArrowsSection.qml" line="405"/>
         <source>Start arrow width</source>
-        <translation type="unfinished"/>
+        <translation>始端矢印の幅</translation>
     </message>
     <message>
         <location filename="../../src/inspector/qml/MuseScore/Inspector/notation/lines/internal/HooksAndArrowsSection.qml" line="459"/>
         <source>End arrow height</source>
-        <translation type="unfinished"/>
+        <translation>終端矢印の高さ</translation>
     </message>
     <message>
         <location filename="../../src/inspector/qml/MuseScore/Inspector/notation/lines/internal/HooksAndArrowsSection.qml" line="490"/>
         <source>End arrow width</source>
-        <translation type="unfinished"/>
+        <translation>終端矢印の幅</translation>
     </message>
     <message>
         <location filename="../../src/inspector/qml/MuseScore/Inspector/notation/lines/internal/LineStyleSection.qml" line="100"/>
@@ -24578,7 +24574,7 @@ pickup measure</source>
     <message>
         <location filename="../../src/inspector/qml/MuseScore/Inspector/notation/lines/internal/LineTextSettingsTab.qml" line="51"/>
         <source>Beginning text</source>
-        <translation>開始テキスト</translation>
+        <translation>始端テキスト</translation>
     </message>
     <message>
         <location filename="../../src/inspector/qml/MuseScore/Inspector/notation/lines/internal/LineTextSettingsTab.qml" line="72"/>
@@ -24588,7 +24584,7 @@ pickup measure</source>
     <message>
         <location filename="../../src/inspector/qml/MuseScore/Inspector/notation/lines/internal/LineTextSettingsTab.qml" line="93"/>
         <source>End text</source>
-        <translation>終了テキスト</translation>
+        <translation>終端テキスト</translation>
     </message>
     <message>
         <location filename="../../src/inspector/qml/MuseScore/Inspector/notation/lines/internal/LineTextSettingsTab.qml" line="118"/>
@@ -25308,7 +25304,7 @@ pickup measure</source>
     <message>
         <location filename="../../src/inspector/qml/MuseScore/Inspector/score/ScoreAppearanceInspectorView.qml" line="54"/>
         <source>Automatically hide all empty staves</source>
-        <translation>すべての空の譜表を自動的に隠す</translation>
+        <translation>すべての空の譜表を自動で隠す</translation>
     </message>
     <message>
         <location filename="../../src/inspector/qml/MuseScore/Inspector/score/ScoreAppearanceInspectorView.qml" line="81"/>
@@ -25383,29 +25379,29 @@ pickup measure</source>
     <message>
         <location filename="../../src/inspector/qml/MuseScore/Inspector/text/TextInspectorView.qml" line="227"/>
         <source>Left-align text within its bounding box</source>
-        <translation type="unfinished"/>
+        <translation>テキストを境界ボックス内で左揃え</translation>
     </message>
     <message>
         <location filename="../../src/inspector/qml/MuseScore/Inspector/text/TextInspectorView.qml" line="233"/>
         <source>Horizontally center text within its bounding box</source>
-        <translation type="unfinished"/>
+        <translation>テキストを境界ボックス内で横方向に中央揃え</translation>
     </message>
     <message>
         <location filename="../../src/inspector/qml/MuseScore/Inspector/text/TextInspectorView.qml" line="239"/>
         <source>Right-align text within its bounding box</source>
-        <translation type="unfinished"/>
+        <translation>テキストを境界ボックス内で右揃え</translation>
     </message>
     <message>
         <location filename="../../src/inspector/qml/MuseScore/Inspector/text/TextInspectorView.qml" line="244"/>
         <location filename="../../src/inspector/qml/MuseScore/Inspector/text/textstylepopup/TextStylePopup.qml" line="295"/>
         <source>Justify</source>
-        <translation type="unfinished"/>
+        <translation>両端揃え</translation>
     </message>
     <message>
         <location filename="../../src/inspector/qml/MuseScore/Inspector/text/TextInspectorView.qml" line="245"/>
         <location filename="../../src/inspector/qml/MuseScore/Inspector/text/textstylepopup/TextStylePopup.qml" line="296"/>
         <source>Justify text to fill the available width</source>
-        <translation type="unfinished"/>
+        <translation>テキストを両端揃えして利用可能な幅を埋める</translation>
     </message>
     <message>
         <location filename="../../src/inspector/qml/MuseScore/Inspector/text/TextInspectorView.qml" line="353"/>
@@ -25653,7 +25649,7 @@ pickup measure</source>
     <message>
         <location filename="../../src/inspector/qml/MuseScore/Inspector/notation/bends/bendsettingsmodel.cpp" line="58"/>
         <source>Bend/dive</source>
-        <translation type="unfinished"/>
+        <translation>ベンド/ダイブ</translation>
     </message>
     <message>
         <location filename="../../src/inspector/qml/MuseScore/Inspector/notation/bends/bendsettingsmodel.cpp" line="283"/>
@@ -25738,7 +25734,7 @@ pickup measure</source>
     <message>
         <location filename="../../src/inspector/qml/MuseScore/Inspector/notation/lines/chordbracketsettingsmodel.cpp" line="36"/>
         <source>Chord bracket</source>
-        <translation type="unfinished"/>
+        <translation>和音の括弧</translation>
     </message>
     <message>
         <location filename="../../src/inspector/qml/MuseScore/Inspector/notation/lines/glissandosettingsmodel.cpp" line="78"/>
@@ -25768,12 +25764,12 @@ pickup measure</source>
     <message>
         <location filename="../../src/inspector/qml/MuseScore/Inspector/notation/lines/lyricslinesettingsmodel.cpp" line="34"/>
         <source>Lyrics line</source>
-        <translation type="unfinished"/>
+        <translation>歌詞線</translation>
     </message>
     <message>
         <location filename="../../src/inspector/qml/MuseScore/Inspector/notation/lines/lyricslinesettingsmodel.cpp" line="38"/>
         <source>Partial lyrics line</source>
-        <translation type="unfinished"/>
+        <translation>部分的な歌詞線</translation>
     </message>
     <message>
         <location filename="../../src/inspector/qml/MuseScore/Inspector/notation/lines/notelinesettingsmodel.cpp" line="32"/>
@@ -25853,7 +25849,7 @@ pickup measure</source>
         <location filename="../../src/inspector/qml/MuseScore/Inspector/notation/lines/textlinesettingsmodel.cpp" line="447"/>
         <source>Line arrow</source>
         <comment>hook type</comment>
-        <translation type="unfinished"/>
+        <translation>線矢印</translation>
     </message>
     <message>
         <location filename="../../src/inspector/qml/MuseScore/Inspector/notation/lines/ottavasettingsmodel.cpp" line="86"/>
@@ -25863,7 +25859,7 @@ pickup measure</source>
         <location filename="../../src/inspector/qml/MuseScore/Inspector/notation/lines/textlinesettingsmodel.cpp" line="448"/>
         <source>Filled arrow</source>
         <comment>hook type</comment>
-        <translation type="unfinished"/>
+        <translation>塗りつぶし矢印</translation>
     </message>
     <message>
         <location filename="../../src/inspector/qml/MuseScore/Inspector/notation/lines/pedalsettingsmodel.cpp" line="37"/>
@@ -26207,47 +26203,47 @@ pickup measure</source>
     <message>
         <location filename="../../src/inspector/qml/MuseScore/Inspector/text/textsettingsmodel.cpp" line="767"/>
         <source>Left-align text box within frame</source>
-        <translation type="unfinished"/>
+        <translation>テキストボックスをフレーム内で左揃え</translation>
     </message>
     <message>
         <location filename="../../src/inspector/qml/MuseScore/Inspector/text/textsettingsmodel.cpp" line="769"/>
         <source>Left-align text box to note/rest</source>
-        <translation type="unfinished"/>
+        <translation>テキストボックスを音符/休符に左揃え</translation>
     </message>
     <message>
         <location filename="../../src/inspector/qml/MuseScore/Inspector/text/textsettingsmodel.cpp" line="771"/>
         <source>Left-align text box to barline</source>
-        <translation type="unfinished"/>
+        <translation>テキストボックスを縦線に左揃え</translation>
     </message>
     <message>
         <location filename="../../src/inspector/qml/MuseScore/Inspector/text/textsettingsmodel.cpp" line="785"/>
         <source>Horizontally center text box within frame</source>
-        <translation type="unfinished"/>
+        <translation>テキストボックスをフレーム内で横方向に中央揃え</translation>
     </message>
     <message>
         <location filename="../../src/inspector/qml/MuseScore/Inspector/text/textsettingsmodel.cpp" line="787"/>
         <source>Horizontally center text box to note/rest</source>
-        <translation type="unfinished"/>
+        <translation>テキストボックスを音符/休符に横方向に中央揃え</translation>
     </message>
     <message>
         <location filename="../../src/inspector/qml/MuseScore/Inspector/text/textsettingsmodel.cpp" line="789"/>
         <source>Horizontally center text box to barline</source>
-        <translation type="unfinished"/>
+        <translation>テキストボックスを縦線に横方向に中央揃え</translation>
     </message>
     <message>
         <location filename="../../src/inspector/qml/MuseScore/Inspector/text/textsettingsmodel.cpp" line="803"/>
         <source>Right-align text box within frame</source>
-        <translation type="unfinished"/>
+        <translation>テキストボックスをフレーム内で右揃え</translation>
     </message>
     <message>
         <location filename="../../src/inspector/qml/MuseScore/Inspector/text/textsettingsmodel.cpp" line="805"/>
         <source>Right-align text box to note/rest</source>
-        <translation type="unfinished"/>
+        <translation>テキストボックスを音符/休符に右揃え</translation>
     </message>
     <message>
         <location filename="../../src/inspector/qml/MuseScore/Inspector/text/textsettingsmodel.cpp" line="807"/>
         <source>Right-align text box to barline</source>
-        <translation type="unfinished"/>
+        <translation>テキストボックスを縦線に右揃え</translation>
     </message>
 </context>
 <context>
@@ -26832,7 +26828,7 @@ In addition, Mastering MuseScore features a supportive community of musicians, w
     <message>
         <location filename="../../src/musesounds/internal/musesoundscheckupdatescenario.cpp" line="136"/>
         <source>Take me to MuseHub</source>
-        <translation type="unfinished"/>
+        <translation>MuseHub に移動</translation>
     </message>
     <message>
         <location filename="../../src/musesounds/internal/musesoundscheckupdatescenario.cpp" line="142"/>
@@ -27152,7 +27148,7 @@ In addition, Mastering MuseScore features a supportive community of musicians, w
     <message>
         <location filename="../../src/notationscene/qml/MuseScore/NotationScene/elementpopups/HarpPedalPopup.qml" line="315"/>
         <location filename="../../src/notationscene/qml/MuseScore/NotationScene/elementpopups/HarpPedalPopup.qml" line="320"/>
-        <location filename="../../src/notationscene/qml/MuseScore/NotationScene/noteinputbarmodel.cpp" line="592"/>
+        <location filename="../../src/notationscene/qml/MuseScore/NotationScene/noteinputbarmodel.cpp" line="602"/>
         <source>Text</source>
         <translation>テキスト</translation>
     </message>
@@ -27409,7 +27405,7 @@ In addition, Mastering MuseScore features a supportive community of musicians, w
     <message>
         <location filename="../../src/notationscene/qml/MuseScore/NotationScene/styledialog/BeamsPage.qml" line="152"/>
         <source>Draw inner stems to nearest beam (“French” style)</source>
-        <translation>内側の符幹を最も近い連桁まで描画 (「フレンチ」スタイル)</translation>
+        <translation>内側の符幹を最も近い連桁まで描画 (『フレンチ』スタイル)</translation>
     </message>
     <message>
         <location filename="../../src/notationscene/qml/MuseScore/NotationScene/styledialog/BendsPage.qml" line="263"/>
@@ -27471,17 +27467,17 @@ In addition, Mastering MuseScore features a supportive community of musicians, w
     <message>
         <location filename="../../src/notationscene/qml/MuseScore/NotationScene/styledialog/ChordSymbolsPage.qml" line="690"/>
         <source>Min. space to fretboard diagram:</source>
-        <translation type="unfinished"/>
+        <translation>フレットボードダイアグラムまでの最小間隔:</translation>
     </message>
     <message>
         <location filename="../../src/notationscene/qml/MuseScore/NotationScene/styledialog/ChordSymbolsPage.qml" line="729"/>
         <source>Min. space to other notation:</source>
-        <translation type="unfinished"/>
+        <translation>他の記譜までの最小間隔:</translation>
     </message>
     <message>
         <location filename="../../src/notationscene/qml/MuseScore/NotationScene/styledialog/ChordSymbolsPage.qml" line="756"/>
         <source>Min. space between chord symbols:</source>
-        <translation type="unfinished"/>
+        <translation>コード記号間の最小間隔:</translation>
     </message>
     <message>
         <location filename="../../src/notationscene/qml/MuseScore/NotationScene/styledialog/ChordSymbolsPage.qml" line="795"/>
@@ -27517,12 +27513,12 @@ In addition, Mastering MuseScore features a supportive community of musicians, w
     <message>
         <location filename="../../src/notationscene/qml/MuseScore/NotationScene/styledialog/FretboardsPage.qml" line="56"/>
         <source>Position above staff:</source>
-        <translation type="unfinished"/>
+        <translation>譜表上位置:</translation>
     </message>
     <message>
         <location filename="../../src/notationscene/qml/MuseScore/NotationScene/styledialog/FretboardsPage.qml" line="64"/>
         <source>Min. space to notation:</source>
-        <translation type="unfinished"/>
+        <translation>記譜までの最小間隔:</translation>
     </message>
     <message>
         <location filename="../../src/notationscene/qml/MuseScore/NotationScene/styledialog/FretboardsPage.qml" line="79"/>
@@ -27852,42 +27848,42 @@ In addition, Mastering MuseScore features a supportive community of musicians, w
         <translation>ズームメニュー</translation>
     </message>
     <message>
-        <location filename="../../src/appshell/qml/MuseScore/AppShell/appmenumodel.cpp" line="698"/>
+        <location filename="../../src/appshell/qml/MuseScore/AppShell/appmenumodel.cpp" line="704"/>
         <location filename="../../src/web/appshell/view/appmenumodel.cpp" line="367"/>
         <source>Insert &amp;after selection…</source>
         <translation>選択範囲の後に挿入…(&amp;A)</translation>
     </message>
     <message>
-        <location filename="../../src/appshell/qml/MuseScore/AppShell/appmenumodel.cpp" line="697"/>
+        <location filename="../../src/appshell/qml/MuseScore/AppShell/appmenumodel.cpp" line="703"/>
         <location filename="../../src/web/appshell/view/appmenumodel.cpp" line="368"/>
         <source>Insert &amp;before selection…</source>
         <translation>選択範囲の前に挿入…(&amp;B)</translation>
     </message>
     <message>
-        <location filename="../../src/appshell/qml/MuseScore/AppShell/appmenumodel.cpp" line="694"/>
-        <source>&amp;Insert one measure before selection</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../../src/appshell/qml/MuseScore/AppShell/appmenumodel.cpp" line="695"/>
-        <source>Insert &amp;one measure at end of score</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
         <location filename="../../src/appshell/qml/MuseScore/AppShell/appmenumodel.cpp" line="700"/>
+        <source>&amp;Insert one measure before selection</source>
+        <translation>選択範囲の前に小節を1つ挿入(&amp;I)</translation>
+    </message>
+    <message>
+        <location filename="../../src/appshell/qml/MuseScore/AppShell/appmenumodel.cpp" line="701"/>
+        <source>Insert &amp;one measure at end of score</source>
+        <translation>スコアの終わりに小節を1つ挿入(&amp;O)</translation>
+    </message>
+    <message>
+        <location filename="../../src/appshell/qml/MuseScore/AppShell/appmenumodel.cpp" line="706"/>
         <location filename="../../src/web/appshell/view/appmenumodel.cpp" line="370"/>
         <source>Insert at &amp;start of score…</source>
         <translation>スコアの始めに挿入…(&amp;S)</translation>
     </message>
     <message>
-        <location filename="../../src/appshell/qml/MuseScore/AppShell/appmenumodel.cpp" line="701"/>
+        <location filename="../../src/appshell/qml/MuseScore/AppShell/appmenumodel.cpp" line="707"/>
         <location filename="../../src/web/appshell/view/appmenumodel.cpp" line="371"/>
         <source>Insert at &amp;end of score…</source>
         <translation>スコアの終わりに挿入…(&amp;E)</translation>
     </message>
     <message>
-        <location filename="../../src/appshell/qml/MuseScore/AppShell/appmenumodel.cpp" line="715"/>
-        <location filename="../../src/notationscene/qml/MuseScore/NotationScene/noteinputbarmodel.cpp" line="675"/>
+        <location filename="../../src/appshell/qml/MuseScore/AppShell/appmenumodel.cpp" line="721"/>
+        <location filename="../../src/notationscene/qml/MuseScore/NotationScene/noteinputbarmodel.cpp" line="685"/>
         <source>Insert at end of score</source>
         <translation>スコアの終わりに挿入</translation>
     </message>
@@ -28058,12 +28054,12 @@ In addition, Mastering MuseScore features a supportive community of musicians, w
         <location filename="../../src/notation/internal/mscoreerrorscontroller.cpp" line="128"/>
         <location filename="../../src/notation/internal/mscoreerrorscontroller.cpp" line="141"/>
         <source>This selection cannot be copied</source>
-        <translation type="unfinished"/>
+        <translation>この選択範囲はコピーできません</translation>
     </message>
     <message>
         <location filename="../../src/notation/internal/mscoreerrorscontroller.cpp" line="129"/>
         <source>Please select all notes that are part of this tuplet and try again.</source>
-        <translation type="unfinished"/>
+        <translation>この連符に含まれるすべての音符を選択してもう一度お試しください。</translation>
     </message>
     <message>
         <location filename="../../src/notation/internal/mscoreerrorscontroller.cpp" line="132"/>
@@ -28083,7 +28079,7 @@ In addition, Mastering MuseScore features a supportive community of musicians, w
     <message>
         <location filename="../../src/notation/internal/mscoreerrorscontroller.cpp" line="142"/>
         <source>Please select all notes that are part of this tremolo and try again.</source>
-        <translation type="unfinished"/>
+        <translation>このトレモロに含まれるすべての音符を選択してもう一度お試しください。</translation>
     </message>
     <message>
         <location filename="../../src/notation/internal/mscoreerrorscontroller.cpp" line="145"/>
@@ -28144,7 +28140,7 @@ In addition, Mastering MuseScore features a supportive community of musicians, w
     <message>
         <location filename="../../src/notation/internal/mscoreerrorscontroller.cpp" line="174"/>
         <source>Can’t repeat this selection</source>
-        <translation type="unfinished"/>
+        <translation>この選択範囲を繰り返せません</translation>
     </message>
     <message>
         <location filename="../../src/notation/internal/mscoreerrorscontroller.cpp" line="175"/>
@@ -28202,28 +28198,28 @@ In addition, Mastering MuseScore features a supportive community of musicians, w
         <translation>申し訳ございませんが、現時点では Web 上での楽器の変更はサポートされていません。</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="4567"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="4569"/>
         <source>‘</source>
         <extracomment>Single open quotation mark</extracomment>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="4569"/>
-        <source>’</source>
-        <extracomment>Single close quotation mark</extracomment>
-        <translation type="unfinished"/>
+        <translation>‘</translation>
     </message>
     <message>
         <location filename="../../src/notation/internal/notationinteraction.cpp" line="4571"/>
-        <source>“</source>
-        <extracomment>Double open quotation mark</extracomment>
-        <translation type="unfinished"/>
+        <source>’</source>
+        <extracomment>Single close quotation mark</extracomment>
+        <translation>’</translation>
     </message>
     <message>
         <location filename="../../src/notation/internal/notationinteraction.cpp" line="4573"/>
+        <source>“</source>
+        <extracomment>Double open quotation mark</extracomment>
+        <translation>“</translation>
+    </message>
+    <message>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="4575"/>
         <source>”</source>
         <extracomment>Double close quotation mark</extracomment>
-        <translation type="unfinished"/>
+        <translation>”</translation>
     </message>
     <message>
         <location filename="../../src/notation/internal/notationparts.cpp" line="57"/>
@@ -28548,37 +28544,37 @@ In addition, Mastering MuseScore features a supportive community of musicians, w
         <translation>区切り線</translation>
     </message>
     <message>
-        <location filename="../../src/notationscene/qml/MuseScore/NotationScene/noteinputbarmodel.cpp" line="588"/>
+        <location filename="../../src/notationscene/qml/MuseScore/NotationScene/noteinputbarmodel.cpp" line="598"/>
         <source>Notes</source>
         <translation>音符</translation>
     </message>
     <message>
-        <location filename="../../src/notationscene/qml/MuseScore/NotationScene/noteinputbarmodel.cpp" line="589"/>
+        <location filename="../../src/notationscene/qml/MuseScore/NotationScene/noteinputbarmodel.cpp" line="599"/>
         <source>Intervals</source>
         <translation>音程</translation>
     </message>
     <message>
-        <location filename="../../src/notationscene/qml/MuseScore/NotationScene/noteinputbarmodel.cpp" line="590"/>
+        <location filename="../../src/notationscene/qml/MuseScore/NotationScene/noteinputbarmodel.cpp" line="600"/>
         <source>Measures</source>
         <translation>小節</translation>
     </message>
     <message>
-        <location filename="../../src/notationscene/qml/MuseScore/NotationScene/noteinputbarmodel.cpp" line="591"/>
+        <location filename="../../src/notationscene/qml/MuseScore/NotationScene/noteinputbarmodel.cpp" line="601"/>
         <source>Frames</source>
         <translation>フレーム</translation>
     </message>
     <message>
-        <location filename="../../src/notationscene/qml/MuseScore/NotationScene/noteinputbarmodel.cpp" line="593"/>
+        <location filename="../../src/notationscene/qml/MuseScore/NotationScene/noteinputbarmodel.cpp" line="603"/>
         <source>Lines</source>
         <translation>線</translation>
     </message>
     <message>
-        <location filename="../../src/notationscene/qml/MuseScore/NotationScene/noteinputbarmodel.cpp" line="594"/>
+        <location filename="../../src/notationscene/qml/MuseScore/NotationScene/noteinputbarmodel.cpp" line="604"/>
         <source>Chords and fretboard diagrams</source>
         <translation>コードとフレットボードダイアグラム</translation>
     </message>
     <message>
-        <location filename="../../src/notationscene/qml/MuseScore/NotationScene/noteinputbarmodel.cpp" line="742"/>
+        <location filename="../../src/notationscene/qml/MuseScore/NotationScene/noteinputbarmodel.cpp" line="752"/>
         <source>Fretboard diagram legend</source>
         <translation>フレットボードダイアグラムの凡例</translation>
     </message>
@@ -29082,22 +29078,22 @@ In addition, Mastering MuseScore features a supportive community of musicians, w
     <message>
         <location filename="../../src/notationscene/qml/MuseScore/NotationScene/styledialog/ClefKeyTimeSigPage.qml" line="496"/>
         <source>When changing to a key signature containing fewer sharps or flats</source>
-        <translation type="unfinished"/>
+        <translation>シャープまたはフラットの数がより少ない調号に変更するとき</translation>
     </message>
     <message>
         <location filename="../../src/notationscene/qml/MuseScore/NotationScene/styledialog/ClefKeyTimeSigPage.qml" line="508"/>
         <source>Don’t show any naturals</source>
-        <translation type="unfinished"/>
+        <translation>全くナチュラルを表示しない</translation>
     </message>
     <message>
         <location filename="../../src/notationscene/qml/MuseScore/NotationScene/styledialog/ClefKeyTimeSigPage.qml" line="509"/>
         <source>Show naturals before the new key signature</source>
-        <translation type="unfinished"/>
+        <translation>新しい調号の前にナチュラルを表示</translation>
     </message>
     <message>
         <location filename="../../src/notationscene/qml/MuseScore/NotationScene/styledialog/ClefKeyTimeSigPage.qml" line="510"/>
         <source>Show naturals after the new key signature</source>
-        <translation type="unfinished"/>
+        <translation>新しい調号の後にナチュラルを表示</translation>
     </message>
 </context>
 <context>
@@ -29143,7 +29139,7 @@ In addition, Mastering MuseScore features a supportive community of musicians, w
         <location filename="../../src/notationscene/qml/MuseScore/NotationScene/styledialog/BendsPage.qml" line="77"/>
         <location filename="../../src/notationscene/qml/MuseScore/NotationScene/styledialog/BendsPage.qml" line="190"/>
         <source>Tablature staff</source>
-        <translation type="unfinished"/>
+        <translation>TAB譜表</translation>
     </message>
     <message>
         <location filename="../../src/notationscene/qml/MuseScore/NotationScene/styledialog/BendsPage.qml" line="102"/>
@@ -29158,67 +29154,67 @@ In addition, Mastering MuseScore features a supportive community of musicians, w
     <message>
         <location filename="../../src/notationscene/qml/MuseScore/NotationScene/styledialog/BendsPage.qml" line="131"/>
         <source>Label for full bends:</source>
-        <translation type="unfinished"/>
+        <translation>フルベンドのラベル:</translation>
     </message>
     <message>
         <location filename="../../src/notationscene/qml/MuseScore/NotationScene/styledialog/BendsPage.qml" line="163"/>
         <source>Dives</source>
-        <translation type="unfinished"/>
+        <translation>ダイブ</translation>
     </message>
     <message>
         <location filename="../../src/notationscene/qml/MuseScore/NotationScene/styledialog/BendsPage.qml" line="198"/>
         <source>Show dive lines</source>
-        <translation type="unfinished"/>
+        <translation>ダイブ線を表示</translation>
     </message>
     <message>
         <location filename="../../src/notationscene/qml/MuseScore/NotationScene/styledialog/BendsPage.qml" line="205"/>
         <source>On the staff</source>
-        <translation type="unfinished"/>
+        <translation>譜表内</translation>
     </message>
     <message>
         <location filename="../../src/notationscene/qml/MuseScore/NotationScene/styledialog/BendsPage.qml" line="206"/>
         <source>Above the staff</source>
-        <translation type="unfinished"/>
+        <translation>譜表の上</translation>
     </message>
     <message>
         <location filename="../../src/notationscene/qml/MuseScore/NotationScene/styledialog/BendsPage.qml" line="236"/>
         <source>Whammy bar line</source>
-        <translation type="unfinished"/>
+        <translation>ワーミーバー線</translation>
     </message>
     <message>
         <location filename="../../src/notationscene/qml/MuseScore/NotationScene/styledialog/BendsPage.qml" line="246"/>
         <source>Text label:</source>
-        <translation type="unfinished"/>
+        <translation>テキストラベル:</translation>
     </message>
     <message>
         <location filename="../../src/notationscene/qml/MuseScore/NotationScene/styledialog/BendsPage.qml" line="289"/>
         <source>Grace note bends/dives on tablature</source>
-        <translation type="unfinished"/>
+        <translation>TAB譜の装飾音符のベンド/ダイブ</translation>
     </message>
     <message>
         <location filename="../../src/notationscene/qml/MuseScore/NotationScene/styledialog/BendsPage.qml" line="296"/>
         <source>Use cue sized fret numbers</source>
-        <translation type="unfinished"/>
+        <translation>小音符の大きさのフレット番号を使用</translation>
     </message>
     <message>
         <location filename="../../src/notationscene/qml/MuseScore/NotationScene/styledialog/BendsPage.qml" line="307"/>
         <source>Align pre-bends and pre-dives</source>
-        <translation type="unfinished"/>
+        <translation>プレベンドとプレダイブを整列</translation>
     </message>
     <message>
         <location filename="../../src/notationscene/qml/MuseScore/NotationScene/styledialog/BendsPage.qml" line="314"/>
         <source>To the main note</source>
-        <translation type="unfinished"/>
+        <translation>主音符に</translation>
     </message>
     <message>
         <location filename="../../src/notationscene/qml/MuseScore/NotationScene/styledialog/BendsPage.qml" line="315"/>
         <source>To the grace note</source>
-        <translation type="unfinished"/>
+        <translation>装飾音符に</translation>
     </message>
     <message>
         <location filename="../../src/notationscene/qml/MuseScore/NotationScene/styledialog/BendsPage.qml" line="333"/>
         <source>Interval labels</source>
-        <translation type="unfinished"/>
+        <translation>音程ラベル</translation>
     </message>
     <message>
         <location filename="../../src/notationscene/qml/MuseScore/NotationScene/styledialog/BendsPage.qml" line="341"/>
@@ -29228,7 +29224,7 @@ In addition, Mastering MuseScore features a supportive community of musicians, w
     <message>
         <location filename="../../src/notationscene/qml/MuseScore/NotationScene/styledialog/BendsPage.qml" line="342"/>
         <source>Level</source>
-        <translation type="unfinished"/>
+        <translation>レベル</translation>
     </message>
 </context>
 <context>
@@ -29251,7 +29247,7 @@ In addition, Mastering MuseScore features a supportive community of musicians, w
     <message>
         <location filename="../../src/notationscene/qml/MuseScore/NotationScene/styledialog/ChordSymbolsPage.qml" line="214"/>
         <source>Capitalization</source>
-        <translation type="unfinished"/>
+        <translation>大文字化</translation>
     </message>
     <message>
         <location filename="../../src/notationscene/qml/MuseScore/NotationScene/styledialog/ChordSymbolsPage.qml" line="225"/>
@@ -29331,7 +29327,7 @@ In addition, Mastering MuseScore features a supportive community of musicians, w
     <message>
         <location filename="../../src/notationscene/qml/MuseScore/NotationScene/styledialog/ChordSymbolsPage.qml" line="868"/>
         <source>Capo</source>
-        <translation>Capo</translation>
+        <translation>カポ</translation>
     </message>
     <message>
         <location filename="../../src/notationscene/qml/MuseScore/NotationScene/styledialog/chordsymbolspagemodel.cpp" line="71"/>
@@ -29433,17 +29429,17 @@ In addition, Mastering MuseScore features a supportive community of musicians, w
     <message>
         <location filename="../../src/notationscene/qml/MuseScore/NotationScene/styledialog/chordsymbolspagemodel.cpp" line="253"/>
         <source>Don’t show chord symbols transposed by capo</source>
-        <translation type="unfinished"/>
+        <translation>カポで移調されたコード記号を表示しない</translation>
     </message>
     <message>
         <location filename="../../src/notationscene/qml/MuseScore/NotationScene/styledialog/chordsymbolspagemodel.cpp" line="256"/>
         <source>Show chord symbols &amp; transposed symbols</source>
-        <translation type="unfinished"/>
+        <translation>コード記号と移調された記号を表示</translation>
     </message>
     <message>
         <location filename="../../src/notationscene/qml/MuseScore/NotationScene/styledialog/chordsymbolspagemodel.cpp" line="259"/>
         <source>Show transposed symbols only</source>
-        <translation type="unfinished"/>
+        <translation>移調された記号のみ表示</translation>
     </message>
 </context>
 <context>
@@ -29581,7 +29577,7 @@ In addition, Mastering MuseScore features a supportive community of musicians, w
     <message>
         <location filename="../../src/notationscene/qml/MuseScore/NotationScene/styledialog/RepeatPage.qml" line="163"/>
         <source>Show for single repeats (e.g. “x2”)</source>
-        <translation>単一の繰り返しに表示 (例:「x2」)</translation>
+        <translation>単一の繰り返しに表示 (例:『x2』)</translation>
     </message>
     <message>
         <location filename="../../src/notationscene/qml/MuseScore/NotationScene/styledialog/repeatplaycounttextmodel.cpp" line="45"/>
@@ -29842,7 +29838,7 @@ In addition, Mastering MuseScore features a supportive community of musicians, w
     <message>
         <location filename="../../src/notationscene/qml/MuseScore/NotationScene/styledialog/ClefKeyTimeSigPage.qml" line="526"/>
         <source>Show naturals when switching between sharps and flats</source>
-        <translation type="unfinished"/>
+        <translation>シャープとフラットを切り替えるときにナチュラルを表示</translation>
     </message>
     <message>
         <location filename="../../src/notationscene/qml/MuseScore/NotationScene/styledialog/ClefKeyTimeSigPage.qml" line="537"/>
@@ -30261,7 +30257,7 @@ In addition, Mastering MuseScore features a supportive community of musicians, w
     <message>
         <location filename="../../src/preferences/qml/MuseScore/Preferences/PercussionPreferencesPage.qml" line="70"/>
         <source>Open the panel automatically</source>
-        <translation type="unfinished"/>
+        <translation>パネルを自動で開く</translation>
     </message>
     <message>
         <location filename="../../src/preferences/qml/MuseScore/Preferences/PercussionPreferencesPage.qml" line="112"/>
@@ -30426,21 +30422,21 @@ In addition, Mastering MuseScore features a supportive community of musicians, w
     <message>
         <location filename="../../src/notationscene/widgets/timeline.cpp" line="765"/>
         <location filename="../../src/notationscene/widgets/timeline.cpp" line="1162"/>
-        <location filename="../../src/notationscene/widgets/timeline.cpp" line="2524"/>
+        <location filename="../../src/notationscene/widgets/timeline.cpp" line="2545"/>
         <source>Tempo</source>
         <translation>テンポ</translation>
     </message>
     <message>
         <location filename="../../src/notationscene/widgets/timeline.cpp" line="766"/>
         <location filename="../../src/notationscene/widgets/timeline.cpp" line="1193"/>
-        <location filename="../../src/notationscene/widgets/timeline.cpp" line="2525"/>
+        <location filename="../../src/notationscene/widgets/timeline.cpp" line="2546"/>
         <source>Time signature</source>
         <translation>拍子記号</translation>
     </message>
     <message>
         <location filename="../../src/notationscene/widgets/timeline.cpp" line="767"/>
         <location filename="../../src/notationscene/widgets/timeline.cpp" line="1232"/>
-        <location filename="../../src/notationscene/widgets/timeline.cpp" line="2526"/>
+        <location filename="../../src/notationscene/widgets/timeline.cpp" line="2547"/>
         <source>Rehearsal mark</source>
         <translation>練習番号</translation>
     </message>
@@ -30449,14 +30445,14 @@ In addition, Mastering MuseScore features a supportive community of musicians, w
         <location filename="../../src/notationscene/widgets/timeline.cpp" line="1097"/>
         <location filename="../../src/notationscene/widgets/timeline.cpp" line="1101"/>
         <location filename="../../src/notationscene/widgets/timeline.cpp" line="1263"/>
-        <location filename="../../src/notationscene/widgets/timeline.cpp" line="2527"/>
+        <location filename="../../src/notationscene/widgets/timeline.cpp" line="2548"/>
         <source>Key signature</source>
         <translation>調号</translation>
     </message>
     <message>
         <location filename="../../src/notationscene/widgets/timeline.cpp" line="769"/>
         <location filename="../../src/notationscene/widgets/timeline.cpp" line="1366"/>
-        <location filename="../../src/notationscene/widgets/timeline.cpp" line="2528"/>
+        <location filename="../../src/notationscene/widgets/timeline.cpp" line="2549"/>
         <source>Barlines</source>
         <translation>縦線</translation>
     </message>
@@ -30464,7 +30460,7 @@ In addition, Mastering MuseScore features a supportive community of musicians, w
         <location filename="../../src/notationscene/widgets/timeline.cpp" line="770"/>
         <location filename="../../src/notationscene/widgets/timeline.cpp" line="1122"/>
         <location filename="../../src/notationscene/widgets/timeline.cpp" line="1422"/>
-        <location filename="../../src/notationscene/widgets/timeline.cpp" line="2529"/>
+        <location filename="../../src/notationscene/widgets/timeline.cpp" line="2550"/>
         <source>Jumps and markers</source>
         <translation>ジャンプとマーカー</translation>
     </message>
@@ -30472,10 +30468,10 @@ In addition, Mastering MuseScore features a supportive community of musicians, w
         <location filename="../../src/notationscene/widgets/timeline.cpp" line="771"/>
         <location filename="../../src/notationscene/widgets/timeline.cpp" line="1506"/>
         <location filename="../../src/notationscene/widgets/timeline.cpp" line="1548"/>
-        <location filename="../../src/notationscene/widgets/timeline.cpp" line="2530"/>
-        <location filename="../../src/notationscene/widgets/timeline.cpp" line="2789"/>
-        <location filename="../../src/notationscene/widgets/timeline.cpp" line="3058"/>
-        <location filename="../../src/notationscene/widgets/timeline.cpp" line="3093"/>
+        <location filename="../../src/notationscene/widgets/timeline.cpp" line="2551"/>
+        <location filename="../../src/notationscene/widgets/timeline.cpp" line="2810"/>
+        <location filename="../../src/notationscene/widgets/timeline.cpp" line="3079"/>
+        <location filename="../../src/notationscene/widgets/timeline.cpp" line="3114"/>
         <source>Measures</source>
         <translation>小節</translation>
     </message>
@@ -30490,24 +30486,24 @@ In addition, Mastering MuseScore features a supportive community of musicians, w
         <translation>カスタム調号</translation>
     </message>
     <message>
-        <location filename="../../src/notationscene/widgets/timeline.cpp" line="3048"/>
+        <location filename="../../src/notationscene/widgets/timeline.cpp" line="3069"/>
         <source>Context menu</source>
         <translation>コンテキストメニュー</translation>
     </message>
     <message>
-        <location filename="../../src/notationscene/widgets/timeline.cpp" line="3050"/>
+        <location filename="../../src/notationscene/widgets/timeline.cpp" line="3071"/>
         <source>Edit instruments</source>
         <translation>楽器を編集</translation>
     </message>
     <message>
-        <location filename="../../src/notationscene/widgets/timeline.cpp" line="3067"/>
-        <location filename="../../src/notationscene/widgets/timeline.cpp" line="3090"/>
+        <location filename="../../src/notationscene/widgets/timeline.cpp" line="3088"/>
+        <location filename="../../src/notationscene/widgets/timeline.cpp" line="3111"/>
         <source>Hide all</source>
         <translation>すべて非表示</translation>
     </message>
     <message>
-        <location filename="../../src/notationscene/widgets/timeline.cpp" line="3070"/>
-        <location filename="../../src/notationscene/widgets/timeline.cpp" line="3099"/>
+        <location filename="../../src/notationscene/widgets/timeline.cpp" line="3091"/>
+        <location filename="../../src/notationscene/widgets/timeline.cpp" line="3120"/>
         <source>Show all</source>
         <translation>すべて表示</translation>
     </message>
@@ -30648,13 +30644,13 @@ In addition, Mastering MuseScore features a supportive community of musicians, w
     </message>
     <message>
         <location filename="../../src/palette/qml/MuseScore/Palette/internal/PaletteGridView.qml" line="493"/>
-        <location filename="../../src/palette/widgets/palettewidget.cpp" line="1113"/>
+        <location filename="../../src/palette/widgets/palettewidget.cpp" line="1127"/>
         <source>Delete</source>
         <translation>削除</translation>
     </message>
     <message>
         <location filename="../../src/palette/qml/MuseScore/Palette/internal/PaletteGridView.qml" line="494"/>
-        <location filename="../../src/palette/widgets/palettewidget.cpp" line="1114"/>
+        <location filename="../../src/palette/widgets/palettewidget.cpp" line="1128"/>
         <source>Properties…</source>
         <translation>プロパティ…</translation>
     </message>
@@ -30669,18 +30665,18 @@ In addition, Mastering MuseScore features a supportive community of musicians, w
         <translation>パレットを検索</translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/palette/qml/MuseScore/Palette/internal/PaletteTree.qml" line="531"/>
+        <location filename="../../src/palette/qml/MuseScore/Palette/internal/PaletteTree.qml" line="552"/>
         <source>%1, contains %Ln matching element(s)</source>
-        <translation type="unfinished"><numerusform></numerusform></translation>
+        <translation><numerusform>%1、%Ln個の一致する要素を含む</numerusform></translation>
     </message>
     <message>
-        <location filename="../../src/palette/qml/MuseScore/Palette/internal/PaletteTree.qml" line="532"/>
+        <location filename="../../src/palette/qml/MuseScore/Palette/internal/PaletteTree.qml" line="553"/>
         <source>%1 expanded</source>
         <comment>tree item not collapsed</comment>
         <translation>展開された %1</translation>
     </message>
     <message>
-        <location filename="../../src/palette/qml/MuseScore/Palette/internal/PaletteTree.qml" line="669"/>
+        <location filename="../../src/palette/qml/MuseScore/Palette/internal/PaletteTree.qml" line="673"/>
         <location filename="../../src/palette/internal/palettemodel.cpp" line="835"/>
         <source>Untitled palette</source>
         <translation>無題のパレット</translation>
@@ -30816,52 +30812,52 @@ failed.</source>
 失敗しました。</translation>
     </message>
     <message>
-        <location filename="../../src/palette/internal/palettecompat.cpp" line="326"/>
-        <location filename="../../src/palette/internal/palettecompat.cpp" line="328"/>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1827"/>
+        <location filename="../../src/palette/internal/palettecompat.cpp" line="340"/>
+        <location filename="../../src/palette/internal/palettecompat.cpp" line="342"/>
         <location filename="../../src/palette/internal/palettecreator.cpp" line="1828"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1829"/>
         <source>Capo</source>
         <translation>Capo</translation>
     </message>
     <message>
-        <location filename="../../src/palette/internal/palettecompat.cpp" line="336"/>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1833"/>
+        <location filename="../../src/palette/internal/palettecompat.cpp" line="350"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1834"/>
         <source>String tunings</source>
         <translation>調弦</translation>
     </message>
     <message>
-        <location filename="../../src/palette/internal/palettecompat.cpp" line="311"/>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1805"/>
+        <location filename="../../src/palette/internal/palettecompat.cpp" line="325"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1806"/>
         <source>Left-hand tapping</source>
         <translation>左手タッピング</translation>
     </message>
     <message>
-        <location filename="../../src/palette/internal/palettecompat.cpp" line="315"/>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1809"/>
+        <location filename="../../src/palette/internal/palettecompat.cpp" line="329"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1810"/>
         <source>Right-hand tapping</source>
         <translation>右手タッピング</translation>
     </message>
     <message>
-        <location filename="../../src/palette/internal/palettecompat.cpp" line="321"/>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1812"/>
+        <location filename="../../src/palette/internal/palettecompat.cpp" line="335"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1813"/>
         <source>Hammer-on / pull-off</source>
         <translation>ハンマリング / プリング</translation>
     </message>
     <message>
-        <location filename="../../src/palette/internal/palettecompat.cpp" line="379"/>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1295"/>
+        <location filename="../../src/palette/internal/palettecompat.cpp" line="393"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1296"/>
         <source>Line (right arrowhead)</source>
-        <translation type="unfinished"/>
+        <translation>線 (右矢尻)</translation>
     </message>
     <message>
-        <location filename="../../src/palette/internal/palettecompat.cpp" line="387"/>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1300"/>
+        <location filename="../../src/palette/internal/palettecompat.cpp" line="401"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1301"/>
         <source>Line (left arrowhead)</source>
-        <translation type="unfinished"/>
+        <translation>線 (左矢尻)</translation>
     </message>
     <message>
-        <location filename="../../src/palette/internal/palettecompat.cpp" line="427"/>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1686"/>
+        <location filename="../../src/palette/internal/palettecompat.cpp" line="434"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1687"/>
         <source>Blank</source>
         <translation>Blank</translation>
     </message>
@@ -30944,19 +30940,19 @@ failed.</source>
     </message>
     <message>
         <location filename="../../src/palette/internal/palettecreator.cpp" line="594"/>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1785"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1786"/>
         <source>RH guitar fingering %1</source>
         <translation>ギター右手運指 %1</translation>
     </message>
     <message>
         <location filename="../../src/palette/internal/palettecreator.cpp" line="602"/>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1793"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1794"/>
         <source>LH guitar fingering %1</source>
         <translation>ギター左手運指 %1</translation>
     </message>
     <message>
         <location filename="../../src/palette/internal/palettecreator.cpp" line="609"/>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1800"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1801"/>
         <source>String number %1</source>
         <translation>弦番 %1</translation>
     </message>
@@ -31014,7 +31010,7 @@ failed.</source>
     </message>
     <message>
         <location filename="../../src/palette/internal/palettecreator.cpp" line="931"/>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1290"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1291"/>
         <source>Line</source>
         <translation>線</translation>
     </message>
@@ -31050,554 +31046,555 @@ failed.</source>
     </message>
     <message>
         <location filename="../../src/palette/internal/palettecreator.cpp" line="1213"/>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1879"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1881"/>
         <source>Pedal (with ped and line)</source>
         <translation>ペダル (pedと線付き)</translation>
     </message>
     <message>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1220"/>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1872"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1221"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1874"/>
         <source>Pedal (with ped and asterisk)</source>
         <translation>ペダル (pedとアスタリスク付き)</translation>
     </message>
     <message>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1228"/>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1887"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1229"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1889"/>
         <source>Pedal (straight hooks)</source>
         <translation>ペダル (直角フック)</translation>
     </message>
     <message>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1237"/>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1895"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1238"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1897"/>
         <source>Pedal (angled end hook)</source>
         <translation>ペダル (終端のフックが斜め)</translation>
     </message>
     <message>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1245"/>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1903"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1246"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1905"/>
         <source>Pedal (both hooks angled)</source>
         <translation>ペダル (両端のフックが斜め)</translation>
     </message>
     <message>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1253"/>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1911"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1254"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1913"/>
         <source>Pedal (angled start hook)</source>
         <translation>ペダル (始端のフックが斜め)</translation>
     </message>
     <message>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1273"/>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1518"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1274"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1519"/>
         <source>Staff text line</source>
         <translation>譜表テキスト線</translation>
     </message>
     <message>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1279"/>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1528"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1280"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1529"/>
         <source>System text line</source>
         <translation>段テキスト線</translation>
     </message>
     <message>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1285"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1286"/>
         <source>Text line</source>
         <translation>テキスト線</translation>
     </message>
     <message>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1305"/>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1959"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1306"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1961"/>
         <source>Ambitus</source>
         <translation>音域</translation>
     </message>
     <message>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1308"/>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1755"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1309"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1756"/>
         <source>Let ring</source>
         <translation>レットリング</translation>
     </message>
     <message>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1326"/>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1752"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1327"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1753"/>
         <source>Palm mute</source>
         <translation>パームミュート</translation>
     </message>
     <message>
-        <location filename="../../src/palette/internal/palettecompat.cpp" line="396"/>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1328"/>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1913"/>
-        <source>Chord bracket</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../../src/palette/internal/palettecompat.cpp" line="397"/>
+        <location filename="../../src/palette/internal/palettecompat.cpp" line="496"/>
         <location filename="../../src/palette/internal/palettecreator.cpp" line="1329"/>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1914"/>
-        <source>Chord bracket (play with left hand)</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../../src/palette/internal/palettecompat.cpp" line="398"/>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1330"/>
         <location filename="../../src/palette/internal/palettecreator.cpp" line="1915"/>
-        <source>Chord bracket (play with right hand)</source>
-        <translation type="unfinished"/>
+        <source>Chord bracket</source>
+        <translation>和音の括弧</translation>
     </message>
     <message>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1344"/>
+        <location filename="../../src/palette/internal/palettecompat.cpp" line="497"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1330"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1916"/>
+        <source>Chord bracket (play with left hand)</source>
+        <translation>和音の括弧 (左手で演奏)</translation>
+    </message>
+    <message>
+        <location filename="../../src/palette/internal/palettecompat.cpp" line="498"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1331"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1917"/>
+        <source>Chord bracket (play with right hand)</source>
+        <translation>和音の括弧 (右手で演奏)</translation>
+    </message>
+    <message>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1345"/>
         <source>Tempo</source>
         <translation>テンポ</translation>
     </message>
     <message>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1365"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1366"/>
         <source>Half note = 80 BPM</source>
         <translation>2分音符 = 80 BPM</translation>
     </message>
     <message>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1368"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1369"/>
         <source>Quarter note = 80 BPM</source>
         <translation>4分音符 = 80 BPM</translation>
     </message>
     <message>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1371"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1372"/>
         <source>Eighth note = 80 BPM</source>
         <translation>8分音符 = 80 BPM</translation>
     </message>
     <message>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1374"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1375"/>
         <source>Dotted half note = 80 BPM</source>
         <translation>付点2分音符 = 80 BPM</translation>
     </message>
     <message>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1377"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1378"/>
         <source>Dotted quarter note = 80 BPM</source>
         <translation>付点4分音符 = 80 BPM</translation>
     </message>
     <message>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1380"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1381"/>
         <source>Dotted eighth note = 80 BPM</source>
         <translation>付点8分音符 = 80 BPM</translation>
     </message>
     <message>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1398"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1399"/>
         <source>Metric modulation: quarter note = dotted quarter note</source>
         <translation>メトリックモジュレーション: 4分音符 = 付点4分音符</translation>
     </message>
     <message>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1401"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1402"/>
         <source>Metric modulation: dotted quarter note = quarter note</source>
         <translation>メトリックモジュレーション: 付点4分音符 = 4分音符</translation>
     </message>
     <message>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1404"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1405"/>
         <source>Metric modulation: half note = quarter note</source>
         <translation>メトリックモジュレーション: 2分音符 = 4分音符</translation>
     </message>
     <message>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1407"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1408"/>
         <source>Metric modulation: quarter note = half note</source>
         <translation>メトリックモジュレーション: 4分音符 = 2分音符</translation>
     </message>
     <message>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1410"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1411"/>
         <source>Metric modulation: eighth note = eighth note</source>
         <translation>メトリックモジュレーション: 8分音符 = 8分音符</translation>
     </message>
     <message>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1413"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1414"/>
         <source>Metric modulation: quarter note = quarter note</source>
         <translation>メトリックモジュレーション: 4分音符 = 4分音符</translation>
     </message>
     <message>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1416"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1417"/>
         <source>Metric modulation: dotted eighth note = quarter note</source>
         <translation>メトリックモジュレーション: 付点8分音符 = 4分音符</translation>
     </message>
     <message>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1437"/>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1444"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1438"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1445"/>
         <source>accel.</source>
         <translation>accel.</translation>
     </message>
     <message>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1438"/>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1445"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1439"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1446"/>
         <source>allarg.</source>
         <translation>allarg.</translation>
     </message>
     <message>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1439"/>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1450"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1440"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1451"/>
         <source>rall.</source>
         <translation>rall.</translation>
     </message>
     <message>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1440"/>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1451"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1441"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1452"/>
         <source>rit.</source>
         <translation>rit.</translation>
     </message>
     <message>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1446"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1447"/>
         <source>calando</source>
         <translation>calando</translation>
     </message>
     <message>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1447"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1448"/>
         <source>lentando</source>
         <translation>lentando</translation>
     </message>
     <message>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1448"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1449"/>
         <source>morendo</source>
         <translation>morendo</translation>
     </message>
     <message>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1449"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1450"/>
         <source>precipitando</source>
         <translation>precipitando</translation>
     </message>
     <message>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1452"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1453"/>
         <source>smorz.</source>
         <translation>smorz.</translation>
     </message>
     <message>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1453"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1454"/>
         <source>sost.</source>
         <translation>sost.</translation>
     </message>
     <message>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1454"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1455"/>
         <source>string.</source>
         <translation>string.</translation>
     </message>
     <message>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1466"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1467"/>
         <source>a tempo</source>
         <translation>a tempo</translation>
     </message>
     <message>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1473"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1474"/>
         <source>tempo primo</source>
         <translation>tempo primo</translation>
     </message>
     <message>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1482"/>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1484"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1483"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1485"/>
         <source>Swing</source>
         <translation>Swing</translation>
     </message>
     <message>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1491"/>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1497"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1492"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1498"/>
         <source>Straight</source>
         <extracomment>System text to switch from swing rhythm back to straight rhythm</extracomment>
         <translation>Straight</translation>
     </message>
     <message>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1506"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1507"/>
         <source>Text</source>
         <translation>テキスト</translation>
     </message>
     <message>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1512"/>
         <location filename="../../src/palette/internal/palettecreator.cpp" line="1513"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1514"/>
         <source>Staff text</source>
         <translation>譜表テキスト</translation>
     </message>
     <message>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1521"/>
         <location filename="../../src/palette/internal/palettecreator.cpp" line="1522"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1523"/>
         <source>System text</source>
         <translation>段テキスト</translation>
     </message>
     <message>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1532"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1533"/>
         <source>expression</source>
         <translation>発想標語</translation>
     </message>
     <message>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1534"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1535"/>
         <source>Expression text</source>
         <translation>発想標語テキスト</translation>
     </message>
     <message>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1537"/>
+        <location filename="../../src/palette/internal/palettecompat.cpp" line="207"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1538"/>
         <source>Change instr.</source>
         <translation>楽器を変更</translation>
     </message>
     <message>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1538"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1539"/>
         <source>Instrument change</source>
         <translation>楽器の変更</translation>
     </message>
     <message>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1542"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1543"/>
         <source>Rehearsal mark</source>
         <translation>練習番号</translation>
     </message>
     <message>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1552"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1553"/>
         <source>legato</source>
         <translation>legato</translation>
     </message>
     <message>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1553"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1554"/>
         <source>pizz.</source>
         <translation>pizz.</translation>
     </message>
     <message>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1554"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1555"/>
         <source>arco</source>
         <translation>arco</translation>
     </message>
     <message>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1554"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1555"/>
         <source>Arco</source>
         <translation>アルコ</translation>
     </message>
     <message>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1555"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1556"/>
         <source>tremolo</source>
         <translation>tremolo</translation>
     </message>
     <message>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1557"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1558"/>
         <source>mute</source>
         <extracomment>For brass and plucked string instruments: staff text that prescribes to use mute while playing, see https://en.wikipedia.org/wiki/Mute_(music)</extracomment>
         <translation>mute</translation>
     </message>
     <message>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1559"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1560"/>
         <source>open</source>
         <extracomment>For brass and plucked string instruments: staff text that prescribes to play without mute, see https://en.wikipedia.org/wiki/Mute_(music)</extracomment>
         <translation>open</translation>
     </message>
     <message>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1560"/>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1841"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1561"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1842"/>
         <source>distort</source>
         <translation>distort</translation>
     </message>
     <message>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1561"/>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1842"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1562"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1843"/>
         <source>overdrive</source>
         <translation>overdrive</translation>
     </message>
     <message>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1562"/>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1843"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1563"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1844"/>
         <source>harmonics</source>
         <translation>harmonics</translation>
     </message>
     <message>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1563"/>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1844"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1564"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1845"/>
         <source>jazz tone</source>
         <translation>jazz tone</translation>
     </message>
     <message>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1564"/>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1845"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1565"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1846"/>
         <source>normal</source>
         <translation>normal</translation>
     </message>
     <message>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1584"/>
         <location filename="../../src/palette/internal/palettecreator.cpp" line="1585"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1586"/>
         <source>Measure number</source>
         <translation>小節番号</translation>
     </message>
     <message>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1588"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1589"/>
         <source>détaché</source>
         <translation>détaché</translation>
     </message>
     <message>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1589"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1590"/>
         <source>martelé</source>
         <translation>martelé</translation>
     </message>
     <message>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1590"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1591"/>
         <source>col legno</source>
         <translation>col legno</translation>
     </message>
     <message>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1591"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1592"/>
         <source>sul pont.</source>
         <translation>sul pont.</translation>
     </message>
     <message>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1592"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1593"/>
         <source>sul tasto</source>
         <translation>sul tasto</translation>
     </message>
     <message>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1593"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1594"/>
         <source>vibrato</source>
         <translation>vibrato</translation>
     </message>
     <message>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1617"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1618"/>
         <location filename="../../src/palette/widgets/masterpalette.cpp" line="170"/>
         <location filename="../../src/palette/widgets/timedialog.cpp" line="44"/>
         <source>Time signatures</source>
         <translation>拍子記号</translation>
     </message>
     <message>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1675"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1676"/>
         <source>Fretboard diagrams</source>
         <translation>フレットボードダイアグラム</translation>
     </message>
     <message>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1688"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1689"/>
         <source>C</source>
         <translation>C</translation>
     </message>
     <message>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1689"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1690"/>
         <source>Cm</source>
         <translation>Cm</translation>
     </message>
     <message>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1690"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1691"/>
         <source>C7</source>
         <translation>C7</translation>
     </message>
     <message>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1692"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1693"/>
         <source>D</source>
         <translation>D</translation>
     </message>
     <message>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1693"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1694"/>
         <source>Dm</source>
         <translation>Dm</translation>
     </message>
     <message>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1694"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1695"/>
         <source>D7</source>
         <translation>D7</translation>
     </message>
     <message>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1696"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1697"/>
         <source>E</source>
         <translation>E</translation>
     </message>
     <message>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1697"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1698"/>
         <source>Em</source>
         <translation>Em</translation>
     </message>
     <message>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1698"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1699"/>
         <source>E7</source>
         <translation>E7</translation>
     </message>
     <message>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1700"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1701"/>
         <source>F</source>
         <translation>F</translation>
     </message>
     <message>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1701"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1702"/>
         <source>Fm</source>
         <translation>Fm</translation>
     </message>
     <message>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1702"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1703"/>
         <source>F7</source>
         <translation>F7</translation>
     </message>
     <message>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1704"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1705"/>
         <source>G</source>
         <translation>G</translation>
     </message>
     <message>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1705"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1706"/>
         <source>Gm</source>
         <translation>Gm</translation>
     </message>
     <message>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1706"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1707"/>
         <source>G7</source>
         <translation>G7</translation>
     </message>
     <message>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1708"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1709"/>
         <source>A</source>
         <translation>A</translation>
     </message>
     <message>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1709"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1710"/>
         <source>Am</source>
         <translation>Am</translation>
     </message>
     <message>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1710"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1711"/>
         <source>A7</source>
         <translation>A7</translation>
     </message>
     <message>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1712"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1713"/>
         <source>B</source>
         <translation>B</translation>
     </message>
     <message>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1713"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1714"/>
         <source>Bm</source>
         <translation>Bm</translation>
     </message>
     <message>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1714"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1715"/>
         <source>B7</source>
         <translation>B7</translation>
     </message>
     <message>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1740"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1741"/>
         <source>Guitar</source>
         <translation>ギター</translation>
     </message>
     <message>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1749"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1750"/>
         <source>Barré line</source>
         <translation>バレー線</translation>
     </message>
     <message>
-        <location filename="../../src/palette/internal/palettecompat.cpp" line="287"/>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1758"/>
+        <location filename="../../src/palette/internal/palettecompat.cpp" line="301"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1759"/>
         <source>Whammy bar</source>
         <translation>ワーミーバー</translation>
     </message>
     <message>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1863"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1864"/>
         <source>Keyboard</source>
         <translation>鍵盤</translation>
     </message>
     <message>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1930"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1932"/>
         <source>Pitch</source>
         <extracomment>The name of a palette</extracomment>
         <translation>音高</translation>
     </message>
     <message>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1966"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1968"/>
         <source>Harp</source>
         <translation>ハープ</translation>
     </message>
     <message>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1972"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1974"/>
         <source>Harp pedal diagram</source>
         <translation>ハープペダルダイアグラム</translation>
     </message>
     <message>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1977"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1979"/>
         <source>Harp pedal text diagram</source>
         <translation>ハープペダルテキストダイアグラム</translation>
     </message>
     <message>
-        <location filename="../../src/palette/internal/palettecreator.cpp" line="1985"/>
+        <location filename="../../src/palette/internal/palettecreator.cpp" line="1987"/>
         <source>Handbells</source>
         <translation>ハンドベル</translation>
     </message>
@@ -31704,33 +31701,33 @@ failed.</source>
         <translation>すべてのパレットを畳む</translation>
     </message>
     <message>
-        <location filename="../../src/palette/widgets/customizekitdialog.cpp" line="601"/>
-        <location filename="../../src/palette/widgets/customizekitdialog.cpp" line="652"/>
+        <location filename="../../src/palette/widgets/customizekitdialog.cpp" line="602"/>
+        <location filename="../../src/palette/widgets/customizekitdialog.cpp" line="653"/>
         <source>MuseScore drumset file</source>
         <translation>MuseScore ドラムセットファイル</translation>
     </message>
     <message>
-        <location filename="../../src/palette/widgets/customizekitdialog.cpp" line="603"/>
+        <location filename="../../src/palette/widgets/customizekitdialog.cpp" line="604"/>
         <source>Load drumset</source>
         <translation>ドラムセットを読み込み</translation>
     </message>
     <message>
-        <location filename="../../src/palette/widgets/customizekitdialog.cpp" line="620"/>
+        <location filename="../../src/palette/widgets/customizekitdialog.cpp" line="621"/>
         <source>Drumset file too old</source>
         <translation>ドラムセットファイルが古すぎます</translation>
     </message>
     <message>
-        <location filename="../../src/palette/widgets/customizekitdialog.cpp" line="621"/>
+        <location filename="../../src/palette/widgets/customizekitdialog.cpp" line="622"/>
         <source>MuseScore Studio may not be able to load this drumset file.</source>
         <translation>MuseScore Studio はこのドラムセットファイルを読み込めない可能性があります。</translation>
     </message>
     <message>
-        <location filename="../../src/palette/widgets/customizekitdialog.cpp" line="654"/>
+        <location filename="../../src/palette/widgets/customizekitdialog.cpp" line="655"/>
         <source>Save drumset</source>
         <translation>ドラムセットを保存</translation>
     </message>
     <message>
-        <location filename="../../src/palette/widgets/customizekitdialog.cpp" line="662"/>
+        <location filename="../../src/palette/widgets/customizekitdialog.cpp" line="663"/>
         <source>Opening file
 %1
 failed: %2</source>
@@ -31739,17 +31736,17 @@ failed: %2</source>
 失敗: %2</translation>
     </message>
     <message>
-        <location filename="../../src/palette/widgets/customizekitdialog.cpp" line="663"/>
+        <location filename="../../src/palette/widgets/customizekitdialog.cpp" line="664"/>
         <source>Open file</source>
         <translation>ファイルを開く</translation>
     </message>
     <message>
-        <location filename="../../src/palette/widgets/customizekitdialog.cpp" line="674"/>
+        <location filename="../../src/palette/widgets/customizekitdialog.cpp" line="675"/>
         <source>Writing file failed: %1</source>
         <translation>ファイルの書き込みに失敗しました: %1</translation>
     </message>
     <message>
-        <location filename="../../src/palette/widgets/customizekitdialog.cpp" line="675"/>
+        <location filename="../../src/palette/widgets/customizekitdialog.cpp" line="676"/>
         <source>Write drumset</source>
         <translation>ドラムセットを書き込み</translation>
     </message>
@@ -31770,14 +31767,14 @@ failed: %2</source>
         <translation>連桁セレクタ</translation>
     </message>
     <message>
-        <location filename="../../src/palette/widgets/palettewidget.cpp" line="1131"/>
+        <location filename="../../src/palette/widgets/palettewidget.cpp" line="1145"/>
         <source>Delete palette cell</source>
         <translation>パレットセルを削除</translation>
     </message>
     <message>
-        <location filename="../../src/palette/widgets/palettewidget.cpp" line="1132"/>
+        <location filename="../../src/palette/widgets/palettewidget.cpp" line="1146"/>
         <source>Are you sure you want to delete palette cell “%1”?</source>
-        <translation>本当にこのパレットセル「%1」を削除しますか？</translation>
+        <translation>本当にこのパレットセル『%1』を削除しますか？</translation>
     </message>
     <message>
         <location filename="../../src/palette/widgets/specialcharactersdialog.cpp" line="437"/>
@@ -33410,7 +33407,7 @@ failed: %2</source>
     <message>
         <location filename="../../src/playback/qml/MuseScore/Playback/internal/PlaybackSpeedPopup.qml" line="43"/>
         <source>Playback speed popup</source>
-        <translation>再生速度ポップアップ</translation>
+        <translation>再生の速さポップアップ</translation>
     </message>
     <message>
         <location filename="../../src/playback/qml/MuseScore/Playback/internal/PlaybackSpeedPopup.qml" line="52"/>
@@ -33419,7 +33416,7 @@ failed: %2</source>
         <location filename="../../src/playback/qml/MuseScore/Playback/internal/PlaybackSpeedSlider.qml" line="64"/>
         <location filename="../../src/playback/qml/MuseScore/Playback/internal/PlaybackToolBarActions.qml" line="223"/>
         <source>Speed</source>
-        <translation>速度</translation>
+        <translation>速さ</translation>
     </message>
     <message>
         <location filename="../../src/playback/qml/MuseScore/Playback/internal/SoundFlag/MuseSoundsParams.qml" line="57"/>
@@ -33555,7 +33552,7 @@ failed: %2</source>
         <translation>コード</translation>
     </message>
     <message>
-        <location filename="../../src/playback/internal/playbackcontroller.cpp" line="1448"/>
+        <location filename="../../src/playback/internal/playbackcontroller.cpp" line="1414"/>
         <source>Loading audio samples</source>
         <translation>オーディオサンプルを読み込み中</translation>
     </message>
@@ -33565,28 +33562,28 @@ failed: %2</source>
         <translation>さらにサウンドを取得</translation>
     </message>
     <message>
-        <location filename="../../src/playback/qml/MuseScore/Playback/inputresourceitem.cpp" line="392"/>
+        <location filename="../../src/playback/qml/MuseScore/Playback/inputresourceitem.cpp" line="393"/>
         <source>SoundFonts</source>
         <translation>サウンドフォント</translation>
     </message>
     <message>
-        <location filename="../../src/playback/qml/MuseScore/Playback/inputresourceitem.cpp" line="435"/>
+        <location filename="../../src/playback/qml/MuseScore/Playback/inputresourceitem.cpp" line="436"/>
         <source>Bank %1, preset %2</source>
         <translation>バンク %1、プリセット %2</translation>
     </message>
     <message>
-        <location filename="../../src/playback/qml/MuseScore/Playback/inputresourceitem.cpp" line="490"/>
-        <location filename="../../src/playback/qml/MuseScore/Playback/inputresourceitem.cpp" line="555"/>
+        <location filename="../../src/playback/qml/MuseScore/Playback/inputresourceitem.cpp" line="491"/>
+        <location filename="../../src/playback/qml/MuseScore/Playback/inputresourceitem.cpp" line="556"/>
         <source>Choose automatically</source>
         <translation>自動で選択</translation>
     </message>
     <message>
-        <location filename="../../src/playback/qml/MuseScore/Playback/inputresourceitem.cpp" line="536"/>
+        <location filename="../../src/playback/qml/MuseScore/Playback/inputresourceitem.cpp" line="537"/>
         <source>Preset %1</source>
         <translation>プリセット %1</translation>
     </message>
     <message>
-        <location filename="../../src/playback/qml/MuseScore/Playback/inputresourceitem.cpp" line="546"/>
+        <location filename="../../src/playback/qml/MuseScore/Playback/inputresourceitem.cpp" line="547"/>
         <source>Bank %1</source>
         <translation>バンク %1</translation>
     </message>
@@ -33722,7 +33719,7 @@ failed: %2</source>
         <location filename="../../src/preferences/qml/MuseScore/Preferences/internal/AccentColorsSection.qml" line="61"/>
         <location filename="../../src/preferences/qml/MuseScore/Preferences/internal/UiColorsSection.qml" line="47"/>
         <source>Accent color</source>
-        <translation type="unfinished"/>
+        <translation>アクセント色</translation>
     </message>
     <message>
         <location filename="../../src/preferences/qml/MuseScore/Preferences/internal/AdvancedTopSection.qml" line="44"/>
@@ -33742,8 +33739,8 @@ failed: %2</source>
     </message>
     <message>
         <location filename="../../src/preferences/qml/MuseScore/Preferences/internal/AudioApiSection.qml" line="42"/>
-        <source>Audio API</source>
-        <translation type="unfinished"/>
+        <source>Audio driver</source>
+        <translation>オーディオドライバー</translation>
     </message>
     <message>
         <location filename="../../src/preferences/qml/MuseScore/Preferences/internal/AudioEngineSection.qml" line="31"/>
@@ -33778,7 +33775,7 @@ failed: %2</source>
     <message>
         <location filename="../../src/preferences/qml/MuseScore/Preferences/internal/AutoSaveSection.qml" line="49"/>
         <source>Auto save every</source>
-        <translation type="unfinished"/>
+        <translation>自動保存間隔</translation>
     </message>
     <message>
         <location filename="../../src/preferences/qml/MuseScore/Preferences/internal/BrailleAdvancedSection.qml" line="29"/>
@@ -33788,12 +33785,12 @@ failed: %2</source>
     <message>
         <location filename="../../src/preferences/qml/MuseScore/Preferences/internal/BrailleAdvancedSection.qml" line="41"/>
         <source>Braille table for lyrics</source>
-        <translation type="unfinished"/>
+        <translation>歌詞用の点字テーブル</translation>
     </message>
     <message>
         <location filename="../../src/preferences/qml/MuseScore/Preferences/internal/BrailleAdvancedSection.qml" line="57"/>
         <source>Interval direction</source>
-        <translation type="unfinished"/>
+        <translation>音程の向き</translation>
     </message>
     <message>
         <location filename="../../src/preferences/qml/MuseScore/Preferences/internal/BrailleSection.qml" line="31"/>
@@ -33813,7 +33810,7 @@ failed: %2</source>
     <message>
         <location filename="../../src/preferences/qml/MuseScore/Preferences/internal/CharsetsSection.qml" line="37"/>
         <source>Overture import character set</source>
-        <translation type="unfinished"/>
+        <translation>Overture インポート文字セット</translation>
     </message>
     <message>
         <location filename="../../src/preferences/qml/MuseScore/Preferences/internal/ColorAndWallpaperSection.qml" line="64"/>
@@ -33828,12 +33825,12 @@ failed: %2</source>
     <message>
         <location filename="../../src/preferences/qml/MuseScore/Preferences/internal/CommonAudioApiConfiguration.qml" line="53"/>
         <source>Audio device</source>
-        <translation type="unfinished"/>
+        <translation>オーディオデバイス</translation>
     </message>
     <message>
         <location filename="../../src/preferences/qml/MuseScore/Preferences/internal/CommonAudioApiConfiguration.qml" line="71"/>
         <source>Buffer size</source>
-        <translation type="unfinished"/>
+        <translation>バッファサイズ</translation>
     </message>
     <message>
         <location filename="../../src/preferences/qml/MuseScore/Preferences/internal/CommonAudioApiConfiguration.qml" line="89"/>
@@ -33843,12 +33840,12 @@ failed: %2</source>
     <message>
         <location filename="../../src/preferences/qml/MuseScore/Preferences/internal/DefaultStyleSection.qml" line="32"/>
         <source>Default style</source>
-        <translation type="unfinished"/>
+        <translation>デフォルトのスタイル</translation>
     </message>
     <message>
         <location filename="../../src/preferences/qml/MuseScore/Preferences/internal/DefaultStyleSection.qml" line="73"/>
         <source>Style for parts</source>
-        <translation type="unfinished"/>
+        <translation>パート譜のスタイル</translation>
     </message>
     <message>
         <location filename="../../src/preferences/qml/MuseScore/Preferences/internal/DefaultStyleSection.qml" line="80"/>
@@ -33865,38 +33862,38 @@ failed: %2</source>
         <location filename="../../src/preferences/qml/MuseScore/Preferences/internal/FoldersSection.qml" line="31"/>
         <location filename="../../src/preferences/qml/MuseScore/Preferences/preferencesmodel.cpp" line="195"/>
         <source>Folders</source>
-        <translation>フォルダ</translation>
+        <translation>フォルダー</translation>
     </message>
     <message>
         <location filename="../../src/preferences/qml/MuseScore/Preferences/internal/FFmpegSection.qml" line="30"/>
         <source>Video converter</source>
-        <translation type="unfinished"/>
+        <translation>動画コンバーター</translation>
     </message>
     <message>
         <location filename="../../src/preferences/qml/MuseScore/Preferences/internal/FFmpegSection.qml" line="43"/>
         <source>FFmpeg library version:</source>
-        <translation type="unfinished"/>
+        <translation>FFmpeg ライブラリのバージョン:</translation>
     </message>
     <message>
         <location filename="../../src/preferences/qml/MuseScore/Preferences/internal/FFmpegSection.qml" line="45"/>
         <source>FFmpeg library not found</source>
-        <translation type="unfinished"/>
+        <translation>FFmpeg ライブラリが見つかりません</translation>
     </message>
     <message>
         <location filename="../../src/preferences/qml/MuseScore/Preferences/internal/FFmpegSection.qml" line="60"/>
         <location filename="../../src/preferences/qml/MuseScore/Preferences/internal/FoldersSection.qml" line="63"/>
         <source>Choose %1 folder</source>
-        <translation>%1 フォルダを選ぶ</translation>
+        <translation>%1 のフォルダーを選択</translation>
     </message>
     <message>
         <location filename="../../src/preferences/qml/MuseScore/Preferences/internal/FFmpegSection.qml" line="63"/>
         <source>Locate existing installation</source>
-        <translation type="unfinished"/>
+        <translation>既存のインストールを指定</translation>
     </message>
     <message>
         <location filename="../../src/preferences/qml/MuseScore/Preferences/internal/FFmpegSection.qml" line="81"/>
         <source>Download FFmpeg</source>
-        <translation type="unfinished"/>
+        <translation>FFmpeg をダウンロード</translation>
     </message>
     <message>
         <location filename="../../src/preferences/qml/MuseScore/Preferences/internal/ImportStyleSection.qml" line="30"/>
@@ -33911,7 +33908,7 @@ failed: %2</source>
     <message>
         <location filename="../../src/preferences/qml/MuseScore/Preferences/internal/ImportStyleSection.qml" line="80"/>
         <source>Use style file</source>
-        <translation type="unfinished"/>
+        <translation>スタイルファイルを使用</translation>
     </message>
     <message>
         <location filename="../../src/preferences/qml/MuseScore/Preferences/internal/KeyboardLayoutsSection.qml" line="31"/>
@@ -33953,17 +33950,17 @@ failed: %2</source>
     <message>
         <location filename="../../src/preferences/qml/MuseScore/Preferences/internal/MidiDevicesSection.qml" line="47"/>
         <source>MIDI input</source>
-        <translation>MIDI Input</translation>
+        <translation>MIDI 入力</translation>
     </message>
     <message>
         <location filename="../../src/preferences/qml/MuseScore/Preferences/internal/MidiDevicesSection.qml" line="63"/>
         <source>MIDI output</source>
-        <translation type="unfinished"/>
+        <translation>MIDI 出力</translation>
     </message>
     <message>
         <location filename="../../src/preferences/qml/MuseScore/Preferences/internal/MidiSection.qml" line="42"/>
         <source>Shortest note</source>
-        <translation>最短音符</translation>
+        <translation>最短の音符</translation>
     </message>
     <message>
         <location filename="../../src/preferences/qml/MuseScore/Preferences/internal/MiscellaneousSection.qml" line="30"/>
@@ -33988,7 +33985,7 @@ failed: %2</source>
     <message>
         <location filename="../../src/preferences/qml/MuseScore/Preferences/internal/MnxSection.qml" line="30"/>
         <source>MNX</source>
-        <translation type="unfinished"/>
+        <translation>MNX</translation>
     </message>
     <message>
         <location filename="../../src/preferences/qml/MuseScore/Preferences/internal/MnxSection.qml" line="32"/>
@@ -33998,7 +33995,7 @@ failed: %2</source>
     <message>
         <location filename="../../src/preferences/qml/MuseScore/Preferences/internal/MnxSection.qml" line="42"/>
         <source>Require exact schema validation</source>
-        <translation type="unfinished"/>
+        <translation>厳密なスキーマ検証を必須にする</translation>
     </message>
     <message>
         <location filename="../../src/preferences/qml/MuseScore/Preferences/internal/MusicXmlSection.qml" line="29"/>
@@ -34063,7 +34060,7 @@ failed: %2</source>
     <message>
         <location filename="../../src/preferences/qml/MuseScore/Preferences/internal/NoteInput/MidiInputSection.qml" line="110"/>
         <source>Delay between notes</source>
-        <translation type="unfinished"/>
+        <translation>音符間の遅延</translation>
     </message>
     <message>
         <location filename="../../src/preferences/qml/MuseScore/Preferences/internal/NoteInput/NoteColorsSection.qml" line="37"/>
@@ -34089,12 +34086,12 @@ failed: %2</source>
     <message>
         <location filename="../../src/preferences/qml/MuseScore/Preferences/internal/NoteInput/NoteInputSection.qml" line="48"/>
         <source>Default input mode</source>
-        <translation type="unfinished"/>
+        <translation>デフォルトの入力モード</translation>
     </message>
     <message>
         <location filename="../../src/preferences/qml/MuseScore/Preferences/internal/NoteInput/NoteInputSection.qml" line="62"/>
         <source>Apply accidentals, augmentation dots, and articulations</source>
-        <translation type="unfinished"/>
+        <translation>臨時記号、付点、アーティキュレーションを適用</translation>
     </message>
     <message>
         <location filename="../../src/preferences/qml/MuseScore/Preferences/internal/NoteInput/NoteInputSection.qml" line="69"/>
@@ -34109,7 +34106,7 @@ failed: %2</source>
     <message>
         <location filename="../../src/preferences/qml/MuseScore/Preferences/internal/NoteInput/NoteInputSection.qml" line="81"/>
         <source>Input by duration mode cursor</source>
-        <translation type="unfinished"/>
+        <translation>音価で入力モードのカーソル</translation>
     </message>
     <message>
         <location filename="../../src/preferences/qml/MuseScore/Preferences/internal/NoteInput/NoteInputSection.qml" line="88"/>
@@ -34134,7 +34131,7 @@ failed: %2</source>
     <message>
         <location filename="../../src/preferences/qml/MuseScore/Preferences/internal/NoteInput/NotePreviewSection.qml" line="73"/>
         <source>Playback duration</source>
-        <translation type="unfinished"/>
+        <translation>再生の長さ</translation>
     </message>
     <message>
         <location filename="../../src/preferences/qml/MuseScore/Preferences/internal/NoteInput/NotePreviewSection.qml" line="96"/>
@@ -34174,7 +34171,7 @@ failed: %2</source>
     <message>
         <location filename="../../src/preferences/qml/MuseScore/Preferences/internal/NoteInput/VoiceAssignmentSection.qml" line="39"/>
         <source>When entered, dynamics and hairpins should affect</source>
-        <translation type="unfinished"/>
+        <translation>入力時の強弱記号と松葉の影響範囲</translation>
     </message>
     <message>
         <location filename="../../src/preferences/qml/MuseScore/Preferences/internal/NoteInput/VoiceAssignmentSection.qml" line="46"/>
@@ -34209,7 +34206,7 @@ failed: %2</source>
     <message>
         <location filename="../../src/preferences/qml/MuseScore/Preferences/internal/OnlineSoundsSection.qml" line="113"/>
         <source>Show processing visualization</source>
-        <translation type="unfinished"/>
+        <translation>処理の視覚化を表示</translation>
     </message>
     <message>
         <location filename="../../src/preferences/qml/MuseScore/Preferences/internal/OnlineSoundsSection.qml" line="123"/>
@@ -34234,12 +34231,12 @@ failed: %2</source>
     <message>
         <location filename="../../src/preferences/qml/MuseScore/Preferences/internal/PageSection.qml" line="56"/>
         <source>Invert score colors</source>
-        <translation type="unfinished"/>
+        <translation>スコアの色を反転</translation>
     </message>
     <message>
         <location filename="../../src/preferences/qml/MuseScore/Preferences/internal/PageSection.qml" line="74"/>
         <source>Only invert colors in dark theme</source>
-        <translation type="unfinished"/>
+        <translation>ダークテーマでのみ色を反転</translation>
     </message>
     <message>
         <location filename="../../src/preferences/qml/MuseScore/Preferences/internal/PageSection.qml" line="93"/>
@@ -34259,7 +34256,7 @@ failed: %2</source>
     <message>
         <location filename="../../src/preferences/qml/MuseScore/Preferences/internal/ProgramStartSection.qml" line="88"/>
         <source>Choose starting score</source>
-        <translation>始めの楽譜を選ぶ:</translation>
+        <translation>始めの楽譜を選択</translation>
     </message>
     <message>
         <location filename="../../src/preferences/qml/MuseScore/Preferences/internal/PublishMuseScoreComSection.qml" line="30"/>
@@ -34314,12 +34311,12 @@ failed: %2</source>
     <message>
         <location filename="../../src/preferences/qml/MuseScore/Preferences/internal/ThemeAdditionalOptionsSection.qml" line="32"/>
         <source>Reset appearance to default</source>
-        <translation type="unfinished"/>
+        <translation>見た目をデフォルトにリセット</translation>
     </message>
     <message>
         <location filename="../../src/preferences/qml/MuseScore/Preferences/internal/ThemesSection.qml" line="30"/>
         <source>High-contrast theme</source>
-        <translation type="unfinished"/>
+        <translation>高コントラストテーマ</translation>
     </message>
     <message>
         <location filename="../../src/preferences/qml/MuseScore/Preferences/internal/ThemesSection.qml" line="30"/>
@@ -34344,7 +34341,7 @@ failed: %2</source>
     <message>
         <location filename="../../src/preferences/qml/MuseScore/Preferences/internal/UiColorsSection.qml" line="48"/>
         <source>Text and icons</source>
-        <translation type="unfinished"/>
+        <translation>テキストとアイコン</translation>
     </message>
     <message>
         <location filename="../../src/preferences/qml/MuseScore/Preferences/internal/UiColorsSection.qml" line="49"/>
@@ -34354,22 +34351,22 @@ failed: %2</source>
     <message>
         <location filename="../../src/preferences/qml/MuseScore/Preferences/internal/UiColorsSection.qml" line="50"/>
         <source>Border color</source>
-        <translation>枠線の色</translation>
+        <translation>枠の色</translation>
     </message>
     <message>
         <location filename="../../src/preferences/qml/MuseScore/Preferences/internal/UiFontSection.qml" line="29"/>
         <source>App text</source>
-        <translation type="unfinished"/>
+        <translation>アプリテキスト</translation>
     </message>
     <message>
         <location filename="../../src/preferences/qml/MuseScore/Preferences/internal/UiFontSection.qml" line="42"/>
         <source>Typeface</source>
-        <translation type="unfinished"/>
+        <translation>書体</translation>
     </message>
     <message>
         <location filename="../../src/preferences/qml/MuseScore/Preferences/internal/UiFontSection.qml" line="57"/>
         <source>Body text size</source>
-        <translation type="unfinished"/>
+        <translation>文字サイズ</translation>
     </message>
     <message>
         <location filename="../../src/preferences/qml/MuseScore/Preferences/internal/WelcomeDialogSection.qml" line="32"/>
@@ -34389,12 +34386,12 @@ failed: %2</source>
     <message>
         <location filename="../../src/preferences/qml/MuseScore/Preferences/internal/ZoomSection.qml" line="48"/>
         <source>Default zoom</source>
-        <translation>既定の倍率</translation>
+        <translation>デフォルトのズーム</translation>
     </message>
     <message>
         <location filename="../../src/preferences/qml/MuseScore/Preferences/internal/ZoomSection.qml" line="94"/>
         <source>Mouse zoom precision</source>
-        <translation>マウス拡大精度</translation>
+        <translation>マウスズーム精度</translation>
     </message>
     <message>
         <location filename="../../src/preferences/qml/MuseScore/Preferences/PercussionPreferencesPage.qml" line="144"/>
@@ -34448,7 +34445,7 @@ failed: %2</source>
     <message>
         <location filename="../../src/preferences/qml/MuseScore/Preferences/folderspreferencesmodel.cpp" line="99"/>
         <source>Instruments and score orders</source>
-        <translation type="unfinished"/>
+        <translation>楽器とスコアの順</translation>
     </message>
     <message>
         <location filename="../../src/preferences/qml/MuseScore/Preferences/folderspreferencesmodel.cpp" line="104"/>
@@ -34503,7 +34500,7 @@ failed: %2</source>
     <message>
         <location filename="../../src/preferences/qml/MuseScore/Preferences/generalpreferencesmodel.cpp" line="204"/>
         <source>Start with score</source>
-        <translation type="unfinished"/>
+        <translation>指定のスコアで開始</translation>
     </message>
     <message>
         <location filename="../../src/preferences/qml/MuseScore/Preferences/generalpreferencesmodel.cpp" line="248"/>
@@ -34598,7 +34595,7 @@ failed: %2</source>
     <message>
         <location filename="../../src/preferences/qml/MuseScore/Preferences/preferencesmodel.cpp" line="183"/>
         <source>Video</source>
-        <translation type="unfinished"/>
+        <translation>動画</translation>
     </message>
     <message>
         <location filename="../../src/preferences/qml/MuseScore/Preferences/preferencesmodel.cpp" line="186"/>
@@ -34625,18 +34622,38 @@ failed: %2</source>
         <source>Braille</source>
         <translation>点字</translation>
     </message>
+    <message>
+        <location filename="../../src/preferences/qml/MuseScore/Preferences/audiomidipreferencesmodel.cpp" line="64"/>
+        <source>No audio devices available</source>
+        <translation>利用可能なオーディオデバイスがありません</translation>
+    </message>
+    <message>
+        <location filename="../../src/preferences/qml/MuseScore/Preferences/audiomidipreferencesmodel.cpp" line="65"/>
+        <source>The selected audio driver does not have any available audio devices. MuseScore Studio will use the default audio driver instead. To use %1, ensure your hardware is set up correctly, then restart MuseScore Studio and try again.</source>
+        <translation>選択されたオーディオドライバーには、使用可能なオーディオデバイスがありません。MuseScore Studio は代わりにデフォルトのオーディオドライバーを使用します。%1 を使用するには、ハードウェアが正しくセットアップされていることを確認してから、MuseScore Studio を再起動して再度お試しください。</translation>
+    </message>
+    <message>
+        <location filename="../../src/preferences/qml/MuseScore/Preferences/internal/PlaybackQualitySection.qml" line="30"/>
+        <source>Playback quality</source>
+        <translation>再生品質</translation>
+    </message>
+    <message>
+        <location filename="../../src/preferences/qml/MuseScore/Preferences/internal/PlaybackQualitySection.qml" line="41"/>
+        <source>Use warmer instrument sound (MS Basic/SoundFont only)</source>
+        <translation>より温かい楽器の音色を使用 (MS Basic/サウンドフォントのみ)</translation>
+    </message>
 </context>
 <context>
     <name>preferences/score</name>
     <message>
         <location filename="../../src/preferences/qml/MuseScore/Preferences/internal/DefaultStyleSection.qml" line="47"/>
         <source>Style for full score</source>
-        <translation type="unfinished"/>
+        <translation>総譜のスタイル</translation>
     </message>
     <message>
         <location filename="../../src/preferences/qml/MuseScore/Preferences/internal/DefaultStyleSection.qml" line="54"/>
         <source>Choose default style for full score</source>
-        <translation type="unfinished"/>
+        <translation>総譜のデフォルトスタイルを選択</translation>
     </message>
     <message>
         <location filename="../../src/preferences/qml/MuseScore/Preferences/internal/DefaultStyleSection.qml" line="55"/>
@@ -34702,7 +34719,7 @@ failed: %2</source>
     </message>
     <message>
         <location filename="../../src/project/qml/MuseScore/Project/internal/NewScore/GeneralInfoView.qml" line="71"/>
-        <location filename="../../src/project/internal/notationproject.cpp" line="86"/>
+        <location filename="../../src/project/internal/notationproject.cpp" line="87"/>
         <source>Untitled score</source>
         <translation>無題のスコア</translation>
     </message>
@@ -34893,7 +34910,7 @@ failed: %2</source>
     <message>
         <location filename="../../src/notationscene/internal/notationactioncontroller.cpp" line="2353"/>
         <source>File “%1” seems not corrupted</source>
-        <translation>ファイル「%1」は破損していないようです</translation>
+        <translation>ファイル『%1』は破損していないようです</translation>
     </message>
     <message>
         <location filename="../../src/notationscene/internal/notationactioncontroller.cpp" line="2354"/>
@@ -34902,9 +34919,9 @@ failed: %2</source>
     </message>
     <message>
         <location filename="../../src/notationscene/internal/notationactioncontroller.cpp" line="2357"/>
-        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1787"/>
+        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1791"/>
         <source>File “%1” is corrupted</source>
-        <translation>ファイル「%1」は破損しています</translation>
+        <translation>ファイル『%1』は破損しています</translation>
     </message>
     <message>
         <location filename="../../src/notationscene/internal/notationactioncontroller.cpp" line="2359"/>
@@ -34932,222 +34949,222 @@ failed: %2</source>
         <translation>このスコアは無効です。</translation>
     </message>
     <message>
-        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="743"/>
+        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="747"/>
         <source>Do you want to save changes to the score “%1” before closing?</source>
-        <translation>閉じる前にスコア「%1」への変更を保存しますか？</translation>
+        <translation>閉じる前にスコア『%1』への変更を保存しますか？</translation>
     </message>
     <message>
-        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="746"/>
+        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="750"/>
         <source>Your changes will be lost if you don’t save them.</source>
         <translation>保存しない場合は変更内容が失われます。</translation>
     </message>
     <message>
-        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1523"/>
-        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1615"/>
+        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1527"/>
+        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1619"/>
         <source>Your score cannot be uploaded to the cloud</source>
         <translation>スコアをクラウドにアップロードできません</translation>
     </message>
     <message>
-        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1526"/>
+        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1530"/>
         <source>This score has become corrupted and contains errors. You can fix the errors manually, or save the score to your computer and get help for this issue on MuseScore.org.</source>
         <translation>このスコアは破損しておりエラーが含まれています。エラーを手動で修正するか、スコアをコンピュータに保存して、 MuseScore.org でこの問題のヘルプを取得できます。</translation>
     </message>
     <message>
-        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1534"/>
+        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1538"/>
         <source>Save as…</source>
         <translation>名前を付けて保存…</translation>
     </message>
     <message>
-        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1539"/>
-        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1581"/>
+        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1543"/>
+        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1585"/>
         <source>Revert to last saved</source>
         <translation>最後に保存した状態に戻す</translation>
     </message>
     <message>
-        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1562"/>
+        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1566"/>
         <source>This score has become corrupted and contains errors</source>
         <translation>この楽譜は破損しておりエラーが含まれています</translation>
     </message>
     <message>
-        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1566"/>
+        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1570"/>
         <source>You can continue saving it locally, although the file may become unusable. You can try to fix the errors manually, or get help for this issue on MuseScore.org.</source>
         <translation>ファイルが使用できなくなる可能性がありますが、ローカルに保存を続けることができます。手動でエラーの修正を試みるか、 MuseScore.org でこの問題のヘルプを取得できます。</translation>
     </message>
     <message>
-        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1568"/>
+        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1572"/>
         <source>You can continue saving it locally, although the file may become unusable. To preserve your score, revert to the last saved version, or fix the errors manually. You can also get help for this issue on MuseScore.org.</source>
         <translation>ファイルが使用できなくなる可能性がありますが、ローカルに保存を続けることができます。スコアを保持するには、最後に保存したバージョンに戻すか、エラーを手動で修正してください。また、 MuseScore.org でこの問題のヘルプを取得できます。</translation>
     </message>
     <message>
-        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1576"/>
+        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1580"/>
         <source>Save anyway</source>
         <translation>強制的に保存</translation>
     </message>
     <message>
-        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1614"/>
+        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1618"/>
         <source>Your score cannot be saved</source>
         <translation>スコアを保存できません</translation>
     </message>
     <message>
-        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1618"/>
+        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1622"/>
         <source>This score is corrupted. You can get help for this issue on MuseScore.org.</source>
         <translation>このスコアは破損しています。 MuseScore.org でこの問題のヘルプを取得できます。</translation>
     </message>
     <message>
-        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1621"/>
-        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1809"/>
+        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1625"/>
+        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1813"/>
         <source>Get help</source>
         <translation>ヘルプを取得</translation>
     </message>
     <message>
-        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1671"/>
+        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1675"/>
         <source>Try again</source>
         <translation>もう一度試す</translation>
     </message>
     <message>
-        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1686"/>
+        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1690"/>
         <source>Revert to last saved?</source>
         <translation>最後に保存した状態に戻しますか？</translation>
     </message>
     <message>
-        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1687"/>
+        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1691"/>
         <source>Your changes will be lost. This action cannot be undone.</source>
         <translation>変更内容は失われます。この操作は元に戻せません。</translation>
     </message>
     <message>
-        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1767"/>
-        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1792"/>
+        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1771"/>
+        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1796"/>
         <source>Open anyway</source>
         <translation>強制的に開く</translation>
     </message>
     <message>
-        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1779"/>
-        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1823"/>
+        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1783"/>
+        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1827"/>
         <source>Cannot read file %1</source>
         <translation>ファイル %1 を読み込めません</translation>
     </message>
     <message>
-        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1780"/>
+        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1784"/>
         <source>This file was saved using a newer version of MuseScore Studio. Please visit &lt;a href=&quot;%1&quot;&gt;MuseScore.org&lt;/a&gt; to obtain the latest version.</source>
         <translation>このファイルは、新しいバージョンの MuseScore Studio を使用して保存されました。最新バージョンを入手するには、 &lt;a href=&quot;%1&quot;&gt;MuseScore.org&lt;/a&gt; にアクセスしてください。</translation>
     </message>
     <message>
-        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1789"/>
+        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1793"/>
         <source>This file contains errors that could cause MuseScore Studio to malfunction.</source>
         <translation>このファイルには、 MuseScore Studio の誤動作を引き起こす可能性のあるエラーが含まれています。</translation>
     </message>
     <message>
-        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1804"/>
+        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1808"/>
         <source>File “%1” is corrupted and cannot be opened</source>
-        <translation>ファイル「%1」は破損しているため開けません</translation>
+        <translation>ファイル『%1』は破損しているため開けません</translation>
     </message>
     <message>
-        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1806"/>
+        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1810"/>
         <source>Get help for this issue on MuseScore.org.</source>
         <translation>MuseScore.org でこの問題に対するヘルプを取得できます。</translation>
     </message>
     <message>
-        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1828"/>
+        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1832"/>
         <source>This file does not exist or cannot be accessed at the moment.</source>
         <translation>このファイルは存在しないか、現在アクセスできません。</translation>
     </message>
     <message>
-        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1831"/>
+        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1835"/>
         <source>This file could not be opened. Please make sure that MuseScore Studio has permission to read this file.</source>
         <translation>このファイルを開けませんでした。 MuseScore Studio にこのファイルを読み取る権限があることを確認してください。</translation>
     </message>
     <message>
-        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1838"/>
+        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1842"/>
         <source>An error occurred while reading this file.</source>
         <translation>このファイルを読み込み中にエラーが発生しました。</translation>
     </message>
     <message>
-        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1894"/>
+        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1898"/>
         <source>All supported files</source>
         <translation>対応するすべてのファイル</translation>
     </message>
     <message>
-        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1895"/>
+        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1899"/>
         <source>MuseScore files</source>
         <translation>MuseScore ファイル</translation>
     </message>
     <message>
-        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1896"/>
+        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1900"/>
         <source>MusicXML files</source>
         <translation>MusicXML ファイル</translation>
     </message>
     <message>
-        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1897"/>
+        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1901"/>
         <source>MIDI files</source>
         <translation>MIDI ファイル</translation>
     </message>
     <message>
-        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1898"/>
+        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1902"/>
         <source>MNX files (experimental)</source>
-        <translation type="unfinished"/>
+        <translation>MNX ファイル (実験的)</translation>
     </message>
     <message>
-        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1899"/>
+        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1903"/>
         <source>MuseData files</source>
         <translation>MuseData ファイル</translation>
     </message>
     <message>
-        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1900"/>
+        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1904"/>
         <source>Capella files</source>
         <translation>Capella ファイル</translation>
     </message>
     <message>
-        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1901"/>
+        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1905"/>
         <source>BB files (experimental)</source>
         <translation>BB ファイル (実験的)</translation>
     </message>
     <message>
-        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1902"/>
+        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1906"/>
         <source>Overture / Score Writer files (experimental)</source>
         <translation>Overture / Score Writer ファイル (実験的)</translation>
     </message>
     <message>
-        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1903"/>
+        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1907"/>
         <source>Bagpipe Music Writer files (experimental)</source>
         <translation>Bagpipe Music Writer ファイル (実験的)</translation>
     </message>
     <message>
-        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1904"/>
+        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1908"/>
         <source>Guitar Pro files</source>
         <translation>Guitar Pro ファイル</translation>
     </message>
     <message>
-        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1905"/>
+        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1909"/>
         <source>Power Tab Editor files (experimental)</source>
         <translation>Power Tab Editor ファイル (実験的)</translation>
     </message>
     <message>
-        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1906"/>
+        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1910"/>
         <source>MEI files</source>
         <translation>MEI ファイル</translation>
     </message>
     <message>
-        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1907"/>
+        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1911"/>
         <source>TablEdit files (experimental)</source>
         <translation>TablEdit ファイル (実験的)</translation>
     </message>
     <message>
-        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1908"/>
+        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1912"/>
         <source>Uncompressed MuseScore folders (experimental)</source>
         <translation>非圧縮 MuseScore フォルダー (実験的)</translation>
     </message>
     <message>
-        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1909"/>
+        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1913"/>
         <source>MuseScore developer files</source>
         <translation>MuseScore 開発者ファイル</translation>
     </message>
     <message>
-        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1910"/>
+        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1914"/>
         <source>MuseScore backup files</source>
         <translation>MuseScore バックアップファイル</translation>
     </message>
     <message>
-        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1922"/>
+        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1926"/>
         <source>Open</source>
         <translation>開く</translation>
     </message>
@@ -35358,7 +35375,7 @@ failed: %2</source>
     <message>
         <location filename="../../src/project/qml/MuseScore/Project/internal/Export/AudioSettings.qml" line="72"/>
         <source>Bit rate:</source>
-        <translation type="unfinished"/>
+        <translation>ビットレート:</translation>
     </message>
     <message>
         <location filename="../../src/project/qml/MuseScore/Project/internal/Export/AudioSettings.qml" line="83"/>
@@ -35368,7 +35385,7 @@ failed: %2</source>
     <message>
         <location filename="../../src/project/qml/MuseScore/Project/internal/Export/AudioSettings.qml" line="97"/>
         <source>Sample format:</source>
-        <translation type="unfinished"/>
+        <translation>サンプルフォーマット:</translation>
     </message>
     <message>
         <location filename="../../src/project/qml/MuseScore/Project/internal/Export/AacSettingsPage.qml" line="39"/>
@@ -35402,7 +35419,7 @@ failed: %2</source>
     <message>
         <location filename="../../src/project/qml/MuseScore/Project/internal/Export/LrcSettingsPage.qml" line="31"/>
         <source>LRC enhanced format</source>
-        <translation type="unfinished"/>
+        <translation>LRC 強化フォーマット</translation>
     </message>
     <message>
         <location filename="../../src/project/qml/MuseScore/Project/internal/Export/MeiSettingsPage.qml" line="31"/>
@@ -35442,27 +35459,27 @@ failed: %2</source>
     <message>
         <location filename="../../src/project/qml/MuseScore/Project/internal/Export/MnxSettingsPage.qml" line="38"/>
         <source>JSON indent:</source>
-        <translation type="unfinished"/>
+        <translation>JSON のインデント:</translation>
     </message>
     <message>
         <location filename="../../src/project/qml/MuseScore/Project/internal/Export/MnxSettingsPage.qml" line="50"/>
         <source>No line breaks</source>
-        <translation type="unfinished"/>
+        <translation>改行なし</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/project/qml/MuseScore/Project/internal/Export/MnxSettingsPage.qml" line="52"/>
         <source>%n space(s)</source>
-        <translation type="unfinished"><numerusform></numerusform></translation>
+        <translation><numerusform>%n スペース</numerusform></translation>
     </message>
     <message>
         <location filename="../../src/project/qml/MuseScore/Project/internal/Export/MnxSettingsPage.qml" line="92"/>
         <source>Export beams</source>
-        <translation type="unfinished"/>
+        <translation>連桁をエクスポート</translation>
     </message>
     <message>
         <location filename="../../src/project/qml/MuseScore/Project/internal/Export/MnxSettingsPage.qml" line="118"/>
         <source>Export rest positions</source>
-        <translation type="unfinished"/>
+        <translation>休符の位置をエクスポート</translation>
     </message>
     <message>
         <location filename="../../src/project/qml/MuseScore/Project/internal/Export/PdfSettingsPage.qml" line="33"/>
@@ -35481,7 +35498,7 @@ failed: %2</source>
         <location filename="../../src/project/qml/MuseScore/Project/internal/Export/PdfSettingsPage.qml" line="76"/>
         <location filename="../../src/project/qml/MuseScore/Project/internal/Export/PngSettingsPage.qml" line="74"/>
         <source>Grayscale</source>
-        <translation type="unfinished"/>
+        <translation>グレースケール</translation>
     </message>
     <message>
         <location filename="../../src/project/qml/MuseScore/Project/internal/Export/PngSettingsPage.qml" line="89"/>
@@ -35497,17 +35514,17 @@ failed: %2</source>
     <message>
         <location filename="../../src/importexport/audioexport/internal/audioexportconfiguration.cpp" line="142"/>
         <source>16-bit integer</source>
-        <translation type="unfinished"/>
+        <translation>16ビット整数</translation>
     </message>
     <message>
         <location filename="../../src/importexport/audioexport/internal/audioexportconfiguration.cpp" line="144"/>
         <source>24-bit integer</source>
-        <translation type="unfinished"/>
+        <translation>24ビット整数</translation>
     </message>
     <message>
         <location filename="../../src/importexport/audioexport/internal/audioexportconfiguration.cpp" line="146"/>
         <source>32-bit float</source>
-        <translation type="unfinished"/>
+        <translation>32ビット浮動小数点数</translation>
     </message>
     <message>
         <location filename="../../src/project/internal/exportprojectscenario.cpp" line="70"/>
@@ -35562,12 +35579,12 @@ failed: %2</source>
         <translation>ファイル %1 を書き込み中にエラーが発生しました。再試行しますか？</translation>
     </message>
     <message>
-        <location filename="../../src/project/internal/exportprojectscenario.cpp" line="440"/>
+        <location filename="../../src/project/internal/exportprojectscenario.cpp" line="449"/>
         <source>Exporting audio…</source>
         <translation>オーディオをエクスポート中…</translation>
     </message>
     <message>
-        <location filename="../../src/project/internal/exportprojectscenario.cpp" line="440"/>
+        <location filename="../../src/project/internal/exportprojectscenario.cpp" line="449"/>
         <source>Exporting…</source>
         <translation>エクスポート中…</translation>
     </message>
@@ -35662,18 +35679,18 @@ failed: %2</source>
     <message>
         <location filename="../../src/project/qml/MuseScore/Project/internal/Export/exportdialogmodel.cpp" line="98"/>
         <source>AAC audio</source>
-        <translation type="unfinished"/>
+        <translation>AAC オーディオ</translation>
     </message>
     <message>
         <location filename="../../src/project/qml/MuseScore/Project/internal/Export/exportdialogmodel.cpp" line="99"/>
         <source>AAC audio files</source>
-        <translation type="unfinished"/>
+        <translation>AAC オーディオファイル</translation>
     </message>
     <message>
         <location filename="../../src/project/qml/MuseScore/Project/internal/Export/exportdialogmodel.cpp" line="103"/>
         <location filename="../../src/project/qml/MuseScore/Project/internal/Export/exportdialogmodel.cpp" line="104"/>
         <source>MP4 video</source>
-        <translation type="unfinished"/>
+        <translation>MP4 動画</translation>
     </message>
     <message>
         <location filename="../../src/project/qml/MuseScore/Project/internal/Export/exportdialogmodel.cpp" line="108"/>
@@ -35714,22 +35731,22 @@ failed: %2</source>
     <message>
         <location filename="../../src/project/qml/MuseScore/Project/internal/Export/exportdialogmodel.cpp" line="124"/>
         <source>MNX (experimental)</source>
-        <translation type="unfinished"/>
+        <translation>MNX (実験的)</translation>
     </message>
     <message>
         <location filename="../../src/project/qml/MuseScore/Project/internal/Export/exportdialogmodel.cpp" line="125"/>
         <source>MNX files (experimental)</source>
-        <translation type="unfinished"/>
+        <translation>MNX ファイル (実験的)</translation>
     </message>
     <message>
         <location filename="../../src/project/qml/MuseScore/Project/internal/Export/exportdialogmodel.cpp" line="128"/>
         <source>LRC file</source>
-        <translation type="unfinished"/>
+        <translation>LRC ファイル</translation>
     </message>
     <message>
         <location filename="../../src/project/qml/MuseScore/Project/internal/Export/exportdialogmodel.cpp" line="129"/>
         <source>LRC files</source>
-        <translation type="unfinished"/>
+        <translation>LRC ファイル</translation>
     </message>
     <message>
         <location filename="../../src/project/qml/MuseScore/Project/internal/Export/exportdialogmodel.cpp" line="363"/>
@@ -35747,25 +35764,35 @@ failed: %2</source>
         <translation>すべてのパートを1つのファイルにする</translation>
     </message>
     <message>
-        <location filename="../../src/project/qml/MuseScore/Project/internal/Export/exportdialogmodel.cpp" line="816"/>
+        <location filename="../../src/project/qml/MuseScore/Project/internal/Export/exportdialogmodel.cpp" line="621"/>
+        <source>Use page layout</source>
+        <translation>ページレイアウトを使用</translation>
+    </message>
+    <message>
+        <location filename="../../src/project/qml/MuseScore/Project/internal/Export/exportdialogmodel.cpp" line="622"/>
+        <source>Reflow to fit video resolution</source>
+        <translation>動画の解像度に合わせて再配置</translation>
+    </message>
+    <message>
+        <location filename="../../src/project/qml/MuseScore/Project/internal/Export/exportdialogmodel.cpp" line="850"/>
         <source>All layout</source>
         <extracomment>Specifies to which extent layout customizations should be exported to MusicXML.</extracomment>
         <translation>すべてのレイアウト</translation>
     </message>
     <message>
-        <location filename="../../src/project/qml/MuseScore/Project/internal/Export/exportdialogmodel.cpp" line="818"/>
+        <location filename="../../src/project/qml/MuseScore/Project/internal/Export/exportdialogmodel.cpp" line="852"/>
         <source>System and page breaks</source>
         <extracomment>Specifies to which extent layout customizations should be exported to MusicXML.</extracomment>
         <translation>段区切りとページ区切り</translation>
     </message>
     <message>
-        <location filename="../../src/project/qml/MuseScore/Project/internal/Export/exportdialogmodel.cpp" line="820"/>
+        <location filename="../../src/project/qml/MuseScore/Project/internal/Export/exportdialogmodel.cpp" line="854"/>
         <source>Manually added system and page breaks only</source>
         <extracomment>Specifies to which extent layout customizations should be exported to MusicXML.</extracomment>
         <translation>手動で追加した段区切りとページ区切りのみ</translation>
     </message>
     <message>
-        <location filename="../../src/project/qml/MuseScore/Project/internal/Export/exportdialogmodel.cpp" line="822"/>
+        <location filename="../../src/project/qml/MuseScore/Project/internal/Export/exportdialogmodel.cpp" line="856"/>
         <source>No system or page breaks</source>
         <extracomment>Specifies to which extent layout customizations should be exported to MusicXML.</extracomment>
         <translation>段区切りとページ区切りを含めない</translation>
@@ -35773,32 +35800,32 @@ failed: %2</source>
     <message>
         <location filename="../../src/project/qml/MuseScore/Project/internal/Export/Mp4SettingsPage.qml" line="51"/>
         <source>To export to this file format, an FFmpeg installation is required. You can also configure this in Preferences &gt; Video.</source>
-        <translation type="unfinished"/>
+        <translation>このファイルフォーマットにエクスポートするには、FFmpeg のインストールが必要です。環境設定 &gt; 動画 から設定することもできます。</translation>
     </message>
     <message>
         <location filename="../../src/project/qml/MuseScore/Project/internal/Export/Mp4SettingsPage.qml" line="59"/>
         <source>Download FFmpeg</source>
-        <translation type="unfinished"/>
+        <translation>FFmpeg をダウンロード</translation>
     </message>
     <message>
         <location filename="../../src/project/qml/MuseScore/Project/internal/Export/Mp4SettingsPage.qml" line="77"/>
         <source>Choose FFmpeg library folder</source>
-        <translation type="unfinished"/>
+        <translation>FFmpeg ライブラリのフォルダーを選択</translation>
     </message>
     <message>
         <location filename="../../src/project/qml/MuseScore/Project/internal/Export/Mp4SettingsPage.qml" line="80"/>
         <source>Locate existing installation</source>
-        <translation type="unfinished"/>
+        <translation>既存のインストールを指定</translation>
     </message>
     <message>
         <location filename="../../src/project/qml/MuseScore/Project/internal/Export/Mp4SettingsPage.qml" line="116"/>
-        <source>Video resolution:</source>
-        <translation type="unfinished"/>
+        <source>Video resolution</source>
+        <translation>動画解像度</translation>
     </message>
     <message>
-        <location filename="../../src/project/qml/MuseScore/Project/internal/Export/Mp4SettingsPage.qml" line="140"/>
+        <location filename="../../src/project/qml/MuseScore/Project/internal/Export/Mp4SettingsPage.qml" line="165"/>
         <source>Each selected part will be exported as a separate video file.</source>
-        <translation type="unfinished"/>
+        <translation>選択された各パートは、別々の動画ファイルとしてエクスポートされます。</translation>
     </message>
 </context>
 <context>
@@ -35949,7 +35976,7 @@ failed: %2</source>
     <message numerus="yes">
         <location filename="../../src/project/qml/MuseScore/Project/internal/NewScore/MeasuresSettings.qml" line="60"/>
         <source>%Ln measure(s),</source>
-        <translation type="unfinished"><numerusform></numerusform></translation>
+        <translation><numerusform>%Ln小節、</numerusform></translation>
     </message>
     <message>
         <location filename="../../src/project/qml/MuseScore/Project/internal/NewScore/MeasuresSettings.qml" line="103"/>
@@ -36247,7 +36274,7 @@ failed: %2</source>
     <message>
         <location filename="../../src/project/qml/MuseScore/Project/AskSaveLocationTypeDialog.qml" line="78"/>
         <source>To the cloud (free)</source>
-        <translation type="unfinished"/>
+        <translation>クラウドに (無料)</translation>
     </message>
     <message>
         <location filename="../../src/project/qml/MuseScore/Project/AskSaveLocationTypeDialog.qml" line="79"/>
@@ -36293,7 +36320,7 @@ failed: %2</source>
         <location filename="../../src/project/qml/MuseScore/Project/AudioGenerationSettings.qml" line="141"/>
         <source>Every %1 saves</source>
         <extracomment>`%1` will be replaced with a number input field. Text before it will appear before that number field, text after will appear after the field.</extracomment>
-        <translation type="unfinished"/>
+        <translation>%1 回の保存ごと</translation>
     </message>
     <message>
         <location filename="../../src/project/qml/MuseScore/Project/AudioGenerationSettings.qml" line="174"/>
@@ -36413,14 +36440,14 @@ failed: %2</source>
         <translation>共有</translation>
     </message>
     <message>
-        <location filename="../../src/project/internal/notationproject.cpp" line="969"/>
+        <location filename="../../src/project/internal/notationproject.cpp" line="952"/>
         <source>File “%1” could not be opened for validation. %2</source>
-        <translation>ファイル「%1」 を検証のために開けませんでした。%2</translation>
+        <translation>ファイル『%1』 を検証のために開けませんでした。%2</translation>
     </message>
     <message>
-        <location filename="../../src/project/internal/notationproject.cpp" line="980"/>
+        <location filename="../../src/project/internal/notationproject.cpp" line="963"/>
         <source>“%1” is corrupted or damaged.</source>
-        <translation>「%1」は破損または損傷しています。</translation>
+        <translation>『%1』は破損または損傷しています。</translation>
     </message>
     <message>
         <location filename="../../src/project/internal/opensaveprojectscenario.cpp" line="93"/>
@@ -36447,7 +36474,7 @@ failed: %2</source>
     </message>
     <message>
         <location filename="../../src/project/internal/opensaveprojectscenario.cpp" line="235"/>
-        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1026"/>
+        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1030"/>
         <source>Log in to MuseScore.com to save this score to the cloud.</source>
         <translation>スコアをクラウドに保存するには、MuseScore.com にログインしてください。</translation>
     </message>
@@ -36496,7 +36523,7 @@ failed: %2</source>
     </message>
     <message>
         <location filename="../../src/project/internal/opensaveprojectscenario.cpp" line="411"/>
-        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1471"/>
+        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1475"/>
         <source>Unable to connect to the cloud</source>
         <translation>クラウドに接続できません</translation>
     </message>
@@ -36558,7 +36585,7 @@ failed: %2</source>
     </message>
     <message>
         <location filename="../../src/project/internal/opensaveprojectscenario.cpp" line="587"/>
-        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1667"/>
+        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1671"/>
         <source>Save as…</source>
         <translation>名前を付けて保存…</translation>
     </message>
@@ -36569,42 +36596,42 @@ failed: %2</source>
         <translation>このスコアを開くには、 MuseScore.com にログインするか、無料のアカウントを作成してください。</translation>
     </message>
     <message>
-        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1393"/>
+        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1397"/>
         <source>View online</source>
         <translation>オンラインで見る</translation>
     </message>
     <message>
-        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1396"/>
+        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1400"/>
         <source>All saved changes will now update to the cloud. You can manage this file in the score manager on MuseScore.com.</source>
         <translation>保存されたすべての変更がクラウドに更新されます。このファイルは MuseScore.com のスコアマネージャーで管理することができます。</translation>
     </message>
     <message>
-        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1472"/>
+        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1476"/>
         <source>Your changes will be saved to a local file until the connection resumes.</source>
         <translation>接続が再開されるまで、変更内容はローカルファイルに保存されます。</translation>
     </message>
     <message>
-        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1487"/>
+        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1491"/>
         <source>Please add at least one instrument to enable saving.</source>
         <translation>保存を有効にするには、少なくとも1つの楽器を追加してください。</translation>
     </message>
     <message>
-        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1637"/>
+        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1641"/>
         <source>An unknown error occurred while saving this file.</source>
         <translation>このファイルを保存中に不明なエラーが発生しました。</translation>
     </message>
     <message>
-        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1645"/>
+        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1649"/>
         <source>Your score could not be saved</source>
         <translation>スコアを保存できませんでした</translation>
     </message>
     <message>
-        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1655"/>
+        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1659"/>
         <source>An error occurred while saving your score</source>
         <translation>スコアを保存中にエラーが発生しました</translation>
     </message>
     <message>
-        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1657"/>
+        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1661"/>
         <source>To preserve your score, try saving it again. If this message still appears, please save your score as new copy. You can also get help for this issue on %1.&lt;br/&gt;&lt;br/&gt;Error details (please cite when asking for support): %2</source>
         <translation>スコアを保持するには、もう一度保存をお試しください。このメッセージが再度現れる場合は、スコアを新しいコピーとして保存してください。この問題については、%1 でもヘルプを取得できます。&lt;br/&gt;&lt;br/&gt;エラーの詳細 (サポートを求める際に引用してください): %2</translation>
     </message>
@@ -36829,8 +36856,8 @@ failed: %2</source>
     </message>
     <message>
         <location filename="../../src/framework/midiremote/midiremotetypes.h" line="66"/>
-        <location filename="../../src/palette/widgets/customizekitdialog.cpp" line="506"/>
-        <location filename="../../src/palette/widgets/customizekitdialog.cpp" line="700"/>
+        <location filename="../../src/palette/widgets/customizekitdialog.cpp" line="507"/>
+        <location filename="../../src/palette/widgets/customizekitdialog.cpp" line="701"/>
         <source>None</source>
         <extracomment>No MIDI remote event</extracomment>
         <translation>なし</translation>
@@ -37341,7 +37368,7 @@ failed: %2</source>
     <message>
         <location filename="../../src/engraving/tests/voiceswitching_tests.cpp" line="118"/>
         <location filename="../../src/inspector/qml/MuseScore/Inspector/inspectormodelwithvoiceandpositionoptions.cpp" line="165"/>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6088"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6096"/>
         <source>Change voice</source>
         <translation>声部を変更</translation>
     </message>
@@ -37441,7 +37468,7 @@ failed: %2</source>
     <message>
         <location filename="../../src/inspector/qml/MuseScore/Inspector/notation/notes/noteheads/noteheadsettingsmodel.cpp" line="54"/>
         <source>Add notehead parentheses</source>
-        <translation type="unfinished"/>
+        <translation>符頭の括弧を追加</translation>
     </message>
     <message>
         <location filename="../../src/inspector/qml/MuseScore/Inspector/notation/notes/noteheads/noteheadsettingsmodel.cpp" line="57"/>
@@ -37509,68 +37536,68 @@ failed: %2</source>
     </message>
     <message>
         <location filename="../../src/notation/internal/masternotationparts.cpp" line="106"/>
-        <location filename="../../src/notation/internal/notationparts.cpp" line="867"/>
+        <location filename="../../src/notation/internal/notationparts.cpp" line="868"/>
         <source>Remove instruments</source>
         <translation>楽器を削除</translation>
     </message>
     <message>
         <location filename="../../src/notation/internal/masternotationparts.cpp" line="121"/>
-        <location filename="../../src/notation/internal/notationparts.cpp" line="987"/>
+        <location filename="../../src/notation/internal/notationparts.cpp" line="988"/>
         <source>Remove staves</source>
         <translation>譜表を削除</translation>
     </message>
     <message>
         <location filename="../../src/notation/internal/masternotationparts.cpp" line="140"/>
-        <location filename="../../src/notation/internal/notationparts.cpp" line="592"/>
-        <location filename="../../src/notation/internal/notationparts.cpp" line="612"/>
+        <location filename="../../src/notation/internal/notationparts.cpp" line="593"/>
+        <location filename="../../src/notation/internal/notationparts.cpp" line="613"/>
         <source>Add staff</source>
         <translation>譜表を追加</translation>
     </message>
     <message>
         <location filename="../../src/notation/internal/masternotationparts.cpp" line="167"/>
-        <location filename="../../src/notation/internal/notationparts.cpp" line="636"/>
+        <location filename="../../src/notation/internal/notationparts.cpp" line="637"/>
         <source>Add linked staff</source>
         <translation>リンクされた譜表を追加</translation>
     </message>
     <message>
         <location filename="../../src/notation/internal/masternotationparts.cpp" line="191"/>
-        <location filename="../../src/notation/internal/notationparts.cpp" line="697"/>
+        <location filename="../../src/notation/internal/notationparts.cpp" line="698"/>
         <source>Replace instrument</source>
         <translation>楽器を置換</translation>
     </message>
     <message>
         <location filename="../../src/notation/internal/masternotationparts.cpp" line="226"/>
-        <location filename="../../src/notation/internal/notationparts.cpp" line="722"/>
+        <location filename="../../src/notation/internal/notationparts.cpp" line="723"/>
         <source>Edit drumset</source>
         <translation>ドラムセットを編集</translation>
     </message>
     <message>
         <location filename="../../src/notation/internal/masternotationparts.cpp" line="264"/>
-        <location filename="../../src/notation/internal/notationparts.cpp" line="762"/>
+        <location filename="../../src/notation/internal/notationparts.cpp" line="763"/>
         <source>Add system markings</source>
         <translation>段標記を追加</translation>
     </message>
     <message>
         <location filename="../../src/notation/internal/masternotationparts.cpp" line="277"/>
-        <location filename="../../src/notation/internal/notationparts.cpp" line="776"/>
+        <location filename="../../src/notation/internal/notationparts.cpp" line="777"/>
         <source>Remove system markings</source>
         <translation>段標記を削除</translation>
     </message>
     <message>
         <location filename="../../src/notation/internal/masternotationparts.cpp" line="286"/>
-        <location filename="../../src/notation/internal/notationparts.cpp" line="795"/>
+        <location filename="../../src/notation/internal/notationparts.cpp" line="796"/>
         <source>Move system markings</source>
         <translation>段標記を移動</translation>
     </message>
     <message>
         <location filename="../../src/notation/internal/masternotationparts.cpp" line="303"/>
-        <location filename="../../src/notation/internal/notationparts.cpp" line="804"/>
+        <location filename="../../src/notation/internal/notationparts.cpp" line="805"/>
         <source>Add system object layer below the bottom staff</source>
         <translation>最下の譜表の下に段オブジェクト層を追加</translation>
     </message>
     <message>
         <location filename="../../src/notation/internal/masternotationparts.cpp" line="316"/>
-        <location filename="../../src/notation/internal/notationparts.cpp" line="813"/>
+        <location filename="../../src/notation/internal/notationparts.cpp" line="814"/>
         <source>Remove system object layer below the bottom staff</source>
         <translation>最下の譜表の下から段オブジェクト層を削除</translation>
     </message>
@@ -37661,479 +37688,479 @@ failed: %2</source>
     </message>
     <message>
         <location filename="../../src/notation/internal/notationinteraction.cpp" line="4452"/>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="4504"/>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="4529"/>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="4561"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="4506"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="4531"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="4563"/>
         <source>Keystroke edit</source>
         <extracomment>Means: an editing operation triggered by a keystroke</extracomment>
         <translation>キー操作による編集</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="4963"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="4971"/>
         <source>Move element anchors</source>
         <translation>要素の固定点を移動</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5009"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5017"/>
         <source>Split measure</source>
         <translation>小節を分割</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5024"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5032"/>
         <source>Join measures</source>
         <translation>小節を結合</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5164"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5172"/>
         <source>Add horizontal frame</source>
         <translation>横型フレームを追加</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5165"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5173"/>
         <source>Add vertical frame</source>
         <translation>縦型フレームを追加</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5166"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5174"/>
         <source>Add text frame</source>
         <translation>テキストフレームを追加</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5167"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5175"/>
         <source>Add fretboard diagram legend</source>
         <translation>フレットボードダイアグラムの凡例を追加</translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5168"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5176"/>
         <source>Add %Ln measure(s)</source>
-        <translation type="unfinished"><numerusform></numerusform></translation>
+        <translation><numerusform>%Ln小節を追加</numerusform></translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5255"/>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5276"/>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5308"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5263"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5284"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5316"/>
         <source>Repeat selection</source>
         <translation>選択範囲を繰り返す</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5330"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5338"/>
         <source>Paste</source>
         <translation>貼り付け</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5412"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5420"/>
         <source>Delete</source>
         <translation>削除</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5438"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5446"/>
         <source>Flip direction</source>
         <translation>向きを反転</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5451"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5459"/>
         <source>Flip horizontally</source>
         <translation>水平に反転</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5511"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5519"/>
         <source>Add ottava</source>
         <translation>オッターヴァを追加</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5518"/>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5558"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5526"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5566"/>
         <location filename="../../src/notationscene/qml/MuseScore/NotationScene/elementpopups/dynamicpopupmodel.cpp" line="207"/>
         <source>Add hairpin</source>
         <translation>松葉を追加</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5619"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5627"/>
         <source>Add brackets</source>
         <translation>括弧を追加</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5624"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5632"/>
         <source>Add braces</source>
         <translation>波括弧を追加</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5629"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5637"/>
         <source>Add parentheses</source>
         <translation>括弧を追加</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5656"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5664"/>
         <source>Toggle accidental</source>
         <translation>臨時記号を切り替え</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5699"/>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="8256"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5707"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="8264"/>
         <source>Toggle articulation</source>
         <translation>アーティキュレーションを切り替え</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5716"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5724"/>
         <source>Toggle augmentation dots</source>
         <translation>付点を切り替え</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5750"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5758"/>
         <source>Add grace note</source>
         <translation>装飾音符を追加</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5777"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5785"/>
         <location filename="../../src/notation/internal/notationnoteinput.cpp" line="708"/>
         <source>Add tuplet</source>
         <translation>連符を追加</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5798"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5806"/>
         <source>Set beam type</source>
         <translation>連桁の種類を設定</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5810"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5818"/>
         <source>Decrease duration</source>
         <translation>音価を減らす</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5811"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5819"/>
         <source>Increase duration</source>
         <translation>音価を増やす</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5828"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5836"/>
         <location filename="../../src/notationscene/qml/MuseScore/NotationScene/elementpopups/dynamicpopupmodel.cpp" line="199"/>
         <source>Change hairpin type</source>
         <translation>松葉の種類を変更</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5871"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5879"/>
         <location filename="../../src/notationscene/qml/MuseScore/NotationScene/elementpopups/dynamicpopupmodel.cpp" line="159"/>
         <source>Add dynamic</source>
         <translation>強弱記号を追加</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5922"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5930"/>
         <source>Toggle layout break</source>
         <translation>レイアウト区切りを切り替え</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5933"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5941"/>
         <source>Move measure to previous system</source>
         <translation>小節を前の段に移動</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5944"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5952"/>
         <source>Move measure to next system</source>
         <translation>小節を次の段に移動</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5951"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5959"/>
         <source>Lock/unlock selected system(s)</source>
         <translation>選択した段をロック/アンロック</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5958"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5966"/>
         <source>Lock/unlock all systems</source>
         <translation>すべての段をロック/アンロック</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5971"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5979"/>
         <source>Create system from selection</source>
         <translation>選択範囲から段を作成</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5978"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5986"/>
         <source>Apply system lock to selection</source>
         <translation>選択範囲に段ロックを適用</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5988"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5996"/>
         <source>Measures per system</source>
         <translation>段ごとの小節</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5995"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6003"/>
         <source>Transposition</source>
         <translation>移調</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6019"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6027"/>
         <source>Swap voices</source>
         <translation>声部を交換</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6066"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6074"/>
         <source>Add interval</source>
         <translation>音程を追加</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6073"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6081"/>
         <source>Enter note at fret %1</source>
         <translation>フレット%1に音符を入力</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6099"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6107"/>
         <source>Change voice assignment</source>
         <translation>声部の割り当てを変更</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6110"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6118"/>
         <source>Add note-anchored line</source>
         <translation>音符に固定された線を追加</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6197"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6205"/>
         <source>Add text</source>
         <translation>テキストを追加</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6265"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6273"/>
         <source>Add image</source>
         <translation>画像を追加</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6284"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6292"/>
         <source>Add figured bass</source>
         <translation>数字付き低音を追加</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6299"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6307"/>
         <source>Increase layout stretch</source>
         <translation>レイアウトストレッチを増やす</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6300"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6308"/>
         <source>Decrease layout stretch</source>
         <translation>レイアウトストレッチを減らす</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6323"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6331"/>
         <source>Add time signature</source>
         <translation>拍子記号を追加</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6334"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6342"/>
         <source>Explode</source>
         <translation>和音を分散</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6350"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6358"/>
         <source>Implode</source>
         <translation>和音を集約</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6366"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6374"/>
         <source>Realize chord symbols</source>
         <translation>コード記号を再現</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6377"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6385"/>
         <source>Extend to next note</source>
-        <translation type="unfinished"/>
+        <translation>次の音符まで延長</translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6423"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6431"/>
         <source>Delete %Ln measure(s)</source>
-        <translation type="unfinished"><numerusform></numerusform></translation>
+        <translation><numerusform>%Ln小節を削除</numerusform></translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6434"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6442"/>
         <source>Delete range</source>
         <translation>範囲を削除</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6441"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6449"/>
         <source>Remove empty trailing measures</source>
         <translation>末尾の空の小節を削除</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6452"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6460"/>
         <source>Fill with slashes</source>
         <translation>スラッシュで埋める</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6463"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6471"/>
         <source>Toggle rhythmic slash notation</source>
         <translation>リズムのスラッシュ記譜を切り替え</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6470"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6478"/>
         <source>Change enharmonic spelling</source>
         <translation>異名同音表記を変更</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6477"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6485"/>
         <source>Optimize enharmonic spelling</source>
         <translation>異名同音表記を最適化</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6484"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6492"/>
         <source>Respell pitches with sharps</source>
-        <translation type="unfinished"/>
+        <translation>音高をシャープで再表記</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6491"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6499"/>
         <source>Respell pitches with flats</source>
-        <translation type="unfinished"/>
+        <translation>音高をフラットで再表記</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6498"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6506"/>
         <source>Regroup rhythms</source>
         <translation>リズムを再グループ化</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6505"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6513"/>
         <source>Resequence rehearsal marks</source>
         <translation>練習番号を振り直す</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6512"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6520"/>
         <source>Reset layout stretch</source>
         <translation>レイアウトストレッチをリセット</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6519"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6527"/>
         <source>Reset text style overrides</source>
         <translation>テキストスタイルの上書きをリセット</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6526"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6534"/>
         <source>Reset beams</source>
         <translation>連桁をリセット</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6543"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6551"/>
         <source>Reset shapes and positions</source>
         <translation>形と位置をリセット</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6563"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6571"/>
         <source>Reset to default layout</source>
         <translation>デフォルトのレイアウトにリセット</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6589"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6597"/>
         <source>Set score view settings</source>
         <translation>スコアビュー設定を設定</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6759"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6767"/>
         <source>Navigate to lyrics</source>
         <translation>歌詞に移動</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6890"/>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6950"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6898"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6958"/>
         <source>Navigate to next syllable</source>
         <translation>次の音節に移動</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6912"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6920"/>
         <source>Add partial lyrics dash</source>
-        <translation type="unfinished"/>
+        <translation>部分的な歌詞ダッシュを追加</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="7116"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="7124"/>
         <source>Navigate to verse</source>
         <translation>次の行に移動</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="7173"/>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="7263"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="7181"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="7271"/>
         <source>Navigate to next chord symbol</source>
         <translation>次のコード記号に移動</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="7306"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="7314"/>
         <source>Navigate to chord symbol</source>
         <translation>コード記号に移動</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="7363"/>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="7409"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="7371"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="7417"/>
         <source>Navigate to next figured bass</source>
         <translation>次の数字付き低音に移動</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="7457"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="7465"/>
         <source>Navigate to figured bass</source>
         <translation>数字付き低音に移動</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="7755"/>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="7784"/>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="7845"/>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="7905"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="7763"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="7792"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="7853"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="7913"/>
         <source>Enter lyrics extension line</source>
         <translation>歌詞の延長線を入力</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="7930"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="7938"/>
         <source>Add lyrics verse</source>
         <translation>歌詞の行を追加</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="7970"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="7978"/>
         <source>Enter guitar bend</source>
         <translation>ギターベンドを入力</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="8039"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="8047"/>
         <source>Add fretboard diagram</source>
         <translation>フレットボードダイアグラムを追加</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="8180"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="8188"/>
         <source>Format text</source>
         <translation>テキストをフォーマット</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="8200"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="8208"/>
         <source>Toggle subscript</source>
         <translation>下付き文字を切り替え</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="8202"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="8210"/>
         <source>Toggle superscript</source>
         <translation>上付き文字を切り替え</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="8204"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="8212"/>
         <source>Toggle subscript/superscript</source>
         <translation>下付き文字/上付き文字を切り替え</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="8261"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="8269"/>
         <source>Toggle ornament</source>
         <translation>装飾記号を切り替え</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="8266"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="8274"/>
         <source>Toggle automatic placement</source>
         <translation>自動配置を切り替え</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="8277"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="8285"/>
         <source>Add clef</source>
         <translation>音部記号を追加</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="8282"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="8290"/>
         <source>Add accidental</source>
         <translation>臨時記号を追加</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="8287"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="8295"/>
         <source>Transpose semitone</source>
         <translation>半音移調</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="8294"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="8302"/>
         <source>Transpose diatonically</source>
         <translation>全音階で移調</translation>
     </message>
@@ -38186,13 +38213,13 @@ failed: %2</source>
     </message>
     <message>
         <location filename="../../src/notation/internal/notationparts.cpp" line="273"/>
-        <location filename="../../src/notationscene/widgets/timeline.cpp" line="3033"/>
+        <location filename="../../src/notationscene/widgets/timeline.cpp" line="3054"/>
         <source>Show instrument</source>
         <translation>楽器を表示</translation>
     </message>
     <message>
         <location filename="../../src/notation/internal/notationparts.cpp" line="274"/>
-        <location filename="../../src/notationscene/widgets/timeline.cpp" line="3034"/>
+        <location filename="../../src/notationscene/widgets/timeline.cpp" line="3055"/>
         <source>Hide instrument</source>
         <translation>楽器を非表示</translation>
     </message>
@@ -38252,32 +38279,32 @@ failed: %2</source>
         <translation>譜表を非表示</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationparts.cpp" line="548"/>
+        <location filename="../../src/notation/internal/notationparts.cpp" line="549"/>
         <source>Set staff type</source>
         <translation>譜表の種類を設定</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationparts.cpp" line="570"/>
+        <location filename="../../src/notation/internal/notationparts.cpp" line="571"/>
         <source>Edit staff properties</source>
         <translation>譜表のプロパティを編集</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationparts.cpp" line="657"/>
+        <location filename="../../src/notation/internal/notationparts.cpp" line="658"/>
         <source>Add instrument</source>
         <translation>楽器を追加</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationparts.cpp" line="677"/>
+        <location filename="../../src/notation/internal/notationparts.cpp" line="678"/>
         <source>Reset instrument formatting</source>
         <translation>楽器のフォーマットをリセット</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationparts.cpp" line="1009"/>
+        <location filename="../../src/notation/internal/notationparts.cpp" line="1010"/>
         <source>Move instruments</source>
         <translation>楽器を移動</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationparts.cpp" line="1037"/>
+        <location filename="../../src/notation/internal/notationparts.cpp" line="1038"/>
         <source>Move staves</source>
         <translation>譜表を移動</translation>
     </message>
@@ -38387,7 +38414,7 @@ failed: %2</source>
         <translation>「すべての譜表にサウンドフラグを適用」を切り替え</translation>
     </message>
     <message>
-        <location filename="../../src/project/internal/notationproject.cpp" line="1243"/>
+        <location filename="../../src/project/internal/notationproject.cpp" line="1222"/>
         <source>Edit project properties</source>
         <translation>プロジェクトのプロパティを編集</translation>
     </message>
@@ -38518,12 +38545,12 @@ failed: %2</source>
     <message>
         <location filename="../../src/framework/workspace/qml/Muse/Workspace/newworkspacemodel.cpp" line="75"/>
         <source>A workspace with the name “%1” already exists. Please choose a different name.</source>
-        <translation>「%1」という名前のワークスペースは既に存在します。別の名前を選んでください。</translation>
+        <translation>『%1』という名前のワークスペースは既に存在します。別の名前を選んでください。</translation>
     </message>
     <message>
         <location filename="../../src/framework/workspace/qml/Muse/Workspace/newworkspacemodel.cpp" line="82"/>
         <source>“%1” cannot be used as a workspace name. Please choose a different name.</source>
-        <translation>「%1」はワークスペース名として使用できません。別の名前を選んでください。</translation>
+        <translation>『%1』はワークスペース名として使用できません。別の名前を選んでください。</translation>
     </message>
     <message>
         <location filename="../../src/framework/workspace/qml/Muse/Workspace/workspacelistmodel.cpp" line="225"/>

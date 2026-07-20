@@ -5,7 +5,7 @@
  * MuseScore Studio
  * Music Composition & Notation
  *
- * Copyright (C) 2021 MuseScore Limited
+ * Copyright (C) 2021 MuseScore Limited and others
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3 as
@@ -261,6 +261,7 @@ public:
     static void write(const PalmMute* item, XmlWriter& xml, WriteContext& ctx);
     static void write(const Parenthesis* item, XmlWriter& xml, WriteContext& ctx);
     static void write(const Part* item, XmlWriter& xml, WriteContext& ctx);
+    static void write(const SharedPart* item, XmlWriter& xml, WriteContext& ctx);
     static void write(const PartialTie* item, XmlWriter& xml, WriteContext& ctx);
     static void write(const PartialLyricsLine* item, XmlWriter& xml, WriteContext& ctx);
     static void write(const Pedal* item, XmlWriter& xml, WriteContext& ctx);
@@ -336,6 +337,8 @@ private:
 
     static void writeProperties(const ChordRest* item, XmlWriter& xml, WriteContext& ctx);
     static void writeChordRestBeam(const ChordRest* item, XmlWriter& xml, WriteContext& ctx);
+
+    static void writeProperties(const Part* part, XmlWriter& xml, WriteContext& ctx);
 
     static void writeProperties(const Rest* item, XmlWriter& xml, WriteContext& ctx);
 

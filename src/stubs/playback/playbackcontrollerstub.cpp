@@ -5,7 +5,7 @@
  * MuseScore Studio
  * Music Composition & Notation
  *
- * Copyright (C) 2025 MuseScore Limited
+ * Copyright (C) 2025 MuseScore Limited and others
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3 as
@@ -37,20 +37,6 @@ muse::async::Notification PlaybackControllerStub::isPlayAllowedChanged() const
 bool PlaybackControllerStub::isPlaying() const
 {
     return false;
-}
-
-muse::async::Notification PlaybackControllerStub::isPlayingChanged() const
-{
-    return muse::async::Notification();
-}
-
-void PlaybackControllerStub::reset()
-{
-}
-
-muse::async::Channel<muse::audio::secs_t, muse::midi::tick_t> PlaybackControllerStub::currentPlaybackPositionChanged() const
-{
-    return muse::async::Channel<muse::audio::secs_t, muse::midi::tick_t>();
 }
 
 bool PlaybackControllerStub::isPlaybackInited() const

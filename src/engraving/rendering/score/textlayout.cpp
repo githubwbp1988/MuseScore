@@ -5,7 +5,7 @@
  * MuseScore Studio
  * Music Composition & Notation
  *
- * Copyright (C) 2025 MuseScore Limited
+ * Copyright (C) 2025 MuseScore Limited and others
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3 as
@@ -139,6 +139,9 @@ void TextLayout::layoutBaseTextBase1(const TextBase* item, TextBase::LayoutData*
         ldata->setShape(shape.transform(t));
         ldata->highResShape.mut_value().transform(t);
     }
+
+    PointF defaultPos = item->defaultPos();
+    ldata->move(defaultPos);
 }
 
 void TextLayout::layoutBaseTextBase1(TextBase* item, const LayoutContext&)

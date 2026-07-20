@@ -5,7 +5,7 @@
  * MuseScore Studio
  * Music Composition & Notation
  *
- * Copyright (C) 2021 MuseScore Limited
+ * Copyright (C) 2021 MuseScore Limited and others
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3 as
@@ -49,7 +49,13 @@ public:
         UNIT_TYPE,
         PAGE_NUMBER,
         TRANSPARENT_BACKGROUND,
-        BEATS_COLORS
+        BEATS_COLORS,
+        WAIT_FOR_COMPLETION,
+
+        WITH_AUDIO,
+
+        LEADING_SILENCE_SEC,
+        TRAILING_SILENCE_SEC,
     };
 
     using Options = std::map<OptionKey, muse::Val>;
@@ -60,9 +66,15 @@ public:
     virtual muse::Ret write(notation::INotationPtr notation, muse::io::IODevice& device, const Options& options = Options()) = 0;
     virtual muse::Ret writeList(const notation::INotationPtrList& notations, muse::io::IODevice& device,
                                 const Options& options = Options()) = 0;
+    // virtual muse::Ret write(notation::INotationPtr notation, const muse::io::path_t& filePath, const Options& options = Options()) = 0;
 
     virtual muse::Progress* progress() { return nullptr; }
     virtual void abort() {}
+
+    virtual void pianoViewTrick(std::function<qreal(QPainter*, QRectF, QRectF)> trickFunction) {}
+    virtual void pianoViewTrickOff(std::function<void()> trickOffFunction) {}
+    
+    virtual void pianoViewInvoke(std::function<void()> invokeFunction) {}
 };
 
 using INotationWriterPtr = std::shared_ptr<INotationWriter>;

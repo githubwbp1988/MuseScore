@@ -91,6 +91,8 @@
       <slurMidWidth>0.21</slurMidWidth>
       <tieEndWidth>0.05</tieEndWidth>
       <tieMidWidth>0.21</tieMidWidth>
+      <maskSlurs>1</maskSlurs>
+      <maskTies>1</maskTies>
       <musicalSymbolFont>Leland</musicalSymbolFont>
       <musicalTextFont>Leland Text</musicalTextFont>
       <showHeader>1</showHeader>
@@ -254,6 +256,7 @@
     <metaTag name="workNumber"></metaTag>
     <metaTag name="workTitle">testpart1</metaTag>
     <Part id="1">
+      <eid>+B_+B</eid>
       <Staff>
         <eid>C_C</eid>
         <StaffType group="pitched">
@@ -293,6 +296,7 @@
         </Instrument>
       </Part>
     <Part id="2">
+      <eid>/B_/B</eid>
       <Staff>
         <eid>D_D</eid>
         <StaffType group="pitched">

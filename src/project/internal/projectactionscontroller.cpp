@@ -5,7 +5,7 @@
  * MuseScore Studio
  * Music Composition & Notation
  *
- * Copyright (C) 2021 MuseScore Limited
+ * Copyright (C) 2021 MuseScore Limited and others
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3 as
@@ -291,7 +291,7 @@ Ret ProjectActionsController::openProject(const muse::io::path_t& givenPath, con
 
 RetVal<INotationProjectPtr> ProjectActionsController::loadProject(const muse::io::path_t& filePath)
 {
-    LOGALEX() << "filePath: " << filePath;
+    // LOGALEX() << "filePath: " << filePath;
     TRACEFUNC;
 
     const auto project = projectCreator()->newProject(iocContext());
@@ -346,7 +346,7 @@ Ret ProjectActionsController::doOpenProject(const muse::io::path_t& filePath)
 {
     TRACEFUNC;
 
-    LOGALEX();
+    // LOGALEX();
 
     RetVal<INotationProjectPtr> rv = loadProject(filePath);
     if (!rv.ret) {
@@ -412,11 +412,11 @@ muse::Ret ProjectActionsController::doOpenCloudProjectOffline(const muse::io::pa
 
 Ret ProjectActionsController::doFinishOpenProject()
 {
-    LOGALEX();
+    // LOGALEX();
     extensionsProvider()->performPointAsync(EXEC_ONPOST_PROJECT_OPENED);
 
     //! Show MuseSounds / MuseSampler update if need
-    auto showUpdateNotification = [=]() {
+    auto showUpdateNotification = [this]() {
         QTimer::singleShot(1000, [this]() {
             if (museSoundsCheckUpdateScenario()->hasUpdate()) {
                 museSoundsCheckUpdateScenario()->showUpdate();
@@ -430,8 +430,8 @@ Ret ProjectActionsController::doFinishOpenProject()
         showUpdateNotification();
     } else {
         async::Channel<Uri> opened = interactive()->opened();
-        opened.onReceive(this, [=](const Uri&) {
-            async::Async::call(this, [=]() {
+        opened.onReceive(this, [this, opened, showUpdateNotification](const Uri&) {
+            async::Async::call(this, [this, opened, showUpdateNotification]() {
                 async::Channel<Uri> mut = opened;
                 mut.disconnect(this);
 
@@ -700,6 +700,10 @@ bool ProjectActionsController::closeOpenedProject(bool goToHome)
         return false;
     }
 
+    if (m_isProjectSaving || m_isProjectUploading) {
+        return false;
+    }
+
     m_isProjectClosing = true;
     DEFER {
         m_isProjectClosing = false;
@@ -710,8 +714,8 @@ bool ProjectActionsController::closeOpenedProject(bool goToHome)
         return true;
     }
 
-    if (playbackController()->isPlaying()) {
-        playbackController()->reset();
+    if (globalContext()->playbackState()->isPlaying()) {
+        dispatcher()->dispatch("stop");
     }
 
     bool result = true;
@@ -1246,7 +1250,7 @@ void ProjectActionsController::showUploadProgressDialog()
 void ProjectActionsController::closeUploadProgressDialog()
 {
     if (interactive()->isOpened(UPLOAD_PROGRESS_URI).val) {
-        interactive()->close(UPLOAD_PROGRESS_URI);
+        interactive()->closeSync(UriQuery(UPLOAD_PROGRESS_URI));
     }
 }
 

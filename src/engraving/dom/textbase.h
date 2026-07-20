@@ -5,7 +5,7 @@
  * MuseScore Studio
  * Music Composition & Notation
  *
- * Copyright (C) 2021 MuseScore Limited
+ * Copyright (C) 2021 MuseScore Limited and others
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3 as
@@ -521,6 +521,8 @@ public:
     double textAngle() const { return m_textAngle; }
     void setTextAngle(double v) { m_textAngle = v; }
 
+    PointF defaultPos() const override;
+
 protected:
     TextBase(const ElementType& type, EngravingItem* parent = 0, TextStyleType tid = TextStyleType::DEFAULT,
              ElementFlags = ElementFlag::NOTHING);
@@ -543,12 +545,13 @@ private:
 
     virtual int getPropertyFlagsIdx(Pid id) const override;
     String stripText(bool, bool, bool) const;
-    Sid offsetSid() const;
 
     static String getHtmlStartTag(double, double&, const String&, String&, FontStyle, VerticalAlignment);
     static String getHtmlEndTag(FontStyle, VerticalAlignment);
 
     static void swap(size_t& r1, size_t& c1, size_t& r2, size_t& c2);
+
+    Sid defaultPosSid() const override;
 
 #ifndef ENGRAVING_NO_ACCESSIBILITY
     AccessibleItemPtr createAccessible() override;

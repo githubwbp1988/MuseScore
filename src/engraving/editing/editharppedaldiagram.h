@@ -5,7 +5,7 @@
  * MuseScore Studio
  * Music Composition & Notation
  *
- * Copyright (C) 2025 MuseScore Limited
+ * Copyright (C) 2025 MuseScore Limited and others
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3 as
@@ -22,12 +22,12 @@
 
 #pragma once
 
-#include "undo.h"
+#include "transaction/undoablecommand.h"
 
 #include "../dom/harppedaldiagram.h"
 
 namespace mu::engraving {
-class ChangeHarpPedalState : public UndoCommand
+class ChangeHarpPedalState : public UndoableCommand
 {
     OBJECT_ALLOCATOR(engraving, ChangeHarpPedalState)
     HarpPedalDiagram* diagram;
@@ -44,7 +44,7 @@ public:
     std::vector<EngravingObject*> objectItems() const override;
 };
 
-class ChangeSingleHarpPedal : public UndoCommand
+class ChangeSingleHarpPedal : public UndoableCommand
 {
     OBJECT_ALLOCATOR(engraving, ChangeSingleHarpPedal)
 

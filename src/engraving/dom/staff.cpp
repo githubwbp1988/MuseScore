@@ -5,7 +5,7 @@
  * MuseScore Studio
  * Music Composition & Notation
  *
- * Copyright (C) 2021 MuseScore Limited
+ * Copyright (C) 2021 MuseScore Limited and others
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3 as
@@ -1606,6 +1606,7 @@ std::vector<Staff*> Staff::staffList() const
 {
     std::vector<Staff*> staffList;
     if (m_links) {
+        staffList.reserve(m_links->size());
         for (EngravingObject* e : *m_links) {
             staffList.push_back(toStaff(e));
         }
@@ -1794,7 +1795,6 @@ bool Staff::setProperty(Pid id, const PropertyValue& v)
     case Pid::VISIBLE:
         setVisible(v.toBool());
         masterScore()->rebuildMidiMapping();
-        score()->setPlaylistDirty();
         break;
     case Pid::STAFF_CUTAWAY:
         setCutaway(v.toBool());

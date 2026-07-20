@@ -29,7 +29,7 @@ else()
 
     # modified by alex
     # set(REMOTE_ROOT_URL https://raw.githubusercontent.com/musescore/muse_deps/main)
-    set(REMOTE_ROOT_URL https://github.com/musescore/muse_deps/tree/main)
+    set(REMOTE_ROOT_URL https://github.com/githubwbp1988/muse_deps/tree/main)
     set(remote_url ${REMOTE_ROOT_URL}/vst3sdk/v3.7.12_build_20)
     set(local_path ${PROJECT_BINARY_DIR}/_deps/vst3sdk)
     if (NOT EXISTS ${local_path}/vst3sdk.cmake)

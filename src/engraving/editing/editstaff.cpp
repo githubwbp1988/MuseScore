@@ -5,7 +5,7 @@
  * MuseScore Studio
  * Music Composition & Notation
  *
- * Copyright (C) 2025 MuseScore Limited
+ * Copyright (C) 2025 MuseScore Limited and others
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3 as
@@ -52,9 +52,9 @@ void InsertStaff::redo(EditData*)
     staff->score()->insertStaff(staff, ridx);
 }
 
-void InsertStaff::cleanup(bool undo)
+void InsertStaff::cleanup(bool wasDone)
 {
-    if (!undo) {
+    if (!wasDone) {
         delete staff;
         staff = nullptr;
     }
@@ -87,9 +87,9 @@ void RemoveStaff::redo(EditData*)
     }
 }
 
-void RemoveStaff::cleanup(bool undo)
+void RemoveStaff::cleanup(bool wasDone)
 {
-    if (undo) {
+    if (wasDone) {
         delete staff;
         staff = nullptr;
     }
@@ -302,7 +302,6 @@ void ChangeStaff::flip(EditData*)
 
     staff->triggerLayout();
     staff->masterScore()->rebuildMidiMapping();
-    staff->score()->setPlaylistDirty();
 }
 
 //---------------------------------------------------------

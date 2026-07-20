@@ -5,7 +5,7 @@
  * MuseScore Studio
  * Music Composition & Notation
  *
- * Copyright (C) 2021 MuseScore Limited
+ * Copyright (C) 2021 MuseScore Limited and others
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3 as
@@ -119,6 +119,7 @@
 #include "inserttime.h"
 #include "mscoreview.h"
 #include "splitjoinmeasure.h"
+#include "transaction/undostack.h"
 #include "transpose.h"
 
 #include "log.h"
@@ -1550,7 +1551,7 @@ void Score::cmdAddTimeSig(Measure* fm, staff_idx_t staffIdx, TimeSig* ts, bool l
                 for (size_t i = 0; i < nstaves(); ++i) {
                     if (staff(i)->timeSig(tick) && staff(i)->timeSig(tick)->isLocal()) {
                         if (!mScore->rewriteMeasures(mf, ns, i)) {
-                            undoStack()->activeCommand()->unwind();
+                            undoStack()->activeTransaction()->unwind();
                             return;
                         }
                     }
@@ -1566,7 +1567,7 @@ void Score::cmdAddTimeSig(Measure* fm, staff_idx_t staffIdx, TimeSig* ts, bool l
             auto staffIdxRangeOnMaster = getStaffIdxRange(mScore);
             if (staffIdxRangeOnMaster.second != staffIdxRangeOnMaster.first
                 && !mScore->rewriteMeasures(mf, ns, local ? staffIdxRangeOnMaster.first : muse::nidx)) {
-                undoStack()->activeCommand()->unwind();
+                undoStack()->activeTransaction()->unwind();
                 return;
             }
         }
@@ -1661,7 +1662,7 @@ void Score::cmdRemoveTimeSig(TimeSig* ts)
     Fraction ns(pm ? pm->timesig() : Fraction(4, 4));
 
     if (!rScore->rewriteMeasures(rm, ns, muse::nidx)) {
-        undoStack()->activeCommand()->unwind();
+        undoStack()->activeTransaction()->unwind();
     } else {
         m = tick2measure(tick);           // old m may have been replaced
         // hack: fix measure rest durations for staves with local time signatures
@@ -2720,7 +2721,7 @@ void Score::cmdFlip()
                 if (ee->isSpanner()) {
                     Spanner* spanner = toSpanner(ee);
                     for (SpannerSegment* ss : spanner->spannerSegments()) {
-                        if (!ss->isStyled(Pid::OFFSET)) {
+                        if (!ss->offset().isNull()) {
                             PointF off = ss->getProperty(Pid::OFFSET).value<PointF>();
                             double oldY = off.y() - oldDefaultY;
                             off.ry() = newDefaultY - oldY;
@@ -2728,7 +2729,7 @@ void Score::cmdFlip()
                             ss->setOffsetChanged(false);
                         }
                     }
-                } else if (!ee->isStyled(Pid::OFFSET)) {
+                } else if (!ee->offset().isNull()) {
                     PointF off = ee->getProperty(Pid::OFFSET).value<PointF>();
                     double oldY = off.y() - oldDefaultY;
                     off.ry() = newDefaultY - oldY;
@@ -3856,7 +3857,7 @@ void Score::deleteRangeAtTrack(std::vector<ChordRest*>& crsToSelect, const track
         if (!s->isChordRestType()) {
             // do not delete TimeSig/KeySig, it doesn't make sense to do it (except on full system)
             if (!s->isTimeTickType() && !s->isTimeSigType() && !s->isKeySigType()
-                && !s->isType(SegmentType::BarLineType) /*covers all barLine types*/) {
+                && !s->isType(SegmentType::BarLineTypes) /*covers all barLine types*/) {
                 undoRemoveElement(e);
             }
             continue;
@@ -4427,7 +4428,7 @@ void Score::addHairpin(Hairpin* hairpin, ChordRest* cr1, ChordRest* cr2)
         }
         const Segment* startSegment = cr2 ? cr2->segment() : cr1->segment();
         for (const Segment* segment = startSegment; segment && segment->tick() < endTick;
-             segment = segment->next1(Segment::CHORD_REST_OR_TIME_TICK_TYPE)) {
+             segment = segment->next1(SegmentType::Duration)) {
             if (segment == startSegment) {
                 continue;
             }
@@ -4468,7 +4469,7 @@ void Score::addHairpinToDynamic(Hairpin* hairpin, Dynamic* dynamic)
     Fraction endTick = startChord ? startChord->endTickIncludingTied() : dynamic->segment()->measure()->endTick();
 
     for (Segment* segment = dynamicSegment; segment && segment->tick() < endTick;
-         segment = segment->next1(Segment::CHORD_REST_OR_TIME_TICK_TYPE)) {
+         segment = segment->next1(SegmentType::Duration)) {
         if (segment == dynamicSegment) {
             continue;
         }
@@ -4699,7 +4700,7 @@ void Score::cmdDeleteTuplet(Tuplet* tuplet, bool replaceWithRest)
 //   nextInputPos
 //---------------------------------------------------------
 
-void Score::nextInputPos(ChordRest* cr, bool doSelect)
+void Score::nextInputPos(const ChordRest* cr, bool doSelect)
 {
     ChordRest* ncr = nextChordRest(cr);
     if ((!ncr) && (m_is.track() % VOICES)) {
@@ -4749,9 +4750,27 @@ MeasureBase* Score::insertMeasure(ElementType type, MeasureBase* beforeMeasure, 
 MeasureBase* Score::insertBox(ElementType type, MeasureBase* beforeMeasure, const InsertMeasureOptions& options)
 {
     const bool isFrame = type == ElementType::FBOX || type == ElementType::HBOX || type == ElementType::TBOX || type == ElementType::VBOX;
-
     if (!isFrame) {
         return nullptr;
+    }
+
+    return this->insertBox(toMeasureBase(Factory::createItem(type, dummy())), beforeMeasure, options);
+}
+
+MeasureBase* Score::insertBox(MeasureBase* box, MeasureBase* beforeMeasure, const InsertMeasureOptions& options)
+{
+    IF_ASSERT_FAILED(box) {
+        return nullptr;
+    }
+
+    ElementType type = box->type();
+    const bool isFrame = type == ElementType::FBOX || type == ElementType::HBOX || type == ElementType::TBOX || type == ElementType::VBOX;
+    if (!isFrame) {
+        return nullptr;
+    }
+
+    if (box->score() != this) {
+        box->setScore(this);
     }
 
     Fraction tick;
@@ -4777,27 +4796,26 @@ MeasureBase* Score::insertBox(ElementType type, MeasureBase* beforeMeasure, cons
         tick = last() ? last()->endTick() : Fraction(0, 1);
     }
 
-    MeasureBase* newMeasureBase = toMeasureBase(Factory::createItem(type, dummy()));
-    newMeasureBase->setTick(tick);
-    newMeasureBase->setNext(beforeMeasure);
-    newMeasureBase->setPrev(beforeMeasure ? beforeMeasure->prev() : last());
-    newMeasureBase->setSizeIsSpatiumDependent(!isTitleFrame);
+    box->setTick(tick);
+    box->setNext(beforeMeasure);
+    box->setPrev(beforeMeasure ? beforeMeasure->prev() : last());
+    box->setSizeIsSpatiumDependent(!isTitleFrame);
 
     if (type == ElementType::FBOX) {
-        toFBox(newMeasureBase)->init();
+        toFBox(box)->init();
     }
 
-    undo(new InsertMeasures(newMeasureBase, newMeasureBase));
+    undo(new InsertMeasures(box, box));
 
     if (options.needDeselectAll) {
         deselectAll();
     }
 
     if (options.cloneBoxToAllParts) {
-        newMeasureBase->manageExclusionFromParts(/*exclude =*/ false);
+        box->manageExclusionFromParts(/*exclude =*/ false);
     }
 
-    return newMeasureBase;
+    return box;
 }
 
 void Score::restoreInitialKeySigAndTimeSig()
@@ -4987,8 +5005,11 @@ void Score::cmdTimeDelete()
     EngravingItem* e = selection().element();
 
     if (e && e->isBarLine() && toBarLine(e)->segment()->isEndBarLineType()) {
-        Measure* m = toBarLine(e)->segment()->measure();
-        SplitJoinMeasure::joinMeasures(m_masterScore, m->tick(), m->nextMeasure()->tick());
+        const Measure* m = toBarLine(e)->segment()->measure();
+        const Measure* next = m->nextMeasure();
+        if (next) {
+            SplitJoinMeasure::joinMeasures(m_masterScore, m->tick(), next->tick());
+        }
         return;
     }
 
@@ -5295,7 +5316,7 @@ void Score::undoChangePageNumberOffset(int po)
     undo(new ChangePageNumberOffset(this, po));
 }
 
-void Score::undoChangeParent(EngravingItem* element, EngravingItem* parent, staff_idx_t staffIdx)
+void Score::undoChangeParent(EngravingItem* element, EngravingItem* parent, staff_idx_t staffIdx, bool changeLinksParents)
 {
     if (!element || !parent) {
         return;
@@ -5318,7 +5339,7 @@ void Score::undoChangeParent(EngravingItem* element, EngravingItem* parent, staf
             linkedDest = linkedScore->staff(0);
         }
 
-        if (!linkedScore) {
+        if (!linkedScore || (!changeLinksParents && item != element)) {
             continue;
         }
         if (item == element) {
@@ -5333,7 +5354,7 @@ void Score::undoChangeParent(EngravingItem* element, EngravingItem* parent, staf
                 Measure* oldMeas = oldSeg->measure();
                 Measure* newMeas = linkedScore->tick2measure(oldMeas->tick());
                 linkedParent = newMeas->tick2segment(oldSeg->tick(), oldSeg->segmentType());
-                if (!linkedParent && oldSeg->isType(Segment::CHORD_REST_OR_TIME_TICK_TYPE)) {
+                if (!linkedParent && oldSeg->isType(SegmentType::Duration)) {
                     // A ChordRest segment that exists in the score may not exist in the part.
                     // In that case we create a TimeTick segment as new parent for the linked item.
                     linkedParent = newMeas->getSegment(SegmentType::TimeTick, oldSeg->tick());
@@ -5412,7 +5433,7 @@ void Score::undoUpdatePlayCountText(Measure* m)
     const int playCount = m->repeatCount();
     const bool showPlayCount = showText && (playCount == 2 ? singleRepeats : true) && m->repeatEnd();
 
-    Segment* endBarSeg = m->last(SegmentType::BarLineType);
+    Segment* endBarSeg = m->last(SegmentType::BarLineTypes);
     BarLine* topBl = endBarSeg ? toBarLine(endBarSeg->element(0)) : nullptr;
     if (!topBl) {
         return;
@@ -5431,6 +5452,19 @@ void Score::undoUpdatePlayCountText(Measure* m)
         undoRemoveElement(topPlayCountText);
         return;
     }
+}
+
+Measure* Score::undoGetMeasure(const Fraction& tick)
+{
+    Measure* last = lastMeasure();
+    if (!last || last->endTick() <= tick) {
+        Fraction lastTick  = last ? last->endTick() : Fraction(0, 1);
+        while (tick >= lastTick) {
+            MeasureBase* m = score()->insertMeasure(ElementType::MEASURE);
+            lastTick += m->ticks();
+        }
+    }
+    return tick2measure(tick);
 }
 
 void Score::undoChangeBarLineType(BarLine* bl, BarLineType barType, bool allStaves, bool replace)
@@ -6733,6 +6767,23 @@ void Score::undoAddElement(EngravingItem* element, bool addToLinkedStaves, bool 
                     }
                 }
             }
+
+            // Match vertical align settings of exiting items
+            if (ne->isHarmony() || ne->isFretDiagram()) {
+                bool exclude = ne->excludeVerticalAlign();
+                for (EngravingItem* item : seg->annotations()) {
+                    if ((!item->isFretDiagram() && !item->isHarmony())
+                        || item->staffIdx() != ne->staffIdx()) {
+                        continue;
+                    }
+
+                    exclude = item->excludeVerticalAlign();
+                    break;
+                }
+                if (exclude != ne->excludeVerticalAlign()) {
+                    ne->undoChangeProperty(Pid::EXCLUDE_VERTICAL_ALIGN, exclude);
+                }
+            }
         } else if (element->isSlur()
                    || element->isHairpin()
                    || element->isOttava()
@@ -7524,7 +7575,7 @@ void Score::doUndoRemoveStaleTieJumpPoints(Tie* tie, bool undo)
                 // These changes should be merged with the change in repeat structure which caused the ties to become invalid
                 // currentIndex returns the next empty index for an undo command
                 const size_t penultimateCmdIdx = undoStack()->currentIndex() - 2;
-                undoStack()->mergeCommands(penultimateCmdIdx);
+                undoStack()->mergeTransactions(penultimateCmdIdx);
             }
         } else {
             removeElement(tie);
@@ -7601,7 +7652,7 @@ void Score::doUndoResetPartialSlur(Slur* slur, bool undo)
         // These changes should be merged with the change in repeat structure which caused the ties to become invalid
         // currentIdx returns the next empty index for an undo command
         const size_t penultimateCmdIdx = undoStack()->currentIndex() - 2;
-        undoStack()->mergeCommands(penultimateCmdIdx);
+        undoStack()->mergeTransactions(penultimateCmdIdx);
     }
 }
 
@@ -7669,7 +7720,7 @@ void Score::undoRemoveStaleTieJumpPoints(bool undo)
             undoRemoveElement(incomingPT);
             endCmd();
             if (undoIdx != undoStack()->currentIndex() && undoStack()->currentIndex() >= 2) {
-                undoStack()->mergeCommands(undoStack()->currentIndex() - 2);
+                undoStack()->mergeTransactions(undoStack()->currentIndex() - 2);
             }
         } else {
             removeElement(incomingPT);

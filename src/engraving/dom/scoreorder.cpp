@@ -5,7 +5,7 @@
  * MuseScore Studio
  * Music Composition & Notation
  *
- * Copyright (C) 2021 MuseScore Limited
+ * Copyright (C) 2021 MuseScore Limited and others
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3 as
@@ -366,6 +366,7 @@ bool ScoreOrder::isScoreOrder(const std::vector<int>& indices) const
 bool ScoreOrder::isScoreOrder(const Score* score) const
 {
     std::vector<int> indices;
+    indices.reserve(score->parts().size());
     for (const Part* part : score->parts()) {
         indices.push_back(instrumentSortingIndex(part->instrument()->id(), part->soloist()));
     }

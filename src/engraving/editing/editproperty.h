@@ -5,7 +5,7 @@
  * MuseScore Studio
  * Music Composition & Notation
  *
- * Copyright (C) 2025 MuseScore Limited
+ * Copyright (C) 2025 MuseScore Limited and others
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3 as
@@ -22,12 +22,12 @@
 
 #pragma once
 
-#include "undo.h"
+#include "transaction/undoablecommand.h"
 
 #include "../dom/staff.h"
 
 namespace mu::engraving {
-class ChangeProperty : public UndoCommand
+class ChangeProperty : public UndoableCommand
 {
     OBJECT_ALLOCATOR(engraving, ChangeProperty)
 protected:
@@ -51,9 +51,9 @@ public:
 
     std::vector<EngravingObject*> objectItems() const override;
 
-    bool isFiltered(UndoCommand::Filter f, const EngravingItem* target) const override
+    bool matchesFilter(UndoableCommandFilter f, const EngravingItem* target) const override
     {
-        return f == UndoCommand::Filter::ChangePropertyLinked && muse::contains(target->linkList(), element);
+        return f == UndoableCommandFilter::ChangePropertyLinked && muse::contains(target->linkList(), element);
     }
 };
 
