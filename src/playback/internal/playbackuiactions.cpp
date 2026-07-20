@@ -96,7 +96,7 @@ const UiActionList PlaybackUiActions::s_mainActions = {
              IconCode::Code::METRONOME,
              Checkable::Yes
              ),
-    UiAction("audio",
+    UiAction("sound",
              mu::context::UiCtxProjectOpened,
              mu::context::CTX_NOTATION_FOCUSED,
              TranslatableString("action", "Hear playback when editing"),
@@ -353,7 +353,7 @@ const muse::ui::ToolConfig& PlaybackUiActions::defaultPlaybackToolConfig()
             { "loop-in", true },
             { "loop-out", true },
             { "metronome", true },
-            { "audio", true },
+            { "sound", true },
         };
     }
     return config;

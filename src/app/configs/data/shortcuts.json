@@ -95,6 +95,12 @@
             "command": "command://playback/metronome-toggle",
             "sequences": [],
             "autorepeat": 0
+        },
+        {
+
+            "command": "command://hear-playback-when-editing-toggle",
+            "sequences": ["M"],
+            "autorepeat": 0
         }
     ],
     "NOTATION": [

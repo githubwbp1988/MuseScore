@@ -48,6 +48,7 @@ static const ToolConfig& defaultPlaybackToolConfig()
             { "command://playback/loop-in", true },
             { "command://playback/loop-out", true },
             { "command://playback/metronome-toggle", true },
+            { "command://playback/hear-playback-when-editing-toggle", true },
         };
     }
     return config;
