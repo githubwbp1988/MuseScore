@@ -5671,7 +5671,7 @@ followed by dashes</source>
     <message>
         <location filename="../../src/appshell/internal/applicationuiactions.cpp" line="261"/>
         <location filename="../../src/appshell/internal/applicationuiactions.cpp" line="262"/>
-        <location filename="../../src/appshell/qml/MuseScore/AppShell/appmenumodel.cpp" line="281"/>
+        <location filename="../../src/appshell/qml/MuseScore/AppShell/appmenumodel.cpp" line="282"/>
         <location filename="../../src/notationscene/internal/notationuiactions.cpp" line="2662"/>
         <location filename="../../src/notationscene/internal/notationuiactions.cpp" line="2663"/>
         <location filename="../../src/notationscene/qml/MuseScore/NotationScene/internal/undoredotoolbarmodel.cpp" line="76"/>
@@ -5682,7 +5682,7 @@ followed by dashes</source>
     <message>
         <location filename="../../src/appshell/internal/applicationuiactions.cpp" line="269"/>
         <location filename="../../src/appshell/internal/applicationuiactions.cpp" line="270"/>
-        <location filename="../../src/appshell/qml/MuseScore/AppShell/appmenumodel.cpp" line="287"/>
+        <location filename="../../src/appshell/qml/MuseScore/AppShell/appmenumodel.cpp" line="288"/>
         <location filename="../../src/notationscene/internal/notationuiactions.cpp" line="2669"/>
         <location filename="../../src/notationscene/internal/notationuiactions.cpp" line="2670"/>
         <location filename="../../src/notationscene/qml/MuseScore/NotationScene/internal/undoredotoolbarmodel.cpp" line="84"/>
@@ -5703,19 +5703,19 @@ followed by dashes</source>
         <translation>წაშლა</translation>
     </message>
     <message>
-        <location filename="../../src/appshell/qml/MuseScore/AppShell/appmenumodel.cpp" line="215"/>
+        <location filename="../../src/appshell/qml/MuseScore/AppShell/appmenumodel.cpp" line="216"/>
         <source>Parts…</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../../src/appshell/qml/MuseScore/AppShell/appmenumodel.cpp" line="282"/>
+        <location filename="../../src/appshell/qml/MuseScore/AppShell/appmenumodel.cpp" line="283"/>
         <location filename="../../src/notationscene/qml/MuseScore/NotationScene/internal/undoredotoolbarmodel.cpp" line="77"/>
         <location filename="../../src/web/appshell/view/appmenumodel.cpp" line="160"/>
         <source>Undo ‘%1’</source>
         <translation>‘%1’-ის გაუქმება</translation>
     </message>
     <message>
-        <location filename="../../src/appshell/qml/MuseScore/AppShell/appmenumodel.cpp" line="288"/>
+        <location filename="../../src/appshell/qml/MuseScore/AppShell/appmenumodel.cpp" line="289"/>
         <location filename="../../src/notationscene/qml/MuseScore/NotationScene/internal/undoredotoolbarmodel.cpp" line="85"/>
         <location filename="../../src/web/appshell/view/appmenumodel.cpp" line="166"/>
         <source>Redo ‘%1’</source>
@@ -9700,31 +9700,41 @@ followed by dashes</source>
     </message>
     <message>
         <location filename="../../src/project/internal/projectuiactions.cpp" line="117"/>
+        <source>Import A&amp;udio to Score…</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../../src/project/internal/projectuiactions.cpp" line="118"/>
+        <source>Import Audio to Score</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../../src/project/internal/projectuiactions.cpp" line="124"/>
         <source>Project propert&amp;ies…</source>
         <translation>პროექტის &amp;თვისებები…</translation>
     </message>
     <message>
-        <location filename="../../src/project/internal/projectuiactions.cpp" line="118"/>
+        <location filename="../../src/project/internal/projectuiactions.cpp" line="125"/>
         <source>Project properties</source>
         <translation>პროექტის თვისებები</translation>
     </message>
     <message>
-        <location filename="../../src/project/internal/projectuiactions.cpp" line="123"/>
+        <location filename="../../src/project/internal/projectuiactions.cpp" line="130"/>
         <source>&amp;Print…</source>
         <translation>&amp;ბეჭდვა…</translation>
     </message>
     <message>
-        <location filename="../../src/project/internal/projectuiactions.cpp" line="124"/>
+        <location filename="../../src/project/internal/projectuiactions.cpp" line="131"/>
         <source>Print</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../../src/project/internal/projectuiactions.cpp" line="130"/>
+        <location filename="../../src/project/internal/projectuiactions.cpp" line="137"/>
         <source>&amp;Clear list of recent files</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../../src/project/internal/projectuiactions.cpp" line="131"/>
+        <location filename="../../src/project/internal/projectuiactions.cpp" line="138"/>
         <source>Clear list of recent files</source>
         <translation type="unfinished"/>
     </message>
@@ -9755,7 +9765,8 @@ followed by dashes</source>
     </message>
     <message>
         <location filename="../../src/appshell/qml/MuseScore/AppShell/HomePage/HomeMenu.qml" line="93"/>
-        <location filename="../../src/musesounds/qml/MuseScore/MuseSounds/MuseSoundsPage.qml" line="88"/>
+        <location filename="../../src/musesounds/qml/MuseScore/MuseSounds/MuseSoundsPage.qml" line="71"/>
+        <location filename="../../src/musesounds/qml/MuseScore/MuseSounds/MuseSoundsPage.qml" line="96"/>
         <source>MuseSounds</source>
         <translation>MuseSounds</translation>
     </message>
@@ -10076,12 +10087,12 @@ Published under the &lt;a href=&quot;%1&quot;&gt;GNU General Public License vers
         <translation>დახურვა</translation>
     </message>
     <message>
-        <location filename="../../src/framework/dockwindow/qml/Muse/Dock/dockpanelview.cpp" line="117"/>
+        <location filename="../../src/framework/dockwindow/qml/Muse/Dock/dockpanelview.cpp" line="121"/>
         <source>Dock</source>
         <translation>მიმაგრება</translation>
     </message>
     <message>
-        <location filename="../../src/framework/dockwindow/qml/Muse/Dock/dockpanelview.cpp" line="117"/>
+        <location filename="../../src/framework/dockwindow/qml/Muse/Dock/dockpanelview.cpp" line="121"/>
         <source>Undock</source>
         <translation>განცალკევება</translation>
     </message>
@@ -10179,54 +10190,54 @@ Published under the &lt;a href=&quot;%1&quot;&gt;GNU General Public License vers
 <context>
     <name>appshell/menu/add</name>
     <message>
-        <location filename="../../src/appshell/qml/MuseScore/AppShell/appmenumodel.cpp" line="333"/>
+        <location filename="../../src/appshell/qml/MuseScore/AppShell/appmenumodel.cpp" line="334"/>
         <location filename="../../src/web/appshell/view/appmenumodel.cpp" line="205"/>
         <source>&amp;Notes</source>
         <translation>&amp;ნოტები</translation>
     </message>
     <message>
-        <location filename="../../src/appshell/qml/MuseScore/AppShell/appmenumodel.cpp" line="334"/>
+        <location filename="../../src/appshell/qml/MuseScore/AppShell/appmenumodel.cpp" line="335"/>
         <location filename="../../src/web/appshell/view/appmenumodel.cpp" line="206"/>
         <source>&amp;Intervals</source>
         <translation>&amp;ინტერვალები</translation>
     </message>
     <message>
-        <location filename="../../src/appshell/qml/MuseScore/AppShell/appmenumodel.cpp" line="335"/>
+        <location filename="../../src/appshell/qml/MuseScore/AppShell/appmenumodel.cpp" line="336"/>
         <location filename="../../src/web/appshell/view/appmenumodel.cpp" line="207"/>
         <source>T&amp;uplets</source>
         <translation>&amp;ტუპლეტები</translation>
     </message>
     <message>
-        <location filename="../../src/appshell/qml/MuseScore/AppShell/appmenumodel.cpp" line="337"/>
+        <location filename="../../src/appshell/qml/MuseScore/AppShell/appmenumodel.cpp" line="338"/>
         <location filename="../../src/web/appshell/view/appmenumodel.cpp" line="209"/>
         <source>&amp;Measures</source>
         <translation>&amp;ტაქტები</translation>
     </message>
     <message>
-        <location filename="../../src/appshell/qml/MuseScore/AppShell/appmenumodel.cpp" line="338"/>
+        <location filename="../../src/appshell/qml/MuseScore/AppShell/appmenumodel.cpp" line="339"/>
         <location filename="../../src/web/appshell/view/appmenumodel.cpp" line="210"/>
         <source>&amp;Frames</source>
         <translation>&amp;ჩარჩოები</translation>
     </message>
     <message>
-        <location filename="../../src/appshell/qml/MuseScore/AppShell/appmenumodel.cpp" line="339"/>
+        <location filename="../../src/appshell/qml/MuseScore/AppShell/appmenumodel.cpp" line="340"/>
         <location filename="../../src/web/appshell/view/appmenumodel.cpp" line="211"/>
         <source>&amp;Text</source>
         <translation>&amp;ტექტი</translation>
     </message>
     <message>
-        <location filename="../../src/appshell/qml/MuseScore/AppShell/appmenumodel.cpp" line="340"/>
+        <location filename="../../src/appshell/qml/MuseScore/AppShell/appmenumodel.cpp" line="341"/>
         <location filename="../../src/web/appshell/view/appmenumodel.cpp" line="212"/>
         <source>&amp;Lines</source>
         <translation>&amp;ხაზები</translation>
     </message>
     <message>
-        <location filename="../../src/appshell/qml/MuseScore/AppShell/appmenumodel.cpp" line="341"/>
+        <location filename="../../src/appshell/qml/MuseScore/AppShell/appmenumodel.cpp" line="342"/>
         <source>&amp;Chords and fretboard diagrams</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../../src/appshell/qml/MuseScore/AppShell/appmenumodel.cpp" line="345"/>
+        <location filename="../../src/appshell/qml/MuseScore/AppShell/appmenumodel.cpp" line="346"/>
         <location filename="../../src/web/appshell/view/appmenumodel.cpp" line="215"/>
         <source>&amp;Add</source>
         <translation>&amp;დამატება</translation>
@@ -10243,52 +10254,52 @@ Published under the &lt;a href=&quot;%1&quot;&gt;GNU General Public License vers
 <context>
     <name>appshell/menu/diagnostics</name>
     <message>
-        <location filename="../../src/appshell/qml/MuseScore/AppShell/appmenumodel.cpp" line="497"/>
+        <location filename="../../src/appshell/qml/MuseScore/AppShell/appmenumodel.cpp" line="498"/>
         <source>&amp;System</source>
         <translation>&amp;სისტემა</translation>
     </message>
     <message>
-        <location filename="../../src/appshell/qml/MuseScore/AppShell/appmenumodel.cpp" line="509"/>
+        <location filename="../../src/appshell/qml/MuseScore/AppShell/appmenumodel.cpp" line="510"/>
         <source>&amp;MuseSampler</source>
         <translation>&amp;MuseSampler</translation>
     </message>
     <message>
-        <location filename="../../src/appshell/qml/MuseScore/AppShell/appmenumodel.cpp" line="566"/>
+        <location filename="../../src/appshell/qml/MuseScore/AppShell/appmenumodel.cpp" line="567"/>
         <source>A&amp;ctions</source>
         <translation>მ&amp;ოქმედებები</translation>
     </message>
     <message>
-        <location filename="../../src/appshell/qml/MuseScore/AppShell/appmenumodel.cpp" line="567"/>
+        <location filename="../../src/appshell/qml/MuseScore/AppShell/appmenumodel.cpp" line="568"/>
         <source>&amp;Accessibility</source>
         <translation>&amp;ხელმისაწვდომობა</translation>
     </message>
     <message>
-        <location filename="../../src/appshell/qml/MuseScore/AppShell/appmenumodel.cpp" line="568"/>
+        <location filename="../../src/appshell/qml/MuseScore/AppShell/appmenumodel.cpp" line="569"/>
         <source>&amp;Engraving</source>
         <translation>&amp;გრავიურა</translation>
     </message>
     <message>
-        <location filename="../../src/appshell/qml/MuseScore/AppShell/appmenumodel.cpp" line="569"/>
+        <location filename="../../src/appshell/qml/MuseScore/AppShell/appmenumodel.cpp" line="570"/>
         <source>E&amp;xtensions</source>
         <translation>გა&amp;ფართოებები</translation>
     </message>
     <message>
-        <location filename="../../src/appshell/qml/MuseScore/AppShell/appmenumodel.cpp" line="570"/>
+        <location filename="../../src/appshell/qml/MuseScore/AppShell/appmenumodel.cpp" line="571"/>
         <source>Auto&amp;bot</source>
         <translation>Auto&amp;bot</translation>
     </message>
     <message>
-        <location filename="../../src/appshell/qml/MuseScore/AppShell/appmenumodel.cpp" line="573"/>
+        <location filename="../../src/appshell/qml/MuseScore/AppShell/appmenumodel.cpp" line="574"/>
         <source>&amp;VST</source>
         <translation>&amp;VST</translation>
     </message>
     <message>
-        <location filename="../../src/appshell/qml/MuseScore/AppShell/appmenumodel.cpp" line="576"/>
+        <location filename="../../src/appshell/qml/MuseScore/AppShell/appmenumodel.cpp" line="577"/>
         <source>&amp;Audio</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../../src/appshell/qml/MuseScore/AppShell/appmenumodel.cpp" line="580"/>
+        <location filename="../../src/appshell/qml/MuseScore/AppShell/appmenumodel.cpp" line="581"/>
         <location filename="../../src/web/appshell/view/appmenumodel.cpp" line="291"/>
         <source>&amp;Diagnostics</source>
         <translation>&amp;დიაგნოსტიკა</translation>
@@ -10297,7 +10308,7 @@ Published under the &lt;a href=&quot;%1&quot;&gt;GNU General Public License vers
 <context>
     <name>appshell/menu/edit</name>
     <message>
-        <location filename="../../src/appshell/qml/MuseScore/AppShell/appmenumodel.cpp" line="265"/>
+        <location filename="../../src/appshell/qml/MuseScore/AppShell/appmenumodel.cpp" line="266"/>
         <location filename="../../src/web/appshell/view/appmenumodel.cpp" line="143"/>
         <source>&amp;Edit</source>
         <translation>ჩასწორება</translation>
@@ -10321,7 +10332,7 @@ Published under the &lt;a href=&quot;%1&quot;&gt;GNU General Public License vers
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../../src/appshell/qml/MuseScore/AppShell/appmenumodel.cpp" line="222"/>
+        <location filename="../../src/appshell/qml/MuseScore/AppShell/appmenumodel.cpp" line="223"/>
         <location filename="../../src/web/appshell/view/appmenumodel.cpp" line="120"/>
         <source>&amp;File</source>
         <translation>&amp;ფაილი</translation>
@@ -10330,13 +10341,13 @@ Published under the &lt;a href=&quot;%1&quot;&gt;GNU General Public License vers
 <context>
     <name>appshell/menu/format</name>
     <message>
-        <location filename="../../src/appshell/qml/MuseScore/AppShell/appmenumodel.cpp" line="361"/>
+        <location filename="../../src/appshell/qml/MuseScore/AppShell/appmenumodel.cpp" line="362"/>
         <location filename="../../src/web/appshell/view/appmenumodel.cpp" line="231"/>
         <source>Str&amp;etch</source>
         <translation>გა&amp;წელვა</translation>
     </message>
     <message>
-        <location filename="../../src/appshell/qml/MuseScore/AppShell/appmenumodel.cpp" line="372"/>
+        <location filename="../../src/appshell/qml/MuseScore/AppShell/appmenumodel.cpp" line="373"/>
         <location filename="../../src/web/appshell/view/appmenumodel.cpp" line="239"/>
         <source>F&amp;ormat</source>
         <translation>&amp;ფორმატი</translation>
@@ -10345,7 +10356,7 @@ Published under the &lt;a href=&quot;%1&quot;&gt;GNU General Public License vers
 <context>
     <name>appshell/menu/help</name>
     <message>
-        <location filename="../../src/appshell/qml/MuseScore/AppShell/appmenumodel.cpp" line="483"/>
+        <location filename="../../src/appshell/qml/MuseScore/AppShell/appmenumodel.cpp" line="484"/>
         <source>&amp;Help</source>
         <translation>&amp;დახმარება</translation>
     </message>
@@ -10353,7 +10364,7 @@ Published under the &lt;a href=&quot;%1&quot;&gt;GNU General Public License vers
 <context>
     <name>appshell/menu/plugins</name>
     <message>
-        <location filename="../../src/appshell/qml/MuseScore/AppShell/appmenumodel.cpp" line="430"/>
+        <location filename="../../src/appshell/qml/MuseScore/AppShell/appmenumodel.cpp" line="431"/>
         <source>&amp;Plugins</source>
         <translation>&amp;მოდულები</translation>
     </message>
@@ -10361,24 +10372,24 @@ Published under the &lt;a href=&quot;%1&quot;&gt;GNU General Public License vers
 <context>
     <name>appshell/menu/tools</name>
     <message>
-        <location filename="../../src/appshell/qml/MuseScore/AppShell/appmenumodel.cpp" line="403"/>
+        <location filename="../../src/appshell/qml/MuseScore/AppShell/appmenumodel.cpp" line="404"/>
         <location filename="../../src/web/appshell/view/appmenumodel.cpp" line="264"/>
         <source>&amp;Voices</source>
         <translation>&amp;ხმები</translation>
     </message>
     <message>
-        <location filename="../../src/appshell/qml/MuseScore/AppShell/appmenumodel.cpp" line="404"/>
+        <location filename="../../src/appshell/qml/MuseScore/AppShell/appmenumodel.cpp" line="405"/>
         <location filename="../../src/web/appshell/view/appmenumodel.cpp" line="265"/>
         <source>&amp;Measures</source>
         <translation>&amp;ტაქტები</translation>
     </message>
     <message>
-        <location filename="../../src/appshell/qml/MuseScore/AppShell/appmenumodel.cpp" line="412"/>
+        <location filename="../../src/appshell/qml/MuseScore/AppShell/appmenumodel.cpp" line="413"/>
         <source>Enharmonic spelling</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../../src/appshell/qml/MuseScore/AppShell/appmenumodel.cpp" line="425"/>
+        <location filename="../../src/appshell/qml/MuseScore/AppShell/appmenumodel.cpp" line="426"/>
         <location filename="../../src/web/appshell/view/appmenumodel.cpp" line="282"/>
         <source>&amp;Tools</source>
         <translation>&amp;ხელსაწყოები</translation>
@@ -10387,25 +10398,25 @@ Published under the &lt;a href=&quot;%1&quot;&gt;GNU General Public License vers
 <context>
     <name>appshell/menu/view</name>
     <message>
-        <location filename="../../src/appshell/qml/MuseScore/AppShell/appmenumodel.cpp" line="315"/>
+        <location filename="../../src/appshell/qml/MuseScore/AppShell/appmenumodel.cpp" line="316"/>
         <location filename="../../src/web/appshell/view/appmenumodel.cpp" line="187"/>
         <source>&amp;Toolbars</source>
         <translation>&amp;ხელსაწყოთა ზოლები</translation>
     </message>
     <message>
-        <location filename="../../src/appshell/qml/MuseScore/AppShell/appmenumodel.cpp" line="319"/>
+        <location filename="../../src/appshell/qml/MuseScore/AppShell/appmenumodel.cpp" line="320"/>
         <location filename="../../src/web/appshell/view/appmenumodel.cpp" line="191"/>
         <source>W&amp;orkspaces</source>
         <translation>&amp;სამუშაო სივრცეები</translation>
     </message>
     <message>
-        <location filename="../../src/appshell/qml/MuseScore/AppShell/appmenumodel.cpp" line="323"/>
+        <location filename="../../src/appshell/qml/MuseScore/AppShell/appmenumodel.cpp" line="324"/>
         <location filename="../../src/web/appshell/view/appmenumodel.cpp" line="195"/>
         <source>&amp;Show</source>
         <translation>&amp;ჩვენება</translation>
     </message>
     <message>
-        <location filename="../../src/appshell/qml/MuseScore/AppShell/appmenumodel.cpp" line="327"/>
+        <location filename="../../src/appshell/qml/MuseScore/AppShell/appmenumodel.cpp" line="328"/>
         <location filename="../../src/web/appshell/view/appmenumodel.cpp" line="199"/>
         <source>&amp;View</source>
         <translation>&amp;ხედი</translation>
@@ -10546,7 +10557,7 @@ Published under the &lt;a href=&quot;%1&quot;&gt;GNU General Public License vers
         <translation>SoundFont-ების მინიჭება ინსტრუმენტებისთვის მიქსერის პანელის გამოყენებით შეგიძლიათ.</translation>
     </message>
     <message>
-        <location filename="../../src/framework/audioplugins/internal/registeraudiopluginsscenario.cpp" line="121"/>
+        <location filename="../../src/framework/audioplugins/internal/registeraudiopluginsscenario.cpp" line="133"/>
         <location filename="../../src/framework/audioplugins/tests/registeraudiopluginsscenariotest.cpp" line="161"/>
         <source>Scanning audio plugins</source>
         <translation>აუდიო დანამატების სკანირება</translation>
@@ -10651,7 +10662,7 @@ Published under the &lt;a href=&quot;%1&quot;&gt;GNU General Public License vers
 <context>
     <name>debugOption</name>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="8424"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="8426"/>
         <source>Toggle show gap rests</source>
         <translation type="unfinished"/>
     </message>
@@ -10729,7 +10740,7 @@ Published under the &lt;a href=&quot;%1&quot;&gt;GNU General Public License vers
         <location filename="../../src/engraving/dom/chordrest.cpp" line="1142"/>
         <location filename="../../src/engraving/dom/note.cpp" line="3436"/>
         <location filename="../../src/engraving/dom/note.cpp" line="3448"/>
-        <location filename="../../src/engraving/dom/segment.cpp" line="2540"/>
+        <location filename="../../src/engraving/dom/segment.cpp" line="2543"/>
         <source>Start of %1</source>
         <translation>%1-ის დასაწყისი</translation>
     </message>
@@ -10739,7 +10750,7 @@ Published under the &lt;a href=&quot;%1&quot;&gt;GNU General Public License vers
         <location filename="../../src/engraving/dom/chordrest.cpp" line="1144"/>
         <location filename="../../src/engraving/dom/note.cpp" line="3440"/>
         <location filename="../../src/engraving/dom/note.cpp" line="3456"/>
-        <location filename="../../src/engraving/dom/segment.cpp" line="2555"/>
+        <location filename="../../src/engraving/dom/segment.cpp" line="2558"/>
         <source>End of %1</source>
         <translation>%1-ის დასასრული</translation>
     </message>
@@ -10865,17 +10876,17 @@ Fret %1 on strings %2</source>
         <translation>%1-ის დასაწყისი და დასასრული</translation>
     </message>
     <message>
-        <location filename="../../src/engraving/dom/engravingitem.cpp" line="2629"/>
+        <location filename="../../src/engraving/dom/engravingitem.cpp" line="2623"/>
         <source>Measure: %1</source>
         <translation>ტაქტი: %1</translation>
     </message>
     <message>
-        <location filename="../../src/engraving/dom/engravingitem.cpp" line="2632"/>
+        <location filename="../../src/engraving/dom/engravingitem.cpp" line="2626"/>
         <source>Displayed measure: %1</source>
         <translation>ნაჩვენები ტაქტი: %1</translation>
     </message>
     <message>
-        <location filename="../../src/engraving/dom/engravingitem.cpp" line="2636"/>
+        <location filename="../../src/engraving/dom/engravingitem.cpp" line="2630"/>
         <source>Beat: %1</source>
         <translation>წილადი: %1</translation>
     </message>
@@ -10959,18 +10970,18 @@ Fret %1 on strings %2</source>
         <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform></translation>
     </message>
     <message>
-        <location filename="../../src/engraving/dom/harmony.cpp" line="1303"/>
+        <location filename="../../src/engraving/dom/harmony.cpp" line="1290"/>
         <source>Roman numeral</source>
         <translation>რომაული ციფრი</translation>
     </message>
     <message>
-        <location filename="../../src/engraving/dom/harmony.cpp" line="1305"/>
+        <location filename="../../src/engraving/dom/harmony.cpp" line="1292"/>
         <location filename="../../src/engraving/types/typesconv.cpp" line="1737"/>
         <source>Nashville number</source>
         <translation>ნეშვილის ნომერი</translation>
     </message>
     <message>
-        <location filename="../../src/engraving/dom/harmony.cpp" line="1355"/>
+        <location filename="../../src/engraving/dom/harmony.cpp" line="1342"/>
         <source>lower case</source>
         <translation>პატარა ასოები</translation>
     </message>
@@ -11126,42 +11137,42 @@ Fret %1 on strings %2</source>
         <translation>%1; ხანგრძლივობა: %2; %3</translation>
     </message>
     <message>
-        <location filename="../../src/engraving/dom/segment.cpp" line="2514"/>
+        <location filename="../../src/engraving/dom/segment.cpp" line="2517"/>
         <source>Annotations:</source>
         <translation>ანოტაციები:</translation>
     </message>
     <message>
-        <location filename="../../src/engraving/dom/spanner.cpp" line="1625"/>
+        <location filename="../../src/engraving/dom/spanner.cpp" line="1630"/>
         <location filename="../../src/notation/internal/notationaccessibility.cpp" line="155"/>
         <source>Start measure: %1</source>
         <translation>დაწყების ტაქტი: %1</translation>
     </message>
     <message>
-        <location filename="../../src/engraving/dom/spanner.cpp" line="1628"/>
+        <location filename="../../src/engraving/dom/spanner.cpp" line="1633"/>
         <location filename="../../src/notation/internal/notationaccessibility.cpp" line="157"/>
         <source>Start displayed measure: %1</source>
         <translation>გამოსახვის დაწყების ტაქტი: %1</translation>
     </message>
     <message>
-        <location filename="../../src/engraving/dom/spanner.cpp" line="1631"/>
+        <location filename="../../src/engraving/dom/spanner.cpp" line="1636"/>
         <location filename="../../src/notation/internal/notationaccessibility.cpp" line="159"/>
         <source>Start beat: %1</source>
         <translation>დაწყების წილი: %1</translation>
     </message>
     <message>
-        <location filename="../../src/engraving/dom/spanner.cpp" line="1638"/>
+        <location filename="../../src/engraving/dom/spanner.cpp" line="1643"/>
         <location filename="../../src/notation/internal/notationaccessibility.cpp" line="162"/>
         <source>End measure: %1</source>
         <translation>დასრულების ტაქტი: %1</translation>
     </message>
     <message>
-        <location filename="../../src/engraving/dom/spanner.cpp" line="1641"/>
+        <location filename="../../src/engraving/dom/spanner.cpp" line="1646"/>
         <location filename="../../src/notation/internal/notationaccessibility.cpp" line="164"/>
         <source>End displayed measure: %1</source>
         <translation>გამოსახვის დასრულების ტაქტი: %1</translation>
     </message>
     <message>
-        <location filename="../../src/engraving/dom/spanner.cpp" line="1644"/>
+        <location filename="../../src/engraving/dom/spanner.cpp" line="1649"/>
         <location filename="../../src/notation/internal/notationaccessibility.cpp" line="166"/>
         <source>End beat: %1</source>
         <translation>დასრულების წილი: %1</translation>
@@ -11415,18 +11426,28 @@ Fret %1 on strings %2</source>
         <translation>არ შეიძლება ტუპლეტის შექმნა %1 თანაფარდობით %2 ხანგრძლივობისთვის</translation>
     </message>
     <message>
-        <location filename="../../src/engraving/editing/edit.cpp" line="7957"/>
-        <location filename="../../src/engraving/editing/edit.cpp" line="8105"/>
+        <location filename="../../src/engraving/editing/edit.cpp" line="7975"/>
+        <location filename="../../src/engraving/editing/edit.cpp" line="8155"/>
         <source>Remove stale partial tie</source>
         <translation>მოძველებული ნაწილობრივი ლიგატურის წაშლა</translation>
     </message>
     <message>
-        <location filename="../../src/engraving/editing/edit.cpp" line="8015"/>
+        <location filename="../../src/engraving/editing/edit.cpp" line="8041"/>
+        <source>Remove invalid incoming partial slur</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../../src/engraving/editing/edit.cpp" line="8049"/>
         <source>Reset incoming partial slur</source>
         <translation>შემომავალი ნაწილობრივი ლიგატურის გადატვირთვა</translation>
     </message>
     <message>
-        <location filename="../../src/engraving/editing/edit.cpp" line="8025"/>
+        <location filename="../../src/engraving/editing/edit.cpp" line="8064"/>
+        <source>Remove invalid outgoing partial slur</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../../src/engraving/editing/edit.cpp" line="8072"/>
         <source>Reset outgoing partial slur</source>
         <translation>გამავალი ნაწილობრივი ლიგატურის გადატვირთვა</translation>
     </message>
@@ -13840,7 +13861,7 @@ Fret %1 on strings %2</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../../src/notationscene/qml/MuseScore/NotationScene/elementpopups/partialtiepopupmodel.cpp" line="218"/>
+        <location filename="../../src/notationscene/qml/MuseScore/NotationScene/elementpopups/partialtiepopupmodel.cpp" line="222"/>
         <source>Remove partial tie</source>
         <translation>ნაწილობრივი ლიგირების წაშლა</translation>
     </message>
@@ -20681,7 +20702,7 @@ Fret %1 on strings %2</source>
     <message>
         <location filename="../../src/framework/cloud/qml/Muse/Cloud/CloudScoresView.qml" line="219"/>
         <location filename="../../src/framework/learn/qml/Muse/Learn/internal/Playlist.qml" line="142"/>
-        <location filename="../../src/musesounds/qml/MuseScore/MuseSounds/MuseSoundsPage.qml" line="178"/>
+        <location filename="../../src/musesounds/qml/MuseScore/MuseSounds/MuseSoundsPage.qml" line="202"/>
         <source>Please check your internet connection or try again later.</source>
         <translation>გთხოვთ, შეამოწმოთ თქვენი ინტერნეტ კავშირი ან სცადოთ მოგვიანებით.</translation>
     </message>
@@ -21165,6 +21186,7 @@ Fret %1 on strings %2</source>
         <translation>ამ პარამეტრის შეცვლა ნებისმიერ დროს შეგიძლიათ პარამეტრებში.</translation>
     </message>
     <message>
+        <location filename="../../src/musesounds/qml/MuseScore/MuseSounds/MuseSoundsPage.qml" line="215"/>
         <location filename="../../src/palette/qml/MuseScore/Palette/PalettesPanel.qml" line="129"/>
         <location filename="../../src/project/qml/MuseScore/Project/internal/NewScore/TitleListView.qml" line="129"/>
         <location filename="../../src/project/qml/MuseScore/Project/internal/ScoresPage/ScoreGridItem.qml" line="293"/>
@@ -21239,7 +21261,7 @@ Fret %1 on strings %2</source>
     </message>
     <message>
         <location filename="../../src/project/qml/MuseScore/Project/ProjectUploadedDialog.qml" line="108"/>
-        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1403"/>
+        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1405"/>
         <source>Success!</source>
         <translation>წარმატება!</translation>
     </message>
@@ -26769,7 +26791,12 @@ In addition, Mastering MuseScore features a supportive community of musicians, w
         <translation>ახლავე მიიღეთ</translation>
     </message>
     <message>
-        <location filename="../../src/musesounds/qml/MuseScore/MuseSounds/MuseSoundsPage.qml" line="173"/>
+        <location filename="../../src/musesounds/qml/MuseScore/MuseSounds/MuseSoundsPage.qml" line="109"/>
+        <source>Search sounds</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../../src/musesounds/qml/MuseScore/MuseSounds/MuseSoundsPage.qml" line="197"/>
         <source>Sorry, we are unable to load these sounds right now</source>
         <translation>ბოდიში, ამ ბგერების ჩატვირთვა ამჟამად შეუძლებელია</translation>
     </message>
@@ -27844,41 +27871,41 @@ In addition, Mastering MuseScore features a supportive community of musicians, w
         <translation>მასშტაბირების მენიუ</translation>
     </message>
     <message>
-        <location filename="../../src/appshell/qml/MuseScore/AppShell/appmenumodel.cpp" line="704"/>
+        <location filename="../../src/appshell/qml/MuseScore/AppShell/appmenumodel.cpp" line="705"/>
         <location filename="../../src/web/appshell/view/appmenumodel.cpp" line="367"/>
         <source>Insert &amp;after selection…</source>
         <translation>მონიშნულის &amp;შემდეგ ჩასმა...</translation>
     </message>
     <message>
-        <location filename="../../src/appshell/qml/MuseScore/AppShell/appmenumodel.cpp" line="703"/>
+        <location filename="../../src/appshell/qml/MuseScore/AppShell/appmenumodel.cpp" line="704"/>
         <location filename="../../src/web/appshell/view/appmenumodel.cpp" line="368"/>
         <source>Insert &amp;before selection…</source>
         <translation>მონიშნულის &amp;წინ ჩასმა...</translation>
     </message>
     <message>
-        <location filename="../../src/appshell/qml/MuseScore/AppShell/appmenumodel.cpp" line="700"/>
+        <location filename="../../src/appshell/qml/MuseScore/AppShell/appmenumodel.cpp" line="701"/>
         <source>&amp;Insert one measure before selection</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../../src/appshell/qml/MuseScore/AppShell/appmenumodel.cpp" line="701"/>
+        <location filename="../../src/appshell/qml/MuseScore/AppShell/appmenumodel.cpp" line="702"/>
         <source>Insert &amp;one measure at end of score</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../../src/appshell/qml/MuseScore/AppShell/appmenumodel.cpp" line="706"/>
+        <location filename="../../src/appshell/qml/MuseScore/AppShell/appmenumodel.cpp" line="707"/>
         <location filename="../../src/web/appshell/view/appmenumodel.cpp" line="370"/>
         <source>Insert at &amp;start of score…</source>
         <translation>პარტიტურის &amp;დასაწყისში ჩასმა…</translation>
     </message>
     <message>
-        <location filename="../../src/appshell/qml/MuseScore/AppShell/appmenumodel.cpp" line="707"/>
+        <location filename="../../src/appshell/qml/MuseScore/AppShell/appmenumodel.cpp" line="708"/>
         <location filename="../../src/web/appshell/view/appmenumodel.cpp" line="371"/>
         <source>Insert at &amp;end of score…</source>
         <translation>პარტიტურის ბ&amp;ოლოს ჩასმა...</translation>
     </message>
     <message>
-        <location filename="../../src/appshell/qml/MuseScore/AppShell/appmenumodel.cpp" line="721"/>
+        <location filename="../../src/appshell/qml/MuseScore/AppShell/appmenumodel.cpp" line="722"/>
         <location filename="../../src/notationscene/qml/MuseScore/NotationScene/noteinputbarmodel.cpp" line="685"/>
         <source>Insert at end of score</source>
         <translation type="unfinished"/>
@@ -28194,25 +28221,25 @@ In addition, Mastering MuseScore features a supportive community of musicians, w
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="4569"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="4571"/>
         <source>‘</source>
         <extracomment>Single open quotation mark</extracomment>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="4571"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="4573"/>
         <source>’</source>
         <extracomment>Single close quotation mark</extracomment>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="4573"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="4575"/>
         <source>“</source>
         <extracomment>Double open quotation mark</extracomment>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="4575"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="4577"/>
         <source>”</source>
         <extracomment>Double close quotation mark</extracomment>
         <translation type="unfinished"/>
@@ -28376,48 +28403,48 @@ In addition, Mastering MuseScore features a supportive community of musicians, w
         <translation>გამოსახულების დამატება</translation>
     </message>
     <message>
-        <location filename="../../src/notationscene/internal/notationactioncontroller.cpp" line="1833"/>
+        <location filename="../../src/notationscene/internal/notationactioncontroller.cpp" line="1835"/>
         <source>MuseScore style files</source>
         <translation>MuseScore სტილის ფაილები</translation>
     </message>
     <message>
-        <location filename="../../src/notationscene/internal/notationactioncontroller.cpp" line="1834"/>
+        <location filename="../../src/notationscene/internal/notationactioncontroller.cpp" line="1836"/>
         <source>MuseScore style file</source>
         <translation>MuseScore სტილის ფაილი</translation>
     </message>
     <message>
-        <location filename="../../src/notationscene/internal/notationactioncontroller.cpp" line="1837"/>
+        <location filename="../../src/notationscene/internal/notationactioncontroller.cpp" line="1839"/>
         <location filename="../../src/notationscene/qml/MuseScore/NotationScene/styledialog/chordsymbolspagemodel.cpp" line="123"/>
         <source>Load style</source>
         <translation>სტილის ჩატვირთვა</translation>
     </message>
     <message>
-        <location filename="../../src/notationscene/internal/notationactioncontroller.cpp" line="1838"/>
+        <location filename="../../src/notationscene/internal/notationactioncontroller.cpp" line="1840"/>
         <source>Save style</source>
         <translation>დამახსოვრების ფორმა</translation>
     </message>
     <message>
-        <location filename="../../src/notationscene/internal/notationactioncontroller.cpp" line="1848"/>
+        <location filename="../../src/notationscene/internal/notationactioncontroller.cpp" line="1850"/>
         <source>The style file could not be loaded.</source>
         <translation>სტილის ფაილის ჩატვირთვა ვერ მოხერხდა.</translation>
     </message>
     <message>
-        <location filename="../../src/notationscene/internal/notationactioncontroller.cpp" line="1854"/>
+        <location filename="../../src/notationscene/internal/notationactioncontroller.cpp" line="1856"/>
         <source>Since this style file is from a different version of MuseScore Studio, your score is not guaranteed to display correctly.</source>
         <translation>რადგან ეს სტილის ფაილი MuseScore Studio-ს სხვა ვერსიიდანაა, თქვენი პარტიტურა შესაძლოა არასწორად გამოჩნდეს.</translation>
     </message>
     <message>
-        <location filename="../../src/notationscene/internal/notationactioncontroller.cpp" line="1856"/>
+        <location filename="../../src/notationscene/internal/notationactioncontroller.cpp" line="1858"/>
         <source>Click OK to load anyway.</source>
         <translation>მაინც ჩასატვირთად დააჭირეთ OK.</translation>
     </message>
     <message>
-        <location filename="../../src/notationscene/internal/notationactioncontroller.cpp" line="1874"/>
+        <location filename="../../src/notationscene/internal/notationactioncontroller.cpp" line="1876"/>
         <source>The style file could not be saved.</source>
         <translation>სტილის ფაილის შენახვა ვერ მოხერხდა.</translation>
     </message>
     <message>
-        <location filename="../../src/notationscene/internal/notationactioncontroller.cpp" line="1875"/>
+        <location filename="../../src/notationscene/internal/notationactioncontroller.cpp" line="1877"/>
         <source>An error occurred.</source>
         <translation>შეცდომა.</translation>
     </message>
@@ -33538,17 +33565,17 @@ failed: %2</source>
         <translation>დამხმარე %1</translation>
     </message>
     <message>
-        <location filename="../../src/playback/internal/playbackcontroller.cpp" line="1077"/>
+        <location filename="../../src/playback/internal/playbackcontroller.cpp" line="1073"/>
         <source>Metronome</source>
         <translation>მეტრონომი</translation>
     </message>
     <message>
-        <location filename="../../src/playback/internal/playbackcontroller.cpp" line="1087"/>
+        <location filename="../../src/playback/internal/playbackcontroller.cpp" line="1083"/>
         <source>Chords</source>
         <translation>აკორდი</translation>
     </message>
     <message>
-        <location filename="../../src/playback/internal/playbackcontroller.cpp" line="1414"/>
+        <location filename="../../src/playback/internal/playbackcontroller.cpp" line="1410"/>
         <source>Loading audio samples</source>
         <translation>აუდიო ნიმუშების ჩატვირთვა</translation>
     </message>
@@ -33859,6 +33886,11 @@ failed: %2</source>
         <location filename="../../src/preferences/qml/MuseScore/Preferences/preferencesmodel.cpp" line="195"/>
         <source>Folders</source>
         <translation>საქაღალდეები</translation>
+    </message>
+    <message>
+        <location filename="../../src/preferences/qml/MuseScore/Preferences/internal/FoldersSection.qml" line="86"/>
+        <source>Rescan VST3 plugins</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../src/preferences/qml/MuseScore/Preferences/internal/FFmpegSection.qml" line="30"/>
@@ -34429,42 +34461,42 @@ failed: %2</source>
         <translation>დაბლა</translation>
     </message>
     <message>
-        <location filename="../../src/preferences/qml/MuseScore/Preferences/folderspreferencesmodel.cpp" line="91"/>
+        <location filename="../../src/preferences/qml/MuseScore/Preferences/folderspreferencesmodel.cpp" line="100"/>
         <source>Scores</source>
         <translation>პარტიტურები</translation>
     </message>
     <message>
-        <location filename="../../src/preferences/qml/MuseScore/Preferences/folderspreferencesmodel.cpp" line="95"/>
+        <location filename="../../src/preferences/qml/MuseScore/Preferences/folderspreferencesmodel.cpp" line="104"/>
         <source>Styles</source>
         <translation>სტილი</translation>
     </message>
     <message>
-        <location filename="../../src/preferences/qml/MuseScore/Preferences/folderspreferencesmodel.cpp" line="99"/>
+        <location filename="../../src/preferences/qml/MuseScore/Preferences/folderspreferencesmodel.cpp" line="108"/>
         <source>Instruments and score orders</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../../src/preferences/qml/MuseScore/Preferences/folderspreferencesmodel.cpp" line="104"/>
+        <location filename="../../src/preferences/qml/MuseScore/Preferences/folderspreferencesmodel.cpp" line="113"/>
         <source>Templates</source>
         <translation>შაბლონები</translation>
     </message>
     <message>
-        <location filename="../../src/preferences/qml/MuseScore/Preferences/folderspreferencesmodel.cpp" line="108"/>
+        <location filename="../../src/preferences/qml/MuseScore/Preferences/folderspreferencesmodel.cpp" line="117"/>
         <source>Plugins</source>
         <translation>მოდულები</translation>
     </message>
     <message>
-        <location filename="../../src/preferences/qml/MuseScore/Preferences/folderspreferencesmodel.cpp" line="112"/>
+        <location filename="../../src/preferences/qml/MuseScore/Preferences/folderspreferencesmodel.cpp" line="121"/>
         <source>SoundFonts</source>
         <translation>SoundFonts</translation>
     </message>
     <message>
-        <location filename="../../src/preferences/qml/MuseScore/Preferences/folderspreferencesmodel.cpp" line="117"/>
+        <location filename="../../src/preferences/qml/MuseScore/Preferences/folderspreferencesmodel.cpp" line="126"/>
         <source>Musical symbol fonts</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../../src/preferences/qml/MuseScore/Preferences/folderspreferencesmodel.cpp" line="123"/>
+        <location filename="../../src/preferences/qml/MuseScore/Preferences/folderspreferencesmodel.cpp" line="132"/>
         <source>VST3</source>
         <translation>VST3</translation>
     </message>
@@ -34904,23 +34936,23 @@ failed: %2</source>
         <translation>ონლაინ შენახვა…</translation>
     </message>
     <message>
-        <location filename="../../src/notationscene/internal/notationactioncontroller.cpp" line="2353"/>
+        <location filename="../../src/notationscene/internal/notationactioncontroller.cpp" line="2355"/>
         <source>File “%1” seems not corrupted</source>
         <translation>ფაილი „%1“ დაუზიანებელია</translation>
     </message>
     <message>
-        <location filename="../../src/notationscene/internal/notationactioncontroller.cpp" line="2354"/>
+        <location filename="../../src/notationscene/internal/notationactioncontroller.cpp" line="2356"/>
         <source>This file does not seem to contain errors.</source>
         <translation>ამ ფაილში შეცდომები არ შეინიშნება.</translation>
     </message>
     <message>
-        <location filename="../../src/notationscene/internal/notationactioncontroller.cpp" line="2357"/>
-        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1791"/>
+        <location filename="../../src/notationscene/internal/notationactioncontroller.cpp" line="2359"/>
+        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1793"/>
         <source>File “%1” is corrupted</source>
         <translation>ფაილი „%1“ დაზიანებულია</translation>
     </message>
     <message>
-        <location filename="../../src/notationscene/internal/notationactioncontroller.cpp" line="2359"/>
+        <location filename="../../src/notationscene/internal/notationactioncontroller.cpp" line="2361"/>
         <source>This file contains errors that could cause MuseScore Studio to malfunction. Please fix those at the earliest, to prevent crashes and further corruptions.</source>
         <translation>ეს ფაილი შეიცავს შეცდომებს, რამაც შეიძლება გამოიწვიოს MuseScore Studio-ს გაუმართაობა. გთხოვთ, გამოასწოროთ ისინი უმოკლეს ვადაში, რათა თავიდან აიცილოთ ავარიული გათიშვა და შემდგომი დაზიანებები.</translation>
     </message>
@@ -34945,222 +34977,222 @@ failed: %2</source>
         <translation>ეს პარტიტურა არასწორია. </translation>
     </message>
     <message>
-        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="747"/>
+        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="749"/>
         <source>Do you want to save changes to the score “%1” before closing?</source>
         <translation>გსურთ შეინახოთ ცვლილებები &quot;%1&quot; პარტიტურაში მის დახურვამდე?</translation>
     </message>
     <message>
-        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="750"/>
+        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="752"/>
         <source>Your changes will be lost if you don’t save them.</source>
         <translation>ცვლილებები დაიკარგება, თუ არ დაიმახსოვრებთ.</translation>
     </message>
     <message>
-        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1527"/>
-        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1619"/>
+        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1529"/>
+        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1621"/>
         <source>Your score cannot be uploaded to the cloud</source>
         <translation>თქვენი პარტიტურის ღრუბელში ატვირთვა შეუძლებელია</translation>
     </message>
     <message>
-        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1530"/>
+        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1532"/>
         <source>This score has become corrupted and contains errors. You can fix the errors manually, or save the score to your computer and get help for this issue on MuseScore.org.</source>
         <translation>ეს პარტიტურა დაზიანებულია და შეიცავს შეცდომებს. შეგიძლიათ ხელით გამოასწოროთ შეცდომები, ან შეინახოთ პარტიტურა თქვენს კომპიუტერში და მიიღოთ დახმარება ამ საკითხზე MuseScore.org-ზე.</translation>
     </message>
     <message>
-        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1538"/>
+        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1540"/>
         <source>Save as…</source>
         <translation>შენახვა როგორც…</translation>
     </message>
     <message>
-        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1543"/>
-        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1585"/>
+        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1545"/>
+        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1587"/>
         <source>Revert to last saved</source>
         <translation>ბოლო შენახულ ვერსიაზე დაბრუნება</translation>
     </message>
     <message>
-        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1566"/>
+        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1568"/>
         <source>This score has become corrupted and contains errors</source>
         <translation>ეს პარტიტურა დაზიანებულია და შეიცავს შეცდომებს</translation>
     </message>
     <message>
-        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1570"/>
+        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1572"/>
         <source>You can continue saving it locally, although the file may become unusable. You can try to fix the errors manually, or get help for this issue on MuseScore.org.</source>
         <translation>შეგიძლიათ გააგრძელოთ მისი ლოკალურად შენახვა, თუმცა ფაილი შესაძლოა გამოუსადეგარი გახდეს. შეგიძლიათ სცადოთ შეცდომების ხელით გამოსწორება, ან მიიღოთ დახმარება ამ საკითხზე MuseScore.org-ზე.</translation>
     </message>
     <message>
-        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1572"/>
+        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1574"/>
         <source>You can continue saving it locally, although the file may become unusable. To preserve your score, revert to the last saved version, or fix the errors manually. You can also get help for this issue on MuseScore.org.</source>
         <translation>შეგიძლიათ გააგრძელოთ მისი ლოკალურად შენახვა, თუმცა ფაილი შესაძლოა გამოუსადეგარი გახდეს. თქვენი პარტიტურის შესანარჩუნებლად, დაუბრუნდით ბოლო შენახულ ვერსიას, ან ხელით გამოასწორეთ შეცდომები. ასევე შეგიძლიათ მიიღოთ დახმარება ამ საკითხზე MuseScore.org-ზე.</translation>
     </message>
     <message>
-        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1580"/>
+        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1582"/>
         <source>Save anyway</source>
         <translation>მაინც შენახვა</translation>
     </message>
     <message>
-        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1618"/>
+        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1620"/>
         <source>Your score cannot be saved</source>
         <translation>თქვენი პარტიტურის შენახვა შეუძლებელია</translation>
     </message>
     <message>
-        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1622"/>
+        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1624"/>
         <source>This score is corrupted. You can get help for this issue on MuseScore.org.</source>
         <translation>ეს პარტიტურა დაზიანებულია. შეგიძლიათ მიიღოთ დახმარება ამ საკითხზე MuseScore.org-ზე.</translation>
     </message>
     <message>
-        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1625"/>
-        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1813"/>
+        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1627"/>
+        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1815"/>
         <source>Get help</source>
         <translation>დახმარების მიღება</translation>
     </message>
     <message>
-        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1675"/>
+        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1677"/>
         <source>Try again</source>
         <translation>ხელახლა ცდა</translation>
     </message>
     <message>
-        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1690"/>
+        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1692"/>
         <source>Revert to last saved?</source>
         <translation>დაუბრუნდეთ ბოლოს შენახულ ვერსიას?</translation>
     </message>
     <message>
-        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1691"/>
+        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1693"/>
         <source>Your changes will be lost. This action cannot be undone.</source>
         <translation>თქვენი ცვლილებები დაიკარგება. ამ მოქმედების გაუქმება შეუძლებელია.</translation>
     </message>
     <message>
-        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1771"/>
-        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1796"/>
+        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1773"/>
+        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1798"/>
         <source>Open anyway</source>
         <translation>მაინც გახსნა</translation>
     </message>
     <message>
-        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1783"/>
-        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1827"/>
+        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1785"/>
+        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1829"/>
         <source>Cannot read file %1</source>
         <translation>ფაილის წაკითხვა შეუძლებელია %1</translation>
     </message>
     <message>
-        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1784"/>
+        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1786"/>
         <source>This file was saved using a newer version of MuseScore Studio. Please visit &lt;a href=&quot;%1&quot;&gt;MuseScore.org&lt;/a&gt; to obtain the latest version.</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1793"/>
+        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1795"/>
         <source>This file contains errors that could cause MuseScore Studio to malfunction.</source>
         <translation>ეს ფაილი შეიცავს შეცდომებს, რამაც შეიძლება გამოიწვიოს MuseScore Studio-ს გაუმართაობა.</translation>
     </message>
     <message>
-        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1808"/>
+        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1810"/>
         <source>File “%1” is corrupted and cannot be opened</source>
         <translation>ფაილი „%1“ დაზიანებულია და მისი გახსნა შეუძლებელია</translation>
     </message>
     <message>
-        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1810"/>
+        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1812"/>
         <source>Get help for this issue on MuseScore.org.</source>
         <translation>მიიღეთ დახმარება ამ საკითხზე MuseScore.org-ზე.</translation>
     </message>
     <message>
-        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1832"/>
+        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1834"/>
         <source>This file does not exist or cannot be accessed at the moment.</source>
         <translation>ეს ფაილი არ არსებობს ან მიუწვდომელია ამჟამად.</translation>
     </message>
     <message>
-        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1835"/>
+        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1837"/>
         <source>This file could not be opened. Please make sure that MuseScore Studio has permission to read this file.</source>
         <translation>ამ ფაილის გახსნა ვერ მოხერხდა. დარწმუნდით, რომ MuseScore Studio-ს აქვს ამ ფაილის წაკითხვის ნებართვა.</translation>
     </message>
     <message>
-        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1842"/>
+        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1844"/>
         <source>An error occurred while reading this file.</source>
         <translation>ამ ფაილის კითხვისას შეცდომა მოხდა.</translation>
     </message>
     <message>
-        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1898"/>
+        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1905"/>
         <source>All supported files</source>
         <translation>ყველა მხარდაჭერილი ფაილი</translation>
     </message>
     <message>
-        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1899"/>
+        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1906"/>
         <source>MuseScore files</source>
         <translation>MuseScore ფაილები</translation>
     </message>
     <message>
-        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1900"/>
+        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1907"/>
         <source>MusicXML files</source>
         <translation>MusicXML ფაილები</translation>
     </message>
     <message>
-        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1901"/>
+        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1908"/>
         <source>MIDI files</source>
         <translation>MIDI ფაილები</translation>
     </message>
     <message>
-        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1902"/>
+        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1909"/>
         <source>MNX files (experimental)</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1903"/>
+        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1910"/>
         <source>MuseData files</source>
         <translation>MuseData ფაილები</translation>
     </message>
     <message>
-        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1904"/>
+        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1911"/>
         <source>Capella files</source>
         <translation>Capella ფაილები</translation>
     </message>
     <message>
-        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1905"/>
+        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1912"/>
         <source>BB files (experimental)</source>
         <translation>BB ფაილები (ექსპერიმენტული)</translation>
     </message>
     <message>
-        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1906"/>
+        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1913"/>
         <source>Overture / Score Writer files (experimental)</source>
         <translation>Overture / Score Writer ფაილები (ექსპერიმენტული)</translation>
     </message>
     <message>
-        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1907"/>
+        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1914"/>
         <source>Bagpipe Music Writer files (experimental)</source>
         <translation>Bagpipe Music Writer ფაილები (ექსპერიმენტული)</translation>
     </message>
     <message>
-        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1908"/>
+        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1915"/>
         <source>Guitar Pro files</source>
         <translation>Guitar Pro ფაილები</translation>
     </message>
     <message>
-        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1909"/>
+        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1916"/>
         <source>Power Tab Editor files (experimental)</source>
         <translation>Power Tab Editor ფაილები (ექსპერიმენტული)</translation>
     </message>
     <message>
-        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1910"/>
+        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1917"/>
         <source>MEI files</source>
         <translation>MEI ფაილები</translation>
     </message>
     <message>
-        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1911"/>
+        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1918"/>
         <source>TablEdit files (experimental)</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1912"/>
+        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1919"/>
         <source>Uncompressed MuseScore folders (experimental)</source>
         <translation>არაკომპრესირებული MuseScore საქაღალდეები (ექსპერიმენტული)</translation>
     </message>
     <message>
-        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1913"/>
+        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1920"/>
         <source>MuseScore developer files</source>
         <translation>MuseScore დეველოპერის ფაილები</translation>
     </message>
     <message>
-        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1914"/>
+        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1921"/>
         <source>MuseScore backup files</source>
         <translation>MuseScore-ის სარეზერვო ფაილები</translation>
     </message>
     <message>
-        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1926"/>
+        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1933"/>
         <source>Open</source>
         <translation>გახსნა</translation>
     </message>
@@ -35287,10 +35319,14 @@ failed: %2</source>
         <translation>MuseScore.com-მა დააბრუნა უცნობი შეცდომის კოდი.</translation>
     </message>
     <message>
-        <location filename="../../src/project/internal/opensaveprojectscenario.cpp" line="477"/>
-        <location filename="../../src/project/internal/opensaveprojectscenario.cpp" line="609"/>
         <source>Please try again later, or get help for this problem on MuseScore.org.</source>
         <translation>გთხოვთ, მოგვიანებით სცადოთ, ან ამ პრობლემის შესახებ დახმარება მიიღოთ MuseScore.org-ზე.</translation>
+    </message>
+    <message>
+        <location filename="../../src/project/internal/opensaveprojectscenario.cpp" line="477"/>
+        <location filename="../../src/project/internal/opensaveprojectscenario.cpp" line="609"/>
+        <source>Please try again later, or get help for this problem on MuseScore.com.</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../src/project/internal/opensaveprojectscenario.cpp" line="493"/>
@@ -36470,7 +36506,7 @@ failed: %2</source>
     </message>
     <message>
         <location filename="../../src/project/internal/opensaveprojectscenario.cpp" line="235"/>
-        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1030"/>
+        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1032"/>
         <source>Log in to MuseScore.com to save this score to the cloud.</source>
         <translation>შედით MuseScore.com-ზე, რათა შეინახოთ ეს პარტიტურა ღრუბელში.</translation>
     </message>
@@ -36519,7 +36555,7 @@ failed: %2</source>
     </message>
     <message>
         <location filename="../../src/project/internal/opensaveprojectscenario.cpp" line="411"/>
-        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1475"/>
+        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1477"/>
         <source>Unable to connect to the cloud</source>
         <translation>ღრუბელთან დაკავშირება ვერ ხერხდება</translation>
     </message>
@@ -36581,53 +36617,53 @@ failed: %2</source>
     </message>
     <message>
         <location filename="../../src/project/internal/opensaveprojectscenario.cpp" line="587"/>
-        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1671"/>
+        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1673"/>
         <source>Save as…</source>
         <translation>შენახვა როგორც…</translation>
     </message>
     <message>
-        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="462"/>
-        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="555"/>
+        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="464"/>
+        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="557"/>
         <source>Log in or create a free account on MuseScore.com to open this score.</source>
         <translation>შედით ან შექმენით უფასო ანგარიში MuseScore.com-ზე ამ პარტიტურის გასახსნელად.</translation>
     </message>
     <message>
-        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1397"/>
+        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1399"/>
         <source>View online</source>
         <translation>ონლაინ ნახვა</translation>
     </message>
     <message>
-        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1400"/>
+        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1402"/>
         <source>All saved changes will now update to the cloud. You can manage this file in the score manager on MuseScore.com.</source>
         <translation>ყველა შენახული ცვლილება ახლა განახლდება ღრუბელში. ამ ფაილის მართვა შეგიძლიათ პარტიტურის მენეჯერში MuseScore.com-ზე.</translation>
     </message>
     <message>
-        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1476"/>
+        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1478"/>
         <source>Your changes will be saved to a local file until the connection resumes.</source>
         <translation>თქვენი ცვლილებები შეინახება ადგილობრივ ფაილში კავშირის აღდგენამდე.</translation>
     </message>
     <message>
-        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1491"/>
+        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1493"/>
         <source>Please add at least one instrument to enable saving.</source>
         <translation>შენახვის გასააქტიურებლად გთხოვთ, დაამატოთ მინიმუმ ერთი ინსტრუმენტი.</translation>
     </message>
     <message>
-        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1641"/>
+        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1643"/>
         <source>An unknown error occurred while saving this file.</source>
         <translation>ამ ფაილის შენახვისას უცნობი შეცდომა მოხდა.</translation>
     </message>
     <message>
-        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1649"/>
+        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1651"/>
         <source>Your score could not be saved</source>
         <translation>თქვენი პარტიტურა ვერ შეინახება</translation>
     </message>
     <message>
-        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1659"/>
+        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1661"/>
         <source>An error occurred while saving your score</source>
         <translation> თქვენი პარტიტურის შენახვის დროს დაფიქსირდა შეცდომა</translation>
     </message>
     <message>
-        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1661"/>
+        <location filename="../../src/project/internal/projectactionscontroller.cpp" line="1663"/>
         <source>To preserve your score, try saving it again. If this message still appears, please save your score as new copy. You can also get help for this issue on %1.&lt;br/&gt;&lt;br/&gt;Error details (please cite when asking for support): %2</source>
         <translation>თქვენი პარტიტურის შესანარჩუნებლად, სცადეთ მისი ხელახლა შენახვა. თუ ეს შეტყობინება კვლავ გამოჩნდება, გთხოვთ შეინახოთ თქვენი პარტიტურა როგორც ახალი ასლი. ამ საკითხზე დახმარების მიღება ასევე შეგიძლიათ %1-ზე.&lt;br/&gt;&lt;br/&gt;შეცდომის დეტალები (გთხოვთ მიუთითოთ მხარდაჭერის მოთხოვნისას): %2</translation>
     </message>
@@ -37290,7 +37326,7 @@ failed: %2</source>
     </message>
     <message>
         <location filename="../../src/braille/internal/notationbraille.cpp" line="738"/>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="2878"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="2880"/>
         <source>Add slur</source>
         <translation>სლურის დამატება</translation>
     </message>
@@ -37346,7 +37382,7 @@ failed: %2</source>
         <translation>&quot;ლესე ვიბრე&quot;-ს გადართვა</translation>
     </message>
     <message>
-        <location filename="../../src/engraving/editing/edit.cpp" line="4571"/>
+        <location filename="../../src/engraving/editing/edit.cpp" line="4589"/>
         <source>Enter rest</source>
         <translation>პაუზის შეყვანა</translation>
     </message>
@@ -37362,9 +37398,9 @@ failed: %2</source>
         <translation>დაზიანებული პარტიტურა</translation>
     </message>
     <message>
-        <location filename="../../src/engraving/tests/voiceswitching_tests.cpp" line="118"/>
+        <location filename="../../src/engraving/tests/voiceswitching_tests.cpp" line="209"/>
         <location filename="../../src/inspector/qml/MuseScore/Inspector/inspectormodelwithvoiceandpositionoptions.cpp" line="165"/>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6096"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6098"/>
         <source>Change voice</source>
         <translation>ხმის შეცვლა</translation>
     </message>
@@ -37628,535 +37664,535 @@ failed: %2</source>
         <translation>პალიტრის ელემენტის გამოყენება: %1</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="3393"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="3395"/>
         <source>Add chord symbol to fretboard diagram</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="3961"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="3963"/>
         <source>Move chord/rest to staff</source>
         <translation>აკორდის/პაუზის სტაფზე გადატანა</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="3991"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="3993"/>
         <source>Move chord/rest</source>
         <translation>აკორდის/პაუზის გადაადგილება</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="4041"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="4043"/>
         <source>Toggle snap to previous</source>
         <translation>წინა პოზიციაზე მიბმის გადართვა</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="4082"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="4084"/>
         <source>Toggle snap to next</source>
         <translation>შემდეგ პოზიციაზე მიბმის გადართვა</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="4222"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="4224"/>
         <source>Change vertical position</source>
         <translation>ვერტიკალური პოზიციის შეცვლა</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="4225"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="4227"/>
         <source>Change pitch</source>
         <translation>ტონალობის შეცვლა</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="4238"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="4240"/>
         <source>Move lyrics</source>
         <translation>ლირიკის გადაადგილება</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="4250"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="4252"/>
         <source>Nudge element</source>
         <translation>ელემენტის ოდნავ გადაწევა</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="4286"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="4288"/>
         <source>Nudge</source>
         <translation>გადაწევა</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="4400"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="4402"/>
         <source>Edit text</source>
         <translation>ტექსტის რედაქტირება</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="4452"/>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="4506"/>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="4531"/>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="4563"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="4454"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="4508"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="4533"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="4565"/>
         <source>Keystroke edit</source>
         <extracomment>Means: an editing operation triggered by a keystroke</extracomment>
         <translation>კლავიშებით რედაქტირება</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="4971"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="4973"/>
         <source>Move element anchors</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5017"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5019"/>
         <source>Split measure</source>
         <translation>ტაქტის გაყოფა</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5032"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5034"/>
         <source>Join measures</source>
         <translation>ტაქტების შეერთება</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5172"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5174"/>
         <source>Add horizontal frame</source>
         <translation>ჰორიზონტალური ჩარჩოს დამატება</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5173"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5175"/>
         <source>Add vertical frame</source>
         <translation>ვერტიკალური ჩარჩოს დამატება</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5174"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5176"/>
         <source>Add text frame</source>
         <translation>ტექსტის ჩარჩოს დამატება</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5175"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5177"/>
         <source>Add fretboard diagram legend</source>
         <translation type="unfinished"/>
     </message>
     <message numerus="yes">
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5176"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5178"/>
         <source>Add %Ln measure(s)</source>
         <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform></translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5263"/>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5284"/>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5316"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5265"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5286"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5318"/>
         <source>Repeat selection</source>
         <translation>მონიშნულის გამეორება</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5338"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5340"/>
         <source>Paste</source>
         <translation>ჩასმა</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5420"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5422"/>
         <source>Delete</source>
         <translation>წაშლა</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5446"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5448"/>
         <source>Flip direction</source>
         <translation>მიმართულების შებრუნება</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5459"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5461"/>
         <source>Flip horizontally</source>
         <translation>ჰორიზონტალურად შებრუნება</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5519"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5521"/>
         <source>Add ottava</source>
         <translation>ოქტავის დამატება</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5526"/>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5566"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5528"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5568"/>
         <location filename="../../src/notationscene/qml/MuseScore/NotationScene/elementpopups/dynamicpopupmodel.cpp" line="207"/>
         <source>Add hairpin</source>
         <translation>ჰაირპინის დამატება</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5627"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5629"/>
         <source>Add brackets</source>
         <translation>ფრჩხილების დამატება</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5632"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5634"/>
         <source>Add braces</source>
         <translation>ფიგურული ფრჩხილების დამატება</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5637"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5639"/>
         <source>Add parentheses</source>
         <translation>მრგვალი ფრჩხილების დამატება</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5664"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5666"/>
         <source>Toggle accidental</source>
         <translation>ქრომატიული ნიშნის გადართვა</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5707"/>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="8264"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5709"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="8266"/>
         <source>Toggle articulation</source>
         <translation>არტიკულაციის გადართვა</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5724"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5726"/>
         <source>Toggle augmentation dots</source>
         <translation>აუგმენტაციის წერტილების გადართვა</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5758"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5760"/>
         <source>Add grace note</source>
         <translation>ფორშლაგის დამატება</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5785"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5787"/>
         <location filename="../../src/notation/internal/notationnoteinput.cpp" line="708"/>
         <source>Add tuplet</source>
         <translation>ტუპლეტის დამატება</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5806"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5808"/>
         <source>Set beam type</source>
         <translation>სხივის ტიპის დაყენება</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5818"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5820"/>
         <source>Decrease duration</source>
         <translation>ხანგრძლივობის შემცირება</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5819"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5821"/>
         <source>Increase duration</source>
         <translation>ხანგრძლივობის გაზრდა</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5836"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5838"/>
         <location filename="../../src/notationscene/qml/MuseScore/NotationScene/elementpopups/dynamicpopupmodel.cpp" line="199"/>
         <source>Change hairpin type</source>
         <translation>ჰაირპინის ტიპის შეცვლა</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5879"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5881"/>
         <location filename="../../src/notationscene/qml/MuseScore/NotationScene/elementpopups/dynamicpopupmodel.cpp" line="159"/>
         <source>Add dynamic</source>
         <translation>დინამიკის დამატება</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5930"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5932"/>
         <source>Toggle layout break</source>
         <translation>განლაგების წყვეტის გადართვა</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5941"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5943"/>
         <source>Move measure to previous system</source>
         <translation>ტაქტის გადატანა წინა სისტემაში</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5952"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5954"/>
         <source>Move measure to next system</source>
         <translation>ტაქტის გადატანა შემდეგ სისტემაში</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5959"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5961"/>
         <source>Lock/unlock selected system(s)</source>
         <translation>არჩეული სისტემის(ების) ჩაკეტვა/განბლოკვა</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5966"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5968"/>
         <source>Lock/unlock all systems</source>
         <translation>ყველა სისტემის ჩაკეტვა/განბლოკვა</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5979"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5981"/>
         <source>Create system from selection</source>
         <translation>სისტემის შექმნა მონიშნულიდან</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5986"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5988"/>
         <source>Apply system lock to selection</source>
         <translation>მონიშნულზე სისტემის ჩაკეტვის გამოყენება</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5996"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="5998"/>
         <source>Measures per system</source>
         <translation>ტაქტები სისტემაზე</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6003"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6005"/>
         <source>Transposition</source>
         <translation>ტრანსპოზიცია</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6027"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6029"/>
         <source>Swap voices</source>
         <translation>ხმების გაცვლა</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6074"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6076"/>
         <source>Add interval</source>
         <translation>ინტერვალის დამატება</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6081"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6083"/>
         <source>Enter note at fret %1</source>
         <translation>ნოტის შეყვანა ლადზე %1</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6107"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6109"/>
         <source>Change voice assignment</source>
         <translation>ხმის მინიჭების შეცვლა</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6118"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6120"/>
         <source>Add note-anchored line</source>
         <translation>ნოტზე მიმაგრებული ხაზის დამატება</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6205"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6207"/>
         <source>Add text</source>
         <translation>ტექსტის დამატება</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6273"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6275"/>
         <source>Add image</source>
         <translation>სურათის დამატება</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6292"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6294"/>
         <source>Add figured bass</source>
         <translation>დაბმული ბანის დამატება</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6307"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6309"/>
         <source>Increase layout stretch</source>
         <translation>გვერდის გაჭიმვის გაზრდა</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6308"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6310"/>
         <source>Decrease layout stretch</source>
         <translation>გვერდის გაჭიმვის შემცირება</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6331"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6333"/>
         <source>Add time signature</source>
         <translation>ტაქტის ზომის დამატება</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6342"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6344"/>
         <source>Explode</source>
         <translation>დაშლა</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6358"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6360"/>
         <source>Implode</source>
         <translation>შერწყმა</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6374"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6376"/>
         <source>Realize chord symbols</source>
         <translation>აკორდის სიმბოლოების განხორციელება</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6385"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6387"/>
         <source>Extend to next note</source>
         <translation type="unfinished"/>
     </message>
     <message numerus="yes">
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6431"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6433"/>
         <source>Delete %Ln measure(s)</source>
         <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform></translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6442"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6444"/>
         <source>Delete range</source>
         <translation>დიაპაზონის წაშლა</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6449"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6451"/>
         <source>Remove empty trailing measures</source>
         <translation>ცარიელი ბოლო ტაქტების წაშლა</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6460"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6462"/>
         <source>Fill with slashes</source>
         <translation>დახრილი ხაზებით შევსება</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6471"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6473"/>
         <source>Toggle rhythmic slash notation</source>
         <translation>რიტმული დახრილი ხაზების ნოტაციის გადართვა</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6478"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6480"/>
         <source>Change enharmonic spelling</source>
         <translation>ენჰარმონიული მართლწერის შეცვლა</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6485"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6487"/>
         <source>Optimize enharmonic spelling</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6492"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6494"/>
         <source>Respell pitches with sharps</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6499"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6501"/>
         <source>Respell pitches with flats</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6506"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6508"/>
         <source>Regroup rhythms</source>
         <translation>რიტმების გადაჯგუფება</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6513"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6515"/>
         <source>Resequence rehearsal marks</source>
         <translation>სარეპეტიციო ნიშნების გადალაგება</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6520"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6522"/>
         <source>Reset layout stretch</source>
         <translation>გვერდის გაჭიმვის გადაყენება</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6527"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6529"/>
         <source>Reset text style overrides</source>
         <translation>ტექსტის სტილის გადაფარვების გადაყენება</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6534"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6536"/>
         <source>Reset beams</source>
         <translation>სხივების გადაყენება</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6551"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6553"/>
         <source>Reset shapes and positions</source>
         <translation>ფორმებისა და პოზიციების გადაყენება</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6571"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6573"/>
         <source>Reset to default layout</source>
         <translation>ნაგულისხმევ განლაგებაზე გადაყენება</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6597"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6599"/>
         <source>Set score view settings</source>
         <translation>პარტიტურის ხედვის პარამეტრების დაყენება</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6767"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6769"/>
         <source>Navigate to lyrics</source>
         <translation>ტექსტზე გადასვლა</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6898"/>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6958"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6900"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6960"/>
         <source>Navigate to next syllable</source>
         <translation>შემდეგ მარცვალზე გადასვლა</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6920"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="6922"/>
         <source>Add partial lyrics dash</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="7124"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="7126"/>
         <source>Navigate to verse</source>
         <translation>სტროფზე გადასვლა</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="7181"/>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="7271"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="7183"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="7273"/>
         <source>Navigate to next chord symbol</source>
         <translation>შემდეგ აკორდის სიმბოლოზე გადასვლა</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="7314"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="7316"/>
         <source>Navigate to chord symbol</source>
         <translation>აკორდის სიმბოლოზე გადასვლა</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="7371"/>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="7417"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="7373"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="7419"/>
         <source>Navigate to next figured bass</source>
         <translation>შემდეგ დაბმულ ბასზე გადასვლა</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="7465"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="7467"/>
         <source>Navigate to figured bass</source>
         <translation>დაბმულ ბასზე გადასვლა</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="7763"/>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="7792"/>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="7853"/>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="7913"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="7765"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="7794"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="7855"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="7915"/>
         <source>Enter lyrics extension line</source>
         <translation>ტექსტის გაგრძელების ხაზის შეყვანა</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="7938"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="7940"/>
         <source>Add lyrics verse</source>
         <translation>ტექსტის სტროფის დამატება</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="7978"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="7980"/>
         <source>Enter guitar bend</source>
         <translation>გიტარის ბენდის შეყვანა</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="8047"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="8049"/>
         <source>Add fretboard diagram</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="8188"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="8190"/>
         <source>Format text</source>
         <translation>ტექსტის ფორმატირება</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="8208"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="8210"/>
         <source>Toggle subscript</source>
         <translation>ქვეინდექსის გადართვა</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="8210"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="8212"/>
         <source>Toggle superscript</source>
         <translation>ზედაინდექსის გადართვა</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="8212"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="8214"/>
         <source>Toggle subscript/superscript</source>
         <translation>ქვეინდექსის/ზედაინდექსის გადართვა</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="8269"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="8271"/>
         <source>Toggle ornament</source>
         <translation>ორნამენტის გადართვა</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="8274"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="8276"/>
         <source>Toggle automatic placement</source>
         <translation>ავტომატური განთავსების გადართვა</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="8285"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="8287"/>
         <source>Add clef</source>
         <translation>გასაღების დამატება</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="8290"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="8292"/>
         <source>Add accidental</source>
         <translation>ქრომატიული ნიშნის დამატება</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="8295"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="8297"/>
         <source>Transpose semitone</source>
         <translation>ნახევარტონით ტრანსპონირება</translation>
     </message>
     <message>
-        <location filename="../../src/notation/internal/notationinteraction.cpp" line="8302"/>
+        <location filename="../../src/notation/internal/notationinteraction.cpp" line="8304"/>
         <source>Transpose diatonically</source>
         <translation>ტრანსპოზიცია დიატონურად</translation>
     </message>
@@ -38330,12 +38366,12 @@ failed: %2</source>
         <translation>სრული ტაქტის პაუზის შეყვანა</translation>
     </message>
     <message>
-        <location filename="../../src/notationscene/internal/notationactioncontroller.cpp" line="2177"/>
+        <location filename="../../src/notationscene/internal/notationactioncontroller.cpp" line="2179"/>
         <source>Display concert pitch</source>
         <translation>საკონცერტო ტონალობის ჩვენება</translation>
     </message>
     <message>
-        <location filename="../../src/notationscene/internal/notationactioncontroller.cpp" line="2178"/>
+        <location filename="../../src/notationscene/internal/notationactioncontroller.cpp" line="2180"/>
         <source>Display transposed</source>
         <translation>ტრანსპოზირებულის ჩვენება</translation>
     </message>

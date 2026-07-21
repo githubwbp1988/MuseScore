@@ -116,11 +116,4 @@ Row {
             }
         }
     }
-
-    StyledTextLabel {
-        width: parent.width
-        text: qsTrc("project/export", "Each selected part will be exported as a separate audio file.")
-        horizontalAlignment: Text.AlignLeft
-        wrapMode: Text.WordWrap
-    }
 }

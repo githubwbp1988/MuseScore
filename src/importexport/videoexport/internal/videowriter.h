@@ -36,17 +36,14 @@
 #include "media/ivideoencoderresolver.h"
 #include "../ivideoexportconfiguration.h"
 #include "../../audioexport/iaudioexportconfiguration.h"
-#include "iapplication.h"
+#include "engraving/types/types.h"
+#include <QPainter>
+#include "draw/painter.h"
 
 #include "context/iglobalcontext.h"
 
 #include "project/inotationwriter.h"
 #include "project/inotationwritersregister.h"
-
-// #include "project/iprojectwriter.h"
-#include "engraving/types/types.h"
-
-#include <QPainter>
 class QImage;
 
 namespace muse::draw {
@@ -99,7 +96,6 @@ private:
         muse::PointF moveToCenter;
     };
 
-    
     // muse::Ret generatePagedOriginalVideo(project::INotationProjectPtr project, const muse::io::path_t& filePath, const Config& config);
     std::function<qreal(QPainter*, QRectF, QRectF)> m_trickFunction = nullptr;
     std::function<void()> m_trickOffFunction = nullptr;

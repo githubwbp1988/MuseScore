@@ -25,6 +25,8 @@
 #include "context/uicontext.h"
 #include "context/shortcutcontext.h"
 #include "types/translatablestring.h"
+#include "notation/inotationinteraction.h"
+#include "notation/inotationselection.h"
 
 using namespace mu::playback;
 using namespace mu::notation;
@@ -94,7 +96,7 @@ const UiActionList PlaybackUiActions::s_mainActions = {
              IconCode::Code::METRONOME,
              Checkable::Yes
              ),
-    UiAction("audio",
+    UiAction("sound",
              mu::context::UiCtxProjectOpened,
              mu::context::CTX_NOTATION_FOCUSED,
              TranslatableString("action", "Hear playback when editing"),
@@ -228,7 +230,7 @@ void PlaybackUiActions::init()
         m_actionCheckedChanged.send({ code });
     });
 
-    m_controller->isPlayAllowedChanged().onNotify(this, [this]() {
+    m_controller->isPlayAllowedChanged().onReceive(this, [this](bool) {
         const UiActionList& actions = actionsList();
 
         ActionCodeList codes;
@@ -351,7 +353,7 @@ const muse::ui::ToolConfig& PlaybackUiActions::defaultPlaybackToolConfig()
             { "loop-in", true },
             { "loop-out", true },
             { "metronome", true },
-            { "audio", true },
+            { "sound", true },
         };
     }
     return config;

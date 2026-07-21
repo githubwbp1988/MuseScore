@@ -26,10 +26,19 @@
 #include <QMimeData>
 
 #include "async/async.h"
+#include "log.h"
 
 #include "actions/actiontypes.h"
 #include "engraving/dom/shadownote.h"
-#include "log.h"
+
+#include "notation/inotationaccessibility.h" // IWYU pragma: keep
+#include "notation/inotationautomation.h"
+#include "notation/inotationelements.h"
+#include "notation/inotationnoteinput.h"
+#include "notation/inotationpainting.h" // IWYU pragma: keep
+#include "notation/inotationselection.h"
+#include "notation/inotationstyle.h"
+#include "notation/inotationviewstate.h"
 
 using namespace mu;
 using namespace mu::notation;
@@ -84,6 +93,20 @@ void AbstractNotationPaintView::load()
 
     m_loadCalled = true;
     m_inputController = std::make_unique<NotationViewInputController>(this, iocContext());
+
+    // Clip automation lines to the view bounds
+    m_automationLinesContainer = new QQuickItem(this);
+    m_automationLinesContainer->setClip(true);
+    m_automationLinesContainer->setWidth(width());
+    m_automationLinesContainer->setHeight(height());
+    connect(this, &QQuickItem::widthChanged, m_automationLinesContainer, [this]() {
+        m_automationLinesContainer->setWidth(width());
+    });
+    connect(this, &QQuickItem::heightChanged, m_automationLinesContainer, [this]() {
+        m_automationLinesContainer->setHeight(height());
+    });
+
+    m_notationAutomationController = std::make_unique<NotationAutomationController>(m_automationLinesContainer, iocContext());
     m_playbackCursor = std::make_unique<PlaybackCursor>(iocContext());
 
     // alex::
@@ -248,7 +271,7 @@ void AbstractNotationPaintView::selectOnNavigationActive()
         return;
     }
 
-    interaction->selectFirstElement(false);
+    interaction->select(SelectionTarget::FirstItem);
 }
 
 bool AbstractNotationPaintView::canReceiveAction(const ActionCode& actionCode) const
@@ -383,13 +406,10 @@ void AbstractNotationPaintView::onLoadNotation(INotationPtr)
     });
 
     // FIXME: only un-/re-subscribe when master notation changes
+    m_notationAutomationController->init();
     notationAutomation()->automationModeEnabledChanged().onNotify(this, [this]() {
         scheduleRedraw();
         emit automationModeChanged();
-    });
-
-    notationAutomation()->automationLinesDataChanged().onNotify(this, [this]() {
-        emit automationLinesDataChanged();
     });
 
     if (isMainView()) {
@@ -425,7 +445,6 @@ void AbstractNotationPaintView::onLoadNotation(INotationPtr)
     emit verticalScrollChanged();
     emit viewportChanged();
     emit automationModeChanged();
-    emit automationLinesDataChanged();
 }
 
 void AbstractNotationPaintView::onUnloadNotation(INotationPtr)
@@ -445,7 +464,6 @@ void AbstractNotationPaintView::onUnloadNotation(INotationPtr)
     notationPlayback()->loopBoundariesChanged().disconnect(this);
     m_notation->viewModeChanged().disconnect(this);
     notationAutomation()->automationModeEnabledChanged().disconnect(this);
-    notationAutomation()->automationLinesDataChanged().disconnect(this);
 
     if (isMainView()) {
         disconnect(this, &QQuickPaintedItem::focusChanged, this, nullptr);
@@ -490,6 +508,10 @@ void AbstractNotationPaintView::onMatrixChanged(const Transform& oldMatrix, cons
     if (m_previewMeasureRect.isValid()) {
         RectF logicRect = oldMatrixInverted.map(m_previewMeasureRect);
         m_previewMeasureRect = newMatrix.map(logicRect);
+    }
+
+    if (m_notationAutomationController) {
+        m_notationAutomationController->setViewMatrix(newMatrix);
     }
 
     scheduleRedraw();
@@ -1381,11 +1403,6 @@ void AbstractNotationPaintView::forceFocusIn()
     forceActiveFocus();
 }
 
-QVariant AbstractNotationPaintView::automationLinesData() const
-{
-    return notationAutomation() ? notationAutomation()->automationLinesData() : QVariant();
-}
-
 void AbstractNotationPaintView::onContextMenuIsOpenChanged(bool open)
 {
     m_isContextMenuOpen = open;
@@ -1863,12 +1880,4 @@ void AbstractNotationPaintView::setPlaybackCursorItem(QQuickItem* cursor)
             m_playbackCursorItem = nullptr;
         });
     }
-}
-
-void AbstractNotationPaintView::requestChangeAutomationPoint(qsizetype lineIdx, qsizetype pointIdx, qreal x, qreal y)
-{
-    IF_ASSERT_FAILED(notationAutomation()) {
-        return;
-    }
-    notationAutomation()->requestChangeAutomationPoint(lineIdx, pointIdx, x, y);
 }

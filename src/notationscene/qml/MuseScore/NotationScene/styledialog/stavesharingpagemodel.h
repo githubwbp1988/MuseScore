@@ -1,6 +1,6 @@
 /*
  * SPDX-License-Identifier: GPL-3.0-only
- * MuseScore-CLA-applies
+ * MuseScore-Studio-CLA-applies
  *
  * MuseScore Studio
  * Music Composition & Notation
@@ -19,15 +19,18 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-
 #pragma once
+#include "modularity/ioc.h"
 
-#include "abstractstyledialogmodel.h"
+#include "audioplugins/iaudiopluginsconfiguration.h"
+#include "audioplugins/iknownaudiopluginsmigrationregister.h"
 
 namespace mu::notation {
 class StaveSharingPageModel : public AbstractStyleDialogModel
 {
     Q_OBJECT
+    muse::GlobalInject<muse::audioplugins::IAudioPluginsConfiguration> m_audioPluginConfiguration;
+    muse::GlobalInject<muse::audioplugins::IKnownAudioPluginsMigrationRegister> m_migrationRegister;
 
     QML_ELEMENT
 

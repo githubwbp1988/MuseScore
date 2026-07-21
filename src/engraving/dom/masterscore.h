@@ -23,6 +23,7 @@
 #pragma once
 
 #include <array>
+#include <memory>
 
 #include "../infrastructure/ifileinfoprovider.h"
 #include "../infrastructure/eidregister.h"
@@ -35,6 +36,7 @@ class EngravingProject;
 class MscReader;
 class MscWriter;
 class MscLoader;
+class TransactionManager;
 }
 
 namespace mu::engraving::compat {
@@ -51,7 +53,7 @@ class Revisions;
 class TempoMap;
 class TimeSigMap;
 class UndoStack;
-class AutomationController;
+class ScoreAutomationController;
 
 class MidiMapping
 {
@@ -97,7 +99,8 @@ public:
 
     bool readOnly() const override { return m_readOnly; }
     void setReadOnly(bool ro) { m_readOnly = ro; }
-    UndoStack* undoStack() const override { return m_undoStack; }
+    TransactionManager* transactionManager() const { return m_transactionManager.get(); }
+    UndoStack* undoStack() const { return m_undoStack; }
     TimeSigMap* sigmap() const override { return m_sigmap; }
     TempoMap* tempomap() const override { return m_tempomap; }
     muse::async::Channel<ScoreChanges> changesChannel() const override { return m_changesChannel; }
@@ -118,8 +121,6 @@ public:
 
     std::vector<Excerpt*>& excerpts() { return m_excerpts; }
     const std::vector<Excerpt*>& excerpts() const { return m_excerpts; }
-    //   QQueue<MidiInputEvent>* midiInputQueue() override { return &_midiInputQueue; }
-    std::list<MidiInputEvent>& activeMidiPitches() override { return m_activeMidiPitches; }
 
     void setUpdateAll() override;
 
@@ -135,10 +136,6 @@ public:
     void setExcerptsChanged(bool val) { m_cmdState.excerptsChanged = val; }
     bool excerptsChanged() const { return m_cmdState.excerptsChanged; }
     bool instrumentsChanged() const { return m_cmdState.instrumentsChanged; }
-
-    void startCmd(const TranslatableString& actionName);
-    void endCmd(bool rollback = false, bool layoutAllParts = false);
-    void undoRedo(bool undo, EditData* ed);
 
     void update() { update(true); }
     void lockUpdates(bool locked);
@@ -158,7 +155,6 @@ public:
     bool exportMidiMapping() { return !m_isSimpleMidiMapping; }
     int getNextFreeMidiMapping(std::set<int>& occupiedMidiChannels, unsigned int& searchMidiMappingFrom, int p = -1, int ch = -1);
     int getNextFreeDrumMidiMapping(std::set<int>& occupiedMidiChannels);
-//    void enqueueMidiEvent(MidiInputEvent ev) { _midiInputQueue.enqueue(ev); }
     void rebuildAndUpdateExpressive(Synthesizer* synth);
     void updateExpressive(Synthesizer* synth);
     void updateExpressive(Synthesizer* synth, bool expressive, bool force = false);
@@ -194,11 +190,12 @@ public:
 
     muse::Ret sanityCheck();
 
-    void setWidthOfSegmentCell(double val) { m_widthOfSegmentCell = val; }
-    double widthOfSegmentCell() const { return m_widthOfSegmentCell; }
-
 private:
     void update(bool resetCmdState, bool layoutAllParts = false);
+
+    void updateAutomation(const ScoreChanges& changes);
+
+    void onTimeInserted(const Fraction& tick, const Fraction& len) override;
 
     void reorderMidiMapping();
     void rebuildExcerptsMidiMapping();
@@ -212,6 +209,7 @@ private:
     friend class compat::ScoreAccess;
     friend class read114::Read114;
     friend class read400::Read400;
+    friend class TransactionManager;
 
     MasterScore(const muse::modularity::ContextPtr& iocCtx, std::weak_ptr<EngravingProject> project = std::weak_ptr<EngravingProject>());
     MasterScore(const muse::modularity::ContextPtr& iocCtx, const MStyle&,
@@ -220,12 +218,13 @@ private:
     void initParts(Excerpt*);
 
     EIDRegister m_eidRegister;
+    std::unique_ptr<TransactionManager> m_transactionManager;
     UndoStack* m_undoStack = nullptr;
     TimeSigMap* m_sigmap = nullptr;
     TempoMap* m_tempomap = nullptr;
     RepeatList* m_expandedRepeatList = nullptr;
     RepeatList* m_nonExpandedRepeatList = nullptr;
-    AutomationController* m_automationController = nullptr;
+    ScoreAutomationController* m_automationController = nullptr;
     bool m_expandRepeats = true;
 
     std::vector<Excerpt*> m_excerpts;
@@ -241,12 +240,9 @@ private:
     std::array<Fraction, 2> m_loopBoundaries; ///< 0 - LoopIn, 1 - LoopOut
 
     int m_midiPortCount = 0;                           // A count of ALSA midi out ports
-    //    QQueue<MidiInputEvent> _midiInputQueue;           // MIDI events that have yet to be processed
-    std::list<MidiInputEvent> m_activeMidiPitches;     // MIDI keys currently being held down
     std::vector<MidiMapping> m_midiMapping;
     bool m_isSimpleMidiMapping = false;                 // midi mapping is simple if all ports and channels
     // don't decrease and don't have gaps
-    double m_widthOfSegmentCell = 3;
 
     std::weak_ptr<EngravingProject> m_project;
 

@@ -37,6 +37,7 @@
 
 #include "engraving/editing/editnote.h"
 #include "engraving/editing/editsystemlocks.h"
+#include "engraving/editing/transaction/transaction.h"
 
 // api
 #include "apistructs.h"
@@ -503,11 +504,12 @@ void System::setIsLocked(bool locked)
     if (locked == isLocked()) {
         return;
     }
-    const mu::engraving::SystemLock* currentLock = system()->systemLock();
+    Transaction& tx = system()->score()->transactionManager()->currentOrDummyTransaction();
+    const mu::engraving::RangeLock* currentLock = system()->systemLock();
     if (currentLock && !locked) {
-        EditSystemLocks::undoRemoveSystemLock(system()->score(), currentLock);
+        EditSystemLocks::undoRemoveSystemLock(tx, system()->score(), currentLock);
     } else if (!currentLock && locked) {
-        EditSystemLocks::undoAddSystemLock(system()->score(), new mu::engraving::SystemLock(system()->first(), system()->last()));
+        EditSystemLocks::undoAddSystemLock(tx, system()->score(), new mu::engraving::RangeLock(system()->first(), system()->last()));
     }
 }
 

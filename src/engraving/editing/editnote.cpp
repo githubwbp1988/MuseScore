@@ -22,7 +22,9 @@
 
 #include "editnote.h"
 #include "editchord.h"
+#include "noteinput.h"
 
+#include <algorithm>
 #include <set>
 
 #include "dom/accidental.h"
@@ -40,7 +42,7 @@
 #include "dom/stringdata.h"
 #include "dom/utils.h"
 
-#include "editing/transaction/undostack.h"
+#include "editing/transaction/transaction.h"
 
 using namespace mu::engraving;
 
@@ -57,7 +59,7 @@ class ChangePitch : public UndoableCommand
     int tpc1 = 0;
     int tpc2 = 0;
 
-    void flip(EditData*) override
+    void flip() override
     {
         int f_pitch = note->pitch();
         int f_tpc1  = note->tpc1();
@@ -109,7 +111,7 @@ class ChangeFretting : public UndoableCommand
     int tpc1 = 0;
     int tpc2 = 0;
 
-    void flip(EditData*) override
+    void flip() override
     {
         int f_pitch = note->pitch();
         int f_string= note->string();
@@ -226,7 +228,7 @@ void EditNote::applyAccidentalToInputNotes(Score* score, AccidentalType accident
         pos.line = noteValToLine(oldVal, score->inputState().staff(), score->inputState().tick());
 
         bool error = false;
-        const NoteVal newVal = score->noteValForPosition(pos, accidentalType, error);
+        const NoteVal newVal = NoteInput::noteValForPosition(score, pos, accidentalType, error);
 
         if (error) {
             notes.push_back(oldVal);
@@ -477,9 +479,9 @@ void EditNote::upDownChromatic(bool up, int pitch, Note* n, Key key, int tpc1, i
 
 void EditNote::upDown(Score* score, bool up, UpDownMode mode)
 {
-    std::list<Note*> el = score->selection().uniqueNotes();
+    std::vector<Note*> el = score->selection().uniqueNotes();
 
-    el.sort([up](Note* a, Note* b) {
+    std::sort(el.begin(), el.end(), [up](Note* a, Note* b) {
         if (up) {
             return a->string() < b->string();
         } else {
@@ -657,9 +659,11 @@ void EditNote::upDown(Score* score, bool up, UpDownMode mode)
 
 void EditNote::undoChangePitch(Score* score, Note* note, int pitch, int tpc1, int tpc2)
 {
+    Transaction& tx = score->transactionManager()->currentOrDummyTransaction();
+
     for (EngravingObject* e : note->linkList()) {
         Note* n = toNote(e);
-        score->undoStack()->pushAndPerform(new ChangePitch(n, pitch, tpc1, tpc2), 0);
+        tx.push(new ChangePitch(n, pitch, tpc1, tpc2));
     }
 }
 
@@ -669,9 +673,11 @@ void EditNote::undoChangePitch(Score* score, Note* note, int pitch, int tpc1, in
 
 void EditNote::undoChangeFretting(Score* score, Note* note, int pitch, int string, int fret, int tpc1, int tpc2)
 {
+    Transaction& tx = score->transactionManager()->currentOrDummyTransaction();
+
     for (EngravingObject* e : note->linkList()) {
         Note* n = toNote(e);
-        score->undo(new ChangeFretting(n, pitch, string, fret, tpc1, tpc2));
+        tx.push(new ChangeFretting(n, pitch, string, fret, tpc1, tpc2));
     }
 }
 
@@ -684,7 +690,7 @@ ChangeVelocity::ChangeVelocity(Note* n, int o)
 {
 }
 
-void ChangeVelocity::flip(EditData*)
+void ChangeVelocity::flip()
 {
     int v = note->userVelocity();
     note->setUserVelocity(userVelocity);
@@ -695,7 +701,7 @@ void ChangeVelocity::flip(EditData*)
 //   ChangeNoteEventList::flip
 //---------------------------------------------------------
 
-void ChangeNoteEventList::flip(EditData*)
+void ChangeNoteEventList::flip()
 {
     // Get copy of current list.
     NoteEventList nel = note->playEvents();
@@ -715,7 +721,7 @@ void ChangeNoteEventList::flip(EditData*)
 //   ChangeNoteEvent::flip
 //---------------------------------------------------------
 
-void ChangeNoteEvent::flip(EditData*)
+void ChangeNoteEvent::flip()
 {
     NoteEvent e = *oldEvent;
     *oldEvent   = newEvent;
@@ -732,7 +738,7 @@ void ChangeNoteEvent::flip(EditData*)
 //   ChangeChordPlayEventType::flip
 //---------------------------------------------------------
 
-void ChangeChordPlayEventType::flip(EditData*)
+void ChangeChordPlayEventType::flip()
 {
     // Flips data between NoteEventList's.
     size_t n = chord->notes().size();

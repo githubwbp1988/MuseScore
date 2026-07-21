@@ -22,13 +22,14 @@
 #include "videoexportmodule.h"
 #include <QFontDatabase>
 
+#include <QFontDatabase>
+
 #include "modularity/ioc.h"
 
 #include "internal/videoexportconfiguration.h"
 #include "internal/videowriter.h"
 
-// #include "project/inotationwritersregister.h"
-// #include "project/iprojectrwregister.h"
+#include "project/inotationwritersregister.h"
 
 using namespace mu::iex::videoexport;
 using namespace mu::project;
@@ -52,10 +53,6 @@ void VideoExportModule::resolveImports()
     if (writers) {
         writers->reg({ "mp4" }, std::make_shared<VideoWriter>(globalCtx()));
     }
-    // auto projectRWreg = globalIoc()->resolve<IProjectRWRegister>(moduleName());
-    // if (projectRWreg) {
-    //     projectRWreg->regWriter({ "mp4" }, std::make_shared<VideoWriter>());
-    // }
 }
 
 void VideoExportModule::onInit(const muse::IApplication::RunMode&)

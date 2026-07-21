@@ -51,9 +51,9 @@ set(CMAKE_MODULE_PATH
 
 ###########################################
 # Check compiler version
-###########################################    
+###########################################
 message(STATUS "C:   ${CMAKE_C_COMPILER_ID} ${CMAKE_C_COMPILER_VERSION}")
-message(STATUS "CXX: ${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER_VERSION}")    
+message(STATUS "CXX: ${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER_VERSION}")
 
 include(CheckCompilerVersion)
 check_compile_version("Clang" 20 "https://github.com/musescore/MuseScore/wiki/Set-up-developer-environment")
@@ -123,13 +123,13 @@ option(MUE_BUILD_IMPORTEXPORT_TESTS "Build importexport tests" ON)
 option(MUE_BUILD_PROPERTIESPANEL_MODULE "Build propertiespanel module" ON)
 option(MUE_BUILD_PROPERTIESPANEL_QML "Build propertiespanel QML" ${MUE_BUILD_PROPERTIESPANEL_MODULE})
 
-option(MUE_BUILD_INSTRUMENTSSCENE_MODULE "Build instruments scene module" ON) 
+option(MUE_BUILD_INSTRUMENTSSCENE_MODULE "Build instruments scene module" ON)
 option(MUE_BUILD_INSTRUMENTSSCENE_QML "Build instruments scene QML" ${MUE_BUILD_INSTRUMENTSSCENE_MODULE})
 
 option(MUE_BUILD_MUSESOUNDS_MODULE "Build MuseSounds module" ON)
 option(MUE_BUILD_MUSESOUNDS_QML "Build musesounds QML" ${MUE_BUILD_MUSESOUNDS_MODULE})
 
-option(MUE_BUILD_NOTATION_MODULE "Build notation module" ON) 
+option(MUE_BUILD_NOTATION_MODULE "Build notation module" ON)
 option(MUE_BUILD_NOTATION_TESTS "Build notation tests" ${MUE_BUILD_NOTATION_MODULE})
 
 option(MUE_BUILD_NOTATIONSCENE_MODULE "Build notation scene module" ON)
@@ -166,8 +166,6 @@ set(APP_WORKSPACE_CONFIG_FILE "${CMAKE_CURRENT_LIST_DIR}/src/app/configs/workspa
 set(APP_BUILTIN_WORKSPACES_DIR "${CMAKE_CURRENT_LIST_DIR}/share/workspaces")
 
 # === Compile ===
-set(MUE_COMPILE_MACOS_PRECOMPILED_DEPS_PATH "" CACHE PATH "Path to precompiled dependencies (macOS only; optional: if not specified, some libraries will be used from the system and others will be built from source)")
-
 option(MUSE_GENERATE_COMPILE_COMMANDS "Generate compile commands" OFF)
 option(MUSE_COMPILE_USE_UNITY "Use unity build" ON)
 option(MUSE_COMPILE_USE_COMPILER_CACHE "Try to use compiler cache: tries ccache, sccache, buildcache in that order. Use COMPILER_CACHE_PROGRAM to specify a specific compiler cache program." ON)
@@ -195,6 +193,10 @@ set(QT_CONCURRENT_SUPPORTED ON)
 set(QT_NO_PRIVATE_MODULE_WARNING ON)
 set(MUSE_MODULE_MULTIWINDOWS_SINGLEPROC_MODE ON)
 
+if(NOT DEFINED MUSE_MODULE_DOCKWINDOW_KDDOCKWIDGETS_V2)
+    set(MUSE_MODULE_DOCKWINDOW_KDDOCKWIDGETS_V2 ON)
+endif()
+
 if(EXISTS "${CMAKE_CURRENT_LIST_DIR}/SetupConfigure.local.cmake")
     include(${CMAKE_CURRENT_LIST_DIR}/SetupConfigure.local.cmake)
 else()
@@ -218,14 +220,6 @@ endif(MUSE_COMPILE_USE_COMPILER_CACHE)
 ###########################################
 set(FETCHCONTENT_QUIET OFF)
 set(FETCHCONTENT_BASE_DIR ${PROJECT_BINARY_DIR}/_deps)
-
-if (MUE_COMPILE_MACOS_PRECOMPILED_DEPS_PATH)
-    list(PREPEND CMAKE_PREFIX_PATH ${MUE_COMPILE_MACOS_PRECOMPILED_DEPS_PATH})
-
-    # These are included in the precompiled dependencies, so let's use them from there
-    set(MUSE_USE_SYSTEM_FLAC ON)
-    set(MUSE_USE_SYSTEM_OPUS ON)
-endif()
 
 include(SetupQt6)
 

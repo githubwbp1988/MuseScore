@@ -23,7 +23,6 @@
 
 #include <cmath>
 
-// #include <QPainter>
 #include <QThread>
 
 #include "global/concurrency/concurrent.h"
@@ -36,14 +35,15 @@
 #include "engraving/dom/page.h"
 #include "engraving/dom/repeatlist.h"
 
+#include "notation/inotationelements.h" // IWYU pragma: keep
+#include "notation/inotationpainting.h"
+#include "notation/inotationplayback.h"
 #include "notation/notationtypes.h"
 
 #include "notationscene/qml/MuseScore/NotationScene/playbackcursor.h"
 
 #include "defer.h"
 #include "log.h"
-
-#include <QPainter>
 
 #include <chrono>
 #include <thread>
@@ -1035,8 +1035,9 @@ bool VideoWriter::generateScoreFrames(muse::media::IVideoEncoderPtr encoder, INo
             break;
         }
         INotationPainting::Options opt;
-        opt.fromPage = page->pageNumber();
+        opt.fromPage = static_cast<int>(page->pageNumber());
         opt.toPage = opt.fromPage;
+        // opt.deviceDpi = config.canvasDpi;
         opt.deviceDpi = CANVAS_DPI;
 
         // --master version

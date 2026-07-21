@@ -22,9 +22,9 @@
 
 #include "transposedialog.h"
 
-#include "async/notifylist.h"
+#include "notation/inotationinteraction.h"
+#include "notation/inotationselection.h"
 
-#include "notation/internal/mscoreerrorscontroller.h"
 #include "ui/view/widgetstatestore.h"
 
 using namespace mu::notation;
@@ -50,7 +50,7 @@ TransposeDialog::TransposeDialog(QWidget* parent)
 void TransposeDialog::componentComplete()
 {
     if (selection()->isNone()) {
-        interaction()->selectAll();
+        interaction()->select(SelectionTarget::All);
         m_allSelected = true;
     }
 
@@ -212,7 +212,6 @@ INotationSelectionPtr TransposeDialog::selection() const
 void TransposeDialog::apply()
 {
     TransposeOptions options;
-
     options.mode = mode();
     options.direction = direction();
     options.key = transposeKey();
@@ -224,8 +223,6 @@ void TransposeDialog::apply()
     saveState();
 
     interaction()->transpose(options);
-
-    MScoreErrorsController(iocContext()).checkAndShowMScoreError();
 
     if (m_allSelected) {
         interaction()->clearSelection();

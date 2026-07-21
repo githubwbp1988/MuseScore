@@ -80,6 +80,7 @@
 #include "../../dom/note.h"
 #include "../../dom/notedot.h"
 
+#include "../../dom/pagelockindicator.h"
 #include "../../dom/parenthesis.h"
 #include "../../dom/playcounttext.h"
 #include "../../dom/playtechannotation.h"
@@ -91,6 +92,7 @@
 #include "../../dom/stafftext.h"
 #include "../../dom/stafftype.h"
 #include "../../dom/stafftypechange.h"
+#include "../../dom/stavesharinglabel.h"
 #include "../../dom/stem.h"
 #include "../../dom/stemslash.h"
 #include "../../dom/sticking.h"
@@ -301,6 +303,7 @@ public:
     static void layoutOttava(Ottava* item, LayoutContext& ctx);
     static void layoutOttavaSegment(OttavaSegment* item, LayoutContext& ctx);
 
+    static void layoutPageLockIndicator(const PageLockIndicator* item, PageLockIndicator::LayoutData* ldata);
     static void layoutPalmMute(PalmMute* item, LayoutContext& ctx);
     static void layoutPalmMuteSegment(PalmMuteSegment* item, LayoutContext& ctx);
     static void layoutParenthesis(Parenthesis* item, Parenthesis::LayoutData* ldata, const LayoutContext& ctx);
@@ -323,6 +326,7 @@ public:
     static void layoutForWidth(StaffLines* item, double w, LayoutContext& ctx);
     static void layoutStaffState(const StaffState* item, StaffState::LayoutData* ldata);
     static void layoutStaffText(const StaffText* item, StaffText::LayoutData* ldata);
+    static void layoutStaveSharingLabel(const StaveSharingLabel* item, StaveSharingLabel::LayoutData* ldata);
     static void layoutStaffTypeChange(const StaffTypeChange* item, StaffTypeChange::LayoutData* ldata, const LayoutConfiguration& conf);
     static void layoutStem(const Stem* item, Stem::LayoutData* ldata, const LayoutConfiguration& conf);
     static void layoutStemSlash(const StemSlash* item, StemSlash::LayoutData* ldata, const LayoutConfiguration& conf);
