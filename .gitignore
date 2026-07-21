@@ -93,5 +93,9 @@ CMakeUserPresets.json
 compile_commands.json
 .cache
 
+# submodule
+muse
+muse_deps
+
 # QML language server
 **/.qmlls.ini
