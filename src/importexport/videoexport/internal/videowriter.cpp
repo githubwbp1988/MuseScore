@@ -35,6 +35,8 @@
 #include "engraving/dom/page.h"
 #include "engraving/dom/repeatlist.h"
 
+#include "notation/imasternotation.h"
+#include "notation/inotation.h"
 #include "notation/inotationelements.h" // IWYU pragma: keep
 #include "notation/inotationpainting.h"
 #include "notation/inotationplayback.h"

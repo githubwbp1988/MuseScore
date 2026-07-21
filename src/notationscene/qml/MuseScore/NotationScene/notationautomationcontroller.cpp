@@ -28,16 +28,22 @@
 
 #include "uicomponents/qml/Muse/UiComponents/polylineplot.h"
 
-#include "engraving/automation/iautomation.h"
+#include "engraving/automation/automationdata.h"
 #include "engraving/dom/masterscore.h"
 #include "engraving/dom/staff.h"
+#include "engraving/editing/transaction/transaction.h"
 
+#include "notation/imasternotation.h"
+#include "notation/inotation.h"
 #include "notation/inotationautomation.h"
-#include "notation/inotationelements.h"
+#include "notation/inotationelements.h" // IWYU pragma: keep
 
 using namespace mu::notation;
 using namespace mu::engraving;
 using namespace muse::uicomponents;
+
+using SetPoint = mu::engraving::AutomationPointEdit::SetPoint;
+using MovePoint = mu::engraving::AutomationPointEdit::MovePoint;
 
 static bool polylinePointIndexIsValid(const PolylinePlot* polyline, int pointIdx)
 {
@@ -222,13 +228,13 @@ QVector<NotationAutomationController::PointData> NotationAutomationController::p
                                                                                                  int startTick, int endTick) const
 {
     QVector<PointData> points;
-    IF_ASSERT_FAILED(staffId.isValid() && score() && engravingAutomation()) {
+    IF_ASSERT_FAILED(staffId.isValid() && score() && automationData()) {
         return points;
     }
 
     int currentPointIndex = 0;
     const mu::engraving::AutomationCurveKey key { mu::engraving::AutomationType::Dynamics, staffId, std::nullopt };
-    const mu::engraving::AutomationCurve& curve = engravingAutomation()->curve(key);
+    const mu::engraving::AutomationCurve& curve = automationData()->curve(key);
 
     // Start at the first point >= startTick rather than curve.begin() - resolvedInValue() only ever
     // looks backward via std::prev(it), which works on any valid iterator, not just one reached by
@@ -239,7 +245,7 @@ QVector<NotationAutomationController::PointData> NotationAutomationController::p
 
         const Fraction frac = Fraction::fromTicks(tick);
         const Segment* seg = score()->tick2leftSegmentMM(frac);
-        IF_ASSERT_FAILED(seg) {
+        if (!seg) { //! FIXME: fix automation curve on measure repeats
             continue;
         }
 
@@ -390,8 +396,8 @@ void NotationAutomationController::onCurrentNotationChanged()
     m_pendingChanges.clear();
     rebuildAllPolylines();
 
-    if (engravingAutomation()) {
-        engravingAutomation()->changed().onReceive(this, [this](const mu::engraving::AutomationChanges& changes) {
+    if (automationData()) {
+        automationData()->changed().onReceive(this, [this](const mu::engraving::AutomationChanges& changes) {
             onAutomationChanged(changes);
         }, Asyncable::Mode::SetReplace /* FIXME */);
     }
@@ -576,7 +582,7 @@ bool NotationAutomationController::requestEditPoint(const PointData& oldPointDat
     // TODO: Not always dynamics...
     const mu::engraving::AutomationCurveKey curveKey { mu::engraving::AutomationType::Dynamics, staff->id(), /*voiceIdx*/ std::nullopt };
 
-    const mu::engraving::AutomationCurve& curve = engravingAutomation()->curve(curveKey);
+    const mu::engraving::AutomationCurve& curve = automationData()->curve(curveKey);
     const auto existingIt = curve.find(oldPointData.tick);
     IF_ASSERT_FAILED(existingIt != curve.end()) {
         return false;
@@ -607,8 +613,12 @@ bool NotationAutomationController::requestEditPoint(const PointData& oldPointDat
         }
         editedPoint.generated = false;
 
+        mu::engraving::AutomationPointEdits edits {
+            { newTick, MovePoint { editedPoint, oldPointData.tick } }
+        };
+
         m_isApplyingOwnEdit = true;
-        engravingAutomation()->editPoints(curveKey, { { newTick, editedPoint, oldPointData.tick } });
+        editAutomationPoints(curveKey, edits);
         m_isApplyingOwnEdit = false;
 
         return true;
@@ -629,11 +639,30 @@ bool NotationAutomationController::requestEditPoint(const PointData& oldPointDat
     newPoint.interpolation = existingPoint.interpolation;
     newPoint.itemId = existingPoint.itemId;
 
+    mu::engraving::AutomationPointEdits edits {
+        { oldPointData.tick, SetPoint { updatedOldPoint } },
+        { newTick, SetPoint { newPoint } }
+    };
+
     m_isApplyingOwnEdit = true;
-    engravingAutomation()->editPoints(curveKey, { { oldPointData.tick, updatedOldPoint }, { newTick, newPoint } });
+    editAutomationPoints(curveKey, edits);
     m_isApplyingOwnEdit = false;
 
     return true;
+}
+
+void NotationAutomationController::editAutomationPoints(const mu::engraving::AutomationCurveKey& key,
+                                                        mu::engraving::AutomationPointEdits& edits)
+{
+    mu::engraving::Score* sc = score();
+    IF_ASSERT_FAILED(sc) {
+        return;
+    }
+
+    sc->transactionManager()->transaction(muse::TranslatableString("undoableAction", "Edit automation points"),
+                                          [&](mu::engraving::Transaction&) {
+        sc->editAutomationPoints(key, edits);
+    });
 }
 
 INotationAutomationPtr NotationAutomationController::automation() const
@@ -647,13 +676,12 @@ INotationPtr NotationAutomationController::currentNotation() const
     return globalContext()->currentNotation();
 }
 
-mu::engraving::IAutomation* NotationAutomationController::engravingAutomation() const
+mu::engraving::AutomationDataConstPtr NotationAutomationController::automationData() const
 {
-    return score() ? score()->automation() : nullptr;
+    return score() ? score()->automationData() : nullptr;
 }
 
 mu::engraving::Score* NotationAutomationController::score() const
 {
-    const INotationElementsPtr currElems = currentNotation() ? currentNotation()->elements() : nullptr;
-    return currElems ? currElems->msScore() : nullptr;
+    return currentNotation() ? currentNotation()->elements()->msScore() : nullptr;
 }

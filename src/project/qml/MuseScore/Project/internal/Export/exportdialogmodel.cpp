@@ -28,6 +28,8 @@
 #include <QTimer>
 
 #include <QProcess>
+#include "notation/imasternotation.h"
+#include "notation/inotation.h"
 
 #include "async/async.h"
 #include "notation/iexcerptnotation.h" // IWYU pragma: keep
