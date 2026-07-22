@@ -6005,7 +6005,7 @@ void NotationInteraction::mirrorNotes()
     notifyAboutNotationChanged();
 }
 
-void NotationInteraction::addTieToSelection()
+void NotationInteraction::toggleTieForSelection()
 {
     // Calls `startEdit` internally
     Tie* newTie = mu::engraving::EditTie::cmdToggleTie(score());
@@ -6025,14 +6025,6 @@ void NotationInteraction::addLaissezVibToSelection()
 
     notifyAboutNotationChanged();
     m_selection->selectionChanged().notify();
-}
-
-void NotationInteraction::addTiedNoteToChord()
-{
-    // Calls `startEdit` internally
-    mu::engraving::EditTie::cmdAddTie(score(), true);
-
-    notifyAboutNotationChanged();
 }
 
 void NotationInteraction::addSlurToSelection()
