@@ -333,7 +333,8 @@ void Score::undo(UndoableCommand* cmd) const
     if (!tx) {
         // this can happen for layout() outside of a transaction (load)
         if (!ScoreLoad::loading()) {
-            LOGW() << "called outside of transaction";
+            // -- alex
+            // LOGW() << "called outside of transaction";
         }
 
         cmd->redo();

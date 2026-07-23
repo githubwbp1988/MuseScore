@@ -52,7 +52,7 @@ public:
     void setNotation(INotationPtr notation);
     void enableHighlightCursorNote(bool highlight);
     void enableKeyboardPlay(bool enable);
-    void move(muse::midi::tick_t tick, bool isPlaying = true);
+    void move(muse::midi::tick_t tick, muse::midi::tick_t tick_delay = 0, bool isPlaying = true);
 
     bool visible() const;
     void setVisible(bool arg);
@@ -99,6 +99,7 @@ private:
         }
     } mutable m_cache;
 
+    void resolveKeyboardByTick(muse::midi::tick_t tick);
     muse::RectF resolveCursorRectByTick1(muse::midi::tick_t tick, bool isPlaying = true);
     void processOttava(mu::engraving::Score* score, bool isPlaying = true);
     void processOttavaAsync(mu::engraving::Score* score, bool scorePartChaged = false, bool isPlaying = false);
