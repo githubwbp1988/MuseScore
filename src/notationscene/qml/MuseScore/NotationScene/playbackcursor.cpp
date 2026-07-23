@@ -139,11 +139,14 @@ void PlaybackCursor::enableKeyboardPlay(bool enable)
     pianoKeyboardPlaybackEnable = enable;
 }
 
-void PlaybackCursor::move(muse::midi::tick_t tick, bool isPlaying)
+void PlaybackCursor::move(muse::midi::tick_t tick, muse::midi::tick_t tick_delay, bool isPlaying)
 {
     // LOGALEX();
     if (highlightCursorNote) {
         m_rect = resolveCursorRectByTick1(tick, isPlaying);
+        if (isPlaying && pianoKeyboardPlaybackEnable && tick_delay > 0) {
+            resolveKeyboardByTick(tick_delay);
+        }
     } else {
         m_rect = resolveCursorRectByTick(tick);
     }
@@ -2609,6 +2612,264 @@ void PlaybackCursor::processCursorNoteRenderRecoverAsync(EngravingItem* engravin
     }
 }
 
+void PlaybackCursor::resolveKeyboardByTick(muse::midi::tick_t _tick) {
+    Fraction tick = Fraction::fromTicks(_tick);
+    if (!m_notation) {
+        return;
+    }
+
+    mu::engraving::Score* score = m_notation->elements()->msScore();
+
+    Measure* measure = score->tick2measureMM(tick);
+    if (!measure) {
+        return;
+    }
+
+    mu::engraving::System* system = measure->system();
+    if (!system) {
+        return;
+    }
+    mu::engraving::Segment* s = nullptr;
+    mu::engraving::Segment* s1 = nullptr;
+    m_notation->interaction()->clearPlaybackNotes();
+    for (s = measure->first(mu::engraving::SegmentType::ChordRest); s;) {
+        s1 = s;
+        Fraction t1 = s->tick();
+        Fraction t2;
+
+        std::vector<EngravingItem*> engravingItemList = s->elist();
+        size_t len = engravingItemList.size();
+
+        for (size_t i = 0; i < len; i++) {
+            EngravingItem* engravingItem = engravingItemList[i];
+            if (engravingItem == nullptr) {
+                continue;
+            }
+            ChordRest *chordRest = toChordRest(engravingItem);
+            int duration_ticks = chordRest->durationTypeTicks().ticks();
+            if (tick.ticks() <= t1.ticks() + duration_ticks) {
+                if (s->tick().ticks() != curr_seg_ticks) {
+                    curr_seg_ticks = s->tick().ticks();
+                    if (clefKeySigsKeysMap.find(curr_seg_ticks) != clefKeySigsKeysMap.end()) {
+                        if (clefKeySigsKeysMap[curr_seg_ticks].size() > 0) {
+                            m_notation->interaction()->addClefKeySigsKeysSet(clefKeySigsKeysMap[curr_seg_ticks]);
+                            m_notation->interaction()->notifyClefKeySigsKeysChange();    
+                        }
+                    }
+                }
+                
+                if (score_trill_map_1[engravingItem]) {
+                    m_notation->interaction()->addTrillNote(score_trill_map_1[engravingItem], score_trill_type_map_1[engravingItem], score_trill_above_map_1[engravingItem], score_trill_st_map_1[engravingItem], 
+                        score_trill_dt_map_1[engravingItem], score_trill_tdt_map_1[engravingItem], score_trill_tt_map_1[engravingItem], score_trill_ot_map_1[engravingItem], 
+                        score_trill_tie_map[score_trill_map_1[engravingItem]], score_trill_fermata_map[score_trill_map_1[engravingItem]]);
+                    m_notation->interaction()->trillNoteUpdate();
+                }
+                
+                if (score_trill_map1_1[engravingItem]) {
+                    m_notation->interaction()->addTrillNote1(score_trill_map1_1[engravingItem], score_trill_type_map1_1[engravingItem], score_trill_above_map1_1[engravingItem], score_trill_st_map1_1[engravingItem], 
+                        score_trill_dt_map1_1[engravingItem], score_trill_tdt_map1_1[engravingItem], score_trill_tt_map1_1[engravingItem], score_trill_ot_map1_1[engravingItem], 
+                        score_trill_tie_map1[score_trill_map1_1[engravingItem]]);
+                    m_notation->interaction()->trillNoteUpdate1();
+                } 
+
+                if (score_tremolo_note_map[engravingItem]) {
+                    m_notation->interaction()->addTremoloNote(score_tremolo_pt_map[engravingItem], score_tremolo_st_map[engravingItem], 
+                        score_tremolo_dt_map[engravingItem], score_tremolo_type_map[engravingItem], score_tremolo_ot_map[engravingItem], score_tremolo1_ot_map[engravingItem], 
+                        score_tremolo_note_note_map[engravingItem], score_tremolo_note_notes_map[engravingItem], score_tremolo_note_notes1_map[engravingItem]);
+                    m_notation->interaction()->tremoloNoteUpdate();
+                }
+                
+                if (score_tremolo_note_map1[engravingItem]) {
+                    m_notation->interaction()->addTremoloNote1(score_tremolo_pt_map1[engravingItem], score_tremolo_st_map1[engravingItem], 
+                        score_tremolo_dt_map1[engravingItem], score_tremolo_type_map1[engravingItem], score_tremolo_ot_map1[engravingItem], score_tremolo1_ot_map1[engravingItem], 
+                        score_tremolo_note_note_map1[engravingItem], score_tremolo_note_notes_map1[engravingItem], score_tremolo_note_notes1_map1[engravingItem]);
+                    m_notation->interaction()->tremoloNoteUpdate1();
+                }
+
+                if (score_arpeggio_map1.find(engravingItem) != score_arpeggio_map1.end()) {
+                    m_notation->interaction()->addArpeggioNotes(score_arpeggio_map1[engravingItem], score_arpeggio_st_map1[engravingItem], score_arpeggio_dt_map1[engravingItem], score_arpeggio_ot_map1[engravingItem]);
+                    m_notation->interaction()->arpeggioNotesUpdate(false);
+                }
+
+                if (score_glissando_endnotes_map.find(engravingItem) != score_glissando_endnotes_map.end()) {
+                    m_notation->interaction()->addGlissandoNote(score_glissando_startnote_map[engravingItem], 
+                                score_glissando_st_map[engravingItem], score_glissando_dt_map[engravingItem], 
+                                score_glissando_ot_map[engravingItem]);
+                    std::vector<Note*> _endNotes = score_glissando_endnotes_map[engravingItem];
+                    for (Note* _note : _endNotes) {
+                        m_notation->interaction()->addGlissandoEndNote(_note, ottava_map[_note]);
+                    }
+                    m_notation->interaction()->glissandoEndNotesUpdate();
+                }
+
+                EngravingItemList itemList = engravingItem->childrenItems(true);
+                size_t items_len = itemList.size();
+                for (size_t j = 0; j < items_len; j++) {
+                    EngravingItem* item = itemList.at(j);
+                    if (item == nullptr) {
+                        continue;
+                    }
+                    if (item->type() == mu::engraving::ElementType::NOTE) {
+                        Note* _pre_note = toNote(item);
+                        Staff* _pre_noteStaff = _pre_note->staff();
+                        bool note_hit_ts = false;
+                        int ticks_dis = tick.ticks() - _pre_note->tick().ticks();
+                        if (_pre_note->chord()) {
+                            int note_dt = _pre_note->chord()->durationTypeTicks().ticks();
+                            if (_pre_note->chord()->durationType().type() <= mu::engraving::DurationType::V_WHOLE) {
+                                note_dt /= 4;
+                            }
+                            if (_pre_note->chord()->durationType().type() == mu::engraving::DurationType::V_HALF) {
+                                note_dt /= 2;
+                            }
+                            if (_pre_note->chord()->durationType().type() >= mu::engraving::DurationType::V_EIGHTH 
+                            && _pre_note->chord()->durationType().type() <= mu::engraving::DurationType::V_1024TH) {
+                                note_dt *= 4;
+                            }
+                            if (ticks_dis >= 0 && ticks_dis <= note_dt / 8) {
+                                note_hit_ts = true;
+                            }
+                        }
+                        
+                        int _pre_note_ottavaType = ottava_map[_pre_note];  
+                        // check grace
+                        bool is_grace = _pre_note->isGrace();
+                        if (!is_grace) {
+                            std::vector<Chord*>& _graceChords = _pre_note->chord()->graceNotes();
+
+                            size_t gracechords_size = _graceChords.size();
+                            if (gracechords_size > 0) {
+                                bool grace_before = true;
+                                if (_graceChords[0]->canvasPos().x() > _pre_note->canvasPos().x()) {
+                                    grace_before = false;
+                                }
+                                int grace_duration_ticks = _pre_note->chord()->durationTypeTicks().ticks();
+                                if (_pre_note->chord()->durationType().type() == mu::engraving::DurationType::V_WHOLE) {
+                                    grace_duration_ticks /= 16;
+                                } else if (_pre_note->chord()->durationType().type() == mu::engraving::DurationType::V_HALF) {
+                                    grace_duration_ticks /= 8;
+                                } else if (_pre_note->chord()->durationType().type() == mu::engraving::DurationType::V_QUARTER) {
+                                    grace_duration_ticks /= 4;
+                                } else if (_pre_note->chord()->durationType().type() == mu::engraving::DurationType::V_EIGHTH) {
+                                    grace_duration_ticks /= 2;
+                                } else if (_pre_note->chord()->durationType().type() == mu::engraving::DurationType::V_16TH) {
+                                    grace_duration_ticks /= 2;
+                                } else if (_pre_note->chord()->durationType().type() == mu::engraving::DurationType::V_32ND) {
+                                    grace_duration_ticks /= 2;
+                                } else if (_pre_note->chord()->durationType().type() >= mu::engraving::DurationType::V_64TH) {
+                                    grace_duration_ticks /= 2;
+                                } 
+                                
+                                std::vector<Chord*> graceChords;
+                                for (auto& _g : _graceChords) {
+                                    graceChords.push_back(_g);
+                                }
+                                std::sort(graceChords.begin(), graceChords.end(), compare_by_chord_x);
+                                int single_grace_duration_ticks = grace_duration_ticks / gracechords_size;
+                                if (grace_before) {
+                                    if (ticks_dis < grace_duration_ticks) {
+                                        for (size_t grace_i = 0; grace_i < gracechords_size; ++grace_i) {
+                                            if (ticks_dis >= single_grace_duration_ticks * grace_i && ticks_dis <= single_grace_duration_ticks * (grace_i + 1)) {
+                                                if (_pre_noteStaff->visible()) {
+                                                    std::vector<Note*> _notesList = graceChords[grace_i]->notes();
+                                                    for (Note* __note__ : _notesList) {
+                                                        int __note__ottavaType = ottava_map[__note__];
+                                                        m_notation->interaction()->addPlaybackNote(__note__, __note__ottavaType, false);
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    } else {
+                                        if (_pre_noteStaff->visible()) {
+                                            m_notation->interaction()->addPlaybackNote(_pre_note, _pre_note_ottavaType, note_hit_ts);
+                                        }
+                                    }
+                                } else {
+                                    int _pre_note_duration_ticks = _pre_note->chord()->durationTypeTicks().ticks();
+                                    if (ticks_dis + grace_duration_ticks > _pre_note_duration_ticks) {
+                                        for (size_t grace_i = 0; grace_i < gracechords_size; ++grace_i) {
+                                            if (ticks_dis >= _pre_note_duration_ticks - single_grace_duration_ticks * (gracechords_size - grace_i) && ticks_dis <= _pre_note_duration_ticks - single_grace_duration_ticks * (gracechords_size - grace_i - 1)) {
+                                                if (_pre_noteStaff->visible()) {
+                                                    for (Note* _note_item : graceChords[grace_i]->notes()) {
+                                                        int _note_item_ottavaType = ottava_map[_note_item];
+                                                        m_notation->interaction()->addPlaybackNote(_note_item, _note_item_ottavaType, false);
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    } else {
+                                        if (_pre_noteStaff->visible()) {
+                                            m_notation->interaction()->addPlaybackNote(_pre_note, _pre_note_ottavaType, note_hit_ts);
+                                        }
+                                    }
+                                }
+                            } else {
+                                if (_pre_noteStaff->visible()) {
+                                    m_notation->interaction()->addPlaybackNote(_pre_note, ottava_map[_pre_note], note_hit_ts);
+                                }
+                            }
+                        } else {
+                            if (score_grace_next_seg_chord_map[engravingItem]) {
+                                Chord* ns_chord = score_grace_next_seg_chord_map[engravingItem];
+                                if (_pre_note->chord()->durationTypeTicks().ticks() == ns_chord->durationTypeTicks().ticks()) {
+                                    if (tick.ticks() > _pre_note->tick().ticks() + _pre_note->chord()->durationTypeTicks().ticks() / 6) {
+                                        if (_pre_noteStaff->visible()) {
+                                            for (auto& _note: ns_chord->notes()) {
+                                                bool note_hit_ts = false;
+                                                int ticks_dis = tick.ticks() - _pre_note->tick().ticks() + _pre_note->chord()->durationTypeTicks().ticks() / 6;
+                                                int note_dt = _pre_note->chord()->durationTypeTicks().ticks() / 6 * 5 + ns_chord->durationTypeTicks().ticks();
+                                                if (ns_chord->durationType().type() <= mu::engraving::DurationType::V_WHOLE) {
+                                                    note_dt /= 4;
+                                                }
+                                                if (ns_chord->durationType().type() == mu::engraving::DurationType::V_HALF) {
+                                                    note_dt /= 2;
+                                                }
+                                                if (ns_chord->durationType().type() >= mu::engraving::DurationType::V_EIGHTH 
+                                                && ns_chord->durationType().type() <= mu::engraving::DurationType::V_1024TH) {
+                                                    note_dt *= 4;
+                                                }
+                                                if (ticks_dis >= 0 && ticks_dis <= note_dt / 8) {
+                                                    note_hit_ts = true;
+                                                }
+                                                m_notation->interaction()->addPlaybackNote(_note, ottava_map[_note], note_hit_ts);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+            }
+        }
+
+        mu::engraving::Segment* ns = s->next(mu::engraving::SegmentType::ChordRest);
+        while (ns && !ns->visible()) {
+            ns = ns->next(mu::engraving::SegmentType::ChordRest);
+        }
+
+        if (ns) {
+            t2 = ns->tick();
+        } else {
+            t2 = measure->endTick();
+        }
+
+        if (tick >= t1 && tick < t2) {
+            break;
+        }
+        s = ns;
+    }
+    m_notation->interaction()->notifyPianoKeyboardNotesChanged();
+    m_notation->interaction()->arpeggioTick(tick.ticks());
+    m_notation->interaction()->trillTick(tick.ticks());
+    m_notation->interaction()->trillTick1(tick.ticks());
+    m_notation->interaction()->tremoloTick(tick.ticks());
+    m_notation->interaction()->tremoloTick1(tick.ticks());
+    m_notation->interaction()->glissandoTick(tick.ticks());
+    m_notation->interaction()->lastMeasure(measure == score->lastMeasure());
+}
+
 muse::RectF PlaybackCursor::resolveCursorRectByTick1(muse::midi::tick_t _tick, bool isPlaying) {
     Fraction tick = Fraction::fromTicks(_tick);
     if (!m_notation) {
@@ -2677,17 +2938,17 @@ muse::RectF PlaybackCursor::resolveCursorRectByTick1(muse::midi::tick_t _tick, b
                 if (t1.ticks() + duration_ticks < tick.ticks()) {
                     processCursorNoteRenderRecover(engravingItem, tick.ticks());
                 } else {
-                    if (pianoKeyboardPlaybackEnable) {
-                        if (s->tick().ticks() != curr_seg_ticks) {
-                            curr_seg_ticks = s->tick().ticks();
-                            if (clefKeySigsKeysMap.find(curr_seg_ticks) != clefKeySigsKeysMap.end()) {
-                                if (clefKeySigsKeysMap[curr_seg_ticks].size() > 0) {
-                                    m_notation->interaction()->addClefKeySigsKeysSet(clefKeySigsKeysMap[curr_seg_ticks]);
-                                    m_notation->interaction()->notifyClefKeySigsKeysChange();    
-                                }
-                            }
-                        }
-                    }
+                    // if (pianoKeyboardPlaybackEnable) {
+                    //     if (s->tick().ticks() != curr_seg_ticks) {
+                    //         curr_seg_ticks = s->tick().ticks();
+                    //         if (clefKeySigsKeysMap.find(curr_seg_ticks) != clefKeySigsKeysMap.end()) {
+                    //             if (clefKeySigsKeysMap[curr_seg_ticks].size() > 0) {
+                    //                 m_notation->interaction()->addClefKeySigsKeysSet(clefKeySigsKeysMap[curr_seg_ticks]);
+                    //                 m_notation->interaction()->notifyClefKeySigsKeysChange();    
+                    //             }
+                    //         }
+                    //     }
+                    // }
                     if (chordrest_fermata_map.find(engravingItem) != chordrest_fermata_map.end()) {
                         chordrest_fermata_map[engravingItem]->setColor(muse::draw::Color::RED);
                     }
@@ -2814,51 +3075,51 @@ muse::RectF PlaybackCursor::resolveCursorRectByTick1(muse::midi::tick_t _tick, b
                         }
                     }
 
-                    if (pianoKeyboardPlaybackEnable) {
-                        if (score_trill_map_1[engravingItem]) {
-                            m_notation->interaction()->addTrillNote(score_trill_map_1[engravingItem], score_trill_type_map_1[engravingItem], score_trill_above_map_1[engravingItem], score_trill_st_map_1[engravingItem], 
-                                score_trill_dt_map_1[engravingItem], score_trill_tdt_map_1[engravingItem], score_trill_tt_map_1[engravingItem], score_trill_ot_map_1[engravingItem], 
-                                score_trill_tie_map[score_trill_map_1[engravingItem]], score_trill_fermata_map[score_trill_map_1[engravingItem]]);
-                            m_notation->interaction()->trillNoteUpdate();
-                        }
+                    // if (pianoKeyboardPlaybackEnable) {
+                    //     if (score_trill_map_1[engravingItem]) {
+                    //         m_notation->interaction()->addTrillNote(score_trill_map_1[engravingItem], score_trill_type_map_1[engravingItem], score_trill_above_map_1[engravingItem], score_trill_st_map_1[engravingItem], 
+                    //             score_trill_dt_map_1[engravingItem], score_trill_tdt_map_1[engravingItem], score_trill_tt_map_1[engravingItem], score_trill_ot_map_1[engravingItem], 
+                    //             score_trill_tie_map[score_trill_map_1[engravingItem]], score_trill_fermata_map[score_trill_map_1[engravingItem]]);
+                    //         m_notation->interaction()->trillNoteUpdate();
+                    //     }
                         
-                        if (score_trill_map1_1[engravingItem]) {
-                            m_notation->interaction()->addTrillNote1(score_trill_map1_1[engravingItem], score_trill_type_map1_1[engravingItem], score_trill_above_map1_1[engravingItem], score_trill_st_map1_1[engravingItem], 
-                                score_trill_dt_map1_1[engravingItem], score_trill_tdt_map1_1[engravingItem], score_trill_tt_map1_1[engravingItem], score_trill_ot_map1_1[engravingItem], 
-                                score_trill_tie_map1[score_trill_map1_1[engravingItem]]);
-                            m_notation->interaction()->trillNoteUpdate1();
-                        } 
+                    //     if (score_trill_map1_1[engravingItem]) {
+                    //         m_notation->interaction()->addTrillNote1(score_trill_map1_1[engravingItem], score_trill_type_map1_1[engravingItem], score_trill_above_map1_1[engravingItem], score_trill_st_map1_1[engravingItem], 
+                    //             score_trill_dt_map1_1[engravingItem], score_trill_tdt_map1_1[engravingItem], score_trill_tt_map1_1[engravingItem], score_trill_ot_map1_1[engravingItem], 
+                    //             score_trill_tie_map1[score_trill_map1_1[engravingItem]]);
+                    //         m_notation->interaction()->trillNoteUpdate1();
+                    //     } 
 
-                        if (score_tremolo_note_map[engravingItem]) {
-                            m_notation->interaction()->addTremoloNote(score_tremolo_pt_map[engravingItem], score_tremolo_st_map[engravingItem], 
-                                score_tremolo_dt_map[engravingItem], score_tremolo_type_map[engravingItem], score_tremolo_ot_map[engravingItem], score_tremolo1_ot_map[engravingItem], 
-                                score_tremolo_note_note_map[engravingItem], score_tremolo_note_notes_map[engravingItem], score_tremolo_note_notes1_map[engravingItem]);
-                            m_notation->interaction()->tremoloNoteUpdate();
-                        }
+                    //     if (score_tremolo_note_map[engravingItem]) {
+                    //         m_notation->interaction()->addTremoloNote(score_tremolo_pt_map[engravingItem], score_tremolo_st_map[engravingItem], 
+                    //             score_tremolo_dt_map[engravingItem], score_tremolo_type_map[engravingItem], score_tremolo_ot_map[engravingItem], score_tremolo1_ot_map[engravingItem], 
+                    //             score_tremolo_note_note_map[engravingItem], score_tremolo_note_notes_map[engravingItem], score_tremolo_note_notes1_map[engravingItem]);
+                    //         m_notation->interaction()->tremoloNoteUpdate();
+                    //     }
                         
-                        if (score_tremolo_note_map1[engravingItem]) {
-                            m_notation->interaction()->addTremoloNote1(score_tremolo_pt_map1[engravingItem], score_tremolo_st_map1[engravingItem], 
-                                score_tremolo_dt_map1[engravingItem], score_tremolo_type_map1[engravingItem], score_tremolo_ot_map1[engravingItem], score_tremolo1_ot_map1[engravingItem], 
-                                score_tremolo_note_note_map1[engravingItem], score_tremolo_note_notes_map1[engravingItem], score_tremolo_note_notes1_map1[engravingItem]);
-                            m_notation->interaction()->tremoloNoteUpdate1();
-                        }
+                    //     if (score_tremolo_note_map1[engravingItem]) {
+                    //         m_notation->interaction()->addTremoloNote1(score_tremolo_pt_map1[engravingItem], score_tremolo_st_map1[engravingItem], 
+                    //             score_tremolo_dt_map1[engravingItem], score_tremolo_type_map1[engravingItem], score_tremolo_ot_map1[engravingItem], score_tremolo1_ot_map1[engravingItem], 
+                    //             score_tremolo_note_note_map1[engravingItem], score_tremolo_note_notes_map1[engravingItem], score_tremolo_note_notes1_map1[engravingItem]);
+                    //         m_notation->interaction()->tremoloNoteUpdate1();
+                    //     }
 
-                        if (score_arpeggio_map1.find(engravingItem) != score_arpeggio_map1.end()) {
-                            m_notation->interaction()->addArpeggioNotes(score_arpeggio_map1[engravingItem], score_arpeggio_st_map1[engravingItem], score_arpeggio_dt_map1[engravingItem], score_arpeggio_ot_map1[engravingItem]);
-                            m_notation->interaction()->arpeggioNotesUpdate(false);
-                        }
+                    //     if (score_arpeggio_map1.find(engravingItem) != score_arpeggio_map1.end()) {
+                    //         m_notation->interaction()->addArpeggioNotes(score_arpeggio_map1[engravingItem], score_arpeggio_st_map1[engravingItem], score_arpeggio_dt_map1[engravingItem], score_arpeggio_ot_map1[engravingItem]);
+                    //         m_notation->interaction()->arpeggioNotesUpdate(false);
+                    //     }
 
-                        if (score_glissando_endnotes_map.find(engravingItem) != score_glissando_endnotes_map.end()) {
-                            m_notation->interaction()->addGlissandoNote(score_glissando_startnote_map[engravingItem], 
-                                        score_glissando_st_map[engravingItem], score_glissando_dt_map[engravingItem], 
-                                        score_glissando_ot_map[engravingItem]);
-                            std::vector<Note*> _endNotes = score_glissando_endnotes_map[engravingItem];
-                            for (Note* _note : _endNotes) {
-                                m_notation->interaction()->addGlissandoEndNote(_note, ottava_map[_note]);
-                            }
-                            m_notation->interaction()->glissandoEndNotesUpdate();
-                        }
-                    }
+                    //     if (score_glissando_endnotes_map.find(engravingItem) != score_glissando_endnotes_map.end()) {
+                    //         m_notation->interaction()->addGlissandoNote(score_glissando_startnote_map[engravingItem], 
+                    //                     score_glissando_st_map[engravingItem], score_glissando_dt_map[engravingItem], 
+                    //                     score_glissando_ot_map[engravingItem]);
+                    //         std::vector<Note*> _endNotes = score_glissando_endnotes_map[engravingItem];
+                    //         for (Note* _note : _endNotes) {
+                    //             m_notation->interaction()->addGlissandoEndNote(_note, ottava_map[_note]);
+                    //         }
+                    //         m_notation->interaction()->glissandoEndNotesUpdate();
+                    //     }
+                    // }
 
                     EngravingItemList itemList = engravingItem->childrenItems(true);
                     size_t items_len = itemList.size();
@@ -2872,22 +3133,22 @@ muse::RectF PlaybackCursor::resolveCursorRectByTick1(muse::midi::tick_t _tick, b
                             Staff* _pre_noteStaff = _pre_note->staff();
                             bool note_hit_ts = false;
                             int ticks_dis = tick.ticks() - _pre_note->tick().ticks();
-                            if (_pre_note->chord()) {
-                                int note_dt = _pre_note->chord()->durationTypeTicks().ticks();
-                                if (_pre_note->chord()->durationType().type() <= mu::engraving::DurationType::V_WHOLE) {
-                                    note_dt /= 4;
-                                }
-                                if (_pre_note->chord()->durationType().type() == mu::engraving::DurationType::V_HALF) {
-                                    note_dt /= 2;
-                                }
-                                if (_pre_note->chord()->durationType().type() >= mu::engraving::DurationType::V_EIGHTH 
-                                && _pre_note->chord()->durationType().type() <= mu::engraving::DurationType::V_1024TH) {
-                                    note_dt *= 4;
-                                }
-                                if (ticks_dis >= 0 && ticks_dis <= note_dt / 8) {
-                                    note_hit_ts = true;
-                                }
-                            }
+                            // if (_pre_note->chord()) {
+                            //     int note_dt = _pre_note->chord()->durationTypeTicks().ticks();
+                            //     if (_pre_note->chord()->durationType().type() <= mu::engraving::DurationType::V_WHOLE) {
+                            //         note_dt /= 4;
+                            //     }
+                            //     if (_pre_note->chord()->durationType().type() == mu::engraving::DurationType::V_HALF) {
+                            //         note_dt /= 2;
+                            //     }
+                            //     if (_pre_note->chord()->durationType().type() >= mu::engraving::DurationType::V_EIGHTH 
+                            //     && _pre_note->chord()->durationType().type() <= mu::engraving::DurationType::V_1024TH) {
+                            //         note_dt *= 4;
+                            //     }
+                            //     if (ticks_dis >= 0 && ticks_dis <= note_dt / 8) {
+                            //         note_hit_ts = true;
+                            //     }
+                            // }
                             
                             int _pre_note_ottavaType = ottava_map[_pre_note];  
                             // check grace
@@ -2946,13 +3207,13 @@ muse::RectF PlaybackCursor::resolveCursorRectByTick1(muse::midi::tick_t _tick, b
                                                     if (_beam) {
                                                         _beam->setColor(muse::draw::Color::RED);
                                                     }
-                                                    if (pianoKeyboardPlaybackEnable && _pre_noteStaff->visible()) {
-                                                        std::vector<Note*> _notesList = graceChords[grace_i]->notes();
-                                                        for (Note* __note__ : _notesList) {
-                                                            int __note__ottavaType = ottava_map[__note__];
-                                                            m_notation->interaction()->addPlaybackNote(__note__, __note__ottavaType, false);
-                                                        }
-                                                    }
+                                                    // if (pianoKeyboardPlaybackEnable && _pre_noteStaff->visible()) {
+                                                    //     std::vector<Note*> _notesList = graceChords[grace_i]->notes();
+                                                    //     for (Note* __note__ : _notesList) {
+                                                    //         int __note__ottavaType = ottava_map[__note__];
+                                                    //         m_notation->interaction()->addPlaybackNote(__note__, __note__ottavaType, false);
+                                                    //     }
+                                                    // }
                                                 } else {
                                                     graceChords[grace_i]->setColor(muse::draw::Color::BLACK);
                                                     for (Note* choreNote : graceChords[grace_i]->notes()) {
@@ -3056,9 +3317,9 @@ muse::RectF PlaybackCursor::resolveCursorRectByTick1(muse::midi::tick_t _tick, b
                                                     _beam->setColor(muse::draw::Color::RED);
                                                 }
                                             }
-                                            if (pianoKeyboardPlaybackEnable && _pre_noteStaff->visible()) {
-                                                m_notation->interaction()->addPlaybackNote(_pre_note, _pre_note_ottavaType, note_hit_ts);
-                                            }
+                                            // if (pianoKeyboardPlaybackEnable && _pre_noteStaff->visible()) {
+                                            //     m_notation->interaction()->addPlaybackNote(_pre_note, _pre_note_ottavaType, note_hit_ts);
+                                            // }
                                         }
                                     } else {
                                         int _pre_note_duration_ticks = _pre_note->chord()->durationTypeTicks().ticks();
@@ -3083,12 +3344,12 @@ muse::RectF PlaybackCursor::resolveCursorRectByTick1(muse::midi::tick_t _tick, b
                                                     if (_beam) {
                                                         _beam->setColor(muse::draw::Color::RED);
                                                     }
-                                                    if (pianoKeyboardPlaybackEnable && _pre_noteStaff->visible()) {
-                                                        for (Note* _note_item : graceChords[grace_i]->notes()) {
-                                                            int _note_item_ottavaType = ottava_map[_note_item];
-                                                            m_notation->interaction()->addPlaybackNote(_note_item, _note_item_ottavaType, false);
-                                                        }
-                                                    }
+                                                    // if (pianoKeyboardPlaybackEnable && _pre_noteStaff->visible()) {
+                                                    //     for (Note* _note_item : graceChords[grace_i]->notes()) {
+                                                    //         int _note_item_ottavaType = ottava_map[_note_item];
+                                                    //         m_notation->interaction()->addPlaybackNote(_note_item, _note_item_ottavaType, false);
+                                                    //     }
+                                                    // }
                                                 } else {
                                                     graceChords[grace_i]->setColor(muse::draw::Color::BLACK);
                                                     for (Note* choreNote : graceChords[grace_i]->notes()) {
@@ -3192,9 +3453,9 @@ muse::RectF PlaybackCursor::resolveCursorRectByTick1(muse::midi::tick_t _tick, b
                                                     _beam->setColor(muse::draw::Color::RED);
                                                 }
                                             }
-                                            if (pianoKeyboardPlaybackEnable && _pre_noteStaff->visible()) {
-                                                m_notation->interaction()->addPlaybackNote(_pre_note, _pre_note_ottavaType, note_hit_ts);
-                                            }
+                                            // if (pianoKeyboardPlaybackEnable && _pre_noteStaff->visible()) {
+                                            //     m_notation->interaction()->addPlaybackNote(_pre_note, _pre_note_ottavaType, note_hit_ts);
+                                            // }
                                         }
                                     }
                                 } else {
@@ -3228,9 +3489,9 @@ muse::RectF PlaybackCursor::resolveCursorRectByTick1(muse::midi::tick_t _tick, b
                                         }
                                     }
 
-                                    if (pianoKeyboardPlaybackEnable && _pre_noteStaff->visible()) {
-                                        m_notation->interaction()->addPlaybackNote(_pre_note, ottava_map[_pre_note], note_hit_ts);
-                                    }
+                                    // if (pianoKeyboardPlaybackEnable && _pre_noteStaff->visible()) {
+                                    //     m_notation->interaction()->addPlaybackNote(_pre_note, ottava_map[_pre_note], note_hit_ts);
+                                    // }
                                 }
                             } else {
                                 if (score_grace_next_seg_chord_map[engravingItem]) {
@@ -3300,27 +3561,27 @@ muse::RectF PlaybackCursor::resolveCursorRectByTick1(muse::midi::tick_t _tick, b
                                                 }   
                                             }
 
-                                            if (pianoKeyboardPlaybackEnable && _pre_noteStaff->visible()) {
-                                                for (auto& _note: ns_chord->notes()) {
-                                                    bool note_hit_ts = false;
-                                                    int ticks_dis = tick.ticks() - _pre_note->tick().ticks() + _pre_note->chord()->durationTypeTicks().ticks() / 6;
-                                                    int note_dt = _pre_note->chord()->durationTypeTicks().ticks() / 6 * 5 + ns_chord->durationTypeTicks().ticks();
-                                                    if (ns_chord->durationType().type() <= mu::engraving::DurationType::V_WHOLE) {
-                                                        note_dt /= 4;
-                                                    }
-                                                    if (ns_chord->durationType().type() == mu::engraving::DurationType::V_HALF) {
-                                                        note_dt /= 2;
-                                                    }
-                                                    if (ns_chord->durationType().type() >= mu::engraving::DurationType::V_EIGHTH 
-                                                    && ns_chord->durationType().type() <= mu::engraving::DurationType::V_1024TH) {
-                                                        note_dt *= 4;
-                                                    }
-                                                    if (ticks_dis >= 0 && ticks_dis <= note_dt / 8) {
-                                                        note_hit_ts = true;
-                                                    }
-                                                    m_notation->interaction()->addPlaybackNote(_note, ottava_map[_note], note_hit_ts);
-                                                }
-                                            }
+                                            // if (pianoKeyboardPlaybackEnable && _pre_noteStaff->visible()) {
+                                            //     for (auto& _note: ns_chord->notes()) {
+                                            //         bool note_hit_ts = false;
+                                            //         int ticks_dis = tick.ticks() - _pre_note->tick().ticks() + _pre_note->chord()->durationTypeTicks().ticks() / 6;
+                                            //         int note_dt = _pre_note->chord()->durationTypeTicks().ticks() / 6 * 5 + ns_chord->durationTypeTicks().ticks();
+                                            //         if (ns_chord->durationType().type() <= mu::engraving::DurationType::V_WHOLE) {
+                                            //             note_dt /= 4;
+                                            //         }
+                                            //         if (ns_chord->durationType().type() == mu::engraving::DurationType::V_HALF) {
+                                            //             note_dt /= 2;
+                                            //         }
+                                            //         if (ns_chord->durationType().type() >= mu::engraving::DurationType::V_EIGHTH 
+                                            //         && ns_chord->durationType().type() <= mu::engraving::DurationType::V_1024TH) {
+                                            //             note_dt *= 4;
+                                            //         }
+                                            //         if (ticks_dis >= 0 && ticks_dis <= note_dt / 8) {
+                                            //             note_hit_ts = true;
+                                            //         }
+                                            //         m_notation->interaction()->addPlaybackNote(_note, ottava_map[_note], note_hit_ts);
+                                            //     }
+                                            // }
                                         }
                                     }
                                 }
@@ -3389,9 +3650,9 @@ muse::RectF PlaybackCursor::resolveCursorRectByTick1(muse::midi::tick_t _tick, b
         setHitMeasure(measure);
     }
     
-    if (pianoKeyboardPlaybackEnable) {
-        m_notation->interaction()->notifyPianoKeyboardNotesChanged();
-    }
+    // if (pianoKeyboardPlaybackEnable) {
+    //     m_notation->interaction()->notifyPianoKeyboardNotesChanged();
+    // }
 
     if (tick.ticks() == 0 && !isPlaying) {
         for (mu::engraving::Segment* segment = score->lastMeasure()->first(mu::engraving::SegmentType::ChordRest); segment;) {
@@ -3473,15 +3734,15 @@ muse::RectF PlaybackCursor::resolveCursorRectByTick1(muse::midi::tick_t _tick, b
 
         processCursorSpannerRenderStatus(hit_measure(), tick, true, isPlaying);
     }
-    if (pianoKeyboardPlaybackEnable) {
-        m_notation->interaction()->arpeggioTick(tick.ticks());
-        m_notation->interaction()->trillTick(tick.ticks());
-        m_notation->interaction()->trillTick1(tick.ticks());
-        m_notation->interaction()->tremoloTick(tick.ticks());
-        m_notation->interaction()->tremoloTick1(tick.ticks());
-        m_notation->interaction()->glissandoTick(tick.ticks());
-        m_notation->interaction()->lastMeasure(measure == score->lastMeasure());
-    }
+    // if (pianoKeyboardPlaybackEnable) {
+    //     m_notation->interaction()->arpeggioTick(tick.ticks());
+    //     m_notation->interaction()->trillTick(tick.ticks());
+    //     m_notation->interaction()->trillTick1(tick.ticks());
+    //     m_notation->interaction()->tremoloTick(tick.ticks());
+    //     m_notation->interaction()->tremoloTick1(tick.ticks());
+    //     m_notation->interaction()->glissandoTick(tick.ticks());
+    //     m_notation->interaction()->lastMeasure(measure == score->lastMeasure());
+    // }
 
     // if (measureNo < 2) {
     //     emit lingeringCursorUpdate(0.0, measureRect.y(), measureRect.width(), measureRect.height());
@@ -3550,7 +3811,6 @@ muse::RectF PlaybackCursor::resolveCursorRectByTick1(muse::midi::tick_t _tick, b
 
     return RectF(x, y, w, h);
 }
-
 
 bool PlaybackCursor::visible() const
 {

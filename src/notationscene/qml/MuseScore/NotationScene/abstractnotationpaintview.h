@@ -269,7 +269,7 @@ private:
 
     void onPlayingChanged();
     void updatePlaybackCursorInterpolated();
-    void movePlaybackCursor(muse::midi::tick_t tick);
+    void movePlaybackCursor(muse::midi::tick_t tick, muse::midi::tick_t tick_delay);
     bool shouldAdjustCanvasVerticallyDuringPlayback(const muse::RectF& cursorRect);
 
     void onPlaybackCursorRectChanged();

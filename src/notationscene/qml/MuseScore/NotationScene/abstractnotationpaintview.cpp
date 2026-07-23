@@ -1691,16 +1691,16 @@ void AbstractNotationPaintView::updatePlaybackCursorInterpolated()
     const secs_t deltaSecs = (elapsed - m_lastPlaybackPositionUpdateTimeNs) / 1e9;
     const secs_t estimatedSecs = m_lastPlaybackPosition + deltaSecs;
     const midi::tick_t estimatedTick = playback->secToTick(estimatedSecs);
-
-    movePlaybackCursor(estimatedTick);
+    const midi::tick_t postTick = playback->secToTick(estimatedSecs + 0.08);
+    movePlaybackCursor(estimatedTick, postTick);
 }
 
-void AbstractNotationPaintView::movePlaybackCursor(muse::midi::tick_t tick)
+void AbstractNotationPaintView::movePlaybackCursor(muse::midi::tick_t tick, muse::midi::tick_t tick_delay)
 {
     TRACEFUNC;
 
     RectF oldCursorRect = m_playbackCursor->rect();
-    m_playbackCursor->move(tick, playbackController()->isPlaying());
+    m_playbackCursor->move(tick, tick_delay, playbackController()->isPlaying());
     const RectF& newCursorRect = m_playbackCursor->rect();
 
     if (newCursorRect != oldCursorRect) {
