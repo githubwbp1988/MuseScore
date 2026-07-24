@@ -1691,7 +1691,7 @@ void AbstractNotationPaintView::updatePlaybackCursorInterpolated()
     const secs_t deltaSecs = (elapsed - m_lastPlaybackPositionUpdateTimeNs) / 1e9;
     const secs_t estimatedSecs = m_lastPlaybackPosition + deltaSecs;
     const midi::tick_t estimatedTick = playback->secToTick(estimatedSecs);
-    const midi::tick_t postTick = playback->secToTick(estimatedSecs + 0.12);
+    const midi::tick_t postTick = playback->secToTick(estimatedSecs + 0.14);
     movePlaybackCursor(estimatedTick, postTick);
 }
 

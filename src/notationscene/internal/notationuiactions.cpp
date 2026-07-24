@@ -1761,6 +1761,13 @@ const UiActionList NotationUiActions::s_actions = {
              TranslatableString("action", "Lock/unlock selected system(s)"),
              IconCode::Code::SYSTEM_LOCK
              ),
+    UiAction("toggle-page-lock",
+             mu::context::UiCtxProjectOpened,
+             mu::context::CTX_NOTATION_OPENED,
+             TranslatableString("action", "Lock/unlock selected page(s)"),
+             TranslatableString("action", "Lock/unlock selected page(s)"),
+             IconCode::Code::PAGE_LOCK
+             ),
     UiAction("enh-both",
              mu::context::UiCtxProjectOpened,
              mu::context::CTX_NOTATION_OPENED,
@@ -2930,7 +2937,7 @@ void NotationUiActions::init()
         }
 
         m_actionCheckedChanged.send({ TOGGLE_CONCERT_PITCH_CODE });
-        m_controller->currentNotationStyleChanged().onNotify(this, [this]() {
+        m_controller->notationStyleChanged().onNotify(this, [this]() {
             m_actionCheckedChanged.send({ TOGGLE_CONCERT_PITCH_CODE });
         }, Asyncable::Mode::SetReplace);
     });
@@ -3045,7 +3052,7 @@ bool NotationUiActions::actionChecked(const UiAction& act) const
     }
 
     if (act.code == TOGGLE_CONCERT_PITCH_CODE) {
-        auto style = m_controller->currentNotationStyle();
+        auto style = m_controller->notationStyle();
         if (style) {
             return style->styleValue(StyleId::concertPitch).toBool();
         }
