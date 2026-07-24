@@ -920,25 +920,6 @@ void NotationInteraction::setHitElementContext(const HitElementContext& context)
     m_hitElementContext = context;
 }
 
-void NotationInteraction::moveSegmentSelection(MoveDirection d)
-{
-    IF_ASSERT_FAILED(MoveDirection::Left == d || MoveDirection::Right == d) {
-        return;
-    }
-
-    EngravingItem* e = selection()->element();
-    if (!e && !selection()->elements().empty()) {
-        e = d == MoveDirection::Left ? selection()->elements().front() : selection()->elements().back();
-    }
-
-    if (!e || (e = d == MoveDirection::Left ? e->prevSegmentElement() : e->nextSegmentElement()) == nullptr) {
-        e = d == MoveDirection::Left ? Navigation::firstElement(score()) : Navigation::lastElement(score());
-    }
-
-    select({ e }, SelectType::SINGLE);
-    showItem(e);
-}
-
 EngravingItem* NotationInteraction::contextItem() const
 {
     EngravingItem* item = selection()->element();
@@ -5190,11 +5171,6 @@ muse::async::Channel<TextBase*> NotationInteraction::textEditingEnded() const
     return m_textEditingEnded;
 }
 
-muse::async::Channel<ScoreConfigType> NotationInteraction::scoreConfigChanged() const
-{
-    return m_scoreConfigChanged;
-}
-
 bool NotationInteraction::isGripEditStarted() const
 {
     return m_editData.element && m_editData.curGrip != mu::engraving::Grip::NO_GRIP;
@@ -7215,31 +7191,31 @@ void NotationInteraction::resetToDefaultLayout()
 ScoreConfig NotationInteraction::scoreConfig() const
 {
     ScoreConfig config;
-    config.isShowInvisibleElements = score()->isShowInvisible();
-    config.isShowUnprintableElements = score()->showUnprintable();
-    config.isShowFrames = score()->showFrames();
-    config.isShowPageMargins = score()->showPageborders();
-    config.isShowSoundFlags = score()->showSoundFlags();
-    config.isMarkIrregularMeasures = score()->markIrregularMeasures();
-
+    config.setShown(ScoreConfigType::ShowInvisibleElements, score()->isShowInvisible());
+    config.setShown(ScoreConfigType::ShowUnprintableElements, score()->showUnprintable());
+    config.setShown(ScoreConfigType::ShowFrames, score()->showFrames());
+    config.setShown(ScoreConfigType::ShowPageMargins, score()->showPageborders());
+    config.setShown(ScoreConfigType::ShowSoundFlags, score()->showSoundFlags());
+    config.setShown(ScoreConfigType::MarkIrregularMeasures, score()->markIrregularMeasures());
     return config;
 }
 
 void NotationInteraction::setScoreConfig(const ScoreConfig& config)
 {
-    if (scoreConfig() == config) {
+    const ScoreConfig oldConfig = scoreConfig();
+    if (oldConfig == config) {
         return;
     }
 
     // TODO: refactor together with `NotationActionController::toggleScoreConfig`
     // to be able to give a more precise name
     startEdit(TranslatableString("undoableAction", "Set score view settings"));
-    score()->setShowInvisible(config.isShowInvisibleElements);
-    score()->setShowUnprintable(config.isShowUnprintableElements);
-    score()->setShowFrames(config.isShowFrames);
-    score()->setShowPageborders(config.isShowPageMargins);
-    score()->setShowSoundFlags(config.isShowSoundFlags);
-    score()->setMarkIrregularMeasures(config.isMarkIrregularMeasures);
+    score()->setShowInvisible(config.isShown(ScoreConfigType::ShowInvisibleElements));
+    score()->setShowUnprintable(config.isShown(ScoreConfigType::ShowUnprintableElements));
+    score()->setShowFrames(config.isShown(ScoreConfigType::ShowFrames));
+    score()->setShowPageborders(config.isShown(ScoreConfigType::ShowPageMargins));
+    score()->setShowSoundFlags(config.isShown(ScoreConfigType::ShowSoundFlags));
+    score()->setMarkIrregularMeasures(config.isShown(ScoreConfigType::MarkIrregularMeasures));
 
     EngravingItem* selectedElement = selection()->element();
     if (selectedElement && !selectedElement->isInteractionAvailable()) {
@@ -7247,6 +7223,17 @@ void NotationInteraction::setScoreConfig(const ScoreConfig& config)
     }
 
     apply();
+
+    for (const auto& p : oldConfig.config) {
+        if (p.second != config.isShown(p.first)) {
+            m_scoreConfigChanged.send(p.first);
+        }
+    }
+}
+
+muse::async::Channel<ScoreConfigType> NotationInteraction::scoreConfigChanged() const
+{
+    return m_scoreConfigChanged;
 }
 
 bool NotationInteraction::needEndTextEditing(const std::vector<EngravingItem*>& newSelectedElements) const

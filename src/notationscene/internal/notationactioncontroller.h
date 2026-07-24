@@ -101,6 +101,11 @@ public:
     bool isNoteOrRestSelected() const override;
     bool isMoveSelectionAvailable(MoveSelectionType type) const override;
 
+    bool isToggleLayoutBreakAvailable() const override;
+
+    ScoreConfig scoreConfig() const override;
+    muse::async::Channel<ScoreConfigType> scoreConfigChanged() const override;
+
     muse::async::Notification currentNotationChanged() const;
 
     INotationNoteInputPtr currentNotationNoteInput() const;
@@ -153,6 +158,7 @@ private:
     void movePitchDiatonic(MoveDirection direction, bool);
 
     void changeVoice(voice_idx_t voiceIndex);
+    void swapVoices(voice_idx_t voiceIndex1, voice_idx_t voiceIndex2);
 
     void cutSelection();
     void repeatSelection();
@@ -176,6 +182,7 @@ private:
     void startEditSelectedText(const muse::actions::ActionData& args);
 
     void addMeasures(const muse::actions::ActionData& actionData, AddBoxesTarget target);
+    void addMeasures(const muse::rcommand::CommandQuery& query, AddBoxesTarget target);
     void addBoxes(BoxType boxType, int count, AddBoxesTarget target);
 
     void addStretch(qreal value);
@@ -186,7 +193,7 @@ private:
     void resetStretch();
     void resetBeamMode();
 
-    void openEditStyleDialog(const muse::actions::ActionData& args);
+    void openEditStyleDialog(const muse::rcommand::CommandQuery& query);
     void openPageSettingsDialog();
     void openStaffProperties();
     void openEditStringsDialog();
@@ -222,7 +229,6 @@ private:
     Fraction resolvePastingScale(const INotationInteractionPtr& interaction, PastingType type) const;
 
     bool measureNavigationAvailable() const;
-    bool toggleLayoutBreakAvailable() const;
 
     enum class TextNavigationType {
         NearNoteOrRest,
@@ -296,6 +302,7 @@ private:
     // commands
     void registerCommand(const muse::rcommand::Command&, std::function<void()>);
     void registerCommand(const muse::rcommand::Command&, std::function<void()>, bool (NotationActionController::*)() const);
+    void registerCommand(const muse::rcommand::Command&, std::function<void(const muse::rcommand::CommandQuery&)>);
     void registerCommand(const muse::rcommand::Command&, void (NotationActionController::*)());
     void registerCommand(const muse::rcommand::Command&, void (NotationActionController::*)(), bool (NotationActionController::*)() const);
     void registerCommand(const muse::rcommand::Command&, void (NotationActionController::*)(const muse::rcommand::CommandQuery&));
@@ -320,6 +327,8 @@ private:
 
     muse::async::Channel<bool> m_isNoteInputAllowedChanged;
     muse::async::Notification m_noteInputStateChanged;
+
+    muse::async::Channel<ScoreConfigType> m_scoreConfigChanged;
 
     using IsActionEnabledFunc = std::function<bool ()>;
     std::map<muse::actions::ActionCode, IsActionEnabledFunc> m_isEnabledMap;

@@ -66,5 +66,10 @@ public:
     virtual bool isNoteInputActionAllowed() const = 0;
     virtual bool isNoteOrRestSelected() const = 0;
     virtual bool isMoveSelectionAvailable(MoveSelectionType type) const = 0;
+
+    virtual bool isToggleLayoutBreakAvailable() const = 0;
+
+    virtual ScoreConfig scoreConfig() const = 0;
+    virtual muse::async::Channel<ScoreConfigType> scoreConfigChanged() const = 0;
 };
 }

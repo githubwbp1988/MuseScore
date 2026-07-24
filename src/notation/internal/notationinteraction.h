@@ -216,7 +216,6 @@ public:
     void notifyPianoKeyboardNotesChanged() override;
     void selectTopOrBottomOfChord(MoveDirection d) override;
     void findAndSelectChordRest(const Fraction& tick) override;
-    void moveSegmentSelection(MoveDirection d) override;
 
     // Change selection
     bool moveSelectionAvailable(MoveSelectionType type) const override;
