@@ -502,7 +502,6 @@ public:
     virtual void addToSelection(MoveDirection d, MoveSelectionType type) = 0;
     virtual void selectTopStaff() = 0;
     virtual void selectEmptyTrailingMeasure() = 0;
-    virtual void moveSegmentSelection(MoveDirection d) = 0;
 
     virtual EngravingItem* contextItem() const = 0;
 
@@ -566,9 +565,6 @@ public:
     virtual muse::async::Notification textEditingStarted() const = 0;
     virtual muse::async::Notification textEditingChanged() const = 0;
     virtual muse::async::Channel<TextBase*> textEditingEnded() const = 0;
-
-    // Display
-    virtual muse::async::Channel<ScoreConfigType> scoreConfigChanged() const = 0;
 
     // Grip edit
     virtual bool isGripEditStarted() const = 0;
@@ -692,6 +688,7 @@ public:
 
     virtual ScoreConfig scoreConfig() const = 0;
     virtual void setScoreConfig(const ScoreConfig& config) = 0;
+    virtual muse::async::Channel<ScoreConfigType> scoreConfigChanged() const = 0;
 
     virtual void addMelisma() = 0;
     virtual void addLyricsVerse() = 0;

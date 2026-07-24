@@ -115,6 +115,8 @@ enum class SelectionTarget : unsigned char
     LastItem,
     NextItem,
     PrevItem,
+    NextSegmentItem,
+    PrevSegmentItem,
     NextChord,
     PrevChord,
     NextMeasure,
@@ -142,6 +144,8 @@ static const std::map<std::string, SelectionTarget> STR_SELECTION_TARGET = {
     { "last-item", SelectionTarget::LastItem },
     { "next-item", SelectionTarget::NextItem },
     { "prev-item", SelectionTarget::PrevItem },
+    { "next-segment-item", SelectionTarget::NextSegmentItem },
+    { "prev-segment-item", SelectionTarget::PrevSegmentItem },
     { "next-chord", SelectionTarget::NextChord },
     { "prev-chord", SelectionTarget::PrevChord },
     { "next-measure", SelectionTarget::NextMeasure },
@@ -329,23 +333,32 @@ enum class ScoreConfigType : unsigned char
 
 struct ScoreConfig
 {
-    bool isShowInvisibleElements = false;
-    bool isShowUnprintableElements = false;
-    bool isShowFrames = false;
-    bool isShowPageMargins = false;
-    bool isShowSoundFlags = false;
-    bool isMarkIrregularMeasures = false;
+    std::map<ScoreConfigType, bool> config = {
+        { ScoreConfigType::ShowInvisibleElements, false },
+        { ScoreConfigType::ShowUnprintableElements, false },
+        { ScoreConfigType::ShowFrames, false },
+        { ScoreConfigType::ShowPageMargins, false },
+        { ScoreConfigType::ShowSoundFlags, false },
+        { ScoreConfigType::MarkIrregularMeasures, false },
+    };
 
-    bool operator==(const ScoreConfig& conf) const
+    bool isShown(ScoreConfigType type) const
     {
-        bool equal = (isShowInvisibleElements == conf.isShowInvisibleElements);
-        equal &= (isShowUnprintableElements == conf.isShowUnprintableElements);
-        equal &= (isShowFrames == conf.isShowFrames);
-        equal &= (isShowPageMargins == conf.isShowPageMargins);
-        equal &= (isShowSoundFlags == conf.isShowSoundFlags);
-        equal &= (isMarkIrregularMeasures == conf.isMarkIrregularMeasures);
+        auto it = config.find(type);
+        if (it != config.end()) {
+            return it->second;
+        }
+        return false;
+    }
 
-        return equal;
+    void setShown(ScoreConfigType type, bool show)
+    {
+        config[type] = show;
+    }
+
+    bool operator==(const ScoreConfig& other) const
+    {
+        return config == other.config;
     }
 };
 
