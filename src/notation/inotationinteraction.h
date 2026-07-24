@@ -87,6 +87,8 @@ public:
     virtual INotationSelectionPtr selection() const = 0;
     virtual void select(const std::vector<EngravingItem*>& elements, SelectType type = SelectType::REPLACE, staff_idx_t staffIndex = 0) = 0;
     virtual void select(SelectionTarget target) = 0;
+    virtual void addToSelection(SelectionTarget target) = 0;
+    virtual void expandSelection(ExpandSelectionMode mode) = 0;
     virtual void clearSelection() = 0;
     virtual muse::async::Notification selectionChanged() const = 0;
     virtual muse::async::Notification playbackNotesChanged() const 
@@ -498,8 +500,6 @@ public:
     virtual void moveSelectionDeprecated(MoveDirection d, MoveSelectionType type) = 0;
 
     virtual void moveLyrics(MoveDirection d) = 0;
-    virtual void expandSelection(ExpandSelectionMode mode) = 0;
-    virtual void addToSelection(MoveDirection d, MoveSelectionType type) = 0;
     virtual void selectTopStaff() = 0;
     virtual void selectEmptyTrailingMeasure() = 0;
 
