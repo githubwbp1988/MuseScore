@@ -4443,7 +4443,9 @@ void ExportMusicXml::chord(Chord* chord, staff_idx_t staff, const std::vector<Ly
             dotTag += elementPosition(this, dot);
             m_xml.tagRaw(dotTag);
         }
-        writeAccidental(m_xml, u"accidental", note->accidental());
+        if (note->staff() && !note->staff()->isTabStaff(Fraction(0, 1))) {
+            writeAccidental(m_xml, u"accidental", note->accidental());
+        }
         writeTimeModification(m_xml, note->chord()->tuplet(), tremoloCorrection(note));
 
         // no stem for whole notes and beyond
@@ -5863,7 +5865,7 @@ void ExportMusicXml::textLine(TextLineBase const* const tl, staff_idx_t staff, c
     String lineEnd;
     switch (hookType) {
     case HookType::HOOK_90:
-        lineEnd = (hookHeight < 0.0) ? u"up" : u"down";
+        lineEnd = (tl->placement() == PlacementV::BELOW) ? u"up" : u"down";
         rest += String(u" end-length=\"%1\"").arg(std::abs(hookHeight * 10));
         break;
     case HookType::HOOK_90T:
