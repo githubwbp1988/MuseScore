@@ -101,7 +101,7 @@
 #include "engraving/editing/edithairpin.h"
 #include "engraving/editing/editnote.h"
 #include "engraving/editing/editspanner.h"
-#include "engraving/editing/editbrackets.h"
+#include "engraving/editing/editaccidentalbrackets.h"
 #include "engraving/editing/editparentheses.h"
 #include "engraving/editing/editrehearsalmark.h"
 #include "engraving/editing/editvisibility.h"
@@ -4411,41 +4411,6 @@ void NotationInteraction::moveSelectionDeprecated(MoveDirection d, MoveSelection
     m_selection->moveSelection(d, type);
 }
 
-void NotationInteraction::selectTopStaff()
-{
-    EngravingItem* el = Navigation::topStaff(score(), activeCr(score()));
-    if (score()->noteEntryMode()) {
-        score()->inputState().moveInputPos(el);
-    }
-
-    if (el->isChord()) {
-        el = mu::engraving::toChord(el)->upNote();
-    }
-
-    select({ el }, SelectType::SINGLE, 0);
-    showItem(el);
-    resetHitElementContext();
-}
-
-void NotationInteraction::selectEmptyTrailingMeasure()
-{
-    ChordRest* cr = activeCr(score());
-    const Measure* ftm = score()->firstTrailingMeasure(cr ? &cr : nullptr);
-    if (!ftm) {
-        ftm = score()->lastMeasure();
-    }
-    if (ftm) {
-        if (score()->style().styleB(mu::engraving::Sid::createMultiMeasureRests) && ftm->hasMMRest()) {
-            ftm = ftm->coveringMMRestOrThis();
-        }
-        EngravingItem* el
-            = !cr ? ftm->first()->nextChordRest(0, false) : ftm->first()->nextChordRest(mu::engraving::trackZeroVoice(cr->track()), false);
-        score()->inputState().moveInputPos(el);
-        select({ el }, SelectType::SINGLE);
-        resetHitElementContext();
-    }
-}
-
 static ChordRest* asChordRest(EngravingItem* e)
 {
     if (e && e->isNote()) {
@@ -6115,12 +6080,12 @@ void NotationInteraction::addBracketsToSelection(BracketsType type)
     switch (type) {
     case BracketsType::Brackets:
         transaction(TranslatableString("undoableAction", "Add brackets"), [&](auto& tx) {
-            EditBrackets::addBracket(tx, score());
+            EditAccidentalBrackets::addBracket(tx, score());
         });
         break;
     case BracketsType::Braces:
         transaction(TranslatableString("undoableAction", "Add braces"), [&](auto& tx) {
-            EditBrackets::addBraces(tx, score());
+            EditAccidentalBrackets::addBraces(tx, score());
         });
         break;
     case BracketsType::Parentheses:
