@@ -220,3 +220,10 @@ muse::Progress PlaybackControllerStub::onlineSoundsProcessingProgress() const
 {
     return {};
 }
+
+void PlaybackControllerStub::setKeyboardPlayOffset(int) {
+}
+
+int PlaybackControllerStub::keyboardPlayOffset() const {
+    return 0;
+}

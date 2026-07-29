@@ -50,6 +50,8 @@
 #include "continuouspanel.h"
 #include "abstractelementpopupmodel.h"
 
+#include "playback/iplaybackconfiguration.h"
+
 namespace mu::notation {
 class AbstractNotationPaintView : public muse::uicomponents::QuickPaintedView, public IControlledView, public muse::Contextable,
     public muse::async::Asyncable, public muse::actions::Actionable
@@ -71,6 +73,7 @@ class AbstractNotationPaintView : public muse::uicomponents::QuickPaintedView, p
 
     Q_PROPERTY(bool isMainView READ isMainView WRITE setIsMainView NOTIFY isMainViewChanged)
 
+    muse::GlobalInject<playback::IPlaybackConfiguration> playbackConfiguration;
     muse::GlobalInject<INotationConfiguration> notationConfiguration;
     muse::GlobalInject<INotationSceneConfiguration> configuration;
     muse::GlobalInject<engraving::IEngravingConfiguration> engravingConfiguration;
@@ -301,6 +304,8 @@ private:
 
     qreal m_previousVerticalScrollPosition = 0;
     qreal m_previousHorizontalScrollPosition = 0;
+
+    int m_keyboardPlayOffset = 0;
 
     bool m_readonly = false;
     bool m_publishMode = false;

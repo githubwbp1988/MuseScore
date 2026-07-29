@@ -49,6 +49,7 @@ static const ToolConfig& defaultPlaybackToolConfig()
             { "command://playback/loop-out", true },
             { "command://playback/metronome-toggle", true },
             { "command://playback/hear-playback-when-editing-toggle", true },
+            { "keyboard-play-offset", true },
         };
     }
     return config;
@@ -331,6 +332,12 @@ void PlaybackToolBarModel::setTempoMultiplier(qreal multiplier)
     emit tempoChanged();
 }
 
+void PlaybackToolBarModel::setKeyboardPlayOffset(int offset)
+{
+    playbackController()->setKeyboardPlayOffset(offset);
+    emit keyboardPlayOffsetChanged();
+}
+
 int PlaybackToolBarModel::maxBeatNumber() const
 {
     return measureBeat().maxBeatIndex + 1;
@@ -360,4 +367,8 @@ QVariant PlaybackToolBarModel::tempo() const
 qreal PlaybackToolBarModel::tempoMultiplier() const
 {
     return playbackController()->tempoMultiplier();
+}
+
+int PlaybackToolBarModel::keyboardPlayOffset() const {
+    return playbackController()->keyboardPlayOffset();
 }

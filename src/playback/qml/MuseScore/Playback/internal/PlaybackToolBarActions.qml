@@ -65,8 +65,54 @@ Item {
 
         readonly property int navigationOrderEnd: count
 
-        delegate: FlatButton {
-            id: btn
+        // delegate: FlatButton {
+        //     id: btn
+
+        //     required property MenuItem item
+        //     required property int index
+
+        //     width: 30
+        //     height: width
+
+        //     icon: Boolean(item) ? item.icon : IconCode.NONE
+
+        //     toolTipTitle: Boolean(item) ? item.title : ""
+        //     toolTipDescription: Boolean(item) ? item.description : ""
+        //     toolTipShortcut: Boolean(item) ? item.shortcuts : ""
+
+        //     iconFont: ui.theme.toolbarIconsFont
+
+        //     accentButton: (Boolean(item) && item.checked) || menuLoader.isMenuOpened
+        //     transparent: !accentButton
+
+        //     navigation.panel: root.navPanel
+        //     navigation.name: toolTipTitle
+        //     navigation.order: index
+        //     accessible.name: (item.checkable ? (item.checked ? item.title + "  " + qsTrc("global", "On") :
+        //                                                        item.title + "  " + qsTrc("global", "Off")) : item.title)
+
+        //     onClicked: {
+        //         if (menuLoader.isMenuOpened || item.subitems.length) {
+        //             menuLoader.toggleOpened(item.subitems)
+        //             return
+        //         }
+
+        //         Qt.callLater(root.playbackModel.handleMenuItem, item.id)
+        //     }
+
+        //     StyledMenuLoader {
+        //         id: menuLoader
+
+        //         onHandleMenuItem: function(itemId) {
+        //             root.playbackModel.handleMenuItem(itemId)
+        //         }
+        //     }
+        // }
+
+        // alex - Compatible with extended : keyboard-play-offset slider control, ...
+        readonly property var popupItemIds: ["keyboard-play-offset"]
+        delegate: Loader {
+            id: delegateLoader
 
             required property MenuItem item
             required property int index
@@ -74,37 +120,100 @@ Item {
             width: 30
             height: width
 
-            icon: Boolean(item) ? item.icon : IconCode.NONE
+            readonly property bool isPopupItem: Boolean(item) && buttonsListView.popupItemIds.includes(item.id)
+            readonly property bool isKeyboardPlayOffset: Boolean(item) && item.id === "keyboard-play-offset"
 
-            toolTipTitle: Boolean(item) ? item.title : ""
-            toolTipDescription: Boolean(item) ? item.description : ""
-            toolTipShortcut: Boolean(item) ? item.shortcuts : ""
+            sourceComponent: isPopupItem ? popupBtnComponent : flatBtnComponent
+        
+            Component {
+                id: flatBtnComponent
+                FlatButton {
+                    id: btn
 
-            iconFont: ui.theme.toolbarIconsFont
+                    width: 30
+                    height: width
 
-            accentButton: (Boolean(item) && item.checked) || menuLoader.isMenuOpened
-            transparent: !accentButton
+                    icon: Boolean(delegateLoader.item) ? delegateLoader.item.icon : IconCode.NONE
 
-            navigation.panel: root.navPanel
-            navigation.name: toolTipTitle
-            navigation.order: index
-            accessible.name: (item.checkable ? (item.checked ? item.title + "  " + qsTrc("global", "On") :
-                                                               item.title + "  " + qsTrc("global", "Off")) : item.title)
+                    toolTipTitle: Boolean(delegateLoader.item) ? delegateLoader.item.title : ""
+                    toolTipDescription: Boolean(delegateLoader.item) ? delegateLoader.item.description : ""
+                    toolTipShortcut: Boolean(delegateLoader.item) ? delegateLoader.item.shortcuts : ""
 
-            onClicked: {
-                if (menuLoader.isMenuOpened || item.subitems.length) {
-                    menuLoader.toggleOpened(item.subitems)
-                    return
+                    iconFont: ui.theme.toolbarIconsFont
+
+                    accentButton: (Boolean(delegateLoader.item) && delegateLoader.item.checked) || menuLoader.isMenuOpened
+                    transparent: !accentButton
+
+                    navigation.panel: root.navPanel
+                    navigation.name: toolTipTitle
+                    navigation.order: delegateLoader.index
+                    accessible.name: (delegateLoader.item.checkable ? (delegateLoader.item.checked ? delegateLoader.item.title + "  " + qsTrc("global", "On") :
+                                                                    delegateLoader.item.title + "  " + qsTrc("global", "Off")) : delegateLoader.item.title)
+
+                    onClicked: {
+                        if (menuLoader.isMenuOpened || delegateLoader.item.subitems.length) {
+                            menuLoader.toggleOpened(delegateLoader.item.subitems)
+                            return
+                        }
+
+                        Qt.callLater(root.playbackModel.handleMenuItem, delegateLoader.item.id)
+                    }
+
+                    StyledMenuLoader {
+                        id: menuLoader
+
+                        onHandleMenuItem: function(itemId) {
+                            root.playbackModel.handleMenuItem(itemId)
+                        }
+                    }
                 }
-
-                Qt.callLater(root.playbackModel.handleMenuItem, item.id)
             }
 
-            StyledMenuLoader {
-                id: menuLoader
+            Component {
+                id: popupBtnComponent
 
-                onHandleMenuItem: function(itemId) {
-                    root.playbackModel.handleMenuItem(itemId)
+                PopupButton {
+                    id: popupBtn
+
+                    width: 30
+                    height: width
+
+                    icon: Boolean(delegateLoader.item) ? delegateLoader.item.icon : IconCode.NONE
+
+                    toolTipTitle: Boolean(delegateLoader.item) ? delegateLoader.item.title : ""
+                    toolTipDescription: Boolean(delegateLoader.item) ? delegateLoader.item.description : ""
+                    toolTipShortcut: Boolean(delegateLoader.item) ? delegateLoader.item.shortcuts : ""
+
+                    iconFont: ui.theme.toolbarIconsFont
+
+                    accentButton: root.isPopupOpened
+                    transparent: !accentButton
+
+                    navigation.panel: root.navPanel
+                    navigation.name: toolTipTitle
+                    navigation.order: delegateLoader.index
+                    accessible.name: delegateLoader.item.title
+
+                    property PlaybackToolBarModel playbackModel: root.playbackModel
+
+                    // popupComponent: {
+                    //     switch (delegateLoader.item ? delegateLoader.item.id : "") {
+                    //     case "keyboardPlayOffset":
+                    //         return   
+                    //     default:
+                    //         return null
+                    //     }
+                    // }
+
+                    popupComponent: isKeyboardPlayOffset ? keyboardPlayOffsetPopupComponent : null
+
+                    Component {
+                        id: keyboardPlayOffsetPopupComponent
+
+                        PlaybackKeyboardPlayOffsetPopup {
+                            playbackModel: popupBtn.playbackModel
+                        }
+                    }
                 }
             }
         }

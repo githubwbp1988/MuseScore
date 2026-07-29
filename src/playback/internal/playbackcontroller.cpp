@@ -71,6 +71,7 @@ static const ActionCode LOOP_IN_CODE("loop-in");
 static const ActionCode LOOP_OUT_CODE("loop-out");
 static const ActionCode METRONOME_CODE("metronome");
 static const ActionCode SOUND_CODE("sound");
+static const ActionCode KEYBOARD_PLAY_OFFSET_CODE("keyboard-play-offset");
 static const ActionCode MIDI_ON_CODE("midi-on");
 static const ActionCode INPUT_WRITTEN_PITCH("midi-input-written-pitch");
 static const ActionCode INPUT_SOUNDING_PITCH("midi-input-sounding-pitch");
@@ -156,6 +157,7 @@ void PlaybackController::init()
     d->onRequest(this, LOOP_OUT_COMMAND, [this]() { return addLoopBoundary(LoopBoundaryType::LoopOut); });
     d->onRequest(this, METRONOME_TOGGLE_COMMAND, [this]() { return toggleMetronome(); });
     d->onRequest(this, SOUND_TOGGLE_COMMAND, [this]() { return toggleHearPlaybackWhenEditing(); });
+    d->onRequest(this, KEYBOARD_PLAY_OFFSET_COMMAND, [this]() { return toogleKeyboardPlayOffset(); });
     d->onRequest(this, SHOW_PLAYBACK_SETUP_COMMAND, [this]() { return showPlaybackSetup(); });
     d->onRequest(this, MIDI_TOGGLE_COMMAND, [this]() { return toggleMidiInput(); });
     d->onRequest(this, MIDI_INPUT_WRITTEN_PITCH_COMMAND, [this]() { return setMidiUseWrittenPitch(true); });
@@ -181,6 +183,7 @@ void PlaybackController::init()
             { "loop-out", LOOP_OUT_COMMAND },
             { "metronome", METRONOME_TOGGLE_COMMAND },
             { "sound", SOUND_TOGGLE_COMMAND },
+            { "keyboard-play-offset", KEYBOARD_PLAY_OFFSET_COMMAND},
             { "playback-setup", SHOW_PLAYBACK_SETUP_COMMAND },
             { "midi-on", MIDI_TOGGLE_COMMAND },
             { "midi-input-written-pitch", MIDI_INPUT_WRITTEN_PITCH_COMMAND },
@@ -1111,6 +1114,11 @@ muse::Ret PlaybackController::toggleHearPlaybackWhenEditing()
     return make_ok();
 }
 
+muse::Ret PlaybackController::toogleKeyboardPlayOffset()
+{
+    return make_ok();
+}
+
 muse::Ret PlaybackController::reloadPlaybackCache()
 {
     INotationPlaybackPtr nPlayback = notationPlayback();
@@ -2007,4 +2015,12 @@ muse::Progress PlaybackController::onlineSoundsProcessingProgress() const
 muse::audio::secs_t PlaybackController::playedTickToSecs(int tick) const
 {
     return secs_t(notationPlayback()->playedTickToSec(tick));
+}
+
+void PlaybackController::setKeyboardPlayOffset(int offset) {
+    configuration()->setKeyboardPlayOffset(offset);
+}
+
+int PlaybackController::keyboardPlayOffset() const {
+    return configuration()->keyboardPlayOffset();
 }

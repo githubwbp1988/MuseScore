@@ -98,8 +98,8 @@
         },
         {
 
-            "command": "command://hear-playback-when-editing-toggle",
-            "sequences": ["M"],
+            "command": "command://playback/hear-playback-when-editing-toggle",
+            "sequences": ["Ctrl+M"],
             "autorepeat": 0
         }
     ],

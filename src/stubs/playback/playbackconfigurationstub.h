@@ -36,6 +36,10 @@ public:
     void setPlayChordWhenEditing(bool value) override;
     muse::async::Channel<bool> playChordWhenEditingChanged() const override;
 
+    void setKeyboardPlayOffset(int value) override;
+    int keyboardPlayOffset() const override;
+    muse::async::Channel<int> keyboardPlayOffsetChanged() const override;
+
     bool playHarmonyWhenEditing() const override;
     void setPlayHarmonyWhenEditing(bool value) override;
     muse::async::Channel<bool> playHarmonyWhenEditingChanged() const override;

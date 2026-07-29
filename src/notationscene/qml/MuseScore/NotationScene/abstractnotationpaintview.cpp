@@ -143,6 +143,11 @@ void AbstractNotationPaintView::load()
     initBackground();
     initNavigatorOrientation();
 
+    m_keyboardPlayOffset = playbackConfiguration()->keyboardPlayOffset();
+    playbackConfiguration()->keyboardPlayOffsetChanged().onReceive(this, [this](int value) {
+        m_keyboardPlayOffset = value;
+    });
+
     configuration()->isLimitCanvasScrollAreaChanged().onNotify(this, [this]() {
         ensureViewportInsideScrollableArea();
 
@@ -1691,7 +1696,7 @@ void AbstractNotationPaintView::updatePlaybackCursorInterpolated()
     const secs_t deltaSecs = (elapsed - m_lastPlaybackPositionUpdateTimeNs) / 1e9;
     const secs_t estimatedSecs = m_lastPlaybackPosition + deltaSecs;
     const midi::tick_t estimatedTick = playback->secToTick(estimatedSecs);
-    const midi::tick_t postTick = playback->secToTick(estimatedSecs + 0.144);
+    const midi::tick_t postTick = playback->secToTick(estimatedSecs + 0.144 + 0.001 * m_keyboardPlayOffset);
     movePlaybackCursor(estimatedTick, postTick);
 }
 

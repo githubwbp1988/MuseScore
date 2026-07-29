@@ -44,6 +44,10 @@ public:
     void setPlayNotesWhenEditing(bool value) override;
     muse::async::Notification playNotesWhenEditingChanged() const override;
 
+    void setKeyboardPlayOffset(int value) override;
+    int keyboardPlayOffset() const override;
+    muse::async::Channel<int> keyboardPlayOffsetChanged() const override;
+
     bool playChordWhenEditing() const override;
     void setPlayChordWhenEditing(bool value) override;
     muse::async::Channel<bool> playChordWhenEditingChanged() const override;
@@ -119,5 +123,7 @@ private:
     muse::async::Channel<MixerSectionType, bool> m_isMixerSectionVisibleChanged;
 
     muse::async::Channel<bool> m_muteHiddenInstrumentsChanged;
+
+    muse::async::Channel<int> m_keyboardPlayOffsetChanged;
 };
 }
