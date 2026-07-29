@@ -41,6 +41,8 @@ static const Settings::Key PLAY_NOTES_ON_MIDI_INPUT(moduleName, "score/note/play
 static const Settings::Key PLAY_CHORD_WHEN_EDITING(moduleName, "score/chord/playOnAddNote");
 static const Settings::Key PLAY_HARMONY_WHEN_EDITING(moduleName, "score/harmony/play/onedit");
 
+static const Settings::Key KEYBOARD_PLAY_OFFSET(moduleName, "playback/keyboard/playOffset");
+
 static const Settings::Key SOUND_PRESETS_MULTI_SELECTION_KEY(moduleName, "application/playback/soundPresetsMultiSelectionEnabled");
 
 static const Settings::Key MIXER_LABELS_SECTION_VISIBLE_KEY(moduleName, "playback/mixer/labelsSectionVisible");
@@ -96,6 +98,9 @@ static Settings::Key auxChannelVisibleKey(aux_channel_idx_t index)
 
 void PlaybackConfiguration::init()
 {
+    settings()->valueChanged(KEYBOARD_PLAY_OFFSET).onReceive(this, [this](const Val& val) {
+        m_keyboardPlayOffsetChanged.send(val.toInt());
+    });
     settings()->setDefaultValue(PLAY_NOTES_WHEN_EDITING, Val(true));
     settings()->valueChanged(PLAY_NOTES_WHEN_EDITING).onReceive(this, [this](const Val&) {
         m_playNotesWhenEditingChanged.notify();
@@ -172,6 +177,21 @@ void PlaybackConfiguration::setPlayNotesWhenEditing(bool value)
 muse::async::Notification PlaybackConfiguration::playNotesWhenEditingChanged() const
 {
     return m_playNotesWhenEditingChanged;
+}
+
+void PlaybackConfiguration::setKeyboardPlayOffset(int value)
+{
+    settings()->setSharedValue(KEYBOARD_PLAY_OFFSET, Val(value));
+}
+
+int PlaybackConfiguration::keyboardPlayOffset() const
+{
+    return settings()->value(KEYBOARD_PLAY_OFFSET).toInt();
+}
+
+async::Channel<int> PlaybackConfiguration::keyboardPlayOffsetChanged() const
+{
+    return m_keyboardPlayOffsetChanged;
 }
 
 bool PlaybackConfiguration::playChordWhenEditing() const

@@ -134,5 +134,8 @@ public:
     virtual const std::map<muse::audio::TrackId, muse::audio::AudioResourceMeta>& onlineSounds() const = 0;
     virtual muse::async::Notification onlineSoundsChanged() const = 0;
     virtual muse::Progress onlineSoundsProcessingProgress() const = 0;
+
+    virtual void setKeyboardPlayOffset(int offset) = 0;
+    virtual int keyboardPlayOffset() const = 0;
 };
 }

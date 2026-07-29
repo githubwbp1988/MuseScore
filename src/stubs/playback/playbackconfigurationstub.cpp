@@ -38,6 +38,20 @@ muse::async::Notification PlaybackConfigurationStub::playNotesWhenEditingChanged
     return muse::async::Notification();
 }
 
+void PlaybackConfigurationStub::setKeyboardPlayOffset(int value)
+{
+}
+
+int PlaybackConfigurationStub::keyboardPlayOffset() const
+{
+    return 0;
+}
+
+muse::async::Notification PlaybackConfigurationStub::keyboardPlayOffsetChanged() const
+{
+    return muse::async::Notification();
+}
+
 bool PlaybackConfigurationStub::playChordWhenEditing() const
 {
     return false;

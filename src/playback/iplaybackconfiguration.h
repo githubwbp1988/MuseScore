@@ -39,6 +39,10 @@ public:
     virtual void setPlayNotesWhenEditing(bool value) = 0;
     virtual muse::async::Notification playNotesWhenEditingChanged() const = 0;
 
+    virtual void setKeyboardPlayOffset(int value) = 0;
+    virtual int keyboardPlayOffset() const = 0;
+    virtual muse::async::Channel<int> keyboardPlayOffsetChanged() const = 0;
+
     virtual bool playChordWhenEditing() const = 0;
     virtual void setPlayChordWhenEditing(bool value) = 0;
     virtual muse::async::Channel<bool> playChordWhenEditingChanged() const = 0;

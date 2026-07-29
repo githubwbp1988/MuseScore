@@ -49,6 +49,8 @@ class PlaybackToolBarModel : public muse::uicomponents::AbstractMenuModel
     Q_PROPERTY(QVariant tempo READ tempo NOTIFY tempoChanged)
     Q_PROPERTY(qreal tempoMultiplier READ tempoMultiplier WRITE setTempoMultiplier NOTIFY tempoChanged)
 
+    Q_PROPERTY(int keyboardPlayOffset READ keyboardPlayOffset WRITE setKeyboardPlayOffset NOTIFY keyboardPlayOffsetChanged)
+
     QML_ELEMENT
 
     muse::GlobalInject<notation::INotationConfiguration> notationConfiguration;
@@ -73,6 +75,8 @@ public:
     QVariant tempo() const;
     qreal tempoMultiplier() const;
 
+    int keyboardPlayOffset() const;
+
     Q_INVOKABLE void load() override;
 
 public slots:
@@ -82,6 +86,7 @@ public slots:
     void setMeasureNumber(int measureNumber);
     void setBeatNumber(int beatNumber);
     void setTempoMultiplier(qreal multiplier);
+    void setKeyboardPlayOffset(int offset);
 
 signals:
     void isToolbarFloatingChanged(bool floating);
@@ -89,6 +94,7 @@ signals:
     void maxPlayTimeChanged();
     void playPositionChanged();
     void tempoChanged();
+    void keyboardPlayOffsetChanged();
 
 private:
     void setupConnections();

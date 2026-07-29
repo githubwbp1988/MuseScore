@@ -104,6 +104,13 @@ const UiActionList PlaybackUiActions::s_mainActions = {
              IconCode::Code::AUDIO,
              Checkable::Yes
              ),
+    UiAction("keyboard-play-offset",
+             mu::context::UiCtxProjectOpened,
+             mu::context::CTX_NOTATION_FOCUSED,
+             TranslatableString("action", "Keyboard play offset"),
+             TranslatableString("action", "Adjust keyboard play offset"),
+             IconCode::Code::MIXER
+             ),
     UiAction("playback-setup",
              mu::context::UiCtxProjectOpened,
              mu::context::CTX_NOTATION_FOCUSED,

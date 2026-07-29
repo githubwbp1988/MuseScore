@@ -142,6 +142,9 @@ public:
     muse::async::Notification onlineSoundsChanged() const override;
     muse::Progress onlineSoundsProcessingProgress() const override;
 
+    void setKeyboardPlayOffset(int offset) override;
+    int keyboardPlayOffset() const override;
+
 private:
     muse::audio::IPlayerPtr currentPlayer() const;
 
@@ -203,6 +206,7 @@ private:
     muse::Ret toggleMidiInput();
     muse::Ret setMidiUseWrittenPitch(bool useWrittenPitch);
     muse::Ret toggleHearPlaybackWhenEditing();
+    muse::Ret toogleKeyboardPlayOffset();
 
     muse::Ret reloadPlaybackCache();
 

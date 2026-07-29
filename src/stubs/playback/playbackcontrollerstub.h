@@ -91,5 +91,8 @@ public:
     const std::map<muse::audio::TrackId, muse::audio::AudioResourceMeta>& onlineSounds() const override;
     muse::async::Notification onlineSoundsChanged() const override;
     muse::Progress onlineSoundsProcessingProgress() const override;
+
+    void setKeyboardPlayOffset(int) override;
+    int keyboardPlayOffset() const override;
 };
 }
