@@ -81,6 +81,8 @@ This feature has not been merged into the official release.
 
 This is mainly because the changes are non‑essential for the official codebase, the modification logic is fairly complex, and a large number of code files are intrusively modified. In addition, the changes exceed stability thresholds. Therefore, this feature is kept on the develop branch for ongoing development.
 
+See https://space.bilibili.com/476034138?spm_id_from=333.1391.0.0 for historical version effects.
+
 ### Running
 
 To start MuseScore Studio, type:
