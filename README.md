@@ -21,6 +21,9 @@ MuseScore Studio is an open source and free music notation software. For support
 - Integrated sequencer and software synthesizer to play the score
 - Print or create PDF files
 
+- Show real-time playback of keys on the keyboard [switch to develop branch]
+# ![keyboard real-time playback](share/icons/musescore_keyboard_realtime_playback.jpg)
+
 ## More info
 
 - [MuseScore Studio Homepage](https://musescore.org)
@@ -67,6 +70,16 @@ If something goes wrong, append the word "clean" to the above command to delete 
     cmake -P build.cmake -DCMAKE_BUILD_TYPE=Release clean
 
 Then try running the first command again.
+
+### Feature: keyboard real‑time playback — Supplementary Notes
+
+If you want to use the version with the keyboard real‑time playback feature, please switch to the develop branch. The develop branch consistently maintains all functionalities from the master branch.
+
+For alignment performance among the keyboard, sheet music and MIDI, fine‑tuning can be done via the offset adjustment control in the playback tool.
+
+This feature has not been merged into the official release. 
+
+This is mainly because the changes are non‑essential for the official codebase, the modification logic is fairly complex, and a large number of code files are intrusively modified. In addition, the changes exceed stability thresholds. Therefore, this feature is kept on the develop branch for ongoing development.
 
 ### Running
 
