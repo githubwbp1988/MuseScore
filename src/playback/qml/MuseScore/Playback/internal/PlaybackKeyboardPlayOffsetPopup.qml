@@ -75,12 +75,12 @@ StyledPopupView {
             }
 
             StyledSlider {
-                Layout.preferredWidth: 500
+                Layout.preferredWidth: 600
                 Layout.preferredHeight: 30
 
                 value: root.playbackModel.keyboardPlayOffset
                 from: 0
-                to: 100
+                to: 200
                 stepSize: 1
 
                 fillBackground: false
