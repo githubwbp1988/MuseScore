@@ -371,7 +371,7 @@ void NotationAutomationController::applyPolylineStyle(PolylinePlot* polyline) co
     standard->setCenterColor(pointFillColor);
     standard->setOutlineColor(lineColor);
 
-    PolylinePointStyle* hovered = polyline->hoveredPointStyle();
+    PolylinePointStyle* hovered = polyline->selectedPointStyle();
     hovered->setCenterColor(pointFillColor);
     hovered->setOutlineColor(lineColor);
 
@@ -407,7 +407,7 @@ void NotationAutomationController::applyPolylineSizes(PolylinePlot* polyline) co
     standard->setCenterRadius(baseStandardRadius * zoomScale);
     standard->setOutlineWidth(lineWidth);
 
-    PolylinePointStyle* hovered = polyline->hoveredPointStyle();
+    PolylinePointStyle* hovered = polyline->selectedPointStyle();
     hovered->setCenterRadius(baseHoveredRadius * zoomScale);
     hovered->setOutlineWidth(lineWidth);
 
