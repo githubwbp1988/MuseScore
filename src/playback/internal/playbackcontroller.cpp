@@ -26,7 +26,6 @@
 #include "containers.h"
 #include "modularity/ioc.h"
 #include "log.h"
-#include "rcommand/commandtypes.h"
 #include "types/ret.h"
 
 #include "audio/common/audioutils.h"
@@ -47,11 +46,9 @@
 #include "project/inotationproject.h"
 
 #include "../playbacktypes.h"
-#include "../playbackcommands.h"
 #include "onlinesoundscontroller.h"
 
 using namespace muse;
-using namespace muse::actions;
 using namespace muse::async;
 using namespace muse::audio;
 using namespace muse::midi;
@@ -143,66 +140,6 @@ void PlaybackController::init()
 
     m_onlineSoundsController->regActions();
 
-    auto d = commandsDispatcher();
-
-    d->onRequest(this, PLAY_TOGGLE_COMMAND, [this]() { return togglePlay(); });
-    d->onRequest(this, PLAY_COMMAND, [this]() { return play(); });
-    d->onRequest(this, PLAY_SELECTION_COMMAND, [this]() { return playFromSelection(); });
-    d->onRequest(this, PAUSE_COMMAND, [this]() { return pause(); });
-    d->onRequest(this, PAUSE_AND_SELECT_COMMAND, [this]() { return pause(true); });
-    d->onRequest(this, STOP_COMMAND, [this]() { return stop(); });
-    d->onRequest(this, REWIND_COMMAND, [this](const rcommand::Request& request) { return rewind(request); });
-    d->onRequest(this, LOOP_TOGGLE_COMMAND, [this]() { return toggleLoopPlayback(); });
-    d->onRequest(this, LOOP_IN_COMMAND, [this]() { return addLoopBoundary(LoopBoundaryType::LoopIn); });
-    d->onRequest(this, LOOP_OUT_COMMAND, [this]() { return addLoopBoundary(LoopBoundaryType::LoopOut); });
-    d->onRequest(this, METRONOME_TOGGLE_COMMAND, [this]() { return toggleMetronome(); });
-    d->onRequest(this, SOUND_TOGGLE_COMMAND, [this]() { return toggleHearPlaybackWhenEditing(); });
-    d->onRequest(this, KEYBOARD_PLAY_OFFSET_COMMAND, [this]() { return toogleKeyboardPlayOffset(); });
-    d->onRequest(this, SHOW_PLAYBACK_SETUP_COMMAND, [this]() { return showPlaybackSetup(); });
-    d->onRequest(this, MIDI_TOGGLE_COMMAND, [this]() { return toggleMidiInput(); });
-    d->onRequest(this, MIDI_INPUT_WRITTEN_PITCH_COMMAND, [this]() { return setMidiUseWrittenPitch(true); });
-    d->onRequest(this, MIDI_INPUT_SOUNDING_PITCH_COMMAND, [this]() { return setMidiUseWrittenPitch(false); });
-    d->onRequest(this, REPEATS_TOGGLE_COMMAND, [this]() { return togglePlayRepeats(); });
-    d->onRequest(this, CHORDSYMBOLS_TOGGLE_COMMAND, [this]() { return togglePlayChordSymbols(); });
-    d->onRequest(this, HEAR_PLAYBACK_WHEN_EDITING_TOGGLE_COMMAND, [this]() { return toggleHearPlaybackWhenEditing(); });
-    d->onRequest(this, PAN_TOGGLE_COMMAND, [this]() { return toggleAutomaticallyPan(); });
-    d->onRequest(this, COUNTIN_TOGGLE_COMMAND, [this]() { return toggleCountIn(); });
-    d->onRequest(this, RELOAD_PLAYBACK_CACHE_COMMAND, [this]() { return reloadPlaybackCache(); });
-
-    // compat
-    {
-        static std::map<ActionCode, rcommand::Command> actionToCommand = {
-            { "play", PLAY_TOGGLE_COMMAND },
-            { "play-from-selection", PLAY_SELECTION_COMMAND },
-            { "pause", PAUSE_COMMAND },
-            { "pause-and-select", PAUSE_AND_SELECT_COMMAND },
-            { "stop", STOP_COMMAND },
-            { "rewind", REWIND_COMMAND },
-            { "loop", LOOP_TOGGLE_COMMAND },
-            { "loop-in", LOOP_IN_COMMAND },
-            { "loop-out", LOOP_OUT_COMMAND },
-            { "metronome", METRONOME_TOGGLE_COMMAND },
-            { "sound", SOUND_TOGGLE_COMMAND },
-            { "keyboard-play-offset", KEYBOARD_PLAY_OFFSET_COMMAND},
-            { "playback-setup", SHOW_PLAYBACK_SETUP_COMMAND },
-            { "midi-on", MIDI_TOGGLE_COMMAND },
-            { "midi-input-written-pitch", MIDI_INPUT_WRITTEN_PITCH_COMMAND },
-            { "midi-input-sounding-pitch", MIDI_INPUT_SOUNDING_PITCH_COMMAND },
-            { "repeat", REPEATS_TOGGLE_COMMAND },
-            { "play-chord-symbols", CHORDSYMBOLS_TOGGLE_COMMAND },
-            { "toggle-hear-playback-when-editing", HEAR_PLAYBACK_WHEN_EDITING_TOGGLE_COMMAND },
-            { "pan", PAN_TOGGLE_COMMAND },
-            { "countin", COUNTIN_TOGGLE_COMMAND },
-            { "reload-playback-cache", RELOAD_PLAYBACK_CACHE_COMMAND },
-            { "clear-online-sounds-cache", CLEAR_ONLINESOUNDS_CACHE_COMMAND },
-        };
-
-        auto ad = dispatcher();
-        for (const auto& [actionCode, command] : actionToCommand) {
-            ad->reg(this, actionCode, [d, command]() { return d->dispatch(command); });
-        }
-    }
-
     globalContext()->currentNotationChanged().onNotify(this, [this]() {
         onNotationChanged();
     });
@@ -232,11 +169,11 @@ void PlaybackController::init()
     });
 
     notationConfiguration()->isMidiInputEnabledChanged().onNotify(this, [this]() {
-        notifyActionCheckedChanged(MIDI_ON_CODE);
+        // notifyActionCheckedChanged(MIDI_ON_CODE);
     });
 
     configuration()->playNotesWhenEditingChanged().onNotify(this, [this]() {
-        notifyActionCheckedChanged(TOGGLE_HEAR_PLAYBACK_WHEN_EDITING_CODE);
+        // notifyActionCheckedChanged(TOGGLE_HEAR_PLAYBACK_WHEN_EDITING_CODE);
         // Since the button "Hear playback when editing" is reused to control whether the score plays back muted, 
         // the mute control needs to monitor the state of this button in real time.
         updateSoloMuteStates();
@@ -797,16 +734,15 @@ muse::Ret PlaybackController::stop()
     return make_ok();
 }
 
-muse::rcommand::Response PlaybackController::rewind(const muse::rcommand::Request& request)
+muse::Ret PlaybackController::rewind(muse::secs_t secs)
 {
     if (!isPlayAllowed()) {
         LOGW() << "playback not allowed";
-        return muse::rcommand::make_response(request, make_ret(Ret::Code::NotSupported));
+        return make_ret(Ret::Code::NotSupported);
     }
 
-    double secs = request.query.param("position", Val(0.0)).toDouble();
-    doRewind(secs_t(secs));
-    return muse::rcommand::make_response(request, make_ok());
+    doRewind(secs);
+    return make_ok();
 }
 
 muse::Ret PlaybackController::playFromSelection(bool showErrors)
@@ -1110,7 +1046,7 @@ muse::Ret PlaybackController::toggleHearPlaybackWhenEditing()
 {
     bool wasPlayNotesWhenEditing = configuration()->playNotesWhenEditing();
     configuration()->setPlayNotesWhenEditing(!wasPlayNotesWhenEditing);
-    notifyActionCheckedChanged(SOUND_CODE);
+    // notifyActionCheckedChanged(SOUND_CODE);
     return make_ok();
 }
 
@@ -1126,12 +1062,6 @@ muse::Ret PlaybackController::reloadPlaybackCache()
         nPlayback->reload();
     }
 
-    return make_ok();
-}
-
-muse::Ret PlaybackController::showPlaybackSetup()
-{
-    interactive()->open("musescore://playback/soundprofiles");
     return make_ok();
 }
 
@@ -1196,11 +1126,6 @@ void PlaybackController::disableLoop()
 
     currentPlayer()->resetLoop();
     notationPlayback()->setLoopBoundariesEnabled(false);
-}
-
-void PlaybackController::notifyActionCheckedChanged(const ActionCode& actionCode)
-{
-    m_actionCheckedChanged.send(actionCode);
 }
 
 mu::project::IProjectAudioSettingsPtr PlaybackController::audioSettings() const
@@ -1754,31 +1679,6 @@ void PlaybackController::updateAuxMuteStates()
     }
 }
 
-bool PlaybackController::actionChecked(const ActionCode&) const
-{
-    // QMap<std::string, bool> isChecked {
-    //     { LOOP_CODE, isLoopEnabled() },
-    //     { MIDI_ON_CODE, notationConfiguration()->isMidiInputEnabled() },
-    //     { INPUT_WRITTEN_PITCH, notationConfiguration()->midiUseWrittenPitch().val },
-    //     { INPUT_SOUNDING_PITCH, !notationConfiguration()->midiUseWrittenPitch().val },
-    //     { REPEAT_CODE, notationConfiguration()->isPlayRepeatsEnabled() },
-    //     { PLAY_CHORD_SYMBOLS_CODE, notationConfiguration()->isPlayChordSymbolsEnabled() },
-    //     { PAN_CODE, notationConfiguration()->isAutomaticallyPanEnabled() },
-    //     { METRONOME_CODE, notationConfiguration()->isMetronomeEnabled() },
-    //     { SOUND_CODE, configuration()->playNotesWhenEditing() },
-    //     { COUNT_IN_CODE, notationConfiguration()->isCountInEnabled() },
-    //     { TOGGLE_HEAR_PLAYBACK_WHEN_EDITING_CODE, configuration()->playNotesWhenEditing() }
-    // };
-
-    // return isChecked[actionCode];
-    return false;
-}
-
-Channel<ActionCode> PlaybackController::actionCheckedChanged() const
-{
-    return m_actionCheckedChanged;
-}
-
 secs_t PlaybackController::totalPlayTime() const
 {
     auto np = notationPlayback();
@@ -1988,7 +1888,7 @@ void PlaybackController::setIsExportingAudio(bool exporting)
     }
 }
 
-bool PlaybackController::canReceiveAction(const ActionCode&) const
+bool PlaybackController::canReceiveAction(const muse::actions::ActionCode&) const
 {
     if (!m_masterNotation || !m_masterNotation->hasParts()) {
         return false;
