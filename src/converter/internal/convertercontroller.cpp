@@ -677,28 +677,28 @@ Ret ConverterController::exportScoreMedia(const muse::io::path_t& in, const muse
 {
     TRACEFUNC;
 
-    return BackendApi::exportScoreMedia(in, out, highlightConfigPath, openParams);
+    return BackendApi::exportScoreMedia(iocContext(), in, out, highlightConfigPath, openParams);
 }
 
 Ret ConverterController::exportScoreMeta(const muse::io::path_t& in, const muse::io::path_t& out, const OpenParams& openParams)
 {
     TRACEFUNC;
 
-    return BackendApi::exportScoreMeta(in, out, openParams);
+    return BackendApi::exportScoreMeta(iocContext(), in, out, openParams);
 }
 
 Ret ConverterController::exportScoreParts(const muse::io::path_t& in, const muse::io::path_t& out, const OpenParams& openParams)
 {
     TRACEFUNC;
 
-    return BackendApi::exportScoreParts(in, out, openParams);
+    return BackendApi::exportScoreParts(iocContext(), in, out, openParams);
 }
 
 Ret ConverterController::exportScorePartsPdfs(const muse::io::path_t& in, const muse::io::path_t& out, const OpenParams& openParams)
 {
     TRACEFUNC;
 
-    return BackendApi::exportScorePartsPdfs(in, out, openParams);
+    return BackendApi::exportScorePartsPdfs(iocContext(), in, out, openParams);
 }
 
 Ret ConverterController::exportScoreTranspose(const muse::io::path_t& in, const muse::io::path_t& out, const std::string& optionsJson,
@@ -706,7 +706,7 @@ Ret ConverterController::exportScoreTranspose(const muse::io::path_t& in, const 
 {
     TRACEFUNC;
 
-    return BackendApi::exportScoreTranspose(in, out, optionsJson, openParams);
+    return BackendApi::exportScoreTranspose(iocContext(), in, out, optionsJson, openParams);
 }
 
 Ret ConverterController::exportScoreElements(const muse::io::path_t& in, const muse::io::path_t& out,
@@ -714,7 +714,7 @@ Ret ConverterController::exportScoreElements(const muse::io::path_t& in, const m
 {
     TRACEFUNC;
 
-    return BackendApi::exportScoreElements(in, out, openParams);
+    return BackendApi::exportScoreElements(iocContext(), in, out, openParams);
 }
 
 Ret ConverterController::exportScoreVideo(const muse::io::path_t& in, const muse::io::path_t& out, const OpenParams& openParams,
@@ -756,5 +756,5 @@ Ret ConverterController::updateSource(const muse::io::path_t& in, const std::str
 {
     TRACEFUNC;
 
-    return BackendApi::updateSource(in, newSource, forceMode);
+    return BackendApi::updateSource(iocContext(), in, newSource, forceMode);
 }
