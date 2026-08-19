@@ -89,15 +89,14 @@ private:
         int fps = 32; // 24
         int bitrate = 800000;
         float leadingSec = 2.0;
-        float trailingSec = 0.0;
+        // float trailingSec = 0.0;
         // float leadingSec = 3.;
-        // float trailingSec = 3.;
+        float trailingSec = 3.;
         double canvasDpi = 300.0;
-        ViewMode viewMode = ViewMode::PageFull;
+        ViewMode viewMode = ViewMode::Flexible;  // ViewMode::PageFull
         muse::PointF moveToCenter;
     };
 
-    // muse::Ret generatePagedOriginalVideo(project::INotationProjectPtr project, const muse::io::path_t& filePath, const Config& config);
     std::function<qreal(QPainter*, QRectF, QRectF)> m_trickFunction = nullptr;
     std::function<void()> m_trickOffFunction = nullptr;
     std::function<void()> m_invokeFunction = nullptr;
@@ -109,10 +108,10 @@ private:
 
     void doGenerate(muse::media::IVideoEncoderPtr encoder, notation::INotationPtr notation, const Config& config);
 
-    bool generateLeadingFrames(muse::media::IVideoEncoderPtr encoder, notation::INotationPtr notation, muse::draw::Painter& painter,
+    bool generateLeadingFrames(muse::media::IVideoEncoderPtr encoder, notation::INotationPtr notation, QPainter* qp, muse::draw::Painter& painter,
                                QImage& frame, const Config& config, int totalFrameCount);
 
-    bool generateScoreFrames(muse::media::IVideoEncoderPtr encoder, notation::INotationPtr notation, QPainter* qp, muse::draw::Painter& painter,
+    bool generateScoreFrames(muse::media::IVideoEncoderPtr encoder, notation::INotationPtr notation, muse::draw::Painter& painter,
                              QImage& frame, const Config& config, float totalPlayTimeSec, int leadingFrameCount, int totalFrameCount);
 
     bool generateTrailingFrames(muse::media::IVideoEncoderPtr encoder, const Config& config);
@@ -150,7 +149,6 @@ private:
     muse::draw::Color PIANO_BG_COLOR = muse::draw::Color(54, 54, 56, 255);
     muse::draw::Color KEYBOARD_BG_COLOR = muse::draw::Color(36, 36, 39, 255);
 
-    double CANVAS_DPI = 300;
     int frameCount;
 
     muse::RectF pianoRect;

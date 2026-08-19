@@ -23,12 +23,14 @@
 
 #include <cmath>
 
+#include <QPainter>
 #include <QThread>
 
 #include "global/concurrency/concurrent.h"
 #include "global/io/filestream.h"
 
 #include "draw/fontmetrics.h"
+#include "draw/painter.h"
 #include "draw/types/drawtypes.h"
 
 #include "engraving/dom/masterscore.h"
@@ -46,12 +48,6 @@
 
 #include "defer.h"
 #include "log.h"
-
-#include <chrono>
-#include <thread>
-
-using namespace std::chrono;
-using namespace std::chrono_literals;
 
 using namespace mu::iex::videoexport;
 using namespace mu::project;
@@ -244,7 +240,7 @@ VideoWriter::Config VideoWriter::makeConfig() const
     cfg.bitrate = int(br * 1000000);
 
     cfg.leadingSec = configuration()->leadingSec();
-    cfg.trailingSec = configuration()->trailingSec();
+    cfg.trailingSec = configuration()->trailingSec() > 0 ? configuration()->trailingSec() : cfg.trailingSec;
 
     cfg.viewMode = configuration()->viewMode();
 
@@ -329,85 +325,18 @@ std::optional<VideoWriter::ScoreRestoreData> VideoWriter::prepareScore(INotation
 
     score->setLayoutMode(engraving::LayoutMode::PAGE);
 
-    // std::vector<QString> linesVec;
-    // bool isCoverLogoAvatar = true;
-    // bool isCoverTextAvatar = true;
-    // int coverAvatarLayout = 1;  // 0: left,  1: right   2: full  3: bottom(avatar below the text)
-    // int voffset = 0;
-    // int hoffset = 0;
-    // float voffsetScale = 0.0;
-    // float hoffsetScale = 0.0;
-    // float coverHoffsetScale = 0.0;
-    // int fontSize = 20;
-    // bool avatarFullHeight = false;
-    // int textHeightScale = 5;
-    // // QString avatarString = "/Users/erlich/Downloads/Tchaikovskys_Piano_Concerto_No._1_Opus_23_Arrangement_for_Solo_Piano.png";
-    // // QString avatarString = "/Users/erlich/Downloads/advanced_processed_1752139510167.png";
-    // // QString avatarString = "/Users/erlich/Downloads/simple_processed_xingxingdiandeng_cropped.png";
-    // QString avatarString = "/Users/erlich/Developer/workspace/python/pythonProject/test/test_images/Luffy_Fierce_Attack.png"; 
-
-    // // read Fine-tune parameters of video cover from a txt file
-    // // QString fineTunePath = "/Users/erlich/Downloads/musescore-fune-tune.txt";
-    // QString fineTunePath = audioConfiguration()->exportFineTuneConfigPath();
-    // QFile configFile(QString::fromStdWString(fineTunePath.toStdWString()));
-    // if (configFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
-    //     isCoverLogoAvatar = false;
-    //     isCoverTextAvatar = false;
-    //     QByteArray data = configFile.readAll();
-    //     QString content = QString::fromUtf8(data);
-    //     QStringList lines = content.split("\n");
-    //     for (const QString& line : lines) {
-    //         QStringList keyValue = line.split("=");
-    //         if (keyValue.size() == 2) {
-    //             QString key = keyValue[0].trimmed();
-    //             QString value = keyValue[1].trimmed();
-    //             if (key == "title") {
-    //                 linesVec.push_back(value);
-    //             } else if (key == "isCoverLogoAvatar") {
-    //                 isCoverLogoAvatar = (value.toLower() == "true");
-    //             } else if (key == "isCoverTextAvatar") {
-    //                 isCoverTextAvatar = (value.toLower() == "true");
-    //             } else if (key == "coverAvatarLayout") {
-    //                 coverAvatarLayout = value.toInt();
-    //             } else if (key == "voffsetScale") {
-    //                 voffsetScale = value.toFloat();
-    //             } else if (key == "hoffsetScale") {
-    //                 hoffsetScale = value.toFloat();
-    //             } else if (key == "coverHoffsetScale") {
-    //                 coverHoffsetScale = value.toFloat();
-    //             } else if (key == "fontSize") {
-    //                 fontSize = value.toInt();
-    //             } else if (key == "avatarString") {
-    //                 avatarString = value;
-    //             } else if (key == "avatarFullHeight") {
-    //                 avatarFullHeight = (value.toLower() == "true");
-    //             } else if (key == "viewMode") {
-    //                 if (value.toInt() == 0) {
-    //                     masterNotation->notation()->setViewMode(notation::ViewMode::PAGE);
-    //                 } else if (value.toInt() == 1) {
-    //                     masterNotation->notation()->setViewMode(notation::ViewMode::FLOAT);
-    //                 }
-    //             } else if (key == "textHeightScale") {
-    //                 textHeightScale = value.toInt();
-    //             }
-    //         }
-    //     }
-    // } else {
-    //     masterNotation->notation()->setViewMode(notation::ViewMode::FLOAT);
-    // }
-
-    // Setup Score view
     score->setShowFrames(false);
     score->setShowInstrumentNames(true);
     score->setShowInvisible(false);
     score->setShowPageborders(false);
-    score->setShowUnprintable(true);
-    score->setShowVBox(false);
+    score->setShowUnprintable(false);
 
     if (config.viewMode == ViewMode::Flexible) {
         score->setShowInstrumentNames(false);
         score->setShowVBox(false);
     }
+
+    score->doLayout();
 
     PageList pages = notation->elements()->pages();
     if (pages.empty()) {
@@ -416,59 +345,35 @@ std::optional<VideoWriter::ScoreRestoreData> VideoWriter::prepareScore(INotation
         return std::nullopt;
     }
 
-    // double CANVAS_DPI = 300;
-
-    int piano_height = 132 * config.width / config.height;  
-    int keyboard_height = piano_height - 14 * config.width / config.height;
-
     const Page* page = pages.front();
-    if (score->staves().size() > 3) {
-        //! NOTE: Calculate the dpi to display all page elements
-        muse::RectF ttbox = page->tbbox();
-        double margin = 100.0;
-        double ttboxHeight = ttbox.height() + margin * 2;
-        double scale = (config.height - piano_height) / ttboxHeight;
-        CANVAS_DPI = scale * engraving::DPI;
+
+    if (config.viewMode == ViewMode::PageFull) {
+        double scaleX = config.width / page->width();
+        double scaleY = config.height / page->height();
+        double scale = std::min(scaleX, scaleY);
+        config.canvasDpi = scale * engraving::DPI;
+        config.moveToCenter = muse::PointF(0.5 * (config.width / scale - page->width()), 0.5 * (config.height / scale - page->height()));
+        return result;
     }
 
-    _piano_height = piano_height;
-    _keyboard_height = keyboard_height;
+    _piano_height = 132 * config.width / config.height;  
+    _keyboard_height = _piano_height - 14 * config.width / config.height;
 
-    score->style().set(engraving::Sid::pageHeight, (config.height - piano_height) / CANVAS_DPI);
-    double pageWidth = config.width / CANVAS_DPI;
-    score->style().set(engraving::Sid::pageWidth, pageWidth);
-    double pagePrintableWidth = score->style().styleD(engraving::Sid::pageWidth)
-                        - score->style().styleD(engraving::Sid::pageOddLeftMargin)
-                        - score->style().styleD(engraving::Sid::pageEvenLeftMargin);
-    score->style().set(engraving::Sid::pagePrintableWidth, pagePrintableWidth);
+    if (score->staves().size() > 3) {
+        //! NOTE: Calculate the dpi to display all page elements
+        double originalPageHeight = page->height() - score->style().styleD(engraving::Sid::pageOddTopMargin)
+                                    - score->style().styleD(engraving::Sid::pageOddBottomMargin);
+        double margin = 100.0;
+        double ttboxHeight = originalPageHeight + margin * 2;
+        double scale = (config.height - _piano_height) / ttboxHeight;
+        config.canvasDpi = scale * engraving::DPI;
+    }
 
-    // --master version
-    // const Page* page = pages.front();
-
-    // if (config.viewMode == ViewMode::PageFull) {
-    //     double scaleX = config.width / page->width();
-    //     double scaleY = config.height / page->height();
-    //     double scale = std::min(scaleX, scaleY);
-    //     config.canvasDpi = scale * engraving::DPI;
-    //     config.moveToCenter = muse::PointF(0.5 * (config.width / scale - page->width()), 0.5 * (config.height / scale - page->height()));
-    //     return result;
-    // }
-
-    // if (score->staves().size() > 3) {
-    //     //! NOTE: Calculate the dpi to display all page elements
-    //     double originalPageHeight = page->height() - score->style().styleD(engraving::Sid::pageOddTopMargin)
-    //                                 - score->style().styleD(engraving::Sid::pageOddBottomMargin);
-    //     double margin = 100.0;
-    //     double ttboxHeight = originalPageHeight + margin * 2;
-    //     double scale = config.height / ttboxHeight;
-    //     config.canvasDpi = scale * engraving::DPI;
-    // }
-
-    // score->style().set(engraving::Sid::pageHeight, config.height / config.canvasDpi);
-    // score->style().set(engraving::Sid::pageWidth, config.width / config.canvasDpi);
-    // score->style().set(engraving::Sid::pagePrintableWidth, score->style().styleD(engraving::Sid::pageWidth)
-    //                    - score->style().styleD(engraving::Sid::pageOddLeftMargin)
-    //                    - score->style().styleD(engraving::Sid::pageEvenLeftMargin));
+    score->style().set(engraving::Sid::pageHeight, (config.height - _piano_height) / config.canvasDpi);
+    score->style().set(engraving::Sid::pageWidth, config.width / config.canvasDpi);
+    score->style().set(engraving::Sid::pagePrintableWidth, score->style().styleD(engraving::Sid::pageWidth)
+                       - score->style().styleD(engraving::Sid::pageOddLeftMargin)
+                       - score->style().styleD(engraving::Sid::pageEvenLeftMargin));
 
     score->style().set(engraving::Sid::pageEvenTopMargin, 0.0);
     score->style().set(engraving::Sid::pageEvenBottomMargin, 0.0);
@@ -528,13 +433,13 @@ void VideoWriter::doGenerate(muse::media::IVideoEncoderPtr encoder, INotationPtr
     frame.setDotsPerMeterX(std::lrint((actualConfig.canvasDpi * 1000) / engraving::INCH));
     frame.setDotsPerMeterY(std::lrint((actualConfig.canvasDpi * 1000) / engraving::INCH));
 
-    muse::RectF frameRect = muse::RectF::fromQRectF(QRectF(frame.rect()));
-
     QPainter qp(&frame);
     qp.setRenderHint(QPainter::Antialiasing, true);
     qp.setRenderHint(QPainter::TextAntialiasing, true);
 
     Painter painter(&qp, "video_writer");
+
+    muse::RectF frameRect = muse::RectF::fromQRectF(QRectF(frame.rect()));
     qreal keyboard_scale = m_trickFunction(&qp, frameRect.toQRectF(), keyboardRect.toQRectF());
 
     double pianoHeight = _piano_height * frameRect.height() / config.height * keyboard_scale + 4;
@@ -549,11 +454,6 @@ void VideoWriter::doGenerate(muse::media::IVideoEncoderPtr encoder, INotationPtr
     pianoTopBorderRect = muse::RectF(frameRect.x(), frameRect.bottom() - pianoHeight, 
                                         frameRect.width(), pianoHeight - keyboardHeight);
 
-    // const Color PIANO_BG_COLOR = Color(54, 54, 56, 255);
-    const Color KEYBOARD_BG_COLOR = Color(36, 36, 39, 255);
-
-    auto painting = notation->masterNotation()->notation()->painting();
-
     // Setup duration
     INotationPlaybackPtr playback = notation->masterNotation()->playback();
     float totalPlayTimeSec = playback->totalPlayTime();
@@ -562,21 +462,17 @@ void VideoWriter::doGenerate(muse::media::IVideoEncoderPtr encoder, INotationPtr
     int scoreFrameCount = static_cast<int>(totalPlayTimeSec * actualConfig.fps);
     int trailingFrameCount = static_cast<int>(actualConfig.trailingSec * actualConfig.fps);
     int totalFrameCount = leadingFrameCount + scoreFrameCount + trailingFrameCount;
-    LOGI() << "totalPlayTime: " << totalPlayTimeSec << " sec" << " frame count " << totalFrameCount;
+    LOGI() << "totalPlayTime: " << totalPlayTimeSec << " sec" << ", frame count: " << totalFrameCount;
 
-    // int frameCount = (totalPlayTimeSec + config.leadingSec + config.trailingSec) * config.fps;
-    frameCount = (totalPlayTimeSec + config.leadingSec) * config.fps;
-
-    // --master version
     m_progress.start();
 
     // Add score title
-    if (!generateLeadingFrames(encoder, notation, painter, frame, actualConfig, totalFrameCount)) {
+    if (!generateLeadingFrames(encoder, notation, &qp, painter, frame, actualConfig, totalFrameCount)) {
         return;
     }
 
     // Add score frames
-    if (!generateScoreFrames(encoder, notation, &qp, painter, frame, actualConfig, totalPlayTimeSec, leadingFrameCount, totalFrameCount)) {
+    if (!generateScoreFrames(encoder, notation, painter, frame, actualConfig, totalPlayTimeSec, leadingFrameCount, totalFrameCount)) {
         return;
     }
 
@@ -590,128 +486,87 @@ void VideoWriter::doGenerate(muse::media::IVideoEncoderPtr encoder, INotationPtr
 }
 
 bool VideoWriter::generateLeadingFrames(muse::media::IVideoEncoderPtr encoder, INotationPtr notation,
-                                        Painter& painter, QImage& frame,
+                                        QPainter* qp, Painter& painter, QImage& frame,
                                         const Config& config, int totalFrameCount)
 {
+    // int leadingFrameCount = static_cast<int>(config.leadingSec * config.fps);
+    // if (leadingFrameCount <= 0) {
+    //     return true;
+    // }
+
+    // muse::String title = notationTitle(notation);
+    // muse::String subtitle = notationSubtitle(notation);
+
+    // auto scaledFontPointSize = [&config](double basePixelSize) {
+    //     double pixelSize = basePixelSize * config.height / 1080.0;
+    //     return pixelSize * 72.0 / engraving::DPI;
+    // };
+
+    // Font titleFont(Font::FontFamily(u"Muse Sans"), Font::Type::Text);
+    // titleFont.setPointSizeF(scaledFontPointSize(128.0));
+    // titleFont.setWeight(Font::Weight::Medium);
+
+    // Font subtitleFont(titleFont);
+    // subtitleFont.setPointSizeF(scaledFontPointSize(48.0));
+
+    // muse::RectF frameRect = muse::RectF::fromQRectF(QRectF(frame.rect()));
+
+    // const double maxTextWidth = frameRect.width() * 0.9;
+    // const double textLeft = (frameRect.width() - maxTextWidth) / 2.0;
+    
+    // auto lineCount = [&](const FontMetrics& fm, const muse::String& text) {
+    //     if (text.isEmpty()) {
+    //         return 0;
+    //     }
+    //     double textWidth = fm.horizontalAdvance(text);
+    //     return std::max(1, static_cast<int>(std::ceil(textWidth / maxTextWidth)));
+    // };
+
+    // FontMetrics titleFontMetrics(titleFont);
+    // const int titleLines = lineCount(titleFontMetrics, title);
+    // const double titleHeight = titleLines * titleFontMetrics.lineSpacing();
+
+    // FontMetrics subtitleFontMetrics(subtitleFont);
+    // const int subtitleLines = lineCount(subtitleFontMetrics, subtitle);
+    // const double subtitleHeight = subtitleLines * subtitleFontMetrics.lineSpacing();
+
+    // double centerY = frameRect.center().y();
+    // double titleTop = centerY - titleHeight / 2.0;
+    // muse::RectF titleRect(textLeft, titleTop, maxTextWidth, titleHeight);
+
+    // const double subtitleOffset = config.height / 20.0;
+    // double subtitleTop = titleRect.bottom() + subtitleOffset;
+    // muse::RectF subtitleRect(textLeft, subtitleTop, maxTextWidth, subtitleHeight);
+
+    // for (int f = 0; f < leadingFrameCount; f++) {
+    //     if (m_abort) {
+    //         m_writeRet = make_ret(muse::Ret::Code::Cancel);
+    //         m_progress.finish(m_writeRet);
+    //         return false;
+    //     }
+
+    //     m_progress.progress(f, totalFrameCount);
+
+    //     painter.fillRect(frameRect, Color::BLACK);
+    //     painter.setPen(Color::WHITE);
+    //     painter.setFont(titleFont);
+    //     painter.drawText(titleRect, AlignCenter, TextWordWrap, title);
+
+    //     if (!subtitle.isEmpty()) {
+    //         painter.setFont(subtitleFont);
+    //         painter.drawText(subtitleRect, AlignCenter, TextWordWrap, subtitle);
+    //     }
+
+    //     encoder->encodeImage(frame);
+    // }
+
+    // return true;
+    ////////////////////////////////////////////////
+    // custom expand
     int leadingFrameCount = static_cast<int>(config.leadingSec * config.fps);
     if (leadingFrameCount <= 0) {
         return true;
     }
-
-    muse::String title = notationTitle(notation);
-    muse::String subtitle = notationSubtitle(notation);
-
-    auto scaledFontPointSize = [&config](double basePixelSize) {
-        double pixelSize = basePixelSize * config.height / 1080.0;
-        return pixelSize * 72.0 / engraving::DPI;
-    };
-
-    Font titleFont(Font::FontFamily(u"Muse Sans"), Font::Type::Text);
-    titleFont.setPointSizeF(scaledFontPointSize(128.0));
-    titleFont.setWeight(Font::Weight::Medium);
-
-    Font subtitleFont(titleFont);
-    subtitleFont.setPointSizeF(scaledFontPointSize(48.0));
-
-    muse::RectF frameRect = muse::RectF::fromQRectF(QRectF(frame.rect()));
-
-    const double maxTextWidth = frameRect.width() * 0.9;
-    const double textLeft = (frameRect.width() - maxTextWidth) / 2.0;
-
-    auto lineCount = [&](const FontMetrics& fm, const muse::String& text) {
-        if (text.isEmpty()) {
-            return 0;
-        }
-        double textWidth = fm.horizontalAdvance(text);
-        return std::max(1, static_cast<int>(std::ceil(textWidth / maxTextWidth)));
-    };
-
-    FontMetrics titleFontMetrics(titleFont);
-    const int titleLines = lineCount(titleFontMetrics, title);
-    const double titleHeight = titleLines * titleFontMetrics.lineSpacing();
-
-    FontMetrics subtitleFontMetrics(subtitleFont);
-    const int subtitleLines = lineCount(subtitleFontMetrics, subtitle);
-    const double subtitleHeight = subtitleLines * subtitleFontMetrics.lineSpacing();
-
-    double centerY = frameRect.center().y();
-    double titleTop = centerY - titleHeight / 2.0;
-    muse::RectF titleRect(textLeft, titleTop, maxTextWidth, titleHeight);
-
-    const double subtitleOffset = config.height / 20.0;
-    double subtitleTop = titleRect.bottom() + subtitleOffset;
-    muse::RectF subtitleRect(textLeft, subtitleTop, maxTextWidth, subtitleHeight);
-
-    for (int f = 0; f < leadingFrameCount; f++) {
-        if (m_abort) {
-            m_writeRet = make_ret(muse::Ret::Code::Cancel);
-            m_progress.finish(m_writeRet);
-            return false;
-        }
-
-        m_progress.progress(f, totalFrameCount);
-
-        painter.fillRect(frameRect, Color::BLACK);
-        painter.setPen(Color::WHITE);
-        painter.setFont(titleFont);
-        painter.drawText(titleRect, AlignCenter, TextWordWrap, title);
-
-        if (!subtitle.isEmpty()) {
-            painter.setFont(subtitleFont);
-            painter.drawText(subtitleRect, AlignCenter, TextWordWrap, subtitle);
-        }
-
-        encoder->encodeImage(frame);
-    }
-
-    return true;
-}
-
-bool VideoWriter::generateTrailingFrames(muse::media::IVideoEncoderPtr encoder, const Config& config)
-{
-    int trailingFrameCount = static_cast<int>(config.trailingSec * config.fps);
-    if (trailingFrameCount <= 0) {
-        return true;
-    }
-
-    static const muse::io::path_t RESOURCE_PATH = ":/videoexport/internal/resources/video_made_with.mp4";
-    muse::ByteArray videoData = fileSystem()->readFile(RESOURCE_PATH).val;
-
-    encoder->encodeVideo(videoData, trailingFrameCount);
-
-    return true;
-}
-
-bool VideoWriter::generateScoreFrames(muse::media::IVideoEncoderPtr encoder, INotationPtr notation,
-                                      QPainter* qp, Painter& painter, QImage& frame,
-                                      const Config& config, float totalPlayTimeSec,
-                                      int leadingFrameCount, int totalFrameCount)
-{
-    int scoreFrameCount = static_cast<int>(totalPlayTimeSec * config.fps);
-    if (scoreFrameCount <= 0) {
-        return true;
-    }
-
-    PageList pages = notation->elements()->pages();
-    auto painting = notation->painting();
-    INotationPlaybackPtr playback = notation->masterNotation()->playback();
-    muse::RectF frameRect = muse::RectF::fromQRectF(QRectF(frame.rect()));
-
-    auto pageByTick = [](const PageList& pages, tick_t tick) -> const Page* {
-        for (const Page* p : pages) {
-            if (tick < static_cast<tick_t>(p->endTick().ticks())) {
-                return p;
-            }
-        }
-        return nullptr;
-    };
-
-    const Color CURSOR_COLOR = Color(0, 0, 255, 100);
-    // --master version
-    // const Color CURSOR_COLOR = Color(2, 109, 203, 127);
-
-    PlaybackCursor cursor(iocContext());
-    cursor.setNotation(notation);
 
     std::vector<QString> linesVec;
     bool isCoverLogoAvatar = true;
@@ -725,10 +580,7 @@ bool VideoWriter::generateScoreFrames(muse::media::IVideoEncoderPtr encoder, INo
     int fontSize = 20;
     bool avatarFullHeight = false;
     int textHeightScale = 5;
-    // QString avatarString = "/Users/erlich/Downloads/Tchaikovskys_Piano_Concerto_No._1_Opus_23_Arrangement_for_Solo_Piano.png";
-    // QString avatarString = "/Users/erlich/Downloads/advanced_processed_1752139510167.png";
-    // QString avatarString = "/Users/erlich/Downloads/simple_processed_xingxingdiandeng_cropped.png";
-    QString avatarString = "/Users/erlich/Developer/workspace/python/pythonProject/test/test_images/Luffy_Fierce_Attack.png"; 
+    QString avatarString = ""; 
 
     // read Fine-tune parameters of video cover from a txt file
     // QString fineTunePath = "/Users/erlich/Downloads/musescore-fune-tune.txt";
@@ -785,250 +637,239 @@ bool VideoWriter::generateScoreFrames(muse::media::IVideoEncoderPtr encoder, INo
     // QString composer = score->metaTag(u"composer");
     // QString arranger = score->metaTag(u"arranger");
 
-    // QString line1 = workTitle;
-    // QString line2 = subtitle;
-    // QString line3 = arranger;
-    
-    // if (!composer.isEmpty()) {
-    //     if (line3.isEmpty()) {
-    //         line3 = composer;
-    //     } else {
-    //         line3 = arranger + "  " + composer; 
-    //     }
-    // }
-
-    // if (!line1.isEmpty()) {
-    //     linesVec.push_back(line1);
-    // }
-    // if (!line2.isEmpty()) {
-    //     linesVec.push_back(line2);
-    // }
-    // if (!line3.isEmpty()) {
-    //     linesVec.push_back(line3);
-    // }
-
-    // linesVec.clear();
-    // // linesVec.push_back("No. 1 in B♭ Minor, Opus 23");
-    // linesVec.push_back("Entrance to the Infinity Castle");
-    // // linesVec.push_back("My Fatherland - The Moldau");
-    // linesVec.push_back("Demon Slayer");
-    // linesVec.push_back("Transcribed by Erlich");
-
     int lines = linesVec.size();
 
     // QFont::Light Normal Medium DemiBold Bold
     QFont font("Comic Sans MS", fontSize, QFont::Normal);   // 38 - Medium  48 - 2160p  28 - Normal
     QFontMetrics fm(font);
 
-    // high_resolution_clock::time_point startTp = high_resolution_clock::now();
-
     // Flag to check if the leading frame has been saved
     bool leadingFrameSaved = false;
+    muse::RectF frameRect = muse::RectF::fromQRectF(QRectF(frame.rect()));
 
-    for (int f = 0; f < frameCount; f++) {
-        float currentTimeSec = (qreal)f / config.fps;
-        
-        // while (true) {
-        //     auto now = high_resolution_clock::now();
-        //     double elapsedSec = duration_cast<duration<double>>(now - startTp).count();
+    for (int f = 0; f < leadingFrameCount; f++) {
+        int textHeight = fm.height();
+        int totalTextHeight = lines * textHeight;
+        qp->setFont(font);
+        qp->setPen(Qt::white);
+        QRectF rect = frameRect.toQRectF();
 
-        //     if (elapsedSec >= currentTimeSec) {
-        //         break;
-        //     }
+        if (isCoverLogoAvatar) {
+            // logo avatar
+            qreal centerX = rect.center().x();
+            qreal centerY = rect.center().y();
+            textHeight = textHeight * 5;
 
-        //     // Use sleep when the time interval is relatively long to reduce CPU usage.
-        //     if (currentTimeSec - elapsedSec > 0.002) { // 2ms 
-        //         std::this_thread::sleep_for(500us); // Microsecond-level sleep
-        //     } else {
-        //         // Use spin-waiting when approaching the target time to improve accuracy.
-        //         std::this_thread::yield();
-        //     }
-        // }
-        
-        if (currentTimeSec < config.leadingSec) {
-            int textHeight = fm.height();
-            int totalTextHeight = lines * textHeight;
-            qp->setFont(font);
-            qp->setPen(Qt::white);
-            QRectF rect = frameRect.toQRectF();
+            QImage avatar(avatarString);
+            int avatarSize = textHeight * 8;
+            if (!avatar.isNull()) {
+                avatar = avatar.scaledToHeight(avatarSize, Qt::SmoothTransformation);
 
-            if (isCoverLogoAvatar) {
-                // logo avatar
+                qreal xStart = centerX - avatar.width() / 2;
+                qreal yStart = centerY - avatar.height() / 2;
+                
+                qp->drawImage(QPointF(xStart, yStart), avatar);
+            }
+
+        } else {
+            if (!isCoverTextAvatar) {
+                // text
+                int yStart = rect.center().y() - totalTextHeight;
+                int t_scale = 1;
+                if (linesVec.size() >= 6) {
+                    t_scale = 2;
+                }
+                yStart -= textHeight * 6 * t_scale;
+                for (int i = 0; i < lines; i++) {
+                    QString line = linesVec[i];
+                    QRectF textRect = rect;
+                    textRect.moveTop(yStart + i * textHeight * 5);
+                    qp->drawText(textRect, Qt::AlignHCenter | Qt::AlignTop, line);
+                }
+            } else {
+                // avatar + text
                 qreal centerX = rect.center().x();
                 qreal centerY = rect.center().y();
-                textHeight = textHeight * 5;
+                textHeight = textHeight * textHeightScale;
+                totalTextHeight = totalTextHeight * textHeightScale;
 
-                QImage avatar(avatarString);
-                int avatarSize = textHeight * 8;
+                QImage avatar(avatarString);  // 
+                int avatarSize = textHeight * 8;  // 6
+                if (avatarFullHeight) {
+                    avatarSize = rect.height();
+                }
                 if (!avatar.isNull()) {
-                    avatar = avatar.scaledToHeight(avatarSize, Qt::SmoothTransformation);
-
-                    qreal xStart = centerX - avatar.width() / 2;
-                    qreal yStart = centerY - avatar.height() / 2;
-                    
-                    qp->drawImage(QPointF(xStart, yStart), avatar);
+                    if (coverAvatarLayout == 2) {
+                        avatar = avatar.scaledToWidth(rect.width(), Qt::SmoothTransformation);
+                        QRect cropRect(0, avatar.height() - rect.height(), rect.width(), rect.height());
+                        avatar = avatar.copy(cropRect);
+                    } else {
+                        // avatar = avatar.scaled(avatarSize, avatarSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+                        avatar = avatar.scaledToHeight(avatarSize, Qt::SmoothTransformation);
+                    }
                 }
 
-            } else {
-                if (!isCoverTextAvatar) {
-                    // text
-                    int yStart = rect.center().y() - totalTextHeight;
-                    int t_scale = 1;
-                    if (linesVec.size() >= 6) {
-                        t_scale = 2;
+                int maxTextWidth = 0;
+                for (const QString& line : linesVec) {
+                    int lineWidth = fm.horizontalAdvance(line);
+                    lineWidth = lineWidth * 5;
+                    if (lineWidth > maxTextWidth) {
+                        maxTextWidth = lineWidth;
                     }
-                    yStart -= textHeight * 6 * t_scale;
-                    for (int i = 0; i < lines; i++) {
-                        QString line = linesVec[i];
-                        QRectF textRect = rect;
-                        textRect.moveTop(yStart + i * textHeight * 5);
-                        qp->drawText(textRect, Qt::AlignHCenter | Qt::AlignTop, line);
-                    }
-                } else {
-                    // avatar + text
-                    qreal centerX = rect.center().x();
-                    qreal centerY = rect.center().y();
-                    textHeight = textHeight * textHeightScale;
-                    totalTextHeight = totalTextHeight * textHeightScale;
-
-                    QImage avatar(avatarString);  // 
-                    int avatarSize = textHeight * 8;  // 6
-                    if (avatarFullHeight) {
-                        avatarSize = rect.height();
-                    }
-                    if (!avatar.isNull()) {
-                        if (coverAvatarLayout == 2) {
-                            avatar = avatar.scaledToWidth(rect.width(), Qt::SmoothTransformation);
-                            QRect cropRect(0, avatar.height() - rect.height(), rect.width(), rect.height());
-                            avatar = avatar.copy(cropRect);
-                        } else {
-                            // avatar = avatar.scaled(avatarSize, avatarSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
-                            avatar = avatar.scaledToHeight(avatarSize, Qt::SmoothTransformation);
-                        }
-                    }
-
-                    int maxTextWidth = 0;
-                    for (const QString& line : linesVec) {
-                        int lineWidth = fm.horizontalAdvance(line);
-                        lineWidth = lineWidth * 5;
-                        if (lineWidth > maxTextWidth) {
-                            maxTextWidth = lineWidth;
-                        }
-                    }
-                    
-                    qreal spacing = 0; // 20
-                    qreal totalWidth = avatar.width() + spacing + maxTextWidth;
-                    if (coverAvatarLayout == 3) {
-                        totalWidth = avatar.width() > maxTextWidth ? avatar.width() : maxTextWidth;
-                    }
-                    qreal xStart = centerX - totalWidth / 2;
-                    if (coverAvatarLayout == 1) {
-                        xStart = centerX + totalWidth / 2 - avatar.width();
-                    } else if (coverAvatarLayout == 3) {
-                        xStart = centerX - avatar.width() / 2;
-                    }
-                    qreal yStart = centerY - totalTextHeight / 2;
-                    if (coverAvatarLayout == 3) {
-                        qreal verti_total_height = totalTextHeight + spacing + avatar.height();
-                        yStart = centerY + verti_total_height / 2 - avatar.height();
-                    }
-                    if (!avatar.isNull()) {
-                        if (coverAvatarLayout == 2) {
-                            qp->drawImage(rect.topLeft(), avatar);
-                        } else if (coverAvatarLayout == 3) {
-                            qp->drawImage(QPointF(xStart, yStart), avatar);
-                        } else {
-                            // if (coverAvatarLayout == 0) {
-                            //     // xStart += 0.4 * totalTextHeight;
-                            // } else if (coverAvatarLayout == 1) {
-                            //     // xStart -= 0.4 * totalTextHeight;
-                            // }
-                            xStart += coverHoffsetScale * totalTextHeight;
-                            if (xStart < 0) {
-                                xStart = 0;
-                            }
-                            qp->drawImage(QPointF(xStart, yStart + (totalTextHeight - avatar.height()) / 2), avatar);
-                        }
-                    }
-
-                    voffset = voffsetScale * totalTextHeight;
-                    hoffset = hoffsetScale * totalTextHeight;
-
+                }
+                
+                qreal spacing = 0; // 20
+                qreal totalWidth = avatar.width() + spacing + maxTextWidth;
+                if (coverAvatarLayout == 3) {
+                    totalWidth = avatar.width() > maxTextWidth ? avatar.width() : maxTextWidth;
+                }
+                qreal xStart = centerX - totalWidth / 2;
+                if (coverAvatarLayout == 1) {
+                    xStart = centerX + totalWidth / 2 - avatar.width();
+                } else if (coverAvatarLayout == 3) {
+                    xStart = centerX - avatar.width() / 2;
+                }
+                qreal yStart = centerY - totalTextHeight / 2;
+                if (coverAvatarLayout == 3) {
+                    qreal verti_total_height = totalTextHeight + spacing + avatar.height();
+                    yStart = centerY + verti_total_height / 2 - avatar.height();
+                }
+                if (!avatar.isNull()) {
                     if (coverAvatarLayout == 2) {
-                        // voffset = -0.5 * totalTextHeight;
-                        // hoffset = 0.5 * totalTextHeight;
-                        for (int i = 0; i < lines; ++i) {
-                            QString line = linesVec[i];
-                            qreal textX = centerX - maxTextWidth / 2 + hoffset; 
-                            qreal textY = yStart + i * textHeight + voffset;
-
-                            QRectF textRect(textX, textY, maxTextWidth, textHeight);
-                            qp->drawText(textRect, Qt::AlignCenter | Qt::AlignVCenter, line);
-                        }
+                        qp->drawImage(rect.topLeft(), avatar);
                     } else if (coverAvatarLayout == 3) {
-                        for (int i = 0; i < lines; ++i) {
-                            QString line = linesVec[i];
-                            qreal textX = centerX - maxTextWidth / 2; 
-                            qreal textY = yStart - spacing - (lines - i) * textHeight;
-                            QRectF textRect(textX, textY, maxTextWidth, textHeight);
-                            qp->drawText(textRect, Qt::AlignCenter, line);
-                        }
+                        qp->drawImage(QPointF(xStart, yStart), avatar);
                     } else {
                         // if (coverAvatarLayout == 0) {
-                        //     voffset = -0.2 * totalTextHeight;
-                        //     hoffset = -0.2 * totalTextHeight;
-                        // } else if (coverAvatarLayout == 1) { 
-                        //     voffset = -0.2 * totalTextHeight;
-                        //     hoffset = 0.5 * totalTextHeight;
+                        //     // xStart += 0.4 * totalTextHeight;
+                        // } else if (coverAvatarLayout == 1) {
+                        //     // xStart -= 0.4 * totalTextHeight;
                         // }
-
-                        for (int i = 0; i < lines; ++i) {
-                            QString line = linesVec[i];
-                            qreal textX = xStart + avatar.width() + spacing + hoffset; 
-                            if (coverAvatarLayout == 1) {
-                                textX = xStart - spacing - maxTextWidth + hoffset;
-                            }
-                            qreal textY = yStart + i * textHeight + voffset;
-
-                            QRectF textRect(textX, textY, maxTextWidth, textHeight);
-                            qp->drawText(textRect, Qt::AlignHCenter | Qt::AlignVCenter, line);
+                        xStart += coverHoffsetScale * totalTextHeight;
+                        if (xStart < 0) {
+                            xStart = 0;
                         }
+                        qp->drawImage(QPointF(xStart, yStart + (totalTextHeight - avatar.height()) / 2), avatar);
+                    }
+                }
+
+                voffset = voffsetScale * totalTextHeight;
+                hoffset = hoffsetScale * totalTextHeight;
+
+                if (coverAvatarLayout == 2) {
+                    // voffset = -0.5 * totalTextHeight;
+                    // hoffset = 0.5 * totalTextHeight;
+                    for (int i = 0; i < lines; ++i) {
+                        QString line = linesVec[i];
+                        qreal textX = centerX - maxTextWidth / 2 + hoffset; 
+                        qreal textY = yStart + i * textHeight + voffset;
+
+                        QRectF textRect(textX, textY, maxTextWidth, textHeight);
+                        qp->drawText(textRect, Qt::AlignCenter | Qt::AlignVCenter, line);
+                    }
+                } else if (coverAvatarLayout == 3) {
+                    for (int i = 0; i < lines; ++i) {
+                        QString line = linesVec[i];
+                        qreal textX = centerX - maxTextWidth / 2; 
+                        qreal textY = yStart - spacing - (lines - i) * textHeight;
+                        QRectF textRect(textX, textY, maxTextWidth, textHeight);
+                        qp->drawText(textRect, Qt::AlignCenter, line);
+                    }
+                } else {
+                    // if (coverAvatarLayout == 0) {
+                    //     voffset = -0.2 * totalTextHeight;
+                    //     hoffset = -0.2 * totalTextHeight;
+                    // } else if (coverAvatarLayout == 1) { 
+                    //     voffset = -0.2 * totalTextHeight;
+                    //     hoffset = 0.5 * totalTextHeight;
+                    // }
+
+                    for (int i = 0; i < lines; ++i) {
+                        QString line = linesVec[i];
+                        qreal textX = xStart + avatar.width() + spacing + hoffset; 
+                        if (coverAvatarLayout == 1) {
+                            textX = xStart - spacing - maxTextWidth + hoffset;
+                        }
+                        qreal textY = yStart + i * textHeight + voffset;
+
+                        QRectF textRect(textX, textY, maxTextWidth, textHeight);
+                        qp->drawText(textRect, Qt::AlignHCenter | Qt::AlignVCenter, line);
                     }
                 }
             }
-
-            // Save the first frame of the leading section as an image
-            if (!leadingFrameSaved) {
-                // QString imageFile = filePath.toQString();
-                // imageFile.replace(".mp4", ".png");
-                // frame.save(imageFile);
-
-                frame.save(*cover_path);
-
-                LOGI() << "Leading frame saved as image: " << cover_path->toStdString();
-                leadingFrameSaved = true;
-            }
-
-            encoder->encodeImage(frame);
-
-            continue;
         }
-        currentTimeSec -= config.leadingSec;
 
-        // --master version
-        // for (int f = 0; f < scoreFrameCount; f++) {
-        //     if (m_abort) {
-        //         m_writeRet = make_ret(muse::Ret::Code::Cancel);
-        //         m_progress.finish(m_writeRet);
-        //         return false;
-        //     }
+        // Save the first frame of the leading section as an image
+        if (!leadingFrameSaved) {
+            frame.save(*cover_path);
 
-        //     m_progress.progress(leadingFrameCount + f, totalFrameCount);
+            LOGI() << "Leading frame saved as image: " << cover_path->toStdString();
+            leadingFrameSaved = true;
+        }
 
-        //     float currentTimeSec = static_cast<float>(f) / config.fps;
-        //     if (currentTimeSec > totalPlayTimeSec) {
-        //         currentTimeSec = totalPlayTimeSec;
-        //     }
+        encoder->encodeImage(frame);
+    }
+    return true;
+}
+
+bool VideoWriter::generateTrailingFrames(muse::media::IVideoEncoderPtr encoder, const Config& config)
+{
+    int trailingFrameCount = static_cast<int>(config.trailingSec * config.fps);
+    if (trailingFrameCount <= 0) {
+        return true;
+    }
+
+    static const muse::io::path_t RESOURCE_PATH = ":/videoexport/internal/resources/video_made_with.mp4";
+    muse::ByteArray videoData = fileSystem()->readFile(RESOURCE_PATH).val;
+
+    encoder->encodeVideo(videoData, trailingFrameCount);
+
+    return true;
+}
+
+bool VideoWriter::generateScoreFrames(muse::media::IVideoEncoderPtr encoder, INotationPtr notation,
+                                      Painter& painter, QImage& frame,
+                                      const Config& config, float totalPlayTimeSec,
+                                      int leadingFrameCount, int totalFrameCount)
+{
+    int scoreFrameCount = static_cast<int>(totalPlayTimeSec * config.fps);
+    if (scoreFrameCount <= 0) {
+        return true;
+    }
+
+    PageList pages = notation->elements()->pages();
+    auto painting = notation->painting();
+    INotationPlaybackPtr playback = notation->masterNotation()->playback();
+    muse::RectF frameRect = muse::RectF::fromQRectF(QRectF(frame.rect()));
+
+    auto pageByTick = [](const PageList& pages, tick_t tick) -> const Page* {
+        for (const Page* p : pages) {
+            if (tick < static_cast<tick_t>(p->endTick().ticks())) {
+                return p;
+            }
+        }
+        return nullptr;
+    };
+
+    // const Color CURSOR_COLOR = Color(0, 0, 255, 100);
+    const Color CURSOR_COLOR = Color(2, 109, 203, 127);
+
+    PlaybackCursor cursor(iocContext());
+    cursor.setNotation(notation);
+    
+    for (int f = 0; f < scoreFrameCount; f++) {
+        if (m_abort) {
+            m_writeRet = make_ret(muse::Ret::Code::Cancel);
+            m_progress.finish(m_writeRet);
+            return false;
+        }
+
+        m_progress.progress(leadingFrameCount + f, totalFrameCount);
+
+        float currentTimeSec = static_cast<float>(f) / config.fps;
+        if (currentTimeSec > totalPlayTimeSec) {
+            currentTimeSec = totalPlayTimeSec;
+        }
 
         tick_t tick = playback->secToTick(currentTimeSec);
 
@@ -1036,39 +877,34 @@ bool VideoWriter::generateScoreFrames(muse::media::IVideoEncoderPtr encoder, INo
         if (!page) {
             break;
         }
+
+        if (!page->firstMeasure()) {
+            // Skip pages with no notation
+            continue;
+        }
+
         INotationPainting::Options opt;
         opt.fromPage = static_cast<int>(page->pageNumber());
         opt.toPage = opt.fromPage;
-        // opt.deviceDpi = config.canvasDpi;
-        opt.deviceDpi = CANVAS_DPI;
-
-        // --master version
-        // if (!page->firstMeasure()) {
-        //     // Skip pages with no notation
-        //     continue;
-        // }
-
-        // INotationPainting::Options opt;
-        // opt.fromPage = static_cast<int>(page->pageNumber());
-        // opt.toPage = opt.fromPage;
-        // opt.deviceDpi = config.canvasDpi;
+        opt.deviceDpi = config.canvasDpi;
 
         painter.fillRect(frameRect, Color::BLACK);
 
         painter.save();
         painter.translate(config.moveToCenter);
 
-        painter.save();
         painting->paintPrint(&painter, opt);
+
         cursor.move(tick);
+
         muse::RectF cursorRect = cursor.rect();
         muse::PointF pagePos = page->pos();
         muse::RectF cursorAbsRect = cursorRect.translated(-pagePos);
         painter.fillRect(cursorAbsRect, CURSOR_COLOR);
         painter.restore();
 
-        // painter.fillRect(pianoRect, PIANO_BG_COLOR);
-        // painter.fillRect(keyboardRect, KEYBOARD_BG_COLOR);
+        painter.fillRect(pianoRect, PIANO_BG_COLOR);
+        painter.fillRect(keyboardRect, KEYBOARD_BG_COLOR);
         painter.fillRect(pianoTopBorderRect, PIANO_BG_COLOR);
 
         painter.save();
@@ -1077,13 +913,8 @@ bool VideoWriter::generateScoreFrames(muse::media::IVideoEncoderPtr encoder, INo
 
         encoder->encodeImage(frame);
     }
-
-    encoder->close();
     m_trickOffFunction();
-    return muse::make_ok();
-
-    // --master version
-    // return true;
+    return true;
 }
 
 void VideoWriter::pianoViewTrick(std::function<qreal(QPainter*, QRectF, QRectF)> trickFunction) {

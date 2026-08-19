@@ -23,13 +23,13 @@
 
 using namespace mu::iex::videoexport;
 
-static const ViewMode DEFAULT_VIEW_MODE = ViewMode::PageFull;
+static const ViewMode DEFAULT_VIEW_MODE = ViewMode::Flexible; // ViewMode::PageFull
 static const bool DEFAULT_SHOW_PIANO = false;
 static const PianoPosition DEFAULT_PIANO_POSITION = PianoPosition::Bottom;
 static const std::string DEFAULT_RESOLUTION = "1440p";
 static const int DEFAULT_FPS = 24;
-static const double DEFAULT_LEADING_SEC = 3.0;
-static const double DEFAULT_TRAILING_SECONDS = 0.0;
+static const double DEFAULT_LEADING_SEC = 2.0;
+static const double DEFAULT_TRAILING_SECONDS = 3.0;
 
 static const std::vector<std::string> AVAILABLE_RESOLUTIONS = { "2160p", "1440p", "1080p" };
 
