@@ -28,6 +28,7 @@
 #include "notation/notationtypes.h"
 #include "ui/iuiactionsmodule.h"
 #include "context/iglobalcontext.h"
+#include "ui/toolconfig.h"
 
 #include "notationactioncontroller.h"
 

@@ -26,6 +26,7 @@
 #include "ui/view/musicalsymbolcodes.h"
 #include "playback/playbacktypes.h"
 #include "playback/playbackcommands.h"
+#include "ui/toolconfig.h"
 
 using namespace mu::playback;
 using namespace mu::engraving;
@@ -117,17 +118,17 @@ void PlaybackToolBarModel::updateActions()
     //! NOTE At the moment no customization ability
     ToolConfig config = defaultPlaybackToolConfig();
     for (const ToolConfig::Item& item : config.items) {
-        if (isAdditionalAction(item.action) && !m_isToolbarFloating) {
+        if (isAdditionalAction(item.intent) && !m_isToolbarFloating) {
             //! NOTE In this case, we want to see the actions' description instead of the title
-            settingsItems << makeMenuItem(item.action);
+            settingsItems << makeMenuItem(item.intent);
         } else {
             MenuItem* menuItem = nullptr;
-            if (item.action == PLAY_TOGGLE_ID) {
+            if (item.intent == PLAY_TOGGLE_ID) {
                 const UiAction& action = playAction();
                 menuItem = makeMenuItem(action.code);
                 menuItem->setId(PLAY_TOGGLE_ID);
             } else {
-                menuItem = makeMenuItem(item.action);
+                menuItem = makeMenuItem(item.intent);
             }
 
             result << menuItem;

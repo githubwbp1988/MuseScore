@@ -50,7 +50,7 @@ void NoteInputBarCustomiseModel::load()
     ToolConfig toolConfig = uiState()->toolConfig(NOTE_INPUT_TOOLBAR_NAME, NotationUiActions::defaultNoteInputBarConfig());
 
     for (const ToolConfig::Item& item : toolConfig.items) {
-        const UiAction& action = actionsRegister()->action(item.action);
+        const UiAction& action = actionsRegister()->action(item.intent);
         items << makeItem(action, item.show);
     }
 
@@ -247,7 +247,7 @@ void NoteInputBarCustomiseModel::saveActions()
         }
 
         ToolConfig::Item citem;
-        citem.action = customiseItem->id().toStdString();
+        citem.intent = customiseItem->id().toStdString();
         citem.show = customiseItem->checked();
         config.items.append(citem);
     }
