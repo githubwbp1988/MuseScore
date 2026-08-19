@@ -25,7 +25,7 @@
 
 #include "translation.h"
 
-#include "internal/notationuiactions.h"
+#include "noteinputbarmodel.h"
 
 #include "log.h"
 
@@ -47,7 +47,7 @@ void NoteInputBarCustomiseModel::load()
 
     QList<Item*> items;
 
-    ToolConfig toolConfig = uiState()->toolConfig(NOTE_INPUT_TOOLBAR_NAME, NotationUiActions::defaultNoteInputBarConfig());
+    ToolConfig toolConfig = uiState()->toolConfig(NOTE_INPUT_TOOLBAR_NAME, NoteInputBarModel::defaultNoteInputConfig());
 
     for (const ToolConfig::Item& item : toolConfig.items) {
         const UiAction& action = actionsRegister()->action(item.intent);
