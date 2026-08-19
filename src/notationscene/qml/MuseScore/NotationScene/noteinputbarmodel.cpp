@@ -109,19 +109,19 @@ void NoteInputBarModel::load()
             continue;
         }
 
-        if (citem.action.empty()) {
+        if (citem.intent.empty()) {
             section++;
             continue;
         }
 
         MenuItemList subitems;
-        if (citem.action == CROSS_STAFF_BEAMING_CODE) {
+        if (citem.intent == CROSS_STAFF_BEAMING_CODE) {
             subitems = makeCrossStaffBeamingItems();
-        } else if (citem.action == TUPLET_ACTION_CODE) {
+        } else if (citem.intent == TUPLET_ACTION_CODE) {
             subitems = makeTupletItems();
         }
 
-        MenuItem* item = makeActionItem(uiActionsRegister()->action(citem.action), QString::number(section), subitems);
+        MenuItem* item = makeActionItem(uiActionsRegister()->action(citem.intent), QString::number(section), subitems);
         items << item;
     }
 

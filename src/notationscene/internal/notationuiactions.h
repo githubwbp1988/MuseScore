@@ -27,6 +27,7 @@
 #include "modularity/ioc.h"
 #include "notation/notationtypes.h"
 #include "ui/iuiactionsmodule.h"
+#include "ui/toolconfig.h"
 
 #include "notationactioncontroller.h"
 
