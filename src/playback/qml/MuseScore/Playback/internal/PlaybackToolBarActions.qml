@@ -110,7 +110,7 @@ Item {
         // }
 
         // alex - Compatible with extended : keyboard-play-offset slider control, ...
-        readonly property var popupItemIds: ["keyboard-play-offset"]
+        readonly property var popupItemIds: ["command://playback/keyboard-play-offset"]
         delegate: Loader {
             id: delegateLoader
 
@@ -121,7 +121,7 @@ Item {
             height: width
 
             readonly property bool isPopupItem: Boolean(item) && buttonsListView.popupItemIds.includes(item.id)
-            readonly property bool isKeyboardPlayOffset: Boolean(item) && item.id === "keyboard-play-offset"
+            readonly property bool isKeyboardPlayOffset: Boolean(item) && item.id === "command://playback/keyboard-play-offset"
 
             sourceComponent: isPopupItem ? popupBtnComponent : flatBtnComponent
         

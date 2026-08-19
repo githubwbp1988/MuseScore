@@ -50,8 +50,8 @@ static const ToolConfig& defaultPlaybackToolConfig()
         config.items = {
             { REWIND_COMMAND, true },
             { "play-toggle", true }, // virtual code
-            { "command://playback/hear-playback-when-editing-toggle", true },
-            { "keyboard-play-offset", true },
+            { SOUND_TOGGLE_COMMAND, true },
+            { KEYBOARD_PLAY_OFFSET_COMMAND, true },
             { LOOP_TOGGLE_COMMAND, true },
             { LOOP_IN_COMMAND, true },
             { LOOP_OUT_COMMAND, true },

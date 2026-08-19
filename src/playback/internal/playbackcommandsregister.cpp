@@ -158,6 +158,13 @@ static const std::vector<CommandInfo> s_commandInfos = {
         Decoration(IconCode::Code::AUDIO, rcommand::Checkable::Yes)
     },
     CommandInfo{
+        KEYBOARD_PLAY_OFFSET_COMMAND,
+        TranslatableString("playback", "Keyboard play offset"),
+        TranslatableString("playback", "Adjust keyboard play offset"),
+        InputSchema(),
+        Decoration(IconCode::Code::MIXER)
+    },
+    CommandInfo{
         PAN_TOGGLE_COMMAND,
         TranslatableString("playback", "Pan score automatically"),
         TranslatableString("playback", "Toggle pan score automatically during playback"),
