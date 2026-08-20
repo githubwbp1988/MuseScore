@@ -100,6 +100,7 @@ private:
     std::function<qreal(QPainter*, QRectF, QRectF)> m_trickFunction = nullptr;
     std::function<void()> m_trickOffFunction = nullptr;
     std::function<void()> m_invokeFunction = nullptr;
+    std::function<void()> m_exportAbortFunction = nullptr;
 
     Config makeConfig() const;
 

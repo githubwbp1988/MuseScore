@@ -52,6 +52,7 @@ public:
     void setNotation(INotationPtr notation);
     void enableHighlightCursorNote(bool highlight);
     void enableKeyboardPlay(bool enable);
+    void enableVideoExport(bool enable);
     void move(muse::midi::tick_t tick, muse::midi::tick_t tick_delay = 0, bool isPlaying = true);
 
     bool visible() const;
@@ -234,5 +235,6 @@ private:
     bool pianoKeyboardPlaybackEnable = true;
 
     bool _scorePartChaged = false;
+    bool videoExportEnable = false;
 };
 }

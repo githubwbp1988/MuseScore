@@ -139,6 +139,10 @@ void PlaybackCursor::enableKeyboardPlay(bool enable)
     pianoKeyboardPlaybackEnable = enable;
 }
 
+void PlaybackCursor::enableVideoExport(bool enable) {
+    videoExportEnable = enable;
+}
+
 void PlaybackCursor::move(muse::midi::tick_t tick, muse::midi::tick_t tick_delay, bool isPlaying)
 {
     // LOGALEX();
@@ -146,6 +150,12 @@ void PlaybackCursor::move(muse::midi::tick_t tick, muse::midi::tick_t tick_delay
         m_rect = resolveCursorRectByTick1(tick, isPlaying);
         if (isPlaying && pianoKeyboardPlaybackEnable && tick_delay > 0) {
             resolveKeyboardByTick(tick_delay);
+        } else if (videoExportEnable) {
+            if (tick_delay > 0) {
+                resolveKeyboardByTick(tick_delay);
+            } else {
+                resolveKeyboardByTick(tick);
+            }
         }
     } else {
         m_rect = resolveCursorRectByTick(tick);

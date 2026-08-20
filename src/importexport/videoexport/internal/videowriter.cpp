@@ -43,7 +43,6 @@
 #include "notation/inotationpainting.h"
 #include "notation/inotationplayback.h"
 #include "notation/notationtypes.h"
-
 #include "notationscene/qml/MuseScore/NotationScene/playbackcursor.h"
 
 #include "defer.h"
@@ -296,6 +295,11 @@ void VideoWriter::abort()
 {
     m_abort = true;
 
+    if (m_exportAbortFunction) {
+        m_exportAbortFunction();
+        m_exportAbortFunction = nullptr;
+    }
+
     if (m_audioWriter) {
         m_audioWriter->abort();
     }
@@ -440,6 +444,11 @@ void VideoWriter::doGenerate(muse::media::IVideoEncoderPtr encoder, INotationPtr
     Painter painter(&qp, "video_writer");
 
     muse::RectF frameRect = muse::RectF::fromQRectF(QRectF(frame.rect()));
+    pianoRect = muse::RectF(frameRect.x(), frameRect.bottom() - _piano_height, 
+                                        frameRect.width(), _piano_height);
+
+    keyboardRect = muse::RectF(frameRect.x(), frameRect.bottom() - _keyboard_height, 
+                                        frameRect.width(), _keyboard_height);
     qreal keyboard_scale = m_trickFunction(&qp, frameRect.toQRectF(), keyboardRect.toQRectF());
 
     double pianoHeight = _piano_height * frameRect.height() / config.height * keyboard_scale + 4;
@@ -648,6 +657,11 @@ bool VideoWriter::generateLeadingFrames(muse::media::IVideoEncoderPtr encoder, I
     muse::RectF frameRect = muse::RectF::fromQRectF(QRectF(frame.rect()));
 
     for (int f = 0; f < leadingFrameCount; f++) {
+        if (m_abort) {
+            m_writeRet = make_ret(muse::Ret::Code::Cancel);
+            m_progress.finish(m_writeRet);
+            return false;
+        }
         int textHeight = fm.height();
         int totalTextHeight = lines * textHeight;
         qp->setFont(font);
@@ -819,6 +833,12 @@ bool VideoWriter::generateTrailingFrames(muse::media::IVideoEncoderPtr encoder, 
         return true;
     }
 
+    if (m_abort) {
+        m_writeRet = make_ret(muse::Ret::Code::Cancel);
+        m_progress.finish(m_writeRet);
+        return false;
+    }
+
     static const muse::io::path_t RESOURCE_PATH = ":/videoexport/internal/resources/video_made_with.mp4";
     muse::ByteArray videoData = fileSystem()->readFile(RESOURCE_PATH).val;
 
@@ -856,6 +876,10 @@ bool VideoWriter::generateScoreFrames(muse::media::IVideoEncoderPtr encoder, INo
 
     PlaybackCursor cursor(iocContext());
     cursor.setNotation(notation);
+    cursor.enableVideoExport(true);
+    m_exportAbortFunction = [&cursor]() {
+        cursor.enableVideoExport(false);
+    };
     
     for (int f = 0; f < scoreFrameCount; f++) {
         if (m_abort) {
@@ -913,7 +937,9 @@ bool VideoWriter::generateScoreFrames(muse::media::IVideoEncoderPtr encoder, INo
 
         encoder->encodeImage(frame);
     }
+    cursor.enableVideoExport(false);
     m_trickOffFunction();
+    m_exportAbortFunction = nullptr;
     return true;
 }
 

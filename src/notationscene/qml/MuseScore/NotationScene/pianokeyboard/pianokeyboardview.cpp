@@ -371,7 +371,11 @@ void PianoKeyboardView::checkResponseKeyOccluded() {
 void PianoKeyboardView::determineOctaveLabelsFont()
 {
     m_octaveLabelsFont.setFamily(QString::fromStdString(uiConfiguration()->fontFamily()));
-    m_octaveLabelsFont.setPixelSize(uiConfiguration()->fontSize() * std::min(m_keyWidthScaling, 1.5));
+    if (m_keyboard_scale > m_keyWidthScaling) {
+        m_octaveLabelsFont.setPixelSize(uiConfiguration()->fontSize() * std::max(m_keyboard_scale, 1.5));
+    } else {
+        m_octaveLabelsFont.setPixelSize(uiConfiguration()->fontSize() * std::min(m_keyWidthScaling, 1.5));
+    }
 }
 
 void PianoKeyboardView::updateKeyStateColors()
