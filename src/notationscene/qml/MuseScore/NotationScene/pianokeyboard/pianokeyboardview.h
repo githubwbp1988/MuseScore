@@ -62,6 +62,7 @@ public:
     void paint(QPainter* painter) override;
 
     qreal handlePaintKeyboard(QPainter* painter, QRectF viewport, QRectF keyboard_viewport);
+    void adjustPaintKeyboard(QRectF keyboard_viewport, int resolution_level);
     void handlePaintKeyboardOff();
 
     void invokePaintKeyboard();
@@ -226,5 +227,6 @@ private:
     QRectF m_viewport;
     QRectF m_keyboard_viewport;
     qreal m_keyboard_scale = 1.0;
+    int export_resolution_level = 1;
 };
 }

@@ -21,6 +21,7 @@
  */
 #include "videowriter.h"
 
+#include <chrono>
 #include <cmath>
 
 #include <QPainter>
@@ -200,12 +201,15 @@ VideoWriter::Config VideoWriter::makeConfig() const
     if (resolution == "2160p") {
         cfg.width = 3840;
         cfg.height = 2160;
+        cfg.resolution_level = 3;
     } else if (resolution == "1440p") {
         cfg.width = 2560;
         cfg.height = 1440;
+        cfg.resolution_level = 2;
     } else if (resolution == "1080p") {
         cfg.width = 1920;
         cfg.height = 1080;
+        cfg.resolution_level = 1;
     } else if (resolution == "720p") {
         cfg.width = 1280;
         cfg.height = 720;
@@ -218,6 +222,7 @@ VideoWriter::Config VideoWriter::makeConfig() const
     } else {
         cfg.width = 1920;
         cfg.height = 1080;
+        cfg.resolution_level = 1;
     }
 
     // compute bitrate according to Google recommended settings
@@ -447,18 +452,20 @@ void VideoWriter::doGenerate(muse::media::IVideoEncoderPtr encoder, INotationPtr
     pianoRect = muse::RectF(frameRect.x(), frameRect.bottom() - _piano_height, 
                                         frameRect.width(), _piano_height);
 
-    keyboardRect = muse::RectF(frameRect.x(), frameRect.bottom() - _keyboard_height, 
+    keyboardRect = muse::RectF(frameRect.x(), frameRect.bottom() - _keyboard_height - 1, 
                                         frameRect.width(), _keyboard_height);
     qreal keyboard_scale = m_trickFunction(&qp, frameRect.toQRectF(), keyboardRect.toQRectF());
 
-    double pianoHeight = _piano_height * frameRect.height() / config.height * keyboard_scale + 4;
-    double keyboardHeight = _keyboard_height * keyboard_scale + 4;
+    double pianoHeight = _piano_height * frameRect.height() / config.height * keyboard_scale;
+    double keyboardHeight = _keyboard_height * keyboard_scale;
 
     pianoRect = muse::RectF(frameRect.x(), frameRect.bottom() - pianoHeight, 
                                         frameRect.width(), pianoHeight);
 
     keyboardRect = muse::RectF(frameRect.x(), frameRect.bottom() - keyboardHeight, 
                                         frameRect.width(), keyboardHeight);
+
+    m_adjustTrickFunction(keyboardRect.toQRectF(), config.resolution_level);
 
     pianoTopBorderRect = muse::RectF(frameRect.x(), frameRect.bottom() - pianoHeight, 
                                         frameRect.width(), pianoHeight - keyboardHeight);
@@ -920,6 +927,7 @@ bool VideoWriter::generateScoreFrames(muse::media::IVideoEncoderPtr encoder, INo
         painting->paintPrint(&painter, opt);
 
         cursor.move(tick);
+        std::this_thread::sleep_for(std::chrono::microseconds(50000));
 
         muse::RectF cursorRect = cursor.rect();
         muse::PointF pagePos = page->pos();
@@ -933,6 +941,7 @@ bool VideoWriter::generateScoreFrames(muse::media::IVideoEncoderPtr encoder, INo
 
         painter.save();
         m_invokeFunction();
+        std::this_thread::sleep_for(std::chrono::microseconds(50000));
         painter.restore();
 
         encoder->encodeImage(frame);
@@ -945,6 +954,10 @@ bool VideoWriter::generateScoreFrames(muse::media::IVideoEncoderPtr encoder, INo
 
 void VideoWriter::pianoViewTrick(std::function<qreal(QPainter*, QRectF, QRectF)> trickFunction) {
     m_trickFunction = trickFunction;
+}
+
+void VideoWriter::adjustPianoViewTrick(std::function<void(QRectF, int)> trickFunction) {
+    m_adjustTrickFunction = trickFunction;
 }
 
 void VideoWriter::pianoViewTrickOff(std::function<void()> trickOffFunction) {

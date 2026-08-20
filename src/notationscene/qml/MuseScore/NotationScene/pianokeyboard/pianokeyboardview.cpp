@@ -25,6 +25,7 @@
 #include <QGuiApplication>
 #include <QScreen>
 #include "pianokeyboardcontroller.h"
+#include <cmath>
 
 #include "log.h"
 
@@ -72,6 +73,9 @@ void PianoKeyboardView::init()
     m_videowriter = videoWriters()->writer("mp4");
     m_videowriter->pianoViewTrick([this](QPainter* painter, QRectF viewport, QRectF keyboard_viewport) {
         return this->handlePaintKeyboard(painter, viewport, keyboard_viewport);
+    });
+    m_videowriter->adjustPianoViewTrick([this](QRectF keyboard_viewport, int resolution_level) {
+        return this->adjustPaintKeyboard(keyboard_viewport, resolution_level);
     });
     m_videowriter->pianoViewTrickOff([this]() {
         this->handlePaintKeyboardOff();
@@ -587,13 +591,22 @@ qreal PianoKeyboardView::handlePaintKeyboard(QPainter* painter, QRectF viewport,
     calculateKeyRects();
     qreal _scale = m_keysAreaRect.height() / m_keyboard_viewport.height();
 
-    m_keyboard_viewport.setY(m_keyboard_viewport.y() + m_keyboard_viewport.height() - m_keysAreaRect.height() - 4);
-    m_keyboard_viewport.setHeight(m_keysAreaRect.height() + 4);
+    m_keyboard_viewport.setY(m_keyboard_viewport.y() + m_keyboard_viewport.height() - m_keysAreaRect.height());
+    m_keyboard_viewport.setHeight(m_keysAreaRect.height());
     return _scale;
+}
+
+void PianoKeyboardView::adjustPaintKeyboard(QRectF keyboard_viewport, int resolution_level) {
+    m_keyboard_viewport = keyboard_viewport;
+
+    m_keyboard_viewport.setY(m_keyboard_viewport.y() + m_keyboard_viewport.height() - m_keysAreaRect.height());
+    m_keyboard_viewport.setHeight(m_keysAreaRect.height());
+    export_resolution_level = resolution_level;
 }
 void PianoKeyboardView::handlePaintKeyboardOff() {
     m_painter = nullptr;
     m_keyboard_scale = 1.0;
+    export_resolution_level = 1;
     calculateKeyRects();
 }
 
@@ -631,7 +644,7 @@ void PianoKeyboardView::paintWhiteKeys(QPainter* painter, const QRectF& viewport
               right = rect.width() - inset, bottom = rect.height() - m_spacing;
 
         if (path.isEmpty()) {
-            qreal cornerRadius = 2.0 * m_keyWidthScaling;
+            qreal cornerRadius = pow(2.0, export_resolution_level) * m_keyWidthScaling;
 
             path.moveTo(left, top);
             path.lineTo(left, bottom - cornerRadius);
@@ -761,9 +774,15 @@ void PianoKeyboardView::paintBlackKeys(QPainter* painter, const QRectF& viewport
         }
 
         if (backgroundRect.isEmpty()) {
-            qreal blackKeyInset = 2.0 * m_keyWidthScaling;
+            qreal blackKeyInset = pow(2.0, export_resolution_level) * m_keyWidthScaling;
             qreal cornerRadius = blackKeyInset;
-            qreal bottomPieceHeight = 8.0 * m_keyWidthScaling;
+            qreal b_factor = 8.0;
+            if (export_resolution_level == 2) {
+                b_factor = 12.0;
+            } else if (export_resolution_level == 3) {
+                b_factor = 16.0;
+            }
+            qreal bottomPieceHeight = b_factor * m_keyWidthScaling;
 
             // Make background rect
             // Adjust the top, to make sure that the rect fully covers the white keys,

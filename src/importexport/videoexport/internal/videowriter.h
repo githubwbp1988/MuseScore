@@ -77,6 +77,7 @@ public:
     void abort() override;
 
     void pianoViewTrick(std::function<qreal(QPainter*, QRectF, QRectF)> trickFunction) override;
+    void adjustPianoViewTrick(std::function<void(QRectF, int)> trickFunction) override;
     void pianoViewTrickOff(std::function<void()> trickOffFunction) override;
 
     void pianoViewInvoke(std::function<void()> invokeFunction) override;
@@ -95,9 +96,11 @@ private:
         double canvasDpi = 300.0;
         ViewMode viewMode = ViewMode::Flexible;  // ViewMode::PageFull
         muse::PointF moveToCenter;
+        int resolution_level = 0;           // 1 - 1080, 2 - 1440, 3 - 2160
     };
 
     std::function<qreal(QPainter*, QRectF, QRectF)> m_trickFunction = nullptr;
+    std::function<void(QRectF, int)> m_adjustTrickFunction = nullptr;
     std::function<void()> m_trickOffFunction = nullptr;
     std::function<void()> m_invokeFunction = nullptr;
     std::function<void()> m_exportAbortFunction = nullptr;

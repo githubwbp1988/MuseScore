@@ -70,6 +70,7 @@ public:
     virtual void abort() {}
 
     virtual void pianoViewTrick(std::function<qreal(QPainter*, QRectF, QRectF)> trickFunction) {}
+    virtual void adjustPianoViewTrick(std::function<void(QRectF, int)> trickFunction) {}
     virtual void pianoViewTrickOff(std::function<void()> trickOffFunction) {}
     
     virtual void pianoViewInvoke(std::function<void()> invokeFunction) {}
