@@ -47,7 +47,6 @@
 #include "notation/inotationselection.h"
 
 #include "projecterrors.h"
-#include "projectextensionpoints.h"
 
 #include "../projectcommands.h"
 #include "rcommand/actiontocommand.h"
@@ -529,9 +528,6 @@ muse::Ret ProjectActionsController::doOpenCloudProjectOffline(const muse::io::pa
 
 Ret ProjectActionsController::doFinishOpenProject()
 {
-    // LOGALEX();
-    extensionsProvider()->performPointAsync(EXEC_ONPOST_PROJECT_OPENED);
-
     //! Show MuseSounds / MuseSampler update if need
     auto showUpdateNotification = [this]() {
         QTimer::singleShot(1000, [this]() {
@@ -801,8 +797,6 @@ muse::Ret ProjectActionsController::newProject()
 
     auto promise = interactive()->open(NEW_SCORE_URI);
     promise.onResolve(this, [this](const Val&) {
-        extensionsProvider()->performPointAsync(EXEC_ONPOST_PROJECT_CREATED);
-
         Ret ret = doFinishOpenProject();
 
         if (!ret) {
@@ -1108,14 +1102,7 @@ bool ProjectActionsController::saveProjectLocally(const muse::io::path_t& filePa
         return false;
     }
 
-    Ret ret = make_ok();
-    if (saveMode == SaveMode::Save) {
-        ret = extensionsProvider()->performPoint(EXEC_ONPRE_PROJECT_SAVE);
-    }
-
-    if (ret) {
-        ret = project->save(filePath, saveMode, createBackup);
-    }
+    Ret ret = project->save(filePath, saveMode, createBackup);
 
     if (!ret) {
         LOGE() << ret.toString();
@@ -1140,10 +1127,6 @@ bool ProjectActionsController::saveProjectLocally(const muse::io::path_t& filePa
             }
         }
         return false;
-    }
-
-    if (saveMode == SaveMode::Save) {
-        ret = extensionsProvider()->performPoint(EXEC_ONPOST_PROJECT_SAVED);
     }
 
     recentFilesController()->prependRecentFile(makeRecentFile(project));
