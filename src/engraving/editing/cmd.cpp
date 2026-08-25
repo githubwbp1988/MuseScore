@@ -282,7 +282,7 @@ static void deletePostponed(CmdState& cmdState)
             std::list<SpannerSegment*> spanners = s->spannerSegments();
             for (SpannerSegment* ss : spanners) {
                 if (ss->system() == s) {
-                    ss->setSystem(0);
+                    ss->moveToSystem(nullptr);
                 }
             }
         }
@@ -601,7 +601,7 @@ void Score::addInterval(int val, const std::vector<Note*>& nl)
         }
 
         Note* note = Factory::createNote(chord);
-        note->setParent(chord);
+        note->setOwnershipParent(chord);
         note->setTrack(chord->track());
         note->setNval(nval, tick);
         undoAddElement(note);
@@ -610,7 +610,7 @@ void Score::addInterval(int val, const std::vector<Note*>& nl)
             Accidental* a = Factory::createAccidental(note);
             a->setAccidentalType(m_is.accidentalType());
             a->setRole(AccidentalRole::USER);
-            a->setParent(note);
+            a->setOwnershipParent(note);
             undoAddElement(a);
         }
         if (on->tieBack() && prevTied) {
@@ -670,11 +670,11 @@ Note* Score::setGraceNote(Chord* ch, int pitch, NoteType type, int len)
     // allow grace notes to be added to other grace notes
     // by really adding to parent chord
     if (ch->noteType() != NoteType::NORMAL) {
-        ch = toChord(ch->explicitParent());
+        ch = toChord(ch->ownershipParent());
     }
 
     chord->setTrack(ch->track());
-    chord->setParent(ch);
+    chord->setOwnershipParent(ch);
     chord->add(note);
 
     // find corresponding note within chord and use its tpc information
@@ -777,7 +777,7 @@ GuitarBend* Score::addGuitarBend(GuitarBendType type, Note* note, Note* endNote)
         bend->setTick2(endNote->tick());
         bend->setTrack2(endNote->track());
         bend->setEndElement(endNote);
-        bend->setParent(note);
+        bend->setOwnershipParent(note);
         if (type == GuitarBendType::BEND) {
             GuitarBend::fixNotesFrettingForStandardBend(note, endNote);
         }
@@ -811,11 +811,11 @@ GuitarBend* Score::addGuitarBend(GuitarBendType type, Note* note, Note* endNote)
             }
 
             // Add bend
-            bend->setParent(graceNote);
+            bend->setOwnershipParent(graceNote);
             bend->setStartElement(graceNote);
             bend->setEndElement(note);
         } else if (type == GuitarBendType::SLIGHT_BEND || type == GuitarBendType::DIP || type == GuitarBendType::SCOOP) {
-            bend->setParent(note);
+            bend->setOwnershipParent(note);
             bend->setStartElement(note);
             // Slight bends don't end on another note
             bend->setEndElement(note);
