@@ -114,7 +114,6 @@
 #include "engraving/dom/stringdata.h"
 #include "engraving/dom/system.h"
 #include "engraving/dom/tapping.h"
-#include "engraving/dom/tempo.h"
 #include "engraving/dom/tempotext.h"
 #include "engraving/dom/text.h"
 #include "engraving/dom/textlinebase.h"
@@ -1484,7 +1483,7 @@ static void creditWords(XmlWriter& xml, const MStyle& s, const page_idx_t pageNr
 
 static double parentHeight(const EngravingItem* element)
 {
-    const EngravingItem* parent = element->parentItem();
+    const EngravingItem* parent = element->layoutParent();
 
     if (!parent) {
         return 0;
@@ -5024,7 +5023,7 @@ void ExportMusicXml::tempoSound(TempoText const* const text)
     // imprecisely and this could cause rounding errors (e.g. 92 BPM would be saved as 91.9998).
     BeatsPerMinute bpm = text->tempo().toBPM();
     if (text->isATempo() || text->isTempoPrimo()) {
-        bpm = m_score->tempomap()->tempo(text->tick().ticks()).toBPM();
+        bpm = m_score->tempo(text->tick()).toBPM();
     }
     double bpmRounded = round(bpm.val * 100) / 100;
     m_xml.tag("sound", { { "tempo", bpmRounded } });
