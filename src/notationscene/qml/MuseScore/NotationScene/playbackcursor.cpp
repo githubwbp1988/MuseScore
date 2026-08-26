@@ -895,8 +895,8 @@ void PlaybackCursor::processOttavaAsync(mu::engraving::Score* score, bool scoreP
                     if (item->type() == mu::engraving::ElementType::NOTE) {
                         Note* _pre_note = toNote(item);
                         if (_pre_note->isGrace()) {
-                            if (_pre_note->parentItem()->isChord()) {
-                                Chord* _grace_parent_chord = toChord(_pre_note->parentItem());
+                            if (_pre_note->ownershipParent()->isChord()) {
+                                Chord* _grace_parent_chord = toChord(_pre_note->ownershipParent());
                                 score_grace_next_seg_chord_map[engravingItem] = _grace_parent_chord;
                             }
                         }
@@ -1403,12 +1403,12 @@ void PlaybackCursor::processOttavaAsync(mu::engraving::Score* score, bool scoreP
                     } else if (item->type() == mu::engraving::ElementType::ARPEGGIO) {
                         std::map<int, bool> seg_arpeggio_staffindex;
                         if (!_arpeggio_seg_checked) {
-                            EngravingItem* arpeggio = item->parentItem();
+                            EngravingItem* arpeggio = (EngravingItem*)item->ownershipParent();
                             // check Fermata
                             bool isFermataTag = false;
                             double fermata_stretch = 1.0;
                             bool isFermataAtLastSegment = false;
-                            EngravingItem* arpeggioParent = arpeggio->parentItem();
+                            EngravingItem* arpeggioParent = (EngravingItem*)arpeggio->ownershipParent();
                             EngravingItemList ___itemList = arpeggioParent->childrenItems(false);
                             for (size_t _k = 0; _k < ___itemList.size(); _k++) {
                                 EngravingItem* ___item = ___itemList.at(_k);
@@ -1504,7 +1504,7 @@ void PlaybackCursor::processOttavaAsync(mu::engraving::Score* score, bool scoreP
                                     Staff* arpeggioStaff = _item->staff();
                                     int arpeggioStaffIndex = arpeggioStaff->idx();
                                     if (seg_arpeggio_staffindex[arpeggioStaffIndex]) {
-                                        EngravingItem* _itemParent = _item->parentItem();
+                                        EngravingItem* _itemParent = (EngravingItem*)_item->ownershipParent();
                                         if (_itemParent->type() == mu::engraving::ElementType::CHORD) {
                                             mu::engraving::Chord *_itemParentChord = toChord(_itemParent);
                                             Note* _note = toNote(_item);
@@ -1619,9 +1619,9 @@ void PlaybackCursor::processOttavaAsync(mu::engraving::Score* score, bool scoreP
                         }
                     } else if (item->type() == mu::engraving::ElementType::GLISSANDO) {
                         if (!_glissando_seg_checked) {
-                            EngravingItem* glissandoNote = item->parentItem();
-                            if (glissandoNote->type() != mu::engraving::ElementType::NOTE && glissandoNote->parentItem()->type() == mu::engraving::ElementType::NOTE) {
-                                glissandoNote = glissandoNote->parentItem();
+                            EngravingItem* glissandoNote = (EngravingItem*)item->ownershipParent();
+                            if (glissandoNote->type() != mu::engraving::ElementType::NOTE && glissandoNote->ownershipParent()->type() == mu::engraving::ElementType::NOTE) {
+                                glissandoNote = (EngravingItem*)glissandoNote->ownershipParent();
                             }
                             if (glissandoNote->type() == mu::engraving::ElementType::NOTE) {
                                 Note* _note= toNote(glissandoNote);
@@ -3527,8 +3527,8 @@ muse::RectF PlaybackCursor::resolveCursorRectByTick1(muse::midi::tick_t _tick, b
                                                     _beam->setColor(muse::draw::Color::BLACK);
                                                 }
                                             }
-                                            // ns_chord->parentItem()->setColor(muse::draw::Color::RED);
-                                            for (EngravingItem* ns_item: ns_chord->parentItem()->childrenItems(false)) {
+                                            // ((EngravingItem*)ns_chord->ownershipParent())->setColor(muse::draw::Color::RED);
+                                            for (EngravingItem* ns_item: ((EngravingItem*)ns_chord->ownershipParent())->childrenItems(false)) {
                                                 if (ns_item->type() == mu::engraving::ElementType::NOTE) {
                                                     Note* ns_note = toNote(ns_item);
                                                     ns_note->setColor(muse::draw::Color::RED);
