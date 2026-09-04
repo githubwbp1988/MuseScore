@@ -70,6 +70,7 @@
 #include "engraving/dom/tuplet.h"
 #include "engraving/dom/volta.h"
 #include "engraving/dom/stringtunings.h"
+#include "engraving/dom/capo.h"
 #include "engraving/rw/xmlwriter.h"
 #include "engraving/types/symid.h"
 
@@ -522,7 +523,9 @@ void GuitarPro::setTuplet(Tuplet* tuplet, int tuple)
 
 void GuitarPro::addDynamic(Note* note, int d)
 {
-    if (d < 0) {
+    // guitar pro only allows their users to go from ppp to fff
+    static const std::array<String, 9> map_dyn { u"f", u"ppp", u"pp", u"p", u"mp", u"mf", u"f", u"ff", u"fff" };
+    if (d < 0 || static_cast<size_t>(d) >= map_dyn.size()) {
         return;
     }
     if (!note->chord()) {
@@ -538,8 +541,6 @@ void GuitarPro::addDynamic(Note* note, int d)
     }
     if (!s->findAnnotation(ElementType::DYNAMIC, note->staffIdx() * VOICES, note->staffIdx() * VOICES + VOICES - 1)) {
         Dynamic* dyn = new Dynamic(s);
-        // guitar pro only allows their users to go from ppp to fff
-        const String map_dyn[] = { u"f", u"ppp", u"pp", u"p", u"mp", u"mf", u"f", u"ff", u"fff" };
         dyn->setDynamicType(map_dyn[d]);
         dyn->setTrack(note->track());
         s->add(dyn);
@@ -1502,6 +1503,10 @@ bool GuitarPro2::read(IODevice* io)
         }
         /*int midiPort     =*/ readInt();     //  - 1;
         int midiChannel  = readInt() - 1;
+        if (midiChannel < 0 || midiChannel >= static_cast<int>(channelDefaults.size())) {
+            LOGE() << "midiChannel " << midiChannel << " out of range 0-" << channelDefaults.size();
+            return false;
+        }
         /*int midiChannel2 =*/ readInt();     // - 1;
         int frets        = readInt();
         int capo         = readInt();
@@ -1564,11 +1569,19 @@ bool GuitarPro2::read(IODevice* io)
 
         if (capo > 0 && !engravingConfiguration()->guitarProImportExperimental()) {
             Segment* s = measure->getSegment(SegmentType::ChordRest, measure->tick());
-            StaffText* st = new StaffText(s);
-            //                  st->setTextStyleType(TextStyleType::STAFF);
-            st->setPlainText(String(u"Capo. fret ") + String::number(capo));
-            st->setTrack(i * VOICES);
-            s->add(st);
+            const size_t track = i * VOICES;
+
+            CapoParams params;
+            params.active = true;
+            params.transposeMode = CapoParams::TransposeMode::TAB_ONLY;
+            params.fretPosition = capo;
+
+            Capo* capoEl = Factory::createCapo(score->dummy()->segment());
+            capoEl->setTrack(track);
+            capoEl->setParams(params);
+            s->add(capoEl);
+
+            staff->insertCapoParams({ 0, 1 }, params, true);
         }
 
         InstrChannel* ch = instr->channel(0);
@@ -1842,7 +1855,7 @@ GuitarPro::ReadNoteResult GuitarPro1::readNote(int string, Note* note)
             }
             gn->setFret(fret);
             gn->setString(string);
-            int grace_pitch = note->staff()->part()->instrument()->stringData()->getPitch(string, fret, nullptr);
+            int grace_pitch = note->staff()->part()->instrument()->stringData()->getPitch(string, fret, note->staff(), note->tick());
             gn->setPitch(grace_pitch);
             gn->setTpcFromPitch();
 
@@ -1965,7 +1978,7 @@ GuitarPro::ReadNoteResult GuitarPro1::readNote(int string, Note* note)
     if (fretNumber > 99 || fretNumber == -1) {
         fretNumber = 0;
     }
-    int pitch = staff->part()->instrument()->stringData()->getPitch(string, fretNumber, nullptr);
+    int pitch = staff->part()->instrument()->stringData()->getPitch(string, fretNumber, staff, note->tick());
 
     /* it's possible to specify extraordinarily high pitches by
     specifying fret numbers that don't exist. This is an issue that
@@ -2249,6 +2262,10 @@ bool GuitarPro3::read(IODevice* io)
         }
         int midiPort     = readInt() - 1;
         int midiChannel  = readInt() - 1;
+        if (midiChannel < 0 || midiChannel >= static_cast<int>(channelDefaults.size())) {
+            LOGE() << "midiChannel " << midiChannel << " out of range 0-" << channelDefaults.size();
+            return false;
+        }
         /*int midiChannel2 =*/ readInt();     // - 1;
         int frets        = readInt();
         int capo         = readInt();
@@ -2310,11 +2327,19 @@ bool GuitarPro3::read(IODevice* io)
 
         if (capo > 0) {
             Segment* s = measure->getSegment(SegmentType::ChordRest, measure->tick());
-            StaffText* st = new StaffText(s);
-            //                  st->setTextStyleType(TextStyleType::STAFF);
-            st->setPlainText(String(u"Capo. fret ") + String::number(capo));
-            st->setTrack(i * VOICES);
-            s->add(st);
+            const size_t track = i * VOICES;
+
+            CapoParams params;
+            params.active = true;
+            params.transposeMode = CapoParams::TransposeMode::TAB_ONLY;
+            params.fretPosition = capo;
+
+            Capo* capoEl = Factory::createCapo(score->dummy()->segment());
+            capoEl->setTrack(track);
+            capoEl->setParams(params);
+            s->add(capoEl);
+
+            staff->insertCapoParams({ 0, 1 }, params, true);
         }
 
         InstrChannel* ch = instr->channel(0);
@@ -2859,7 +2884,7 @@ Err importGTP(MasterScore* score, muse::io::IODevice* io, const muse::modularity
         return ptb.read();
     }
 
-    GuitarPro* gp;
+    GuitarPro* gp = nullptr;
     bool readResult = false;
     bool isVersionAbove6 = false;
     // check to see if we are dealing with a GP file via the extension
@@ -2891,6 +2916,7 @@ Err importGTP(MasterScore* score, muse::io::IODevice* io, const muse::modularity
             s = s.mid(21);
         } else {
             LOGD("unknown gtp format <%s>", ss);
+            delete gp;
             return Err::FileBadFormat;
         }
         int a = s.left(1).toInt();
@@ -2908,16 +2934,19 @@ Err importGTP(MasterScore* score, muse::io::IODevice* io, const muse::modularity
             gp = new GuitarPro5(score, version, iocCtx);
         } else {
             LOGD("unknown gtp format %d", version);
+            delete gp;
             return Err::FileBadFormat;
         }
         readResult = gp->read(io);
         gp->setTempo(0, 0);
     } else {
+        delete gp;
         return Err::FileBadFormat;
     }
     if (readResult == false) {
         LOGD("guitar pro import error====");
         // avoid another error message box
+        delete gp;
         return Err::NoError;
     }
 
