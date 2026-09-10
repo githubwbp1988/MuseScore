@@ -23,21 +23,8 @@
 #pragma once
 
 #include "modularity/imoduleinterface.h"
-#include "progress.h"
-#include "io/path.h"
-#include "types/ret.h"
-
-#include "types/projectfile.h"
-#include "types/projecttypes.h"
-
-class QUrl;
 
 namespace mu::project {
-struct ProjectBeingDownloaded {
-    int scoreId = 0;
-    muse::ProgressPtr progress;
-};
-
 class IProjectFilesController : MODULE_CONTEXT_INTERFACE
 {
     INTERFACE_ID(IProjectFilesController)
@@ -45,15 +32,6 @@ class IProjectFilesController : MODULE_CONTEXT_INTERFACE
 public:
     virtual ~IProjectFilesController() = default;
 
-    virtual bool isUrlSupported(const QUrl& url) const = 0;
-    virtual bool isFileSupported(const muse::io::path_t& path) const = 0;
-    virtual muse::Ret openProject(const ProjectFile& file) = 0;
     virtual bool closeOpenedProject(bool goToHome = true) = 0;
-    virtual bool saveProject(const muse::io::path_t& path = muse::io::path_t()) = 0;
-    virtual bool saveProjectLocally(
-        const muse::io::path_t& path = muse::io::path_t(), SaveMode saveMode = SaveMode::Save, bool createBackup = true) = 0;
-
-    virtual const ProjectBeingDownloaded& projectBeingDownloaded() const = 0;
-    virtual muse::async::Notification projectBeingDownloadedChanged() const = 0;
 };
 }
