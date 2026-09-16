@@ -5,7 +5,7 @@
  * MuseScore Studio
  * Music Composition & Notation
  *
- * Copyright (C) 2021 MuseScore Limited and others
+ * Copyright (C) 2026 MuseScore Limited and others
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3 as
@@ -22,26 +22,26 @@
 
 #pragma once
 
-#include "uicomponents/qml/Muse/UiComponents/abstractmenumodel.h"
+#include "modularity/imoduleinterface.h"
+#include "async/notification.h"
+#include "async/promise.h"
+#include "types/ret.h"
 
-#include "modularity/ioc.h"
-#include "internal/ipalettecommandscontroller.h"
+#include "types/projecttypes.h"
 
-namespace mu::palette {
-class PalettesPanelContextMenuModel : public muse::uicomponents::AbstractMenuModel
+namespace mu::project {
+class ICloseProjectScenario : MODULE_CONTEXT_INTERFACE
 {
-    Q_OBJECT
-
-    QML_ELEMENT
-
-    muse::ContextInject<IPaletteCommandsController> commandsController = { this };
+    INTERFACE_ID(ICloseProjectScenario)
 
 public:
-    explicit PalettesPanelContextMenuModel(QObject* parent = nullptr);
+    virtual ~ICloseProjectScenario() = default;
 
-    Q_INVOKABLE void load() override;
+    //! NOTE Resolves once the score is gone, or with an error if it is still there:
+    //! the user kept it, the save it needed failed, or a close is already under way
+    virtual muse::async::Promise<muse::Ret> closeOpenedProject(bool goToHome = true) = 0;
 
-signals:
-    void expandCollapseAllRequested(bool expand);
+    virtual bool isBusy(BusyStatus status) const = 0;
+    virtual muse::async::Notification busyChanged() const = 0;
 };
 }
