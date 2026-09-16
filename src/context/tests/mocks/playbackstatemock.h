@@ -5,7 +5,7 @@
  * MuseScore Studio
  * Music Composition & Notation
  *
- * Copyright (C) 2021 MuseScore Limited and others
+ * Copyright (C) 2026 MuseScore Limited and others
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3 as
@@ -22,26 +22,19 @@
 
 #pragma once
 
-#include "uicomponents/qml/Muse/UiComponents/abstractmenumodel.h"
+#include <gmock/gmock.h>
 
-#include "modularity/ioc.h"
-#include "internal/ipalettecommandscontroller.h"
+#include "context/iplaybackstate.h"
 
-namespace mu::palette {
-class PalettesPanelContextMenuModel : public muse::uicomponents::AbstractMenuModel
+namespace mu::context {
+class PlaybackStateMock : public IPlaybackState
 {
-    Q_OBJECT
-
-    QML_ELEMENT
-
-    muse::ContextInject<IPaletteCommandsController> commandsController = { this };
-
 public:
-    explicit PalettesPanelContextMenuModel(QObject* parent = nullptr);
+    MOCK_METHOD(bool, isPlaying, (), (const, override));
+    MOCK_METHOD(muse::audio::PlaybackStatus, playbackStatus, (), (const, override));
+    MOCK_METHOD(muse::async::Channel<muse::audio::PlaybackStatus>, playbackStatusChanged, (), (const, override));
 
-    Q_INVOKABLE void load() override;
-
-signals:
-    void expandCollapseAllRequested(bool expand);
+    MOCK_METHOD(muse::audio::secs_t, playbackPosition, (), (const, override));
+    MOCK_METHOD(muse::async::Channel<muse::audio::secs_t>, playbackPositionChanged, (), (const, override));
 };
 }
