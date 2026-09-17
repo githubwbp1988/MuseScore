@@ -61,6 +61,7 @@ public:
     ~PlaybackController() override;
 
     void init();
+    void deinit();
 
     muse::async::Notification isPlayingScorePartChanged() override;
 
@@ -215,6 +216,7 @@ private:
     project::IProjectAudioSettingsPtr audioSettings() const;
 
     void resetPlayback();
+    void setupPlaybackIfNeed();
     void setupPlayback();
     void subscribeOnAudioParamsChanges();
     void setupTracks();
@@ -248,6 +250,7 @@ private:
     notation::INotationPtr m_notation;
     notation::IMasterNotationPtr m_masterNotation;
     muse::audio::IPlayerPtr m_player;
+    bool m_needSetupPlayback = false;
     bool m_isPlaybackInited = false;
     muse::async::Channel<bool> m_playbackInited;
 
