@@ -20,22 +20,39 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#pragma once
+pragma ComponentBehavior: Bound
 
-#include <gmock/gmock.h>
+import QtQuick
 
-#include "rcommand/icommanddispatcher.h"
+import MuseScore.NotationScene
+import MuseScore.Project
 
-namespace muse::rcommand {
-class CommandDispatcherMock : public ICommandDispatcher
-{
-public:
-    //! NOTE Keeps the convenience overloads of the interface visible next to the mocked ones
-    using ICommandDispatcher::dispatch;
-    using ICommandDispatcher::onRequest;
+Item {
+    id: root
 
-    MOCK_METHOD(async::Promise<Response>, dispatch, (const Request& request), (override));
-    MOCK_METHOD(void, onRequest, (Commandable * client, const Command& command, const CallBack& callback), (override));
-    MOCK_METHOD(void, unreg, (Commandable * client), (override));
-};
+    property alias name: notationView.name
+    readonly property alias navigationSection: notationView.navigationSection
+
+    NotationView {
+        id: notationView
+
+        anchors.fill: parent
+
+        readOnly: true
+    }
+
+    ReviewScoreQualityPanel {
+        id: reviewPanel
+
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 16
+
+        z: 100
+
+        navigationSection: root.navigationSection
+        navigationOrderStart: notationView.navigationOrderEnd + 1
+
+        onCloseRequested: reviewPanel.visible = false
+    }
 }
