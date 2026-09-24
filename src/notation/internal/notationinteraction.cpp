@@ -3392,6 +3392,7 @@ void NotationInteraction::applyDropPaletteElement(mu::engraving::Score* score, m
     dropData->modifiers = keyboardModifier(modifiers);
     dropData->dropElement = e;
     dropData->track = (track == muse::nidx) ? target->track() : track;
+    dropData->pos = target->pageBoundingRect().topLeft();
 
     if (target->acceptDrop(*dropData)) {
         // use same code path as drag&drop

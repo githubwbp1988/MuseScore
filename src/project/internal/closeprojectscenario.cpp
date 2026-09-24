@@ -23,14 +23,13 @@
 #include "closeprojectscenario.h"
 
 #include "translation.h"
+#include "types/projecturis.h"
 
 #include "log.h"
 
 using namespace mu::project;
 using namespace muse;
 using muse::async::Promise;
-
-static const muse::Uri HOME_PAGE_URI("musescore://home");
 
 Promise<Ret> CloseProjectScenario::resolvedPromise(const Ret& ret)
 {
@@ -150,9 +149,6 @@ Promise<IInteractive::Result> CloseProjectScenario::askAboutSavingScore(const IN
 Promise<Ret> CloseProjectScenario::doCloseProject(bool goToHome)
 {
     return interactive()->closeAllDialogs().then<Ret>(this, [this, goToHome](const Ret&, auto resolve) {
-        /// NOTE: Hold the project until it is fully disconnected from receivers
-        INotationProjectPtr project = currentNotationProject();
-
         globalContext()->setCurrentProject(nullptr);
 
         if (goToHome) {
