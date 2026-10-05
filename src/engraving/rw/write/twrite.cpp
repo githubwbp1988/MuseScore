@@ -1646,19 +1646,6 @@ void TWrite::writeProperties(const SLine* item, XmlWriter& xml, WriteContext& ct
     writeProperty(item, xml, Pid::DASH_LINE_LEN);
     writeProperty(item, xml, Pid::DASH_GAP_LEN);
 
-    // TO PREVENT CRASH IN VERSIONS <4.6.5
-    if (item->score()->isPaletteScore()) {
-        const double COMPAT_SCALE = 0.5;
-        // when used as icon
-        if (!item->spannerSegments().empty()) {
-            const LineSegment* s = item->frontSegment();
-            xml.tag("length", s->pos2().x() * COMPAT_SCALE);
-        } else {
-            xml.tag("length", item->spatium() * 4 * COMPAT_SCALE);
-        }
-        return;
-    }
-
     if (!item->isUserModified()) {
         return;
     }
@@ -2397,6 +2384,7 @@ void TWrite::write(const Lyrics* item, XmlWriter& xml, WriteContext& ctx)
         xml.tag("syllabic", TConv::toXml(item->syllabic()));
     }
     writeProperty(item, xml, Pid::LYRIC_TICKS);
+    writeProperty(item, xml, Pid::CENTER_BETWEEN_STAVES);
 
     writeProperties(toTextBase(item), xml, ctx, true);
     if (item->separator() && !item->separator()->generated()) {
@@ -2734,6 +2722,8 @@ void TWrite::write(const PartialLyricsLine* item, XmlWriter& xml, WriteContext& 
     xml.startElement(item);
     writeProperty(item, xml, Pid::VERSE);
     xml.tag("isEndMelisma", item->isEndMelisma());
+    writeProperty(item, xml, Pid::CENTER_BETWEEN_STAVES);
+    writeProperty(item, xml, Pid::PLACEMENT);
     writeProperties(static_cast<const SLine*>(item), xml, ctx);
     xml.endElement();
 }

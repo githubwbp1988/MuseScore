@@ -120,6 +120,7 @@
 #include "engraving/editing/edittie.h"
 #include "engraving/editing/edittimesig.h"
 #include "engraving/editing/editpagelocks.h"
+#include "engraving/editing/editposition.h"
 #include "engraving/editing/editsystemlocks.h"
 #include "engraving/editing/flip.h"
 #include "engraving/editing/exchangevoices.h"
@@ -7269,6 +7270,20 @@ void NotationInteraction::resetShapesAndPosition()
     }
 }
 
+void NotationInteraction::freezeSelectionPosition()
+{
+    std::vector<EngravingItem*> items = selection()->elements();
+    if (items.empty()) {
+        return;
+    }
+
+    transaction(TranslatableString("undoableAction", "Freeze current placement"), [&](mu::engraving::Transaction& tx) {
+        EditPosition::freezeItemsPositions(tx, items);
+    });
+
+    notifyAboutNotationChanged();
+}
+
 void NotationInteraction::resetToDefaultLayout()
 {
     TRACEFUNC;
@@ -7399,7 +7414,9 @@ void NotationInteraction::navigateToLyrics(bool back, bool moveOnly, bool end)
     mu::engraving::PropertyFlags pFlags = lyrics->propertyFlags(mu::engraving::Pid::PLACEMENT);
     mu::engraving::FontStyle fStyle = lyrics->fontStyle();
     mu::engraving::PropertyFlags fFlags = lyrics->propertyFlags(mu::engraving::Pid::FONT_STYLE);
+    mu::engraving::AutoOnOff centering = lyrics->centerBetweenStaves();
     mu::engraving::TextStyleType styleType = lyrics->textStyleType();
+    double yOffset = lyrics->offset().y();
 
     mu::engraving::Segment* nextSegment = segment;
     if (back) {
@@ -7474,9 +7491,11 @@ void NotationInteraction::navigateToLyrics(bool back, bool moveOnly, bool end)
         nextLyrics->setTextStyleType(styleType);
         nextLyrics->setPlacement(placement);
         nextLyrics->setPropertyFlags(mu::engraving::Pid::PLACEMENT, pFlags);
+        nextLyrics->setCenterBetweenStaves(centering);
         nextLyrics->setSyllabic(mu::engraving::LyricsSyllabic::SINGLE);
         nextLyrics->setFontStyle(fStyle);
         nextLyrics->setPropertyFlags(mu::engraving::Pid::FONT_STYLE, fFlags);
+        nextLyrics->setOffset(PointF(0.0, yOffset));
         newLyrics = true;
     }
 
@@ -7558,7 +7577,9 @@ void NotationInteraction::navigateToNextSyllable()
     PropertyFlags pFlags = lyrics->propertyFlags(Pid::PLACEMENT);
     FontStyle fStyle = lyrics->fontStyle();
     PropertyFlags fFlags = lyrics->propertyFlags(Pid::FONT_STYLE);
+    AutoOnOff centering = lyrics->centerBetweenStaves();
     mu::engraving::TextStyleType styleType = lyrics->textStyleType();
+    double yOffset = lyrics->offset().y();
 
     // search next chord
     Segment* nextSegment = segment;
@@ -7639,6 +7660,8 @@ void NotationInteraction::navigateToNextSyllable()
             dash->setIsEndMelisma(false);
             dash->setVerse(verse);
             dash->setPlacement(placement);
+            dash->setPropertyFlags(Pid::PLACEMENT, pFlags);
+            dash->setCenterBetweenStaves(centering);
             dash->setTick(initialCR->tick());
             dash->setTicks(Fraction(0, 1));
             dash->setTrack(initialCR->track());
@@ -7655,9 +7678,11 @@ void NotationInteraction::navigateToNextSyllable()
             toLyrics->setTextStyleType(styleType);
             toLyrics->setPlacement(placement);
             toLyrics->setPropertyFlags(Pid::PLACEMENT, pFlags);
+            toLyrics->setCenterBetweenStaves(centering);
             toLyrics->setSyllabic(LyricsSyllabic::END);
             toLyrics->setFontStyle(fStyle);
             toLyrics->setPropertyFlags(Pid::FONT_STYLE, fFlags);
+            toLyrics->setOffset(PointF(0.0, yOffset));
 
             score()->undoAddElement(toLyrics);
             score()->endCmd();
@@ -7737,9 +7762,11 @@ void NotationInteraction::navigateToNextSyllable()
 
         toLyrics->setPlacement(placement);
         toLyrics->setPropertyFlags(Pid::PLACEMENT, pFlags);
+        toLyrics->setCenterBetweenStaves(centering);
         toLyrics->setSyllabic(LyricsSyllabic::END);
         toLyrics->setFontStyle(fStyle);
         toLyrics->setPropertyFlags(Pid::FONT_STYLE, fFlags);
+        toLyrics->setOffset(PointF(0.0, yOffset));
     } else {
         // as we arrived at toLyrics by a dash, it cannot be initial or isolated
         if (toLyrics->syllabic() == LyricsSyllabic::BEGIN) {
@@ -7770,7 +7797,9 @@ void NotationInteraction::navigateToNextSyllable()
         PartialLyricsLine* dash = Factory::createPartialLyricsLine(score()->dummy());
         dash->setIsEndMelisma(false);
         dash->setVerse(verse);
-        dash->setPlacement(lyrics->placement());
+        dash->setPlacement(placement);
+        dash->setPropertyFlags(Pid::PLACEMENT, pFlags);
+        dash->setCenterBetweenStaves(centering);
         dash->setTick(initialCR->tick());
         dash->setTicks(hasPrecedingRepeat ? Fraction(0, 1) : initialCR->ticks());
         dash->setTrack(initialCR->track());
@@ -7813,6 +7842,7 @@ void NotationInteraction::navigateToLyricsVerse(MoveDirection direction)
     mu::engraving::PropertyFlags pFlags = lyrics->propertyFlags(mu::engraving::Pid::PLACEMENT);
     mu::engraving::FontStyle fStyle = lyrics->fontStyle();
     mu::engraving::PropertyFlags fFlags = lyrics->propertyFlags(mu::engraving::Pid::FONT_STYLE);
+    mu::engraving::AutoOnOff centering = lyrics->centerBetweenStaves();
     mu::engraving::TextStyleType styleType = lyrics->textStyleType();
 
     if (direction == MoveDirection::Up) {
@@ -7838,6 +7868,7 @@ void NotationInteraction::navigateToLyricsVerse(MoveDirection direction)
         lyrics->setTextStyleType(styleType);
         lyrics->setPlacement(placement);
         lyrics->setPropertyFlags(mu::engraving::Pid::PLACEMENT, pFlags);
+        lyrics->setCenterBetweenStaves(centering);
         lyrics->setFontStyle(fStyle);
         lyrics->setPropertyFlags(mu::engraving::Pid::FONT_STYLE, fFlags);
 
@@ -8419,6 +8450,8 @@ void NotationInteraction::addMelisma()
     PropertyFlags pFlags = lyrics->propertyFlags(Pid::PLACEMENT);
     FontStyle fStyle = lyrics->fontStyle();
     PropertyFlags fFlags = lyrics->propertyFlags(Pid::FONT_STYLE);
+    double yOffset = lyrics->offset().y();
+    AutoOnOff centering = lyrics->centerBetweenStaves();
     Fraction endTick = segment->tick(); // a previous melisma cannot extend beyond this point
     endEditText();
 
@@ -8524,7 +8557,9 @@ void NotationInteraction::addMelisma()
             PartialLyricsLine* melisma = Factory::createPartialLyricsLine(score()->dummy());
             melisma->setIsEndMelisma(true);
             melisma->setVerse(verse);
-            melisma->setPlacement(lyrics->placement());
+            melisma->setPlacement(placement);
+            melisma->setPropertyFlags(Pid::PLACEMENT, pFlags);
+            melisma->setCenterBetweenStaves(centering);
             melisma->setTick(initialCR->tick());
             melisma->setTicks(initialCR->ticks());
             melisma->setTrack(initialCR->track());
@@ -8577,9 +8612,11 @@ void NotationInteraction::addMelisma()
 
         toLyrics->setPlacement(placement);
         toLyrics->setPropertyFlags(Pid::PLACEMENT, pFlags);
+        toLyrics->setCenterBetweenStaves(centering);
         toLyrics->setSyllabic(LyricsSyllabic::SINGLE);
         toLyrics->setFontStyle(fStyle);
         toLyrics->setPropertyFlags(Pid::FONT_STYLE, fFlags);
+        toLyrics->setOffset(PointF(0.0, yOffset));
     }
     // as we arrived at toLyrics by an underscore, it cannot have syllabic dashes before
     else if (toLyrics->syllabic() == LyricsSyllabic::MIDDLE) {
@@ -8608,7 +8645,9 @@ void NotationInteraction::addMelisma()
         PartialLyricsLine* melisma = Factory::createPartialLyricsLine(score()->dummy());
         melisma->setIsEndMelisma(true);
         melisma->setVerse(verse);
-        melisma->setPlacement(lyrics->placement());
+        melisma->setPlacement(placement);
+        melisma->setPropertyFlags(Pid::PLACEMENT, pFlags);
+        melisma->setCenterBetweenStaves(centering);
         melisma->setTick(initialCR->tick());
         melisma->setTicks(initialCR->ticks());
         melisma->setTrack(initialCR->track());
@@ -8645,6 +8684,7 @@ void NotationInteraction::addLyricsVerse()
     mu::engraving::Lyrics* oldLyrics = toLyrics(m_editData.element);
     mu::engraving::FontStyle fStyle = oldLyrics->fontStyle();
     mu::engraving::PropertyFlags fFlags = oldLyrics->propertyFlags(mu::engraving::Pid::FONT_STYLE);
+    mu::engraving::AutoOnOff centering = oldLyrics->centerBetweenStaves();
 
     endEditText();
 
@@ -8656,6 +8696,7 @@ void NotationInteraction::addLyricsVerse()
     lyrics->setOwnershipParent(oldLyrics->chordRest());
     lyrics->setPlacement(oldLyrics->placement());
     lyrics->setPropertyFlags(mu::engraving::Pid::PLACEMENT, oldLyrics->propertyFlags(mu::engraving::Pid::PLACEMENT));
+    lyrics->setCenterBetweenStaves(centering);
 
     lyrics->setVerse(newVerse);
     const mu::engraving::TextStyleType styleType(lyrics->isEven() ? TextStyleType::LYRICS_EVEN : TextStyleType::LYRICS_ODD);
@@ -8778,6 +8819,12 @@ void NotationInteraction::addFretboardDiagram()
     for (int i = int(created.size()) - 1; i >= 0; --i) {
         FretDiagram* diagram = created[i];
         Harmony* harmony = toHarmony(filteredElements[i]);
+
+        harmony->undoResetProperty(Pid::OFFSET);
+        harmony->undoChangeProperty(Pid::ALIGN, Align(AlignH::HCENTER, AlignV::BASELINE));
+        if (harmony->propertyFlags(Pid::ALIGN) == PropertyFlags::STYLED) {
+            harmony->setPropertyFlags(Pid::ALIGN, PropertyFlags::UNSTYLED);
+        }
 
         score->undoChangeParent(harmony, diagram,
                                 track2staff(filteredElements[i]->track()));

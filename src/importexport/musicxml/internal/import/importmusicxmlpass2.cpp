@@ -6945,8 +6945,10 @@ void MusicXmlParserPass2::xmlSetDrumsetPitch(Note* note, const Chord* chord, con
             ds->drum(newPitch) = DrumInstrument();
 
             newPitch = instr.pitch;
-            ds->drum(newPitch) = ds->drum(newPitch) = DrumInstrument(
-                instr.name, headGroup, line, stemDir, static_cast<int>(chord->voice()));
+            if (stemDir == DirectionV::AUTO) {
+                stemDir = chord->voice() & 1 ? DirectionV::DOWN : DirectionV::UP;
+            }
+            ds->drum(newPitch) = DrumInstrument(instr.name, headGroup, line, stemDir, static_cast<int>(chord->voice()));
         }
     }
 
@@ -6963,7 +6965,11 @@ void MusicXmlParserPass2::xmlSetDrumsetPitch(Note* note, const Chord* chord, con
 
         ds->drum(newPitch) = DrumInstrument(u"drum", headGroup, line, stemDir, static_cast<int>(chord->voice()));
     } else if (stemDir == DirectionV::AUTO) {
-        stemDir = ds->stemDirection(newPitch);
+        if (ds->voice(newPitch) != static_cast<int>(chord->voice())) {
+            stemDir = chord->voice() & 1 ? DirectionV::DOWN : DirectionV::UP;
+        } else {
+            stemDir = ds->stemDirection(newPitch);
+        }
     }
 
     note->setPitch(newPitch);
@@ -7301,7 +7307,7 @@ Note* MusicXmlParserPass2::note(const String& partId,
         handleSmallness(cue || isSmall, note, c);
         note->setPlay(!cue);          // cue notes don't play
         note->setHeadGroup(headGroup);
-        if (headScheme != NoteHeadScheme::HEAD_AUTO) {
+        if (headScheme != NoteHeadScheme::HEAD_AUTO && !mnp.unpitched()) {
             note->setHeadScheme(headScheme);
         }
         colorItem(note, noteColor);
