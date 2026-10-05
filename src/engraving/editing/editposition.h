@@ -5,7 +5,7 @@
  * MuseScore Studio
  * Music Composition & Notation
  *
- * Copyright (C) 2021 MuseScore Limited and others
+ * Copyright (C) 2026 MuseScore Limited and others
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3 as
@@ -13,33 +13,25 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 #pragma once
 
-#include <qqmlintegration.h>
+#include <vector>
 
-namespace mu::propertiespanel {
-namespace MarkerTypes {
-Q_NAMESPACE;
-QML_ELEMENT;
+namespace mu::engraving {
+class EngravingItem;
+class Transaction;
 
-enum class Type {
-    TYPE_SEGNO = 0,
-    TYPE_VARSEGNO,
-    TYPE_CODA,
-    TYPE_VARCODA,
-    TYPE_CODETTA,
-    TYPE_FINE,
-    TYPE_TOCODA,
-    TYPE_USER
+class EditPosition
+{
+public:
+    static void freezeItemsPositions(Transaction& tx, const std::vector<EngravingItem*>& items);
+    static void freezeItemPosition(Transaction& tx, EngravingItem* item);
 };
-
-Q_ENUM_NS(Type)
-}
 }
