@@ -532,7 +532,6 @@ void SystemLayout::layoutSystemLockIndicators(System* system, LayoutContext& ctx
 
     SystemLockIndicator* lockIndicator = Factory::createSystemLockIndicator(system, lock);
     lockIndicator->setTrack(0);
-    lockIndicator->setOwnershipParent(system);
     system->addSystemLockIndicator(lockIndicator);
 
     TLayout::layoutIndicatorIcon(lockIndicator, lockIndicator->mutldata());
@@ -554,7 +553,6 @@ void SystemLayout::layoutPageLockIndicators(System* system)
 
     PageLockIndicator* lockIndicator = Factory::createPageLockIndicator(system, lock);
     lockIndicator->setTrack(0);
-    lockIndicator->setOwnershipParent(system);
     system->setPageLockIndicator(lockIndicator);
 
     TLayout::layoutPageLockIndicator(lockIndicator, lockIndicator->mutldata());
@@ -569,7 +567,7 @@ System* SystemLayout::getNextSystem(LayoutContext& ctx)
     bool isVBox = ctx.state().curMeasure()->isVBox();
     System* system = nullptr;
     if (ctx.state().systemList().empty()) {
-        system = Factory::createSystem(ctx.mutDom().dummyParent()->score());
+        system = Factory::createSystem(ctx.mutDom().score());
         ctx.mutState().setSystemOldMeasure(nullptr);
     } else {
         system = muse::takeFirst(ctx.mutState().systemList());
