@@ -22,9 +22,9 @@
 
 #include <gtest/gtest.h>
 
-#include "engraving/compat/dummyelement.h"
 #include "engraving/compat/scoreaccess.h"
 
+#include "engraving/dom/dummyparent.h"
 #include "engraving/dom/dynamic.h"
 #include "engraving/dom/factory.h"
 #include "engraving/dom/hairpin.h"
@@ -340,14 +340,14 @@ TEST_F(Engraving_StaveCenteringTests, centeringPropertiesRoundTrip)
 {
     MasterScore* score = compat::ScoreAccess::createMasterScore(nullptr);
 
-    Lyrics* defaultLyrics = Factory::createLyrics(score->dummy()->chord());
+    Lyrics* defaultLyrics = Factory::createLyrics(score->dummy());
     ASSERT_EQ(defaultLyrics->centerBetweenStaves(), AutoOnOff::AUTO);
     Lyrics* readDefaultLyrics = toLyrics(ScoreRW::writeReadElement(defaultLyrics));
     EXPECT_EQ(readDefaultLyrics->centerBetweenStaves(), AutoOnOff::AUTO);
     delete readDefaultLyrics;
     delete defaultLyrics;
 
-    Lyrics* lyrics = Factory::createLyrics(score->dummy()->chord());
+    Lyrics* lyrics = Factory::createLyrics(score->dummy());
     lyrics->setProperty(Pid::CENTER_BETWEEN_STAVES, AutoOnOff::ON);
     Lyrics* readLyrics = toLyrics(ScoreRW::writeReadElement(lyrics));
     EXPECT_EQ(readLyrics->getProperty(Pid::CENTER_BETWEEN_STAVES).value<AutoOnOff>(), AutoOnOff::ON);
