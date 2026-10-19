@@ -1267,6 +1267,10 @@ void SystemLayout::layoutSystemElements(System* system, LayoutContext& ctx)
         GraceNotesGroup& graceAfter = chord->graceNotesAfter();
         TLayout::layoutGraceNotesGroup2(&graceBefore, graceBefore.mutldata());
         TLayout::layoutGraceNotesGroup2(&graceAfter, graceAfter.mutldata());
+        if (TabDurationSymbol* symbol = chord->tabDur()) {
+            TLayout::layoutTabDurationSymbol2(symbol, symbol->mutldata());
+            ChordLayout::fillShape(chord, chord->mutldata());
+        }
     }
 
     for (ChordRest* cr : elementsToLayout.chordRests) {
@@ -2796,7 +2800,7 @@ bool SystemLayout::snapChainShouldBeCenteredBetweenStaves(EngravingItem* item, c
 {
     // Snapped items are centered as one, so if any of them cannot be centered, none of them can
     bool allCenterable = true;
-    AlignmentLayout::scanConnectedItems(item, system, [&allCenterable, system](EngravingItem* chainItem) {
+    item->ldata()->scanConnectedItemsInSnappingChain(system, [&allCenterable, system](EngravingItem* chainItem) {
         allCenterable = allCenterable && elementShouldBeCenteredBetweenStaves(chainItem, system, chainItem->placeAbove());
     });
 
@@ -2965,8 +2969,9 @@ void SystemLayout::centerItemsInGap(const Gap& gap, const System* system, double
                 canCenterGroup = false;
 
                 // Snapped items stay together:
-                AlignmentLayout::scanConnectedItems(gapItem.item, system,
-                                                    [&movableItems](EngravingItem* chainItem) { movableItems.erase(chainItem); });
+                gapItem.item->ldata()->scanConnectedItemsInSnappingChain(system, [&movableItems](EngravingItem* chainItem) {
+                    movableItems.erase(chainItem);
+                });
 
                 // A lyrics verse stays together:
                 if (gapItem.isLyrics) {

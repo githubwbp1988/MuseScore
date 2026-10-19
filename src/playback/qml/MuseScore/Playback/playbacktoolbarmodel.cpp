@@ -36,7 +36,6 @@
 using namespace mu::playback;
 using namespace mu::engraving;
 using namespace muse;
-using namespace muse::actions;
 using namespace muse::ui;
 using namespace muse::uicomponents;
 using namespace muse::audio;
