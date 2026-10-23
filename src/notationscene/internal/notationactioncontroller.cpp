@@ -60,7 +60,6 @@ using namespace mu;
 using namespace muse;
 using namespace muse::io;
 using namespace mu::notation;
-using namespace mu::context;
 
 static constexpr qreal STRETCH_STEP = 0.1;
 static constexpr bool NEAR_NOTE_OR_REST = true;
@@ -657,8 +656,8 @@ void NotationActionController::init()
     }
 
     // listen on state changes
-    globalContext()->currentNotationChanged().onNotify(this, [this]() {
-        auto notation = globalContext()->currentNotation();
+    projectSession()->currentNotationChanged().onNotify(this, [this]() {
+        auto notation = projectSession()->currentNotation();
         if (notation) {
             auto interaction = notation->interaction();
 
@@ -702,7 +701,7 @@ void NotationActionController::init()
         m_currentNotationStyleChanged.notify();
     });
 
-    globalContext()->playbackState()->playbackStatusChanged().onReceive(this, [this](muse::audio::PlaybackStatus) {
+    playbackController()->isPlayingChanged().onReceive(this, [this](bool) {
         m_isNoteInputAllowedChanged.send(isNoteInputAllowed());
     }, Asyncable::Mode::SetReplace);
 }
@@ -720,12 +719,12 @@ INotationViewController* NotationActionController::viewController() const
 
 INotationPtr NotationActionController::currentNotation() const
 {
-    return globalContext()->currentNotation();
+    return projectSession()->currentNotation();
 }
 
 IMasterNotationPtr NotationActionController::currentMasterNotation() const
 {
-    return globalContext()->currentMasterNotation();
+    return projectSession()->masterNotation();
 }
 
 INotationInteractionPtr NotationActionController::currentNotationInteraction() const
@@ -745,12 +744,12 @@ INotationElementsPtr NotationActionController::currentNotationElements() const
 
 muse::async::Notification NotationActionController::currentNotationChanged() const
 {
-    return globalContext()->currentNotationChanged();
+    return projectSession()->currentNotationChanged();
 }
 
 muse::async::Notification NotationActionController::currentMasterNotationChanged() const
 {
-    return globalContext()->currentMasterNotationChanged();
+    return projectSession()->masterNotationChanged();
 }
 
 INotationNoteInputPtr NotationActionController::currentNotationNoteInput() const
@@ -807,7 +806,7 @@ void NotationActionController::resetState()
 {
     TRACEFUNC;
 
-    if (globalContext()->playbackState()->isPlaying()) {
+    if (playbackController()->isPlaying()) {
         commandDispatcher()->dispatch(playback::STOP_COMMAND);
     }
 
@@ -846,7 +845,7 @@ void NotationActionController::resetState()
 
 bool NotationActionController::isNoteInputAllowed() const
 {
-    return !globalContext()->playbackState()->isPlaying();
+    return !playbackController()->isPlaying();
 }
 
 muse::async::Channel<bool> NotationActionController::isNoteInputAllowedChanged() const
@@ -994,6 +993,9 @@ void NotationActionController::setDuration(DurationType duration)
         }
 
         startNoteInput();
+    }
+    if (noteInput->isNoteInputMode() && !noteInput->state().isValid()) {
+        return;
     }
 
     noteInput->setDuration(duration);
@@ -1619,7 +1621,7 @@ muse::Ret NotationActionController::moveWithRet(MoveDirection direction, bool qu
             interaction->nudge(direction, quickly);
         } else if (selectedElement && selectedElement->hasGrips() && interaction->isGripEditStarted()) {
             interaction->nudgeAnchors(direction);
-        } else if (noteInput->isNoteInputMode() && noteInput->usingNoteInputMethod(NoteInputMethod::BY_DURATION)) {
+        } else if (state.isValid() && noteInput->isNoteInputMode() && noteInput->usingNoteInputMethod(NoteInputMethod::BY_DURATION)) {
             moveInputNotes(direction == MoveDirection::Up, quickly ? PitchMode::OCTAVE : PitchMode::DIATONIC);
             return muse::make_ok();
         } else if (noteInput->isNoteInputMode() && noteInput->state().staffGroup() == mu::engraving::StaffGroup::TAB) {
@@ -1636,7 +1638,7 @@ muse::Ret NotationActionController::moveWithRet(MoveDirection direction, bool qu
         break;
     case MoveDirection::Right:
     case MoveDirection::Left:
-        if (globalContext()->playbackState()->isPlaying()) {
+        if (playbackController()->isPlaying()) {
             engraving::MeasureBeat beat = playbackController()->currentBeat();
             int targetBeatIdx = static_cast<int>(beat.beat);
             int targetMeasureIdx = beat.measureIndex;
@@ -1724,7 +1726,7 @@ void NotationActionController::movePitchDiatonic(MoveDirection direction, bool)
     }
 
     INotationNoteInputPtr noteInput = interaction->noteInput();
-    if (noteInput->isNoteInputMode() && noteInput->usingNoteInputMethod(NoteInputMethod::BY_DURATION)) {
+    if (noteInput->state().isValid() && noteInput->isNoteInputMode() && noteInput->usingNoteInputMethod(NoteInputMethod::BY_DURATION)) {
         moveInputNotes(direction == MoveDirection::Up, PitchMode::DIATONIC);
         return;
     }
@@ -2630,7 +2632,7 @@ void NotationActionController::playSelectedElement(bool playChord)
 
 bool NotationActionController::toggleNoteInputAllowed() const
 {
-    if (globalContext()->playbackState()->isPlaying()) {
+    if (!isNoteInputAllowed()) {
         return false;
     }
 
@@ -2712,11 +2714,6 @@ muse::async::Notification NotationActionController::stackChanged() const
     return m_stackChanged;
 }
 
-bool NotationActionController::isNotationPage() const
-{
-    return uiContextResolver()->matchWithCurrent(context::UiCtxProjectOpened);
-}
-
 bool NotationActionController::isTablatureStaff() const
 {
     return isNotEditingElement() && currentNotationScore()->inputState().staffGroup() == mu::engraving::StaffGroup::TAB;
@@ -2763,7 +2760,7 @@ bool NotationActionController::isNotEditingElement() const
 
 void NotationActionController::checkForScoreCorruptions()
 {
-    project::INotationProjectPtr project = globalContext()->currentProject();
+    project::INotationProjectPtr project = projectSession()->project();
     if (!project) {
         return;
     }
