@@ -66,7 +66,7 @@ std::vector<INotationWriter::UnitType> ExportProjectScenario::supportedUnitTypes
 RetVal<muse::io::path_t> ExportProjectScenario::askExportPath(const INotationPtrList& notations, const ExportType& exportType,
                                                               INotationWriter::UnitType unitType, muse::io::path_t defaultDirPath) const
 {
-    INotationProjectPtr project = context()->currentProject();
+    INotationProjectPtr project = context()->project();
 
     std::string filenameAddition;
 
@@ -341,7 +341,7 @@ bool ExportProjectScenario::isMainNotation(INotationPtr notation) const
 
 IMasterNotationPtr ExportProjectScenario::masterNotation() const
 {
-    return context()->currentMasterNotation();
+    return context()->masterNotation();
 }
 
 muse::io::path_t ExportProjectScenario::completeExportPath(const muse::io::path_t& basePath, INotationPtr notation, bool isMain,

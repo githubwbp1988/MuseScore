@@ -279,7 +279,7 @@ void ExportDialogModel::selectSavedNotations()
 
 IMasterNotationPtr ExportDialogModel::masterNotation() const
 {
-    return context()->currentMasterNotation();
+    return context()->masterNotation();
 }
 
 bool ExportDialogModel::isMainNotation(INotationPtr notation) const
