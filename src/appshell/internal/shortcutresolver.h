@@ -40,7 +40,7 @@ public:
     ShortcutResolver(const muse::modularity::ContextPtr& iocCtx)
         : muse::Contextable(iocCtx) {}
 
-    muse::shortcuts::Shortcut selectOne(const muse::shortcuts::ShortcutList& list) const override;
+    muse::shortcuts::Shortcut selectActive(const muse::shortcuts::ShortcutList& list) const override;
 
     muse::TranslatableString scopeTitle(const std::string& scopeCode) const override;
 
@@ -50,6 +50,9 @@ private:
     bool isNotationFocused() const;
     bool isNotationFocusedAndNoteInputMode() const;
     bool isNotationFocusedAndTabStaff() const;
+    bool isNotationFocusedAndHasSelection() const;
+    bool isNotationFocusedAndSingleSelection() const;
+    bool isNotationFocusedAndRangeSelection() const;
     bool isNotationFocusedAndTextEditing() const;
 
     mutable std::map<std::string, std::function<int()> > m_scopePriorityMap;
