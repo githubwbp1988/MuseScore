@@ -42,6 +42,7 @@
 #include "notation/notationtypes.h"
 
 #include "inotationviewcontroller.h"
+#include "notationcommands.h"
 
 namespace mu::notation {
 class NotationActionController : public INotationCommandsController, public muse::rcommand::Commandable, public muse::async::Asyncable,
@@ -110,6 +111,8 @@ public:
 
     bool isTablatureStaff() const override;
 
+    INotationAutomationPtr automation() const;
+
     bool isAutomationModeEnabled() const override;
     muse::async::Notification automationModeEnabledChanged() const override;
 
@@ -133,11 +136,18 @@ private:
 
     mu::engraving::Score* currentNotationScore() const;
 
+    muse::Ret select(const SelectTargetCommand& command);
+    muse::Ret select(SelectionTarget target, PlayMode playMode = PlayMode::NoPlay);
+    muse::Ret addToSelection(const AddToSelectionTargetCommand& command);
+    muse::Ret addToSelection(SelectionTarget target);
+
     void toggleNoteInput(NoteInputMethod method);
     void toggleNoteInputInsert();
-    muse::RetVal<muse::rcommand::Params> getNoteInputState() const;
+    muse::RetVal<GetNoteInputStateCommand::Output> getNoteInputState() const;
 
-    muse::Ret addNote(const muse::rcommand::Params& params);
+    muse::Ret flipSelection();
+
+    muse::Ret addNote(const AddNoteCommand& command);
     void addNote(NoteName noteName, NoteAddingMode addingMode);
     muse::Ret addDrumNote(const muse::rcommand::Params& params);
     void doAddNote(const NoteInputParams& params, const NoteAddingMode& addingMode);
@@ -266,6 +276,17 @@ private:
     muse::Ret selectAutomationType(const muse::rcommand::Params& params);
 
     // commands
+    template<muse::rcommand::TypedCommand C>
+    void registerCommand(std::function<muse::Ret()>);
+    template<muse::rcommand::TypedCommand C>
+    void registerCommand(muse::Ret (NotationActionController::*)());
+    template<muse::rcommand::TypedCommand C>
+    void registerCommand(muse::Ret (NotationActionController::*)(const C&));
+    template<muse::rcommand::HasOutput C>
+    void registerGetCommand(muse::RetVal<typename C::Output>(NotationActionController::*)() const);
+    template<muse::rcommand::HasOutput C>
+    void registerGetCommand(muse::RetVal<typename C::Output>(NotationActionController::*)(const C&) const);
+
     void registerCommand(const muse::rcommand::Command&, std::function<void()>);
     void registerCommand(const muse::rcommand::Command&, std::function<void()>, bool (NotationActionController::*)() const);
     void registerCommandWithParams(const muse::rcommand::Command&, std::function<muse::Ret(const muse::rcommand::Params&)>);
@@ -284,9 +305,6 @@ private:
 
     void registerGetCommand(const muse::rcommand::Command&, std::function<muse::RetVal<muse::rcommand::Params>()>);
     void registerGetCommand(const muse::rcommand::Command&, muse::RetVal<muse::rcommand::Params>(NotationActionController::*)() const);
-
-    muse::Ret select(const muse::rcommand::Params& params);
-    void select(SelectionTarget target, PlayMode playMode = PlayMode::NoPlay);
 
     void registerViewCommand(const muse::rcommand::Command&, void (INotationViewController::*)());
     template<typename P1>

@@ -52,6 +52,7 @@
 #include "qml/MuseScore/NotationScene/notationviewinputcontroller.h"
 
 #include "../notationcommands.h"
+#include "../notationcommandsenums.h"
 #include "playback/playbackcommands.h"
 
 #include "log.h"
@@ -59,7 +60,9 @@
 using namespace mu;
 using namespace muse;
 using namespace muse::io;
+using namespace muse::rcommand;
 using namespace mu::notation;
+using namespace mu::engraving;
 
 static constexpr qreal STRETCH_STEP = 0.1;
 static constexpr bool NEAR_NOTE_OR_REST = true;
@@ -100,46 +103,47 @@ void NotationActionController::init()
 
     // navigation and selection commands
 
-    registerCommandWithParams(SELECT_COMMAND, &Controller::select);
-    registerCommand(GOTO_FIRST_ELEMENT_COMMAND, [this]() { select(SelectionTarget::FirstItem, PlayMode::PlayChord); });
-    registerCommand(GOTO_LAST_ELEMENT_COMMAND, [this]() { select(SelectionTarget::LastItem, PlayMode::PlayChord); });
-    registerCommand(GOTO_NEXT_ELEMENT_COMMAND, [this]() { select(SelectionTarget::NextItem, PlayMode::PlayNote); });
-    registerCommand(GOTO_PREV_ELEMENT_COMMAND, [this]() { select(SelectionTarget::PrevItem, PlayMode::PlayNote); });
-    registerCommand(GOTO_NEXT_SEGMENT_ELEMENT_COMMAND, [this]() { select(SelectionTarget::NextSegmentItem, PlayMode::PlayNote); });
-    registerCommand(GOTO_PREV_SEGMENT_ELEMENT_COMMAND, [this]() { select(SelectionTarget::PrevSegmentItem, PlayMode::PlayNote); });
-    registerCommand(GOTO_NEXT_TRACK_COMMAND, [this]() { select(SelectionTarget::NextTrack, PlayMode::PlayChord); });
-    registerCommand(GOTO_PREV_TRACK_COMMAND, [this]() { select(SelectionTarget::PrevTrack, PlayMode::PlayChord); });
-    registerCommand(GOTO_NEXT_FRAME_COMMAND, [this]() { select(SelectionTarget::NextFrame); });
-    registerCommand(GOTO_PREV_FRAME_COMMAND, [this]() { select(SelectionTarget::PrevFrame); });
-    registerCommand(GOTO_NEXT_SYSTEM_COMMAND, [this]() { select(SelectionTarget::NextSystem); });
-    registerCommand(GOTO_PREV_SYSTEM_COMMAND, [this]() { select(SelectionTarget::PrevSystem); });
-    registerCommand(GOTO_UPNOTE_IN_CHORD_COMMAND, [this]() { select(SelectionTarget::UpNoteInChord); });
-    registerCommand(GOTO_DOWNNOTE_IN_CHORD_COMMAND, [this]() { select(SelectionTarget::DownNoteInChord); });
-    registerCommand(GOTO_TOPNOTE_IN_CHORD_COMMAND, [this]() { select(SelectionTarget::TopNoteInChord); });
-    registerCommand(GOTO_BOTTOMNOTE_IN_CHORD_COMMAND, [this]() { select(SelectionTarget::BottomNoteInChord); });
-    registerCommand(GOTO_TOP_STAFF_COMMAND, [this]() { select(SelectionTarget::TopStaff, PlayMode::PlayChord); });
-    registerCommand(GOTO_EMPTY_TRAILING_MEASURE_COMMAND, [this]() { select(SelectionTarget::EmptyTrailingMeasure); });
-    registerCommand(SELECT_SIMILAR_COMMAND, [this]() { select(SelectionTarget::Similar); });
-    registerCommand(SELECT_SIMILAR_IN_STAFF_COMMAND, [this]() { select(SelectionTarget::SimilarInStaff); });
-    registerCommand(SELECT_SIMILAR_IN_RANGE_COMMAND, [this]() { select(SelectionTarget::SimilarInRange); });
-    registerCommand(SELECT_NOTES_IN_CHORD_COMMAND, [this]() { select(SelectionTarget::NotesInChord); });
-    registerCommand(SELECT_ALL_COMMAND, [this]() { select(SelectionTarget::All); });
-    registerCommand(SELECT_SECTION_COMMAND, [this]() { select(SelectionTarget::Section); });
+    registerCommand<SelectTargetCommand>(&Controller::select);
+    registerCommand<SelectFirstItemCommand>([this]() { return select(SelectionTarget::FirstItem, PlayMode::PlayChord); });
+    registerCommand<SelectLastItemCommand>([this]() { return select(SelectionTarget::LastItem, PlayMode::PlayChord); });
+    registerCommand<SelectNextItemCommand>([this]() { return select(SelectionTarget::NextItem, PlayMode::PlayNote); });
+    registerCommand<SelectPrevItemCommand>([this]() { return select(SelectionTarget::PrevItem, PlayMode::PlayNote); });
+    registerCommand<SelectNextSegmentCommand>([this]() { return select(SelectionTarget::NextSegment, PlayMode::PlayNote); });
+    registerCommand<SelectPrevSegmentCommand>([this]() { return select(SelectionTarget::PrevSegment, PlayMode::PlayNote); });
+    registerCommand<SelectNextTrackCommand>([this]() { return select(SelectionTarget::NextTrack, PlayMode::PlayChord); });
+    registerCommand<SelectPrevTrackCommand>([this]() { return select(SelectionTarget::PrevTrack, PlayMode::PlayChord); });
+    registerCommand<SelectNextFrameCommand>([this]() { return select(SelectionTarget::NextFrame); });
+    registerCommand<SelectPrevFrameCommand>([this]() { return select(SelectionTarget::PrevFrame); });
+    registerCommand<SelectNextSystemCommand>([this]() { return select(SelectionTarget::NextSystem); });
+    registerCommand<SelectPrevSystemCommand>([this]() { return select(SelectionTarget::PrevSystem); });
+    registerCommand<SelectUpNoteInChordCommand>([this]() { return select(SelectionTarget::UpNoteInChord); });
+    registerCommand<SelectDownNoteInChordCommand>([this]() { return select(SelectionTarget::DownNoteInChord); });
+    registerCommand<SelectTopNoteInChordCommand>([this]() { return select(SelectionTarget::TopNoteInChord); });
+    registerCommand<SelectBottomNoteInChordCommand>([this]() { return select(SelectionTarget::BottomNoteInChord); });
+    registerCommand<SelectTopStaffCommand>([this]() { return select(SelectionTarget::TopStaff, PlayMode::PlayChord); });
+    registerCommand<SelectEmptyTrailingMeasureCommand>([this]() { return select(SelectionTarget::EmptyTrailingMeasure); });
+    registerCommand<SelectSimilarCommand>([this]() { return select(SelectionTarget::Similar); });
+    registerCommand<SelectSimilarInStaffCommand>([this]() { return select(SelectionTarget::SimilarInStaff); });
+    registerCommand<SelectSimilarInRangeCommand>([this]() { return select(SelectionTarget::SimilarInRange); });
+    registerCommand<SelectNotesInChordCommand>([this]() { return select(SelectionTarget::NotesInChord); });
+    registerCommand<SelectAllCommand>([this]() { return select(SelectionTarget::All); });
+    registerCommand<SelectSectionCommand>([this]() { return select(SelectionTarget::Section); });
 
-    registerCommand(GET_LOCATION_COMMAND, &Interaction::getLocation);
-
-    registerCommand(ADD_TO_SELECTION_NEXT_CHORD_COMMAND, &Interaction::addToSelection, SelectionTarget::NextChord);
-    registerCommand(ADD_TO_SELECTION_PREV_CHORD_COMMAND, &Interaction::addToSelection, SelectionTarget::PrevChord);
-    registerCommand(ADD_TO_SELECTION_NEXT_MEASURE_COMMAND, &Interaction::addToSelection, SelectionTarget::NextMeasure);
-    registerCommand(ADD_TO_SELECTION_PREV_MEASURE_COMMAND, &Interaction::addToSelection, SelectionTarget::PrevMeasure);
-    registerCommand(ADD_TO_SELECTION_ABOVE_STAFF_COMMAND, &Interaction::addToSelection, SelectionTarget::AboveStaff);
-    registerCommand(ADD_TO_SELECTION_BELOW_STAFF_COMMAND, &Interaction::addToSelection, SelectionTarget::BelowStaff);
-    registerCommand(ADD_TO_SELECTION_BEGIN_SYSTEM_COMMAND, &Interaction::expandSelection, ExpandSelectionMode::BeginSystem);
-    registerCommand(ADD_TO_SELECTION_END_SYSTEM_COMMAND, &Interaction::expandSelection, ExpandSelectionMode::EndSystem);
-    registerCommand(ADD_TO_SELECTION_BEGIN_SCORE_COMMAND, &Interaction::expandSelection, ExpandSelectionMode::BeginScore);
-    registerCommand(ADD_TO_SELECTION_END_SCORE_COMMAND, &Interaction::expandSelection, ExpandSelectionMode::EndScore);
+    registerCommand<AddToSelectionTargetCommand>(&Controller::addToSelection);
+    registerCommand<AddToSelectionNextChordCommand>([this]() { return addToSelection(SelectionTarget::NextChord); });
+    registerCommand<AddToSelectionPrevChordCommand>([this]() { return addToSelection(SelectionTarget::PrevChord); });
+    registerCommand<AddToSelectionNextMeasureCommand>([this]() { return addToSelection(SelectionTarget::NextMeasure); });
+    registerCommand<AddToSelectionPrevMeasureCommand>([this]() { return addToSelection(SelectionTarget::PrevMeasure); });
+    registerCommand<AddToSelectionAboveStaffCommand>([this]() { return addToSelection(SelectionTarget::AboveStaff); });
+    registerCommand<AddToSelectionBelowStaffCommand>([this]() { return addToSelection(SelectionTarget::BelowStaff); });
+    registerCommand<AddToSelectionBeginSystemCommand>([this]() { return addToSelection(SelectionTarget::BeginSystem); });
+    registerCommand<AddToSelectionEndSystemCommand>([this]() { return addToSelection(SelectionTarget::EndSystem); });
+    registerCommand<AddToSelectionBeginScoreCommand>([this]() { return addToSelection(SelectionTarget::BeginScore); });
+    registerCommand<AddToSelectionEndScoreCommand>([this]() { return addToSelection(SelectionTarget::EndScore); });
 
     registerCommand(OPEN_SELECTION_OPTIONS_COMMAND, &Controller::openSelectionMoreOptions);
+
+    registerCommand(GET_LOCATION_COMMAND, &Interaction::getLocation);
 
     // text navigation commands
     registerCommand(EDITTEXT_NEXT_WORD_COMMAND, [this]() { nextWord(); });
@@ -186,7 +190,7 @@ void NotationActionController::init()
 
     registerCommand(REALTIME_ADVANCE_COMMAND, &Controller::realtimeAdvance);
 
-    registerGetCommand(GET_NOTEINPUT_STATE_COMMAND, &NotationActionController::getNoteInputState);
+    registerGetCommand<GetNoteInputStateCommand>(&NotationActionController::getNoteInputState);
 
     registerCommand(SET_DURATION_LONGA_COMMAND, [this]() { setDuration(DurationType::V_LONG); });
     registerCommand(SET_DURATION_BREVE_COMMAND, [this]() { setDuration(DurationType::V_BREVE); });
@@ -247,10 +251,10 @@ void NotationActionController::init()
     registerCommand(SWAP_VOICE_X24_COMMAND, [this]() { swapVoices(1, 3); });
     registerCommand(SWAP_VOICE_X34_COMMAND, [this]() { swapVoices(2, 3); });
 
-    registerCommand(FLIP_COMMAND, &Interaction::flipSelection);
+    registerCommand<FlipCommand>(&Controller::flipSelection);
     registerCommand(FLIP_HORIZONTALLY_COMMAND, &Interaction::flipSelectionHorizontally);
 
-    registerCommandWithParams(ADD_NOTE_COMMAND, &Controller::addNote);
+    registerCommand<AddNoteCommand>(&Controller::addNote);
     registerCommandWithParams(ADD_DRUM_NOTE_COMMAND, &Controller::addDrumNote);
 
     registerNoteCommand(ENTER_NOTE_C_COMMAND, NoteName::C);
@@ -548,6 +552,8 @@ void NotationActionController::init()
     registerCommandWithParams(SCREEN_EDIT_TEXT_COMMAND, &Controller::startEditSelectedText);
     registerCommandWithParams(SCREEN_EDIT_ELEMENT_COMMAND, &Controller::startEditSelectedElement);
 
+    registerCommandWithParams(EDIT_ELEMENT_COMMAND, &Controller::startEditSelectedElement); // same as screen edit element command, no params
+
     // others commands
     registerCommand(REGROUP_RHYTHMS_COMMAND, &Interaction::regroupNotesAndRests);
     registerCommand(RESEQUENCE_REHEARSAL_MARKS_COMMAND, &Interaction::resequenceRehearsalMarks);
@@ -843,6 +849,50 @@ void NotationActionController::resetState()
     if (!interaction->selection()->isNone()) {
         interaction->clearSelection();
     }
+
+    if (automation()) {
+        automation()->resetEditStateRequested().notify();
+    }
+}
+
+muse::Ret NotationActionController::select(const SelectTargetCommand& command)
+{
+    return select(command.target, command.playMode);
+}
+
+muse::Ret NotationActionController::select(SelectionTarget target, PlayMode playMode)
+{
+    auto interaction = currentNotationInteraction();
+    if (!interaction) {
+        return muse::make_ret(Ret::Code::InternalError);
+    }
+
+    Ret ret = interaction->select(target);
+    if (!ret) {
+        return ret;
+    }
+
+    seekSelectedElement();
+    if (playMode != PlayMode::NoPlay) {
+        playSelectedElement(playMode == PlayMode::PlayChord);
+    }
+
+    return muse::make_ok();
+}
+
+muse::Ret NotationActionController::addToSelection(const AddToSelectionTargetCommand& command)
+{
+    return addToSelection(command.target);
+}
+
+muse::Ret NotationActionController::addToSelection(SelectionTarget target)
+{
+    auto interaction = currentNotationInteraction();
+    if (!interaction) {
+        return muse::make_ret(Ret::Code::InternalError);
+    }
+
+    return interaction->addToSelection(target);
 }
 
 bool NotationActionController::isNoteInputAllowed() const
@@ -911,30 +961,37 @@ void NotationActionController::toggleNoteInputInsert()
     }
 }
 
-muse::RetVal<muse::rcommand::Params> NotationActionController::getNoteInputState() const
+muse::RetVal<GetNoteInputStateCommand::Output> NotationActionController::getNoteInputState() const
 {
     INotationNoteInputPtr noteInput = currentNotationNoteInput();
     if (!noteInput) {
-        return RetVal<rcommand::Params>::make_ret(Ret::Code::InternalError);
+        return muse::RetVal<GetNoteInputStateCommand::Output>::make_ret(Ret::Code::InternalError);
     }
 
-    if (!noteInput->isNoteInputMode()) {
-        return RetVal<rcommand::Params>::make_ok(muse::rcommand::Params({ { "mode", Val("disabled") } }));
+    GetNoteInputStateCommand::Output output;
+    output.enabled = noteInput->isNoteInputMode();
+    if (output.enabled) {
+        const NoteInputState& state = noteInput->state();
+        output.method = state.noteEntryMethod();
     }
 
-    const NoteInputState& state = noteInput->state();
-
-    return RetVal<rcommand::Params>::make_ok(muse::rcommand::Params({ { "mode", Val(str_conv(state.noteEntryMethod())) } }));
+    return muse::RetVal<GetNoteInputStateCommand::Output>::make_ok(output);
 }
 
-muse::Ret NotationActionController::addNote(const muse::rcommand::Params& params)
+muse::Ret NotationActionController::flipSelection()
 {
-    TRACEFUNC;
+    INotationInteractionPtr interaction = currentNotationInteraction();
+    if (!interaction) {
+        return muse::make_ret(Ret::Code::InternalError);
+    }
 
-    NoteName note = str_conv(params.at("note").toString(), NoteName::C);
-    NoteAddingMode mode = str_conv(params.at("mode").toString(), NoteAddingMode::CurrentChord);
+    interaction->flipSelection();
+    return muse::make_ok();
+}
 
-    addNote(note, mode);
+muse::Ret NotationActionController::addNote(const AddNoteCommand& command)
+{
+    addNote(command.note, command.mode);
     return muse::make_ok();
 }
 
@@ -956,7 +1013,7 @@ muse::Ret NotationActionController::addDrumNote(const muse::rcommand::Params& pa
     TRACEFUNC;
 
     int pitch = params.at("pitch").toInt();
-    NoteAddingMode mode = str_conv(params.at("mode").toString(), NoteAddingMode::CurrentChord);
+    NoteAddingMode mode = EnumContract<NoteAddingMode>::get(params);
 
     NoteInputParams noteInputParams;
     noteInputParams.drumPitch = pitch;
@@ -1497,9 +1554,10 @@ muse::Ret NotationActionController::putTuplet(const muse::rcommand::Params& para
 {
     TupletOptions options;
     options.ratio = engraving::Fraction::fromString(muse::String::fromStdString(params.at("ratio").toString()));
-    options.numberType = engraving::str_conv(params.at("number-type").toString(), engraving::TupletNumberType::SHOW_NUMBER);
-    options.bracketType = engraving::str_conv(params.at("bracket-type").toString(), engraving::TupletBracketType::AUTO_BRACKET);
+    options.numberType = EnumContract<TupletNumberType>::get(params);
+    options.bracketType = EnumContract<TupletBracketType>::get(params);
     options.autoBaseLen = params.at("auto-baselen", Val(false)).toBool();
+    options.selectedDurationAs = EnumContract<TupletSelectedDuration>::get(params);
 
     putTuplet(options);
     return muse::make_ok();
@@ -1515,11 +1573,6 @@ void NotationActionController::putTuplet(const TupletOptions& options)
 
     auto noteInput = interaction->noteInput();
     if (!noteInput) {
-        return;
-    }
-
-    if (!interaction->canAddTupletToSelectedChordRests()) {
-        interactive()->error(muse::trc("notation", "Cannot create tuplet"), muse::trc("notation", "Note value is too short"));
         return;
     }
 
@@ -2747,9 +2800,14 @@ bool NotationActionController::isTablatureStaff() const
     return isNotEditingElement() && currentNotationScore()->inputState().staffGroup() == mu::engraving::StaffGroup::TAB;
 }
 
+INotationAutomationPtr NotationActionController::automation() const
+{
+    return currentMasterNotation() ? currentMasterNotation()->automation() : nullptr;
+}
+
 bool NotationActionController::isAutomationModeEnabled() const
 {
-    return currentMasterNotation() ? currentMasterNotation()->automation()->isAutomationModeEnabled() : false;
+    return automation() ? automation()->isAutomationModeEnabled() : false;
 }
 
 muse::async::Notification NotationActionController::automationModeEnabledChanged() const
@@ -2826,18 +2884,12 @@ void NotationActionController::toggleAutomation()
 
 muse::Ret NotationActionController::selectAutomationType(const muse::rcommand::Params& params)
 {
-    const std::string type = params.at("type").toString();
-    mu::engraving::AutomationType automationType = mu::engraving::AutomationType::Dynamics;
-
-    if (type == "tempo") {
-        automationType = mu::engraving::AutomationType::Tempo;
-    } else if (type == "volume") {
-        automationType = mu::engraving::AutomationType::Volume;
-    } else if (type == "pan") {
-        automationType = mu::engraving::AutomationType::Pan;
+    const std::optional<AutomationLane> lane = automationLaneFromString(params.at("type").toString());
+    if (!lane) {
+        return muse::make_ret(Ret::Code::BadArgs);
     }
 
-    configuration()->setCurrentAutomationType(automationType);
+    configuration()->setCurrentAutomationLane(*lane);
 
     return muse::make_ok();
 }
@@ -2851,35 +2903,67 @@ bool NotationActionController::isNoteInputActionAllowed() const
     return !isTablatureStaff();
 }
 
-muse::Ret NotationActionController::select(const muse::rcommand::Params& params)
-{
-    SelectionTarget target = str_conv(params.at("target").toString(), SelectionTarget::Undefined);
-    if (target == SelectionTarget::Undefined) {
-        return muse::make_ret(Ret::Code::BadArgs);
-    }
-
-    PlayMode playMode = str_conv(params.at("play-mode").toString(), PlayMode::NoPlay);
-
-    select(target, playMode);
-    return muse::make_ok();
-}
-
-void NotationActionController::select(SelectionTarget target, PlayMode playMode)
-{
-    auto interaction = currentNotationInteraction();
-    if (!interaction) {
-        return;
-    }
-
-    interaction->select(target);
-    seekSelectedElement();
-
-    if (playMode != PlayMode::NoPlay) {
-        playSelectedElement(playMode == PlayMode::PlayChord);
-    }
-}
-
 // COMMANDS
+template<muse::rcommand::TypedCommand C>
+void NotationActionController::registerCommand(std::function<muse::Ret()> handler)
+{
+    commandDispatcher()->onRequest<C>(this, [this, handler](const C&) {
+        if (!commandsState()->commandState(C::id).enabled) {
+            return muse::make_ret(Ret::Code::NotSupported);
+        }
+        return handler();
+    });
+}
+
+template<muse::rcommand::TypedCommand C>
+void NotationActionController::registerCommand(muse::Ret (NotationActionController::* handler)())
+{
+    commandDispatcher()->onRequest<C>(this, [this, handler](const C&) {
+        if (!commandsState()->commandState(C::id).enabled) {
+            return muse::make_ret(Ret::Code::NotSupported);
+        }
+        return (this->*handler)();
+    });
+}
+
+template<muse::rcommand::TypedCommand C>
+void NotationActionController::registerCommand(muse::Ret (NotationActionController::* handler)(const C&))
+{
+    commandDispatcher()->onRequest<C>(this, [this, handler](const C& command) {
+        if (!commandsState()->commandState(C::id).enabled) {
+            return muse::make_ret(Ret::Code::NotSupported);
+        }
+
+        muse::Ret ret = (this->*handler)(command);
+        return ret;
+    });
+}
+
+template<muse::rcommand::HasOutput C>
+void NotationActionController::registerGetCommand(muse::RetVal<typename C::Output>(NotationActionController::* handler)() const)
+{
+    commandDispatcher()->onRequest<C>(this, [this, handler](const C&) {
+        if (!commandsState()->commandState(C::id).enabled) {
+            return muse::RetVal<typename C::Output>::make_ret(Ret::Code::NotSupported);
+        }
+
+        muse::RetVal<typename C::Output> ret = (this->*handler)();
+        return ret;
+    });
+}
+
+template<muse::rcommand::HasOutput C>
+void NotationActionController::registerGetCommand(muse::RetVal<typename C::Output>(NotationActionController::* handler)(const C&) const)
+{
+    commandDispatcher()->onRequest<C>(this, [this, handler](const C& command) {
+        if (!commandsState()->commandState(C::id).enabled) {
+            return muse::RetVal<typename C::Output>::make_ret(Ret::Code::NotSupported);
+        }
+
+        muse::RetVal<typename C::Output> ret = (this->*handler)(command);
+        return ret;
+    });
+}
 
 void NotationActionController::registerCommand(const muse::rcommand::Command& command, std::function<void()> handler)
 {

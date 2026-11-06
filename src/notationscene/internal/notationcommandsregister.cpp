@@ -688,13 +688,7 @@ static const std::vector<CommandInfo> s_commandInfos = {
         Decoration()
     },
 
-    CommandInfo{
-        FLIP_COMMAND,
-        TranslatableString("action", "Flip direction"),
-        TranslatableString("action", "Flip direction"),
-        InputSchema(),
-        Decoration(IconCode::Code::NOTE_FLIP)
-    },
+    makeCommandInfo<FlipCommand>(),
     CommandInfo{
         FLIP_HORIZONTALLY_COMMAND,
         TranslatableString("action", "Flip horizontally"),
@@ -704,22 +698,14 @@ static const std::vector<CommandInfo> s_commandInfos = {
     },
 
     // note operation
-    CommandInfo{
-        ADD_NOTE_COMMAND,
-        TranslatableString("action", "Add note"),
-        TranslatableString("action", "Add note"),
-        InputSchema({
-            { "note", Arg(DataType::String, u"Note name (c, d, e, f, g, a, b)") },
-            { "mode", Arg(DataType::String, u"Adding mode (current, next, insert)") },
-        }),
-        Decoration()
-    },
+    makeCommandInfo<AddNoteCommand>(),
+
     CommandInfo{
         ADD_DRUM_NOTE_COMMAND,
         TranslatableString("action", "Add drum note"),
         TranslatableString("action", "Add drum note"),
         InputSchema({
-            { "pitch", Arg(DataType::Integer, u"Drum pitch (e.g. 35, 36, 37, 38, 39, 40, 41)", Val(0), Val(127)) },
+            { "pitch", Arg(DataType::Int, u"Drum pitch (e.g. 35, 36, 37, 38, 39, 40, 41)", Val(0), Val(127)) },
             { "mode", Arg(DataType::String, u"Adding mode (current, next, insert)") },
         }),
         Decoration()
@@ -896,7 +882,8 @@ static const std::vector<CommandInfo> s_commandInfos = {
             { "ratio", Arg(DataType::String, u"Tuplet ratio (e.g. 3/2, 4/3, 5/4, 6/5, 7/6, 8/7, 9/8)") },
             { "number-type", Arg(DataType::String, u"Tuplet number type (number, relation, none)") },
             { "bracket-type", Arg(DataType::String, u"Tuplet bracket type (auto, show, none)") },
-            { "auto-baselen", Arg(DataType::Boolean, u"Auto base length") },
+            { "auto-baselen", Arg(DataType::Bool, u"Auto base length") },
+            { "selected-duration-as", Arg(DataType::String, u"Use selected duration as (subdivision, tuplet-length)") },
         }),
         Decoration()
     },
@@ -959,22 +946,7 @@ static const std::vector<CommandInfo> s_commandInfos = {
 
     // navigation and selection commands
 
-    CommandInfo{
-        SELECT_COMMAND,
-        TranslatableString("action", "Select"),
-        TranslatableString("action", "Select items by target"),
-        InputSchema({
-            { "target",
-              Arg(DataType::String,
-                  u"Selection target (first-item, last-item, next-item, prev-item, "
-                  u"next-chord, prev-chord, next-measure, prev-measure, "
-                  u"next-track, prev-track, next-frame, prev-frame, next-system, prev-system, "
-                  u"up-note-in-chord, down-note-in-chord, top-note-in-chord, bottom-note-in-chord, notes-in-chord, "
-                  u"similar, similar-in-staff, similar-in-range, all, section)") },
-            { "play-mode", Arg(DataType::String, u"Play mode (none, note, chord)") },
-        }),
-        Decoration()
-    },
+    makeCommandInfo<SelectTargetCommand>(),
     CommandInfo{
         OPEN_SELECTION_OPTIONS_COMMAND,
         TranslatableString("action", "Selection options"),
@@ -982,176 +954,32 @@ static const std::vector<CommandInfo> s_commandInfos = {
         InputSchema(),
         Decoration()
     },
-    CommandInfo{
-        GOTO_FIRST_ELEMENT_COMMAND,
-        TranslatableString("action", "First element"),
-        TranslatableString("action", "Go to first element in score"),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
-        GOTO_LAST_ELEMENT_COMMAND,
-        TranslatableString("action", "Last element"),
-        TranslatableString("action", "Go to last element in score"),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
-        GOTO_NEXT_ELEMENT_COMMAND,
-        TranslatableString("action", "Next element"),
-        TranslatableString("action", "Select next element in score"),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
-        GOTO_PREV_ELEMENT_COMMAND,
-        TranslatableString("action", "Previous element"),
-        TranslatableString("action", "Select previous element in score"),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
-        GOTO_NEXT_SEGMENT_ELEMENT_COMMAND,
-        TranslatableString("action", "Next segment element"),
-        TranslatableString("action", "Select next segment element"),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
-        GOTO_PREV_SEGMENT_ELEMENT_COMMAND,
-        TranslatableString("action", "Previous segment element"),
-        TranslatableString("action", "Select previous segment element"),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
-        GOTO_NEXT_TRACK_COMMAND,
-        TranslatableString("action", "Next staff or voice"),
-        TranslatableString("action", "Go to next staff or voice"),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
-        GOTO_PREV_TRACK_COMMAND,
-        TranslatableString("action", "Previous staff or voice"),
-        TranslatableString("action", "Go to previous staff or voice"),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
-        GOTO_NEXT_FRAME_COMMAND,
-        TranslatableString("action", "Next frame"),
-        TranslatableString("action", "Go to next frame"),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
-        GOTO_PREV_FRAME_COMMAND,
-        TranslatableString("action", "Previous frame"),
-        TranslatableString("action", "Go to previous frame"),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
-        GOTO_NEXT_SYSTEM_COMMAND,
-        TranslatableString("action", "Next system"),
-        TranslatableString("action", "Go to next system"),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
-        GOTO_PREV_SYSTEM_COMMAND,
-        TranslatableString("action", "Previous system"),
-        TranslatableString("action", "Go to previous system"),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
-        GOTO_UPNOTE_IN_CHORD_COMMAND,
-        TranslatableString("action", "Up note in chord"),
-        TranslatableString("action", "Select note/rest above"),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
-        GOTO_DOWNNOTE_IN_CHORD_COMMAND,
-        TranslatableString("action", "Down note in chord"),
-        TranslatableString("action", "Select note/rest below"),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
-        GOTO_TOPNOTE_IN_CHORD_COMMAND,
-        TranslatableString("action", "Top note in chord"),
-        TranslatableString("action", "Select top note in chord"),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
-        GOTO_BOTTOMNOTE_IN_CHORD_COMMAND,
-        TranslatableString("action", "Bottom note in chord"),
-        TranslatableString("action", "Select bottom note in chord"),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
-        GOTO_TOP_STAFF_COMMAND,
-        TranslatableString("action", "Go to top staff"),
-        TranslatableString("action", "Go to top staff"),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
-        GOTO_EMPTY_TRAILING_MEASURE_COMMAND,
-        TranslatableString("action", "Go to first empty trailing measure"),
-        TranslatableString("action", "Go to first empty trailing measure"),
-        InputSchema(),
-        Decoration()
-    },
+    makeCommandInfo<SelectFirstItemCommand>(),
+    makeCommandInfo<SelectLastItemCommand>(),
+    makeCommandInfo<SelectNextItemCommand>(),
+    makeCommandInfo<SelectPrevItemCommand>(),
+    makeCommandInfo<SelectNextSegmentCommand>(),
+    makeCommandInfo<SelectPrevSegmentCommand>(),
+    makeCommandInfo<SelectNextTrackCommand>(),
+    makeCommandInfo<SelectPrevTrackCommand>(),
+    makeCommandInfo<SelectNextFrameCommand>(),
+    makeCommandInfo<SelectPrevFrameCommand>(),
+    makeCommandInfo<SelectNextSystemCommand>(),
+    makeCommandInfo<SelectPrevSystemCommand>(),
+    makeCommandInfo<SelectUpNoteInChordCommand>(),
+    makeCommandInfo<SelectDownNoteInChordCommand>(),
+    makeCommandInfo<SelectTopNoteInChordCommand>(),
+    makeCommandInfo<SelectBottomNoteInChordCommand>(),
+    makeCommandInfo<SelectTopStaffCommand>(),
+    makeCommandInfo<SelectEmptyTrailingMeasureCommand>(),
 
     // selection commands
-    CommandInfo{
-        SELECT_SIMILAR_COMMAND,
-        TranslatableString("action", "Similar"),
-        TranslatableString("action", "Select similar elements"),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
-        SELECT_SIMILAR_IN_STAFF_COMMAND,
-        TranslatableString("action", "Similar on this staff"),
-        TranslatableString("action", "Select similar elements on the same staff"),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
-        SELECT_SIMILAR_IN_RANGE_COMMAND,
-        TranslatableString("action", "Similar in this range"),
-        TranslatableString("action", "Select similar elements in the selected range"),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
-        SELECT_NOTES_IN_CHORD_COMMAND,
-        TranslatableString("action", "Notes in chord"),
-        TranslatableString("action", "Select notes in chord"),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
-        SELECT_ALL_COMMAND,
-        TranslatableString("action", "Select &all"),
-        TranslatableString("action", "Select all"),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
-        SELECT_SECTION_COMMAND,
-        TranslatableString("action", "Select sectio&n"),
-        TranslatableString("action", "Select section"),
-        InputSchema(),
-        Decoration()
-    },
+    makeCommandInfo<SelectSimilarCommand>(),
+    makeCommandInfo<SelectSimilarInStaffCommand>(),
+    makeCommandInfo<SelectSimilarInRangeCommand>(),
+    makeCommandInfo<SelectNotesInChordCommand>(),
+    makeCommandInfo<SelectAllCommand>(),
+    makeCommandInfo<SelectSectionCommand>(),
     CommandInfo{
         GET_LOCATION_COMMAND,
         TranslatableString("action", "Get location"),
@@ -1446,7 +1274,7 @@ static const std::vector<CommandInfo> s_commandInfos = {
         TranslatableString("action", "Insert &before selection…"),
         TranslatableString("action", "Insert measures before selection"),
         InputSchema({
-            { "count", Arg(DataType::Integer, u"Number of measures to insert") },
+            { "count", Arg(DataType::Int, u"Number of measures to insert") },
         }),
         Decoration()
     },
@@ -1455,7 +1283,7 @@ static const std::vector<CommandInfo> s_commandInfos = {
         TranslatableString("action", "Insert &after selection…"),
         TranslatableString("action", "Insert measures after selection"),
         InputSchema({
-            { "count", Arg(DataType::Integer, u"Number of measures to insert") },
+            { "count", Arg(DataType::Int, u"Number of measures to insert") },
         }),
         Decoration()
     },
@@ -1464,7 +1292,7 @@ static const std::vector<CommandInfo> s_commandInfos = {
         TranslatableString("action", "Insert at &start of score…"),
         TranslatableString("action", "Insert measures at start of score"),
         InputSchema({
-            { "count", Arg(DataType::Integer, u"Number of measures to insert") },
+            { "count", Arg(DataType::Int, u"Number of measures to insert") },
         }),
         Decoration()
     },
@@ -1480,7 +1308,7 @@ static const std::vector<CommandInfo> s_commandInfos = {
         TranslatableString("action", "Insert at &end of score…"),
         TranslatableString("action", "Insert measures at end of score"),
         InputSchema({
-            { "count", Arg(DataType::Integer, u"Number of measures to insert") },
+            { "count", Arg(DataType::Int, u"Number of measures to insert") },
         }),
         Decoration()
     },
@@ -2255,76 +2083,17 @@ static const std::vector<CommandInfo> s_commandInfos = {
     },
 
     // add to selection commands
-    CommandInfo{
-        ADD_TO_SELECTION_NEXT_CHORD_COMMAND,
-        TranslatableString("action", "Add next chord to selection"),
-        TranslatableString("action", "Add to selection: next note/rest"),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
-        ADD_TO_SELECTION_PREV_CHORD_COMMAND,
-        TranslatableString("action", "Add previous chord to selection"),
-        TranslatableString("action", "Add to selection: previous note/rest"),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
-        ADD_TO_SELECTION_NEXT_MEASURE_COMMAND,
-        TranslatableString("action", "Add next measure to selection"),
-        TranslatableString("action", "Add to selection: next measure"),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
-        ADD_TO_SELECTION_PREV_MEASURE_COMMAND,
-        TranslatableString("action", "Add previous measure to selection"),
-        TranslatableString("action", "Add to selection: previous measure"),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
-        ADD_TO_SELECTION_ABOVE_STAFF_COMMAND,
-        TranslatableString("action", "Add staff above to selection"),
-        TranslatableString("action", "Add to selection: staff above"),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
-        ADD_TO_SELECTION_BELOW_STAFF_COMMAND,
-        TranslatableString("action", "Add staff below to selection"),
-        TranslatableString("action", "Add to selection: staff below"),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
-        ADD_TO_SELECTION_BEGIN_SYSTEM_COMMAND,
-        TranslatableString("action", "Select to beginning of system"),
-        TranslatableString("action", "Add to selection: beginning of system"),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
-        ADD_TO_SELECTION_END_SYSTEM_COMMAND,
-        TranslatableString("action", "Select to end of system"),
-        TranslatableString("action", "Add to selection: end of system"),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
-        ADD_TO_SELECTION_BEGIN_SCORE_COMMAND,
-        TranslatableString("action", "Select to beginning of score"),
-        TranslatableString("action", "Add to selection: beginning of score"),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
-        ADD_TO_SELECTION_END_SCORE_COMMAND,
-        TranslatableString("action", "Select to end of score"),
-        TranslatableString("action", "Add to selection: end of score"),
-        InputSchema(),
-        Decoration()
-    },
+    makeCommandInfo<AddToSelectionTargetCommand>(),
+    makeCommandInfo<AddToSelectionNextChordCommand>(),
+    makeCommandInfo<AddToSelectionPrevChordCommand>(),
+    makeCommandInfo<AddToSelectionNextMeasureCommand>(),
+    makeCommandInfo<AddToSelectionPrevMeasureCommand>(),
+    makeCommandInfo<AddToSelectionAboveStaffCommand>(),
+    makeCommandInfo<AddToSelectionBelowStaffCommand>(),
+    makeCommandInfo<AddToSelectionBeginSystemCommand>(),
+    makeCommandInfo<AddToSelectionEndSystemCommand>(),
+    makeCommandInfo<AddToSelectionBeginScoreCommand>(),
+    makeCommandInfo<AddToSelectionEndScoreCommand>(),
     CommandInfo{
         EXTEND_TO_NEXT_NOTE_COMMAND,
         TranslatableString("action", "Extend to next note"),
@@ -2971,8 +2740,8 @@ static const std::vector<CommandInfo> s_commandInfos = {
         InputSchema({
             { "pos_x", Arg(DataType::Float, u"X position") },
             { "pos_y", Arg(DataType::Float, u"Y position") },
-            { "replace", Arg(DataType::Boolean, u"Replace") },
-            { "insert", Arg(DataType::Boolean, u"Insert") },
+            { "replace", Arg(DataType::Bool, u"Replace") },
+            { "insert", Arg(DataType::Bool, u"Insert") },
         }),
         Decoration()
     },
@@ -2997,14 +2766,22 @@ static const std::vector<CommandInfo> s_commandInfos = {
         Decoration()
     },
     CommandInfo{
+        EDIT_ELEMENT_COMMAND,
+        TranslatableString("action", "Edit element"),
+        TranslatableString("action", "Edit current element"),
+        InputSchema(),
+        Decoration()
+    },
+    CommandInfo{
         SCREEN_EDIT_ELEMENT_COMMAND,
         TranslatableString("action", "Edit element"),
-        TranslatableString("action", "Edit element"),
+        TranslatableString("action", "Edit screen element"),
         InputSchema({
             { "pos_x", Arg(DataType::Float, u"X cursor position") },
             { "pos_y", Arg(DataType::Float, u"Y cursor position") },
         }),
-        Decoration()
+        Decoration(),
+        Availability::Dispatch  // only dispatch from view
     },
 
     // view commands
@@ -3055,7 +2832,7 @@ static const std::vector<CommandInfo> s_commandInfos = {
         TranslatableString("action", "Zoom to percent"),
         TranslatableString("action", "Zoom to percent"),
         InputSchema({
-            { "percent", Arg(DataType::Integer, u"Percent") },
+            { "percent", Arg(DataType::Int, u"Percent") },
         }),
         Decoration()
     },
@@ -3154,7 +2931,7 @@ static const std::vector<CommandInfo> s_commandInfos = {
         TranslatableString("action", "Piano keyboard: Set number of keys"),
         TranslatableString("action", "Set number of keys for piano keyboard"),
         InputSchema({
-            { "keys", Arg(DataType::Integer, u"Number of keys") },
+            { "keys", Arg(DataType::Int, u"Number of keys") },
         }),
         Decoration()
     },
@@ -3259,19 +3036,7 @@ static const std::vector<CommandInfo> s_commandInfos = {
         Decoration()
     },
 
-    //! NOTE "Read" commands for MCP and maybe API
-    CommandInfo {
-        GET_NOTEINPUT_STATE_COMMAND,
-        TranslatableString("action", "Get note input state"),
-        TranslatableString("action", "Get note input state"),
-        InputSchema(),
-        OutputSchema({
-            { "mode", Arg(DataType::String, u"Note input mode (disabled, by-note-name, by-duration,"
-                                            "repitch, rhythm, realtime-auto, realtime-manual, timewise)") },
-        }),
-        Decoration(),
-        Availability::MCP
-    },
+    makeCommandInfo<GetNoteInputStateCommand>()
 };
 
 std::string NotationCommandsRegister::moduleName() const
