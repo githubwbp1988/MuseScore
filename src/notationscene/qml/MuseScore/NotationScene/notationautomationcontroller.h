@@ -133,6 +133,7 @@ private:
                                          int endTick) const;
 
     mu::engraving::AutomationType currentAutomationType() const;
+    mu::engraving::AutomationCurveKey currentCurveKey(const mu::engraving::Staff* staff) const;
 
     void applyPolylineStyle(muse::uicomponents::PolylinePlot* polyline, const SysStaffKey& key) const;
     void applyPolylineColors(muse::uicomponents::PolylinePlot* polyline, const SysStaffKey& key) const;
@@ -167,11 +168,16 @@ private:
     mu::engraving::Score* score() const;
 
     QQuickItem* m_linesParent = nullptr;
+
     SysStaffToPolylinesMap m_stavesToLinesMap;
     PointsDataMap m_pointsDataByStaff;
+
     muse::draw::Transform m_viewMatrix;
+
     mu::engraving::AutomationChanges m_pendingChanges;
     PendingScoreState m_pendingScoreState;
     bool m_updateScheduled = false;
+
+    muse::uicomponents::PolylinePlot* m_currentlyEditedPolyline = nullptr;
 };
 }

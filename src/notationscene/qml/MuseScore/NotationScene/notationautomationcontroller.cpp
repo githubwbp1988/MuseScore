@@ -84,7 +84,7 @@ static constexpr double VOLUME_RANGE_MIN_DB = -60.0;
 static constexpr double VOLUME_RANGE_MAX_DB = 12.0;
 
 // Mirrors VolumeSlider.qml's fader curve, so dragging a point feels like moving the mixer fader -
-// a plain linear map would put 0dB at 83% up the lane instead of the center
+// a plain linear map would put 0dB at 83% up the lane instead of 75%
 static constexpr double VOLUME_LOCAL_CENTER_DB = -24.0;
 static constexpr double VOLUME_LOGICAL_CENTER_DB = -12.0;
 static constexpr double VOLUME_HIGH_ACCURACY_STEP = 1.5;
@@ -251,21 +251,23 @@ static std::optional<int> tickFromCanvasX(const System* system, const muse::Rect
     return prevSeg->tick().ticks() + static_cast<int>(ratio * (nextTick - prevSeg->tick().ticks()));
 }
 
-static AutomationCurveKey curveKeyFor(AutomationType type, const Staff* staff)
+static AutomationCurveKey curveKeyFor(AutomationLane lane, const Staff* staff)
 {
-    switch (type) {
-    case AutomationType::Dynamics:
+    const AutomationType type = automationTypeOf(lane);
+
+    switch (lane) {
+    case AutomationLane::Dynamics:
         return AutomationCurveKey::staff(type, staff->id());
-    case AutomationType::Tempo:
+    case AutomationLane::Tempo:
+    case AutomationLane::MasterVolume:
+    case AutomationLane::MasterPan:
         return AutomationCurveKey::global(type);
-    case AutomationType::Volume:
-    case AutomationType::Pan: {
+    case AutomationLane::Volume:
+    case AutomationLane::Pan: {
         const Part* part = staff->part();
         const InstrumentTrackId trackId { part->id(), part->instrumentId() };
         return AutomationCurveKey::instrument(type, trackId);
     }
-    case AutomationType::Unknown:
-        break;
     }
 
     return AutomationCurveKey();
@@ -304,9 +306,20 @@ static bool isStructuralChange(const mu::engraving::ScoreChanges& changes)
 
 static qreal defaultValueFor(AutomationType type)
 {
-    if (type == AutomationType::Pan) {
-        return 0.5;
+    switch (type) {
+    case AutomationType::Dynamics:
+    case AutomationType::Tempo:
+        return 0.0;
+    case AutomationType::Volume: {
+        const muse::real_t zeroDb((0.0 - VOLUME_RANGE_MIN_DB) / (VOLUME_RANGE_MAX_DB - VOLUME_RANGE_MIN_DB));
+        return automationValueToDisplay(type, zeroDb);
     }
+    case AutomationType::Pan:
+        return 0.5;
+    case AutomationType::Unknown:
+        break;
+    }
+
     return 0.0;
 }
 
@@ -332,7 +345,18 @@ void NotationAutomationController::init()
         }
     }, Asyncable::Mode::SetReplace /* FIXME */);
 
-    notationConfiguration()->currentAutomationTypeChanged().onNotify(this, [this]() {
+    automation()->resetEditStateRequested().onNotify(this, [this]() {
+        if (m_currentlyEditedPolyline) {
+            m_currentlyEditedPolyline->cancelEdit();
+            // Rebuild all because changes to this polyline may have affected those on other systems...
+            // TODO: As above - e.g. changes to the end of a polyline in one system should affect the polyline on
+            // the next system (probably requires the implementation of "startY" in PolylinePlot)...
+            rebuildAllPolylines();
+        }
+        m_currentlyEditedPolyline = nullptr;
+    }, Asyncable::Mode::SetReplace /* FIXME */);
+
+    notationConfiguration()->currentAutomationLaneChanged().onNotify(this, [this]() {
         rebuildAllPolylines();
     }, Asyncable::Mode::SetReplace /* FIXME */);
 
@@ -392,7 +416,7 @@ muse::uicomponents::PolylinePlot* NotationAutomationController::createPolylineFo
         return nullptr;
     }
 
-    const AutomationCurveKey curveKey = curveKeyFor(currentAutomationType(), staff);
+    const AutomationCurveKey curveKey = currentCurveKey(staff);
     if (curveKey.isGlobal() && staffIdx != firstVisibleStaffIdx(score())) {
         // Score-scoped automation is only drawn on the score's first staff
         return nullptr;
@@ -463,6 +487,7 @@ muse::uicomponents::PolylinePlot* NotationAutomationController::createPolylineFo
         };
 
         if (completed) {
+            m_currentlyEditedPolyline = nullptr;
             if (!requestEditPoint(oldPointData, key, clampedX, y)) {
                 // Edit was rejected - snap the point back to where it actually is instead of
                 // leaving the live-drag preview stuck at the rejected position
@@ -471,6 +496,8 @@ muse::uicomponents::PolylinePlot* NotationAutomationController::createPolylineFo
             return;
         }
 
+        m_currentlyEditedPolyline = polyline;
+
         // Live drag preview
         setPreviewPoint({ clampedX, y });
     });
@@ -478,6 +505,7 @@ muse::uicomponents::PolylinePlot* NotationAutomationController::createPolylineFo
     QObject::connect(polyline, &muse::uicomponents::PolylinePlot::pointAdded,
                      [this, key, polyline, system, staffCanvasRect](qreal x, qreal y, bool completed) {
         if (completed) {
+            m_currentlyEditedPolyline = nullptr;
             requestAddPoint(key, x, y);
             return;
         }
@@ -486,6 +514,8 @@ muse::uicomponents::PolylinePlot* NotationAutomationController::createPolylineFo
         if (!tick) {
             return;
         }
+
+        m_currentlyEditedPolyline = polyline;
 
         QVector<PointData>& pointsData = m_pointsDataByStaff[key];
         int insertIdx = 0;
@@ -527,7 +557,7 @@ QVector<NotationAutomationController::PointData> NotationAutomationController::p
     const AutomationType type = currentAutomationType();
 
     int currentPointIndex = 0;
-    const mu::engraving::AutomationCurveKey key = curveKeyFor(type, staff);
+    const mu::engraving::AutomationCurveKey key = currentCurveKey(staff);
     const mu::engraving::AutomationCurve& curve = automationData()->curve(key);
 
     // Start at the first point >= startTick rather than curve.begin() - resolvedInValue() only ever
@@ -586,7 +616,9 @@ void NotationAutomationController::applyPolylineStyle(PolylinePlot* polyline, co
     polyline->setLineWidth(POLYLINE_LINE_WIDTH);
     polyline->setDrawBackground(false);
 
-    polyline->setBaselineN(defaultValueFor(currentAutomationType()));
+    const qreal baselineN = defaultValueFor(currentAutomationType());
+    polyline->setBaselineN(baselineN);
+    polyline->setDefaultValue(1.0 - baselineN);
 
     polyline->setGhostPointsEnabled(false);
     polyline->setSelectedPointsEnabled(true);
@@ -901,6 +933,8 @@ void NotationAutomationController::processPendingChanges()
 
 void NotationAutomationController::rebuildAllPolylines()
 {
+    m_currentlyEditedPolyline = nullptr;
+
     // TODO: More efficient if we don't clear/recreate the polylines every time...
     for (const auto& [staff, polylines] : m_stavesToLinesMap) {
         for (PolylinePlot* polyline : polylines) {
@@ -1024,7 +1058,7 @@ void NotationAutomationController::applyAutomationChanges(const mu::engraving::A
         const bool staffAffected = affectedStaffIds.find(staff->id()) != affectedStaffIds.end();
         const mu::engraving::InstrumentTrackId staffTrackId { staff->part()->id(), staff->part()->instrumentId() };
         const bool trackAffected = affectedTrackIds.find(staffTrackId) != affectedTrackIds.end();
-        const bool globalCurveAffected = globalAffected && curveKeyFor(currentAutomationType(), staff).isGlobal();
+        const bool globalCurveAffected = globalAffected && currentCurveKey(staff).isGlobal();
         if (!staffAffected && !trackAffected && !globalCurveAffected) {
             continue;
         }
@@ -1060,7 +1094,7 @@ bool NotationAutomationController::requestEditPoint(const PointData& oldPointDat
     const bool tickChanged = newTick != oldPointData.tick;
 
     // STEP 3 - Fetch the point being edited...
-    const mu::engraving::AutomationCurveKey curveKey = curveKeyFor(currentAutomationType(), staff);
+    const mu::engraving::AutomationCurveKey curveKey = currentCurveKey(staff);
 
     const mu::engraving::AutomationCurve& curve = automationData()->curve(curveKey);
     const auto existingIt = curve.find(oldPointData.tick);
@@ -1157,7 +1191,7 @@ bool NotationAutomationController::requestAddPoint(const SysStaffKey& key, qreal
                                                                                mu::engraving::AutomationPoint::Ease::none() };
     newPoint.generated = false;
 
-    const mu::engraving::AutomationCurveKey curveKey = curveKeyFor(currentAutomationType(), staff);
+    const mu::engraving::AutomationCurveKey curveKey = currentCurveKey(staff);
 
     mu::engraving::AutomationPointEdits edits {
         { *newTick, SetPoint { newPoint } }
@@ -1184,7 +1218,7 @@ bool NotationAutomationController::requestRemovePoint(const PointData& pointData
         return false;
     }
 
-    const mu::engraving::AutomationCurveKey curveKey = curveKeyFor(currentAutomationType(), staff);
+    const mu::engraving::AutomationCurveKey curveKey = currentCurveKey(staff);
 
     mu::engraving::AutomationPointEdits edits {
         { pointData.tick, ErasePoint {} }
@@ -1213,7 +1247,7 @@ const mu::engraving::AutomationPoint* NotationAutomationController::automationPo
         return nullptr;
     }
 
-    const mu::engraving::AutomationCurveKey curveKey = curveKeyFor(currentAutomationType(), staff);
+    const mu::engraving::AutomationCurveKey curveKey = currentCurveKey(staff);
     const mu::engraving::AutomationCurve& curve = automationData()->curve(curveKey);
     const auto it = curve.find(tick);
     if (it == curve.end()) {
@@ -1225,7 +1259,12 @@ const mu::engraving::AutomationPoint* NotationAutomationController::automationPo
 
 AutomationType NotationAutomationController::currentAutomationType() const
 {
-    return notationConfiguration()->currentAutomationType();
+    return automationTypeOf(notationConfiguration()->currentAutomationLane());
+}
+
+AutomationCurveKey NotationAutomationController::currentCurveKey(const Staff* staff) const
+{
+    return curveKeyFor(notationConfiguration()->currentAutomationLane(), staff);
 }
 
 INotationAutomationPtr NotationAutomationController::automation() const
