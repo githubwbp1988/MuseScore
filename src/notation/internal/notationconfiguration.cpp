@@ -60,6 +60,8 @@ static const Settings::Key USE_NOTE_INPUT_CURSOR_IN_INPUT_BY_DURATION(module_nam
 
 static const Settings::Key THIN_NOTE_INPUT_CURSOR(module_name, "ui/canvas/thinNoteInputCursor");
 
+static const Settings::Key ENABLE_JIANPU(module_name, "notation/enableJianpu");
+
 static const Settings::Key SELECTION_PROXIMITY(module_name, "ui/canvas/misc/selectionProximity");
 
 static const Settings::Key DEFAULT_ZOOM_TYPE(module_name, "ui/canvas/zoomDefaultType");
@@ -76,6 +78,7 @@ static const Settings::Key DEFAULT_NOTE_INPUT_METHOD(module_name, "score/default
 
 static const Settings::Key ADD_ACCIDENTAL_ARTICULATIONS_DOTS_TO_NEXT_NOTE_ENTERED(module_name,
                                                                                   "score/addAccidentalDotsArticulationsToNextNoteEntered");
+static const Settings::Key TUPLET_COMMANDS_SELECTED_DURATION_AS(module_name, "score/tupletCommandsSelectedDurationAs");
 
 static const Settings::Key IS_MIDI_INPUT_ENABLED(module_name, "io/midi/enableInput");
 static const Settings::Key START_NOTE_INPUT_AT_SELECTED_NOTE_REST_WHEN_PRESSING_MIDI_KEY(module_name,
@@ -212,6 +215,8 @@ void NotationConfiguration::init()
 
     settings()->setDefaultValue(THIN_NOTE_INPUT_CURSOR, Val(false)); // accessible via DevTools/Settings
 
+    settings()->setDefaultValue(ENABLE_JIANPU, Val(false));
+
     settings()->setDefaultValue(FOREGROUND_WALLPAPER_PATH, Val());
     settings()->valueChanged(FOREGROUND_WALLPAPER_PATH).onReceive(nullptr, [this](const Val&) {
         m_foregroundChanged.notify();
@@ -269,6 +274,11 @@ void NotationConfiguration::init()
     settings()->setDefaultValue(ADD_ACCIDENTAL_ARTICULATIONS_DOTS_TO_NEXT_NOTE_ENTERED, Val(true));
     settings()->valueChanged(ADD_ACCIDENTAL_ARTICULATIONS_DOTS_TO_NEXT_NOTE_ENTERED).onReceive(this, [this](const Val&) {
         m_addAccidentalDotsArticulationsToNextNoteEnteredChanged.notify();
+    });
+
+    settings()->setDefaultValue(TUPLET_COMMANDS_SELECTED_DURATION_AS, Val(engraving::TupletSelectedDuration::SUBDIVISION));
+    settings()->valueChanged(TUPLET_COMMANDS_SELECTED_DURATION_AS).onReceive(this, [this](const Val&) {
+        m_tupletCommandsSelectedDurationAsChanged.notify();
     });
 
     settings()->setDefaultValue(SELECTION_PROXIMITY, Val(2));
@@ -623,6 +633,11 @@ bool NotationConfiguration::thinNoteInputCursor() const
     return settings()->value(THIN_NOTE_INPUT_CURSOR).toBool();
 }
 
+bool NotationConfiguration::enableJianpu() const
+{
+    return settings()->value(ENABLE_JIANPU).toBool();
+}
+
 QColor NotationConfiguration::loopMarkerColor() const
 {
     return QColor(0x2456AA);
@@ -842,6 +857,21 @@ void NotationConfiguration::setAddAccidentalDotsArticulationsToNextNoteEntered(b
 muse::async::Notification NotationConfiguration::addAccidentalDotsArticulationsToNextNoteEnteredChanged() const
 {
     return m_addAccidentalDotsArticulationsToNextNoteEnteredChanged;
+}
+
+engraving::TupletSelectedDuration NotationConfiguration::tupletCommandsSelectedDurationAs() const
+{
+    return settings()->value(TUPLET_COMMANDS_SELECTED_DURATION_AS).toEnum<engraving::TupletSelectedDuration>();
+}
+
+void NotationConfiguration::setTupletCommandsSelectedDurationAs(engraving::TupletSelectedDuration selectedDurationAs)
+{
+    settings()->setSharedValue(TUPLET_COMMANDS_SELECTED_DURATION_AS, Val(selectedDurationAs));
+}
+
+muse::async::Notification NotationConfiguration::tupletCommandsSelectedDurationAsChanged() const
+{
+    return m_tupletCommandsSelectedDurationAsChanged;
 }
 
 bool NotationConfiguration::isMidiInputEnabled() const

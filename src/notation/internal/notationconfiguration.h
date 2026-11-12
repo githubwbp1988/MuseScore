@@ -98,6 +98,8 @@ public:
 
     bool thinNoteInputCursor() const override;
 
+    bool enableJianpu() const override;
+
     QColor selectionColor(engraving::voice_idx_t voiceIndex = 0) const override;
     QColor highlightSelectionColor(engraving::voice_idx_t voiceIndex = 0) const override;
 
@@ -152,6 +154,10 @@ public:
     bool addAccidentalDotsArticulationsToNextNoteEntered() const override;
     void setAddAccidentalDotsArticulationsToNextNoteEntered(bool value) override;
     muse::async::Notification addAccidentalDotsArticulationsToNextNoteEnteredChanged() const override;
+
+    engraving::TupletSelectedDuration tupletCommandsSelectedDurationAs() const override;
+    void setTupletCommandsSelectedDurationAs(engraving::TupletSelectedDuration selectedDurationAs) override;
+    muse::async::Notification tupletCommandsSelectedDurationAsChanged() const override;
 
     muse::io::path_t userMusicFontsPath() const override;
     void setUserMusicFontsPath(const muse::io::path_t& path) override;
@@ -254,6 +260,7 @@ private:
 
     muse::async::Notification m_defaultNoteInputMethodChanged;
     muse::async::Notification m_addAccidentalDotsArticulationsToNextNoteEnteredChanged;
+    muse::async::Notification m_tupletCommandsSelectedDurationAsChanged;
     muse::async::Notification m_useNoteInputCursorInInputByDurationChanged;
     muse::async::Notification m_isMidiInputEnabledChanged;
     muse::async::Notification m_startNoteInputAtSelectedNoteRestWhenPressingMidiKeyChanged;
