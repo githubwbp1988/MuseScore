@@ -281,7 +281,7 @@ std::vector<int> Chord::noteDistances() const
 //   Chord
 //---------------------------------------------------------
 
-Chord::Chord(DummyParentOr<Segment> parent)
+Chord::Chord(DummyParentOr<Segment, Chord> parent)
     : ChordRest(ElementType::CHORD, parent)
 {
     m_stem             = 0;
@@ -671,9 +671,6 @@ void Chord::add(EngravingItem* e)
     case ElementType::TREMOLO_SINGLECHORD:
         setTremoloSingleChord(item_cast<TremoloSingleChord*>(e));
         break;
-    case ElementType::GLISSANDO:
-        m_endsNoteAnchoredLine = true;
-        break;
     case ElementType::STEM:
         assert(!m_stem);
         m_stem = toStem(e);
@@ -777,9 +774,6 @@ void Chord::remove(EngravingItem* e)
         break;
     case ElementType::TREMOLO_SINGLECHORD:
         setTremoloSingleChord(nullptr);
-        break;
-    case ElementType::GLISSANDO:
-        m_endsNoteAnchoredLine = false;
         break;
     case ElementType::STEM:
         m_stem = 0;
@@ -1073,7 +1067,8 @@ bool Chord::shouldHaveStem() const
            && !(durationType().type() == DurationType::V_HALF && staffType && staffType->isTabStaff()
                 && staffType->minimStyle() == TablatureMinimStyle::NONE)
            && !(measure() && measure()->stemless(staffIdx()))
-           && !(staffType && staffType->isTabStaff() && staffType->stemless());
+           && !(staffType && staffType->isTabStaff() && staffType->stemless())
+           && !(staff && staff->isJianpuStaff(tick()));
 }
 
 bool Chord::shouldHaveHook() const

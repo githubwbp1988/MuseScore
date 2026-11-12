@@ -5,7 +5,7 @@
  * MuseScore Studio
  * Music Composition & Notation
  *
- * Copyright (C) 2021 MuseScore Limited and others
+ * Copyright (C) 2026 MuseScore Limited and others
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3 as
@@ -19,18 +19,24 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-#include "applicationactioncontroller.h"
 
-#include "log.h"
+var Commands = require("Commands.js")
 
-using namespace mu::appshell;
-using namespace muse;
-using namespace muse::actions;
+// A command that is enabled only when a project is opened
+const HAS_PROJECT_COMMAND = Commands.PROJECT_PROPERTIES_COMMAND
 
-void ApplicationActionController::preInit()
-{
-}
+module.exports = {
+    isOpened: function()
+    {
+        return api.testflow.isCommandEnabled(HAS_PROJECT_COMMAND)
+    },
 
-void ApplicationActionController::init()
-{
+    //! NOTE Closing without an opened project quits the application,
+    //! so close only if there is something to close
+    closeIfOpened: function()
+    {
+        if (api.testflow.isCommandEnabled(HAS_PROJECT_COMMAND)) {
+            api.dispatcher.dispatch(Commands.PROJECT_CLOSE_COMMAND)
+        }
+    }
 }
