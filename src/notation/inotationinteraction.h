@@ -499,8 +499,6 @@ public:
     virtual bool moveSelectionAvailable(MoveSelectionType type) const = 0;
     virtual void moveSelectionDeprecated(MoveDirection d, MoveSelectionType type) = 0;
 
-    virtual void moveLyrics(MoveDirection d) = 0;
-
     virtual EngravingItem* contextItem() const = 0;
 
     // SelectionFilter
@@ -542,9 +540,8 @@ public:
     virtual void undoRedoToIndex(size_t idx) = 0;
 
     // Move/nudge elements
+    virtual bool moveSelectedItems(MoveDirection d, bool quickly) = 0;
     virtual void movePitch(MoveDirection d, PitchMode mode) = 0;
-    virtual void nudge(MoveDirection d, bool quickly) = 0;
-    virtual void nudgeAnchors(MoveDirection d) = 0;
     virtual void moveChordRestToStaff(MoveDirection d) = 0;
     virtual void swapChordRest(MoveDirection d) = 0;
     virtual void toggleSnapToPrevious() = 0;
@@ -647,8 +644,7 @@ public:
     virtual void changeSelectedElementsVoiceAssignment(VoiceAssignment voiceAssignment) = 0;
     virtual void addAnchoredLineToSelectedNotes() = 0;
 
-    virtual void addTextToTopFrame(TextStyleType type) = 0;
-    virtual void addTextToItem(TextStyleType type, EngravingItem* item) = 0;
+    virtual void addText(TextStyleType type) = 0;
 
     virtual muse::Ret canAddImageToItem(const EngravingItem* item) const = 0;
     virtual void addImageToItem(const muse::io::path_t& imagePath, EngravingItem* item) = 0;
@@ -724,7 +720,7 @@ public:
     virtual void insertClef(mu::engraving::ClefType) = 0;
 
     virtual void toggleArticulation(mu::engraving::SymId) = 0;
-    virtual void toggleOrnament(mu::engraving::SymId) = 0;
+    virtual void toggleOrnament(OrnamentType) = 0;
     virtual void changeAccidental(mu::engraving::AccidentalType) = 0;
     virtual void transposeSemitone(int) = 0;
     virtual void transposeDiatonicAlterations(mu::engraving::TransposeDirection) = 0;

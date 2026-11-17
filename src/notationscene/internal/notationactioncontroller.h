@@ -136,6 +136,15 @@ private:
 
     mu::engraving::Score* currentNotationScore() const;
 
+    muse::Ret resetState();
+    muse::Ret undo();
+    muse::Ret redo();
+    muse::Ret copySelection();
+    muse::Ret cutSelection();
+    muse::Ret copyPasteSwap();
+    muse::Ret copyLyrics();
+    muse::Ret deleteSelection();
+
     muse::Ret select(const SelectCommand& command);
     muse::Ret select(SelectionTarget target, PlayMode playMode = PlayMode::NoPlay);
     muse::Ret addToSelection(const AddToSelectionCommand& command);
@@ -164,8 +173,22 @@ private:
     void doAddNote(const NoteInputParams& params, const NoteAddingMode& addingMode);
 
     muse::Ret toggleAccidental(const ToggleAccidentalCommand& command);
+    muse::Ret changeVoice(const UseVoiceCommand& command);
+    muse::Ret swapVoices(const SwapVoicesCommand& command);
 
+    muse::Ret putTuplet(const AddTupletCommand& command);
+    muse::Ret openTupletOtherDialog();
+
+    muse::Ret addBoxes(const AddBoxesCommand& command);
+    muse::Ret addGraceNotes(const AddGraceNoteCommand& command);
+    muse::Ret addInterval(const AddIntervalCommand& command);
+    muse::Ret addText(const AddTextCommand& command);
+    muse::Ret addBeam(const AddBeamCommand& command);
+    muse::Ret addOrnament(const AddOrnamentCommand& command);
     muse::Ret flipSelection();
+
+    // Tab
+    muse::Ret addFret(const AddFretCommand& command);
 
     muse::Ret putNote(const muse::rcommand::Params& params);
     muse::Ret removeNote(const muse::rcommand::Params& params);
@@ -174,29 +197,19 @@ private:
 
     void toggleArticulation(SymbolId articulationSymbolId);
 
-    muse::Ret putTuplet(const muse::rcommand::Params& params);
-    void putTuplet(const TupletOptions& options);
-    void putTuplet(int tupletCount);
-
     muse::Ret moveWithRet(MoveDirection direction, bool quickly = false);
     void move(MoveDirection direction, bool quickly = false);
     void moveInputNotes(bool up, PitchMode mode);
     void movePitchDiatonic(MoveDirection direction, bool);
 
-    void changeVoice(voice_idx_t voiceIndex);
-    void swapVoices(voice_idx_t voiceIndex1, voice_idx_t voiceIndex2);
-
-    void cutSelection();
     void repeatSelection();
     void addTie();
     void addLaissezVib();
     void addSlur();
     void addHammerOnPullOff();
-    void addFret(int num);
 
     void insertClef(mu::engraving::ClefType type);
 
-    void addText(TextStyleType type);
     void addDynamic();
     void addImage();
     void addFiguredBass();
@@ -206,9 +219,6 @@ private:
     muse::Ret startEditSelectedElement(const muse::rcommand::Params& params);
     muse::Ret startEditSelectedText(const muse::rcommand::Params& params);
 
-    muse::Ret addMeasures(const muse::rcommand::Params& params, AddBoxesTarget target);
-    void addBoxes(BoxType boxType, int count, AddBoxesTarget target);
-
     void addStretch(qreal value);
 
     void unrollRepeats();
@@ -217,7 +227,6 @@ private:
     void toggleHideEmpty();
     void addFullMeasureRest();
 
-    void resetState();
     void resetStretch();
     void resetBeamMode();
 
@@ -228,7 +237,6 @@ private:
     void openBreaksDialog();
     void openTransposeDialog();
     void openPartsDialog();
-    void openTupletOtherDialog();
     void openStaffTextPropertiesDialog();
     void openMeasurePropertiesDialog();
     void openEditGridSizeDialog();
@@ -248,7 +256,7 @@ private:
     bool isEditingElement() const;
     bool isNotEditingElement() const;
 
-    void pasteSelection(PastingType type = PastingType::Default);
+    muse::Ret pasteSelection(const PasteCommand& command);
     Fraction resolvePastingScale(const INotationInteractionPtr& interaction, PastingType type) const;
 
     enum class TextNavigationType {
@@ -268,6 +276,7 @@ private:
     void nextBeatTextElement();
     void prevBeatTextElement();
     void navigateToTextElement(MoveDirection direction, bool nearNoteOrRest = false, bool moveOnly = true);
+    muse::Ret editTextAdvance(const EditTextAdvanceCommand& command);
     void navigateToTextItemByFraction(const Fraction& fraction);
     void navigateToTextElementInNearMeasure(MoveDirection direction);
 
@@ -309,7 +318,6 @@ private:
     template<typename P1>
     void registerCommand(const muse::rcommand::Command&, void (INotationInteraction::*)(P1), P1, PlayMode = PlayMode::NoPlay,
                          bool (NotationActionController::*)() const = nullptr);
-    void registerNavigationByFractionCommand(const muse::rcommand::Command&, const Fraction&);
 
     void registerGetCommand(const muse::rcommand::Command&, std::function<muse::RetVal<muse::rcommand::Params>()>);
     void registerGetCommand(const muse::rcommand::Command&, muse::RetVal<muse::rcommand::Params>(NotationActionController::*)() const);

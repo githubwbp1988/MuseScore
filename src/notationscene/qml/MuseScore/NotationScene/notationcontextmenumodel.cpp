@@ -116,11 +116,11 @@ MenuItemList NotationContextMenuModel::makePageItems()
 MenuItemList NotationContextMenuModel::makeDefaultCopyPasteItems()
 {
     MenuItemList items {
-        makeMenuItem(CUT_COMMAND),
-        makeMenuItem(COPY_COMMAND),
-        makeMenuItem(PASTE_COMMAND),
-        makeMenuItem(COPY_PASTE_SWAP_COMMAND),
-        makeMenuItem(DELETE_COMMAND),
+        makeMenuItem(CutCommand::id),
+        makeMenuItem(CopyCommand::id),
+        makeMenuItem(PasteDefaultCommand::id),
+        makeMenuItem(CopyPasteSwapCommand::id),
+        makeMenuItem(DeleteCommand::id),
     };
 
     return items;
@@ -129,15 +129,15 @@ MenuItemList NotationContextMenuModel::makeDefaultCopyPasteItems()
 MenuItemList NotationContextMenuModel::makeMeasureItems()
 {
     MenuItemList items = {
-        makeMenuItem(CUT_COMMAND),
-        makeMenuItem(COPY_COMMAND),
-        makeMenuItem(PASTE_COMMAND),
-        makeMenuItem(COPY_PASTE_SWAP_COMMAND),
+        makeMenuItem(CutCommand::id),
+        makeMenuItem(CopyCommand::id),
+        makeMenuItem(PasteDefaultCommand::id),
+        makeMenuItem(CopyPasteSwapCommand::id),
     };
 
     items << makeSeparator();
 
-    MenuItem* clearItem = makeMenuItem(DELETE_COMMAND);
+    MenuItem* clearItem = makeMenuItem(DeleteCommand::id);
     clearItem->setTitle(TranslatableString("notation", "Clear measures"));
     MenuItem* deleteItem = makeMenuItem(REMOVE_SELECTED_RANGE_COMMAND);
     deleteItem->setTitle(TranslatableString("notation", "Delete measures"));
@@ -234,7 +234,7 @@ MenuItemList NotationContextMenuModel::makeFretboardDiagramItems()
     const engraving::FretDiagram* fretDiagram = engraving::toFretDiagram(element);
     if (!fretDiagram->harmony()) {
         items << makeSeparator();
-        items << makeMenuItem(ADD_CHORD_TEXT_COMMAND, TranslatableString("notation", "Add c&hord symbol"));
+        items << makeMenuItem(AddChordTextCommand::id, TranslatableString("notation", "Add c&hord symbol"));
     }
 
     return items;
@@ -243,10 +243,10 @@ MenuItemList NotationContextMenuModel::makeFretboardDiagramItems()
 MenuItemList NotationContextMenuModel::makeElementInFretBoxItems()
 {
     MenuItemList items {
-        makeMenuItem(COPY_COMMAND)
+        makeMenuItem(CopyCommand::id)
     };
 
-    MenuItem* hideItem = makeMenuItem(DELETE_COMMAND);
+    MenuItem* hideItem = makeMenuItem(DeleteCommand::id);
     hideItem->setTitle(TranslatableString("notation", "Hide"));
     hideItem->setIcon(ui::IconCode::Code::NONE);
 
@@ -312,11 +312,11 @@ MenuItemList NotationContextMenuModel::makeElementItems()
 MenuItemList NotationContextMenuModel::makeInsertMeasuresItems()
 {
     MenuItemList items {
-        makeMenuItem(INSERT_MEASURES_AFTER_SELECTION_COMMAND, TranslatableString("notation", "After selection…")),
-        makeMenuItem(INSERT_MEASURES_COMMAND, TranslatableString("notation", "Before selection…")),
+        makeMenuItem(InsertMeasuresAfterSelectionCommand::id, TranslatableString("notation", "After selection…")),
+        makeMenuItem(InsertMeasuresCommand::id, TranslatableString("notation", "Before selection…")),
         makeSeparator(),
-        makeMenuItem(INSERT_MEASURES_AT_START_OF_SCORE_COMMAND, TranslatableString("notation", "At start of score…")),
-        makeMenuItem(APPEND_MEASURES_COMMAND, TranslatableString("notation", "At end of score…"))
+        makeMenuItem(InsertMeasuresAtStartOfScoreCommand::id, TranslatableString("notation", "At start of score…")),
+        makeMenuItem(AppendMeasuresCommand::id, TranslatableString("notation", "At end of score…"))
     };
 
     return items;
@@ -344,12 +344,12 @@ MenuItemList NotationContextMenuModel::makeChangeInstrumentItems()
 MenuItemList NotationContextMenuModel::makeVerticalBoxItems()
 {
     MenuItemList addMenuItems;
-    addMenuItems << makeMenuItem(ADD_FRAME_TEXT_COMMAND);
-    addMenuItems << makeMenuItem(ADD_TITLE_TEXT_COMMAND);
-    addMenuItems << makeMenuItem(ADD_SUBTITLE_TEXT_COMMAND);
-    addMenuItems << makeMenuItem(ADD_COMPOSER_TEXT_COMMAND);
-    addMenuItems << makeMenuItem(ADD_LYRICIST_TEXT_COMMAND);
-    addMenuItems << makeMenuItem(ADD_PART_TEXT_COMMAND);
+    addMenuItems << makeMenuItem(AddFrameTextCommand::id);
+    addMenuItems << makeMenuItem(AddTitleTextCommand::id);
+    addMenuItems << makeMenuItem(AddSubtitleTextCommand::id);
+    addMenuItems << makeMenuItem(AddComposerTextCommand::id);
+    addMenuItems << makeMenuItem(AddLyricistTextCommand::id);
+    addMenuItems << makeMenuItem(AddPartTextCommand::id);
     addMenuItems << makeMenuItem(ADD_IMAGE_COMMAND);
 
     MenuItemList items = makeElementItems();
@@ -362,7 +362,7 @@ MenuItemList NotationContextMenuModel::makeVerticalBoxItems()
 MenuItemList NotationContextMenuModel::makeHorizontalBoxItems()
 {
     MenuItemList addMenuItems;
-    addMenuItems << makeMenuItem(ADD_FRAME_TEXT_COMMAND);
+    addMenuItems << makeMenuItem(AddFrameTextCommand::id);
     addMenuItems << makeMenuItem(ADD_IMAGE_COMMAND);
 
     MenuItemList items = makeElementItems();

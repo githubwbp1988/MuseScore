@@ -263,11 +263,9 @@ public:
     void undoRedoToIndex(size_t idx) override;
 
     // Move
+    bool moveSelectedItems(MoveDirection d, bool quickly) override;
     void movePitch(MoveDirection d, PitchMode mode) override;
-    void nudge(MoveDirection d, bool quickly) override;
-    void nudgeAnchors(MoveDirection) override;
     void moveChordRestToStaff(MoveDirection d) override;
-    void moveLyrics(MoveDirection d) override;
     void swapChordRest(MoveDirection d) override;
     void toggleSnapToPrevious() override;
     void toggleSnapToNext() override;
@@ -371,8 +369,7 @@ public:
     void changeSelectedElementsVoiceAssignment(VoiceAssignment voiceAssignment) override;
     void addAnchoredLineToSelectedNotes() override;
 
-    void addTextToTopFrame(TextStyleType type) override;
-    void addTextToItem(TextStyleType type, EngravingItem* item) override;
+    void addText(TextStyleType type) override;
 
     muse::Ret canAddImageToItem(const EngravingItem* item) const override;
     void addImageToItem(const muse::io::path_t& imagePath, EngravingItem* item) override;
@@ -441,7 +438,7 @@ public:
     void toggleSubScript() override;
     void toggleSuperScript() override;
     void toggleArticulation(mu::engraving::SymId) override;
-    void toggleOrnament(mu::engraving::SymId) override;
+    void toggleOrnament(OrnamentType type) override;
     void toggleAutoplace(bool) override;
 
     bool canInsertClef(mu::engraving::ClefType) const override;
@@ -526,7 +523,9 @@ private:
 
     bool canAddTextToItem(TextStyleType type, const EngravingItem* item) const;
 
-    void addText(TextStyleType type, EngravingItem* item = nullptr);
+    void addTextToTopFrame(TextStyleType type);
+    void addTextToItem(TextStyleType type, EngravingItem* item);
+    void doAddText(TextStyleType type, EngravingItem* item = nullptr);
 
     void startEditText(mu::engraving::TextBase* text);
     bool needEndTextEdit() const;
@@ -549,8 +548,7 @@ private:
     void setAnchorLines(const std::vector<muse::LineF>& anchorList);
     void resetAnchorLines();
 
-    double getHRaster() const;
-    double getVRaster() const;
+    double gridRaster(const EngravingItem* item, muse::Orientation orientation) const;
 
     double currentScaling(muse::draw::Painter* painter) const;
 
@@ -602,6 +600,10 @@ private:
 
     void resetGripEdit();
     void resetHitElementContext() override;
+
+    void nudge(MoveDirection d, bool quickly, const std::vector<EngravingItem*>& elements);
+    void nudgeAnchors(MoveDirection d);
+    void shiftLyricsVerses(engraving::Transaction& tx, MoveDirection d, const std::vector<EngravingItem*>& elements);
 
     template<typename P>
     void execute(void (mu::engraving::Score::* function)(P), P param, const muse::TranslatableString& actionName);

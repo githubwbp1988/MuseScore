@@ -45,10 +45,10 @@ static inline auto commands(const Map& m) -> std::vector<typename Map::key_type>
 }
 
 static const std::vector<Command> HAS_SELECTION_REQUIRED_COMMANDS = {
-    CUT_COMMAND,
-    COPY_COMMAND,
-    COPY_PASTE_SWAP_COMMAND,
-    DELETE_COMMAND,
+    CutCommand::id,
+    CopyCommand::id,
+    CopyPasteSwapCommand::id,
+    DeleteCommand::id,
     FlipCommand::id,
     FLIP_HORIZONTALLY_COMMAND,
     SelectNextSegmentCommand::id,
@@ -77,8 +77,8 @@ static const std::vector<Command> HAS_SELECTION_REQUIRED_COMMANDS = {
 };
 
 static const std::vector<Command> UNDO_REDO_COMMANDS = {
-    UNDO_COMMAND,
-    REDO_COMMAND
+    UndoCommand::id,
+    RedoCommand::id
 };
 
 static const std::vector<Command> TEXT_EDITING_COMMANDS = {
@@ -93,15 +93,15 @@ static const std::vector<Command> TEXT_EDITING_COMMANDS = {
     EDITTEXT_NEXT_WORD_COMMAND,
     EDITTEXT_NEXT_BEAT_COMMAND,
     EDITTEXT_PREV_BEAT_COMMAND,
-    EDITTEXT_ADVANCE_LONGA_COMMAND,
-    EDITTEXT_ADVANCE_BREVE_COMMAND,
-    EDITTEXT_ADVANCE_1_COMMAND,
-    EDITTEXT_ADVANCE_2_COMMAND,
-    EDITTEXT_ADVANCE_4_COMMAND,
-    EDITTEXT_ADVANCE_8_COMMAND,
-    EDITTEXT_ADVANCE_16_COMMAND,
-    EDITTEXT_ADVANCE_32_COMMAND,
-    EDITTEXT_ADVANCE_64_COMMAND,
+    EditTextAdvanceLongaCommand::id,
+    EditTextAdvanceBreveCommand::id,
+    EditTextAdvance1Command::id,
+    EditTextAdvance2Command::id,
+    EditTextAdvance4Command::id,
+    EditTextAdvance8Command::id,
+    EditTextAdvance16Command::id,
+    EditTextAdvance32Command::id,
+    EditTextAdvance64Command::id,
 };
 
 static const std::vector<Command> LYRICS_EDITING_COMMANDS = {
@@ -185,10 +185,10 @@ static const std::map<Command, SymId> ADD_ARTICULATION_COMMANDS = {
 };
 
 static const std::map<Command, voice_idx_t> VOICE_COMMANDS = {
-    { USE_VOICE_1_COMMAND, 0 },
-    { USE_VOICE_2_COMMAND, 1 },
-    { USE_VOICE_3_COMMAND, 2 },
-    { USE_VOICE_4_COMMAND, 3 }
+    { UseVoice1Command::id, 0 },
+    { UseVoice2Command::id, 1 },
+    { UseVoice3Command::id, 2 },
+    { UseVoice4Command::id, 3 }
 };
 
 static const std::vector<Command> NOTE_COMMANDS = {
@@ -218,16 +218,16 @@ static const std::vector<Command> NOTE_COMMANDS = {
 };
 
 static const std::vector<Command> TUPLET_COMMANDS = {
-    OPEN_TUPLET_CONFIGURE_COMMAND,
-    ADD_TUPLET_COMMAND,
-    ADD_DUPLET_COMMAND,
-    ADD_TRIPLET_COMMAND,
-    ADD_QUADRUPLET_COMMAND,
-    ADD_QUINTUPLET_COMMAND,
-    ADD_SEXTUPLET_COMMAND,
-    ADD_SEPTUPLET_COMMAND,
-    ADD_OCTUPLET_COMMAND,
-    ADD_NONUPLET_COMMAND,
+    OpenTupletConfigureCommand::id,
+    AddTupletCommand::id,
+    AddDupletCommand::id,
+    AddTripletCommand::id,
+    AddQuadrupletCommand::id,
+    AddQuintupletCommand::id,
+    AddSextupletCommand::id,
+    AddSeptupletCommand::id,
+    AddOctupletCommand::id,
+    AddNonupletCommand::id,
 };
 
 static const std::vector<Command> NOTE_OR_REST_SELECTED_COMMANDS = {
@@ -281,21 +281,21 @@ static const std::vector<Command> TAB_COMMANDS = {
     SET_DURATION_512TH_TAB_COMMAND,
     SET_DURATION_1024TH_TAB_COMMAND,
     ENTER_REST_TAB_COMMAND,
-    ENTER_FRET_0_COMMAND,
-    ENTER_FRET_1_COMMAND,
-    ENTER_FRET_2_COMMAND,
-    ENTER_FRET_3_COMMAND,
-    ENTER_FRET_4_COMMAND,
-    ENTER_FRET_5_COMMAND,
-    ENTER_FRET_6_COMMAND,
-    ENTER_FRET_7_COMMAND,
-    ENTER_FRET_8_COMMAND,
-    ENTER_FRET_9_COMMAND,
-    ENTER_FRET_10_COMMAND,
-    ENTER_FRET_11_COMMAND,
-    ENTER_FRET_12_COMMAND,
-    ENTER_FRET_13_COMMAND,
-    ENTER_FRET_14_COMMAND,
+    AddFret0Command::id,
+    AddFret1Command::id,
+    AddFret2Command::id,
+    AddFret3Command::id,
+    AddFret4Command::id,
+    AddFret5Command::id,
+    AddFret6Command::id,
+    AddFret7Command::id,
+    AddFret8Command::id,
+    AddFret9Command::id,
+    AddFret10Command::id,
+    AddFret11Command::id,
+    AddFret12Command::id,
+    AddFret13Command::id,
+    AddFret14Command::id,
     GOTO_STRING_ABOVE_COMMAND,
     GOTO_STRING_BELOW_COMMAND
 };
@@ -447,10 +447,10 @@ CommandState NotationCommandsState::doCommandState(const Command& command) const
         return CommandState(controller()->isMoveSelectionAvailable(MOVE_SELECTION_COMMANDS.at(command)), false);
     }
 
-    if (command == UNDO_COMMAND) {
+    if (command == UndoCommand::id) {
         return CommandState(controller()->canUndo(), false);
     }
-    if (command == REDO_COMMAND) {
+    if (command == RedoCommand::id) {
         return CommandState(controller()->canRedo(), false);
     }
 

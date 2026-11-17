@@ -116,6 +116,7 @@
 #include "engraving/editing/navigation.h"
 #include "engraving/editing/noteinput.h"
 #include "engraving/editing/editpart.h"
+#include "engraving/editing/editlyrics.h"
 #include "engraving/editing/editslashnotation.h"
 #include "engraving/editing/editslur.h"
 #include "engraving/editing/editstavesharing.h"
@@ -161,37 +162,19 @@ static mu::engraving::KeyboardModifier keyboardModifier(Qt::KeyboardModifiers km
     return mu::engraving::KeyboardModifier(int(km));
 }
 
-static double nudgeDistance(const mu::engraving::EditData& editData)
+static double nudgeDistance(const EngravingItem* item, bool quickly, double raster)
 {
-    double spatium = editData.element->spatium();
+    const double spatium = item->spatium();
 
-    if (editData.element->isBeam()) {
-        if (editData.modifiers & Qt::ControlModifier) {
-            return spatium;
-        } else if (editData.modifiers & Qt::AltModifier) {
-            return spatium * 4;
-        }
-
-        return spatium * 0.25;
+    double distance = 0.0;
+    if (item->isBeam()) {
+        distance = quickly ? spatium : spatium * 0.25;
+    } else {
+        distance = spatium * (quickly ? mu::engraving::MScore::nudgeStep10 : mu::engraving::MScore::nudgeStep);
     }
 
-    if (editData.modifiers & Qt::ControlModifier) {
-        return spatium * mu::engraving::MScore::nudgeStep10;
-    } else if (editData.modifiers & Qt::AltModifier) {
-        return spatium * mu::engraving::MScore::nudgeStep50;
-    }
-
-    return spatium * mu::engraving::MScore::nudgeStep;
-}
-
-static double nudgeDistance(const mu::engraving::EditData& editData, double raster)
-{
-    double distance = nudgeDistance(editData);
     if (raster > 0) {
-        raster = editData.element->spatium() / raster;
-        if (distance < raster) {
-            distance = raster;
-        }
+        distance = std::max(distance, spatium / raster);
     }
 
     return distance;
@@ -4039,34 +4022,18 @@ void NotationInteraction::resetAnchorLines()
     m_anchorLines.clear();
 }
 
-double NotationInteraction::getHRaster() const
+double NotationInteraction::gridRaster(const EngravingItem* item, muse::Orientation orientation) const
 {
-    double hRaster = mu::engraving::MScore::hRaster();
-
-    if (m_editData.element->isBarLine()) {
+    if (item->isBeam()) {
         // Always adjust by .25sp
-        hRaster = 4.0;
-    } else if (m_editData.element->isLyricsLineSegment()) {
-        // Ignore grid
-        hRaster = 0.0;
+        return 4.0;
     }
 
-    return hRaster;
-}
-
-double NotationInteraction::getVRaster() const
-{
-    double vRaster = mu::engraving::MScore::vRaster();
-
-    if (m_editData.element->isBarLine()) {
-        // Always adjust by .25sp
-        vRaster = 4.0;
-    } else if (m_editData.element->isLyricsLineSegment()) {
-        // Ignore grid
-        vRaster = 0.0;
+    if (!configuration()->isSnappedToGrid(orientation)) {
+        return 0.0;
     }
 
-    return vRaster;
+    return orientation == muse::Orientation::Horizontal ? mu::engraving::MScore::hRaster() : mu::engraving::MScore::vRaster();
 }
 
 double NotationInteraction::currentScaling(Painter* painter) const
@@ -4551,101 +4518,143 @@ void NotationInteraction::movePitch(MoveDirection d, PitchMode mode)
     IF_ASSERT_FAILED(MoveDirection::Up == d || MoveDirection::Down == d) {
         return;
     }
-    EngravingItem* selected = score()->selection().element();
-    if (selected && selected->isRest()) {
-        if (noteInput()->state().staffGroup() == mu::engraving::StaffGroup::TAB) {
-            // The rest won't be visible - don't try to move it...
-            return;
+
+    const mu::engraving::Selection& selection = score()->selection();
+    const bool hasNotes = !selection.uniqueNotes().empty();
+
+    // Range selections only transpose notes; rests are moved for list selections (without notes) only
+    std::vector<Rest*> rests;
+    if (!hasNotes && selection.isList()) {
+        for (EngravingItem* el : selection.elements()) {
+            if (el->isRest()) {
+                rests.push_back(toRest(el));
+            }
         }
-        startEdit(TranslatableString("undoableAction", "Change vertical position"));
-        score()->cmdMoveRest(toRest(selected), toDirection(d));
-    } else {
-        startEdit(TranslatableString("undoableAction", "Change pitch"));
+    }
+
+    if (rests.empty() && !hasNotes) {
+        return;
+    }
+
+    startEdit(hasNotes ? TranslatableString("undoableAction", "Change pitch")
+              : TranslatableString("undoableAction", "Change vertical position"));
+
+    if (hasNotes) {
         EditNote::upDown(score(), MoveDirection::Up == d, mode);
+    } else {
+        for (Rest* rest : rests) {
+            if (rest->staff()->isTabStaff(rest->tick())) {
+                // The rest won't be visible - don't try to move it...
+                continue;
+            }
+            score()->cmdMoveRest(rest, toDirection(d));
+        }
     }
 
     apply();
 }
 
-void NotationInteraction::moveLyrics(MoveDirection d)
+void NotationInteraction::shiftLyricsVerses(Transaction& tx, MoveDirection d, const std::vector<EngravingItem*>& elements)
 {
-    EngravingItem* el = score()->selection().element();
-    IF_ASSERT_FAILED(el && el->isLyrics()) {
-        return;
-    }
-    startEdit(TranslatableString("undoableAction", "Move lyrics"));
-    score()->cmdMoveLyrics(toLyrics(el), toDirection(d));
-    apply();
-}
+    const bool up = d == MoveDirection::Up;
 
-void NotationInteraction::nudge(MoveDirection d, bool quickly)
-{
-    EngravingItem* el = score()->selection().element();
-    IF_ASSERT_FAILED(el && (el->isTextBase() || el->isArticulationFamily())) {
-        return;
-    }
+    std::vector<Lyrics*> lyrics;
+    std::set<const LinkedObjects*> movedLinks;
+    for (EngravingItem* el : elements) {
+        if (!el->isLyrics()) {
+            continue;
+        }
 
-    startEdit(TranslatableString("undoableAction", "Nudge element"));
+        Lyrics* l = toLyrics(el);
 
-    qreal step = quickly ? mu::engraving::MScore::nudgeStep10 : mu::engraving::MScore::nudgeStep;
-    step = step * el->spatium();
-
-    switch (d) {
-    case MoveDirection::Undefined: {
-        IF_ASSERT_FAILED(d != MoveDirection::Undefined) {
+        // Move the selected lyrics as a block: if one can't move up, don't move any
+        if (up && l->verse() == 0) {
             return;
         }
-    } break;
-    case MoveDirection::Left:
-        el->undoChangeProperty(mu::engraving::Pid::OFFSET, el->offset() - PointF(step, 0.0), mu::engraving::PropertyFlags::UNSTYLED);
-        break;
-    case MoveDirection::Right:
-        el->undoChangeProperty(mu::engraving::Pid::OFFSET, el->offset() + PointF(step, 0.0), mu::engraving::PropertyFlags::UNSTYLED);
-        break;
-    case MoveDirection::Up:
-        el->undoChangeProperty(mu::engraving::Pid::OFFSET, el->offset() - PointF(0.0, step), mu::engraving::PropertyFlags::UNSTYLED);
-        break;
-    case MoveDirection::Down:
-        el->undoChangeProperty(mu::engraving::Pid::OFFSET, el->offset() + PointF(0.0, step), mu::engraving::PropertyFlags::UNSTYLED);
-        break;
+
+        if (l->links() && !movedLinks.insert(l->links()).second) {
+            continue;
+        }
+
+        lyrics.push_back(l);
     }
 
-    apply();
+    // Lyrics::undoChangeProperty swaps a lyric with the one already in its target verse,
+    // so we move the lyrics furthest in the direction of travel first. Otherwise, selected
+    // lyrics would swap with each other instead of moving together:
+    std::sort(lyrics.begin(), lyrics.end(), [up](const Lyrics* a, const Lyrics* b) {
+        return up ? a->verse() < b->verse() : a->verse() > b->verse();
+    });
 
-    notifyAboutDragChanged();
+    for (Lyrics* l : lyrics) {
+        EditLyrics::shiftLyricsVerse(tx, l, toDirection(d));
+    }
+}
+
+void NotationInteraction::nudge(MoveDirection d, bool quickly, const std::vector<EngravingItem*>& elements)
+{
+    const bool horizontal = d == MoveDirection::Left || d == MoveDirection::Right;
+    const muse::Orientation orientation = horizontal ? muse::Orientation::Horizontal : muse::Orientation::Vertical;
+
+    for (EngravingItem* el : elements) {
+        const double step = nudgeDistance(el, quickly, gridRaster(el, orientation));
+
+        switch (d) {
+        case MoveDirection::Undefined:
+            UNREACHABLE;
+            break;
+        case MoveDirection::Left:
+            el->undoChangeProperty(mu::engraving::Pid::OFFSET, el->offset() - PointF(step, 0.0), mu::engraving::PropertyFlags::UNSTYLED);
+            break;
+        case MoveDirection::Right:
+            el->undoChangeProperty(mu::engraving::Pid::OFFSET, el->offset() + PointF(step, 0.0), mu::engraving::PropertyFlags::UNSTYLED);
+            break;
+        case MoveDirection::Up:
+            el->undoChangeProperty(mu::engraving::Pid::OFFSET, el->offset() - PointF(0.0, step), mu::engraving::PropertyFlags::UNSTYLED);
+            break;
+        case MoveDirection::Down:
+            el->undoChangeProperty(mu::engraving::Pid::OFFSET, el->offset() + PointF(0.0, step), mu::engraving::PropertyFlags::UNSTYLED);
+            break;
+        }
+    }
 }
 
 void NotationInteraction::nudgeAnchors(MoveDirection d)
 {
+    // TODO: Refactor grip editing to allow multiple selection and nudging (without rebasing anchors)
+
     IF_ASSERT_FAILED(m_editData.element) {
         return;
     }
 
-    startEdit(TranslatableString("undoableAction", "Nudge"));
-    double vRaster = getVRaster();
-    double hRaster = getHRaster();
+    const EngravingItem* element = m_editData.element;
+    const bool quickly = m_editData.modifiers & mu::engraving::ControlModifier;
+    const double hRaster = gridRaster(element, muse::Orientation::Horizontal);
+    const double vRaster = gridRaster(element, muse::Orientation::Vertical);
 
     switch (d) {
     case MoveDirection::Left:
-        m_editData.delta = PointF(-nudgeDistance(m_editData, hRaster), 0);
+        m_editData.delta = PointF(-nudgeDistance(element, quickly, hRaster), 0);
         break;
     case MoveDirection::Right:
-        m_editData.delta = PointF(nudgeDistance(m_editData, hRaster), 0);
+        m_editData.delta = PointF(nudgeDistance(element, quickly, hRaster), 0);
         break;
     case MoveDirection::Up:
-        m_editData.delta = PointF(0, -nudgeDistance(m_editData, vRaster));
+        m_editData.delta = PointF(0, -nudgeDistance(element, quickly, vRaster));
         break;
     case MoveDirection::Down:
-        m_editData.delta = PointF(0, nudgeDistance(m_editData, vRaster));
+        m_editData.delta = PointF(0, nudgeDistance(element, quickly, vRaster));
         break;
-    default:
-        rollback();
+    case MoveDirection::Undefined:
+        UNREACHABLE;
         return;
     }
 
     m_editData.evtDelta = m_editData.moveDelta = m_editData.delta;
     m_editData.hRaster = hRaster;
     m_editData.vRaster = vRaster;
+
+    m_editData.isEditMode = isEditingElement();
 
     if (m_editData.curGrip != mu::engraving::Grip::NO_GRIP && int(m_editData.curGrip) < m_editData.grips) {
         m_editData.pos = m_editData.grip[int(m_editData.curGrip)].center() + m_editData.delta;
@@ -4658,8 +4667,103 @@ void NotationInteraction::nudgeAnchors(MoveDirection d)
         m_editData.element->drag(m_editData);
         m_editData.element->endDrag(m_editData);
     }
+}
 
-    apply();
+static bool isNudgeable(const EngravingItem* item)
+{
+    return item->isTextBase()
+           || item->isArticulationFamily()
+           || item->isSymbol()
+           || item->isFermata()
+           || item->isBreath()
+           // Items whose default grip moves the item's offset (rather than resizing or reshaping it) when they are edited on their own:
+           || item->isTuplet()
+           || item->isImage()
+           || item->isArpeggio()
+           || item->isLineSegment()
+           || item->isSlurTieSegment();
+}
+
+static bool followsLyrics(const LyricsLineSegment* segment, const std::set<const EngravingItem*>& lyrics, bool horizontal)
+{
+    const LyricsLineSegment::LayoutData* ldata = segment->ldata();
+    if (horizontal) {
+        return lyrics.count(ldata->startXLyrics) > 0 || lyrics.count(ldata->endXLyrics) > 0;
+    }
+
+    return lyrics.count(ldata->yLyrics) > 0;
+}
+
+bool NotationInteraction::moveSelectedItems(MoveDirection d, bool quickly)
+{
+    if (d == MoveDirection::Undefined) {
+        return false;
+    }
+
+    const bool vertical = d == MoveDirection::Up || d == MoveDirection::Down;
+    const PitchMode pitchMode = quickly ? PitchMode::OCTAVE : PitchMode::CHROMATIC;
+    const mu::engraving::Selection& selection = score()->selection();
+
+    // Range selections only transpose notes. In list selections, notes and rests take precedence over other items
+    const std::vector<EngravingItem*>& selectionElements = selection.elements();
+    const auto isNoteOrRest = [](const EngravingItem* el) { return el->isNote() || el->isRest(); };
+    if (selection.isRange() || std::any_of(selectionElements.begin(), selectionElements.end(), isNoteOrRest)) {
+        if (!vertical || (selection.isRange() && selection.uniqueNotes().empty())) {
+            return false;
+        }
+        movePitch(d, pitchMode);
+        return true;
+    }
+
+    std::vector<EngravingItem*> lyrics;
+    std::vector<EngravingItem*> nudgeable;
+
+    for (EngravingItem* el : selectionElements) {
+        if (vertical && !quickly && el->isLyrics()) {
+            lyrics.push_back(el);
+        } else if (isNudgeable(el)) {
+            nudgeable.push_back(el);
+        }
+    }
+
+    if (lyrics.empty() && nudgeable.empty()) {
+        return false;
+    }
+
+    // Lyrics only change verse when no other items are being nudged: otherwise, they're nudged with them
+    if (!lyrics.empty() && !nudgeable.empty()) {
+        nudgeable.insert(nudgeable.end(), lyrics.begin(), lyrics.end());
+        lyrics.clear();
+    }
+
+    // Don't nudge lyrics lines that already follow the position of a nudged lyric (or they would move twice as much)
+    std::set<const EngravingItem*> nudgedLyrics;
+    for (const EngravingItem* el : nudgeable) {
+        if (el->isLyrics()) {
+            nudgedLyrics.insert(el);
+        }
+    }
+    if (!nudgedLyrics.empty()) {
+        std::erase_if(nudgeable, [&nudgedLyrics, vertical](const EngravingItem* el) {
+            return el->isLyricsLineSegment() && followsLyrics(toLyricsLineSegment(el), nudgedLyrics, !vertical);
+        });
+    }
+
+    transaction(TranslatableString("undoableAction", "Move items"), [&](Transaction& tx) {
+        if (!lyrics.empty()) {
+            shiftLyricsVerses(tx, d, lyrics);
+        } else {
+            nudge(d, quickly, nudgeable);
+        }
+    });
+
+    if (!nudgeable.empty()) {
+        notifyAboutDragChanged();
+    } else {
+        notifyAboutNotationChanged();
+    }
+
+    return true;
 }
 
 bool NotationInteraction::isTextSelected() const
@@ -4801,8 +4905,7 @@ bool NotationInteraction::handleKeyPress(QKeyEvent* event)
         return false;
     }
 
-    const double vRaster = editElem->isBeam() ? 4 : mu::engraving::MScore::vRaster();
-    const double hRaster = editElem->isBeam() ? 4 : mu::engraving::MScore::hRaster();
+    MoveDirection direction = MoveDirection::Undefined;
 
     switch (event->key()) {
     case Qt::Key_Tab:
@@ -4820,43 +4923,26 @@ bool NotationInteraction::handleKeyPress(QKeyEvent* event)
         notifyAboutNotationChanged();
         return true;
     case Qt::Key_Left:
-        m_editData.delta = PointF(-nudgeDistance(m_editData, hRaster), 0);
+        direction = MoveDirection::Left;
         break;
     case Qt::Key_Right:
-        m_editData.delta = PointF(nudgeDistance(m_editData, hRaster), 0);
+        direction = MoveDirection::Right;
         break;
     case Qt::Key_Up:
-        m_editData.delta = PointF(0, -nudgeDistance(m_editData, vRaster));
+        direction = MoveDirection::Up;
         break;
     case Qt::Key_Down:
-        m_editData.delta = PointF(0, nudgeDistance(m_editData, vRaster));
+        direction = MoveDirection::Down;
         break;
     default:
         return false;
     }
 
-    m_editData.evtDelta = m_editData.moveDelta = m_editData.delta;
-    m_editData.hRaster = hRaster;
-    m_editData.vRaster = vRaster;
-
-    m_editData.isEditMode = isEditingElement();
-
     //: Means: an editing operation triggered by a keystroke
     startEdit(TranslatableString("undoableAction", "Keystroke edit"));
-
-    if (m_editData.curGrip != mu::engraving::Grip::NO_GRIP && int(m_editData.curGrip) < m_editData.grips) {
-        m_editData.pos = m_editData.grip[int(m_editData.curGrip)].center() + m_editData.delta;
-
-        editElem->startDragGrip(m_editData);
-        editElem->dragGrip(m_editData);
-        editElem->endDragGrip(m_editData);
-    } else {
-        editElem->startDrag(m_editData);
-        editElem->drag(m_editData);
-        editElem->endDrag(m_editData);
-    }
-
+    nudgeAnchors(direction);
     apply();
+
     return true;
 }
 
@@ -5206,7 +5292,7 @@ void NotationInteraction::startEditElement(EngravingItem* element)
 
     if (element->isTextBase()) {
         startEditText(element);
-    } else if (element->hasGrips() && !element->isImage()) {
+    } else if (element->hasGrips()) {
         startEditGrip(element, element->defaultGrip());
     } else {
         element->startEdit(m_editData);
@@ -6704,9 +6790,35 @@ void NotationInteraction::addAnchoredLineToSelectedNotes()
     apply();
 }
 
+void NotationInteraction::addText(TextStyleType type)
+{
+    EngravingItem* item = nullptr;
+
+    const INotationSelectionPtr sel = selection();
+    if (sel->isRange()) {
+        const INotationSelectionRangePtr range = sel->range();
+        item = range->rangeStartSegment()->firstElementForNavigation(range->startStaffIndex());
+    } else {
+        item = contextItem();
+    }
+
+    if (!item) {
+        return;
+    }
+
+    if (isVerticalBoxTextStyle(type)) {
+        if (!item->isVBox()) {
+            addTextToTopFrame(type);
+            return;
+        }
+    }
+
+    addTextToItem(type, item);
+}
+
 void NotationInteraction::addTextToTopFrame(TextStyleType type)
 {
-    addText(type);
+    doAddText(type);
 }
 
 bool NotationInteraction::canAddTextToItem(TextStyleType type, const EngravingItem* item) const
@@ -6777,10 +6889,10 @@ void NotationInteraction::addTextToItem(TextStyleType type, EngravingItem* item)
         return;
     }
 
-    addText(type, item);
+    doAddText(type, item);
 }
 
-void NotationInteraction::addText(TextStyleType type, EngravingItem* item)
+void NotationInteraction::doAddText(TextStyleType type, EngravingItem* item)
 {
     if (m_noteInput->isNoteInputMode()) {
         m_noteInput->endNoteInput();
@@ -7314,144 +7426,28 @@ void NotationInteraction::resetHitElementContext()
     setHitElementContext(HitElementContext());
 }
 
-//! NOTE: Copied from ScoreView::lyricsTab
 void NotationInteraction::navigateToLyrics(bool back, bool moveOnly, bool end)
 {
     if (!m_editData.element || !m_editData.element->isLyrics()) {
         LOGW("nextLyric called with invalid current element");
         return;
     }
-    mu::engraving::Lyrics* lyrics = toLyrics(m_editData.element);
-    track_idx_t track = lyrics->track();
-    mu::engraving::Segment* segment = lyrics->segment();
-    int verse = lyrics->verse();
-    mu::engraving::PlacementV placement = lyrics->placement();
-    mu::engraving::PropertyFlags pFlags = lyrics->propertyFlags(mu::engraving::Pid::PLACEMENT);
-    mu::engraving::FontStyle fStyle = lyrics->fontStyle();
-    mu::engraving::PropertyFlags fFlags = lyrics->propertyFlags(mu::engraving::Pid::FONT_STYLE);
-    mu::engraving::AutoOnOff centering = lyrics->centerBetweenStaves();
-    mu::engraving::TextStyleType styleType = lyrics->textStyleType();
-    double yOffset = lyrics->offset().y();
-
-    mu::engraving::Segment* nextSegment = segment;
-    if (back) {
-        // search prev chord
-        while ((nextSegment = nextSegment->prev1(mu::engraving::SegmentType::ChordRest))) {
-            EngravingItem* el = nextSegment->element(track);
-            if (!el) {
-                continue;
-            }
-            if (el->isChord()) {
-                break;
-            } else if (el->isRest()) {
-                mu::engraving::Lyrics* nextLyrics = toChordRest(el)->lyrics(verse, placement);
-                if (nextLyrics) {
-                    break;
-                }
-            }
-        }
-    } else {
-        // search next chord
-        while ((nextSegment = nextSegment->next1(mu::engraving::SegmentType::ChordRest))) {
-            EngravingItem* el = nextSegment->element(track);
-            if (!el) {
-                continue;
-            }
-            if (el->isChord()) {
-                break;
-            } else if (el->isRest()) {
-                mu::engraving::Lyrics* nextLyrics = toChordRest(el)->lyrics(verse, placement);
-                if (nextLyrics) {
-                    break;
-                }
-            }
-        }
-    }
-    if (!nextSegment) {
+    const EditLyrics::InitialState state = EditLyrics::initialState(toLyrics(m_editData.element));
+    if (!EditLyrics::canNavigateToLyrics(state, back)) {
         return;
     }
 
     endEditText();
 
-    // look for the lyrics we are moving from; may be the current lyrics or a previous one
-    // if we are skipping several chords with spaces
-    mu::engraving::Lyrics* fromLyrics = 0;
-    if (!back) {
-        while (segment) {
-            ChordRest* cr = toChordRest(segment->element(track));
-            if (cr) {
-                fromLyrics = cr->lyrics(verse, placement);
-                if (fromLyrics) {
-                    break;
-                }
-            }
-            segment = segment->prev1(mu::engraving::SegmentType::ChordRest);
-        }
-    }
-
-    ChordRest* cr = toChordRest(nextSegment->element(track));
-    if (!cr) {
-        LOGD("no next lyrics list: %s", nextSegment->element(track)->typeName());
+    EditLyrics::NavigatedLyrics navigated;
+    transaction(TranslatableString("undoableAction", "Navigate to lyrics"), [&](Transaction& tx) {
+        navigated = EditLyrics::navigateToLyrics(tx, score(), state, back, moveOnly);
+    });
+    Lyrics* nextLyrics = navigated.lyrics;
+    if (!nextLyrics) {
         return;
     }
-    mu::engraving::Lyrics* nextLyrics = cr->lyrics(verse, placement);
 
-    bool newLyrics = false;
-    if (!nextLyrics) {
-        nextLyrics = Factory::createLyrics(cr);
-        nextLyrics->setTrack(track);
-        cr = toChordRest(nextSegment->element(track));
-        nextLyrics->setOwnershipParent(cr);
-        nextLyrics->setVerse(verse);
-        nextLyrics->setTextStyleType(styleType);
-        nextLyrics->setPlacement(placement);
-        nextLyrics->setPropertyFlags(mu::engraving::Pid::PLACEMENT, pFlags);
-        nextLyrics->setCenterBetweenStaves(centering);
-        nextLyrics->setSyllabic(mu::engraving::LyricsSyllabic::SINGLE);
-        nextLyrics->setFontStyle(fStyle);
-        nextLyrics->setPropertyFlags(mu::engraving::Pid::FONT_STYLE, fFlags);
-        nextLyrics->setOffset(PointF(0.0, yOffset));
-        newLyrics = true;
-    }
-
-    score()->startCmd(TranslatableString("undoableAction", "Navigate to lyrics"));
-    if (fromLyrics && !moveOnly) {
-        switch (nextLyrics->syllabic()) {
-        // as we arrived at nextLyrics by a [Space], it can be the beginning
-        // of a multi-syllable, but cannot have syllabic dashes before
-        case mu::engraving::LyricsSyllabic::SINGLE:
-        case mu::engraving::LyricsSyllabic::BEGIN:
-            break;
-        case mu::engraving::LyricsSyllabic::END:
-            nextLyrics->undoChangeProperty(mu::engraving::Pid::SYLLABIC, int(mu::engraving::LyricsSyllabic::SINGLE));
-            break;
-        case mu::engraving::LyricsSyllabic::MIDDLE:
-            nextLyrics->undoChangeProperty(mu::engraving::Pid::SYLLABIC, int(mu::engraving::LyricsSyllabic::BEGIN));
-            break;
-        }
-        // as we moved away from fromLyrics by a [Space], it can be
-        // the end of a multi-syllable, but cannot have syllabic dashes after
-        switch (fromLyrics->syllabic()) {
-        case mu::engraving::LyricsSyllabic::SINGLE:
-        case mu::engraving::LyricsSyllabic::END:
-            break;
-        case mu::engraving::LyricsSyllabic::BEGIN:
-            fromLyrics->undoChangeProperty(mu::engraving::Pid::SYLLABIC, int(mu::engraving::LyricsSyllabic::SINGLE));
-            break;
-        case mu::engraving::LyricsSyllabic::MIDDLE:
-            fromLyrics->undoChangeProperty(mu::engraving::Pid::SYLLABIC, int(mu::engraving::LyricsSyllabic::END));
-            break;
-        }
-        // for the same reason, it cannot have a melisma
-        if (fromLyrics->separator() && !fromLyrics->separator()->isEndMelisma()) {
-            fromLyrics->undoChangeProperty(mu::engraving::Pid::LYRIC_TICKS, Fraction::fromTicks(0));
-        }
-    }
-
-    if (newLyrics) {
-        score()->undoAddElement(nextLyrics);
-    }
-    score()->endCmd();
     score()->select(nextLyrics, SelectType::SINGLE, 0);
     score()->setLayoutAll();
 
@@ -7459,7 +7455,7 @@ void NotationInteraction::navigateToLyrics(bool back, bool moveOnly, bool end)
 
     if (end) {
         nextLyrics->selectAll();
-    } else if (!newLyrics) {
+    } else if (!navigated.isNew) {
         mu::engraving::TextCursor* cursor = nextLyrics->cursor();
         cursor->movePosition(mu::engraving::TextCursor::MoveOperation::End, mu::engraving::TextCursor::MoveMode::MoveAnchor);
         cursor->movePosition(mu::engraving::TextCursor::MoveOperation::Start, mu::engraving::TextCursor::MoveMode::KeepAnchor);
@@ -7473,321 +7469,52 @@ void NotationInteraction::navigateToLyrics(MoveDirection direction, bool moveOnl
     navigateToLyrics(direction == MoveDirection::Left, moveOnly, false);
 }
 
-//! NOTE: Copied from ScoreView::lyricsTab
 void NotationInteraction::navigateToNextSyllable()
 {
     if (!m_editData.element || !m_editData.element->isLyrics()) {
         LOGW("nextSyllable called with invalid current element");
         return;
     }
-    Lyrics* lyrics = toLyrics(m_editData.element);
-    ChordRest* initialCR = lyrics->chordRest();
-    const bool hasPrecedingRepeat = initialCR->hasPrecedingJumpItem();
-    const bool hasFollowingRepeat = initialCR->hasFollowingJumpItem();
-    track_idx_t track = lyrics->track();
-    track_idx_t toLyricTrack = track;
-    Segment* segment = lyrics->segment();
-    int verse = lyrics->verse();
-    PlacementV placement = lyrics->placement();
-    PropertyFlags pFlags = lyrics->propertyFlags(Pid::PLACEMENT);
-    FontStyle fStyle = lyrics->fontStyle();
-    PropertyFlags fFlags = lyrics->propertyFlags(Pid::FONT_STYLE);
-    AutoOnOff centering = lyrics->centerBetweenStaves();
-    mu::engraving::TextStyleType styleType = lyrics->textStyleType();
-    double yOffset = lyrics->offset().y();
-
-    // search next chord
-    Segment* nextSegment = segment;
-    while ((nextSegment = nextSegment->next1(SegmentType::ChordRest))) {
-        EngravingItem* el = nextSegment->element(track);
-        if (!el || !el->isChord()) {
-            const track_idx_t strack = trackZeroVoice(track);
-            const track_idx_t etrack = strack + VOICES;
-            for (track_idx_t t = strack; t < etrack; ++t) {
-                el = nextSegment->element(t);
-                if (el && el->isChord() && toChord(el)->lyrics(verse, placement)) {
-                    toLyricTrack = t;
-                    break;
-                }
-            }
-        }
-
-        if (el && el->isChord()) {
-            break;
-        }
-    }
-
-    if (!segmentsAreAdjacent(segment, nextSegment)) {
-        nextSegment = nullptr;
-    }
-
-    if (!nextSegment && !hasFollowingRepeat && !hasPrecedingRepeat) {
+    const EditLyrics::InitialState state = EditLyrics::initialState(toLyrics(m_editData.element));
+    if (!EditLyrics::canNavigateToNextSyllable(state)) {
         return;
     }
-
-    PartialLyricsLine* prevPartialLyricsLine = findPrevPartialLyricsLineDash(lyrics);
 
     endEditText();
 
-    // look for the lyrics we are moving from; may be the current lyrics or a previous one
-    // we are extending with several dashes
-    Lyrics* fromLyrics = nullptr;
-    Segment* curSeg = segment;
-    while (segment && segmentsAreAdjacent(segment, curSeg)) {
-        ChordRest* cr = toChordRest(segment->element(track));
-        if (!cr) {
-            segment = segment->prev1(SegmentType::ChordRest);
-            continue;
-        }
-        fromLyrics = cr->lyrics(verse, placement);
-        if (fromLyrics) {
-            break;
-        }
-        segment = segment->prev1(SegmentType::ChordRest);
-    }
-
-    if (!nextSegment) {
-        score()->startCmd(TranslatableString("undoableAction", "Navigate to next syllable"));
-        if (fromLyrics && hasFollowingRepeat) {
-            // Allow dash with no end syllable if there is a repeat
-            switch (fromLyrics->syllabic()) {
-            case LyricsSyllabic::BEGIN:
-            case LyricsSyllabic::MIDDLE:
-                break;
-            case LyricsSyllabic::SINGLE:
-                fromLyrics->undoChangeProperty(Pid::SYLLABIC, int(LyricsSyllabic::BEGIN));
-                break;
-            case LyricsSyllabic::END:
-                fromLyrics->undoChangeProperty(Pid::SYLLABIC, int(LyricsSyllabic::MIDDLE));
-                break;
-            }
-            fromLyrics->undoChangeProperty(Pid::LYRIC_TICKS, Fraction(0, 1));
-            score()->setLayoutAll();
-            score()->endCmd();
-            return;
-        }
-
-        if (hasPrecedingRepeat) {
-            score()->endCmd();
-            score()->startCmd(TranslatableString("undoableAction", "Add partial lyrics dash"));
-            // No from lyrics - create incoming partial dash
-            PartialLyricsLine* dash = Factory::createPartialLyricsLine(score()->dummy());
-            dash->setIsEndMelisma(false);
-            dash->setVerse(verse);
-            dash->setPlacement(placement);
-            dash->setPropertyFlags(Pid::PLACEMENT, pFlags);
-            dash->setCenterBetweenStaves(centering);
-            dash->setTick(initialCR->tick());
-            dash->setTicks(Fraction(0, 1));
-            dash->setTrack(initialCR->track());
-            dash->setTrack2(initialCR->track());
-
-            score()->undoAddElement(dash);
-
-            // Don't advance cursor
-
-            Lyrics* toLyrics = Factory::createLyrics(initialCR);
-            toLyrics->setTrack(track);
-            toLyrics->setVerse(verse);
-            toLyrics->setTextStyleType(styleType);
-            toLyrics->setPlacement(placement);
-            toLyrics->setPropertyFlags(Pid::PLACEMENT, pFlags);
-            toLyrics->setCenterBetweenStaves(centering);
-            toLyrics->setSyllabic(LyricsSyllabic::END);
-            toLyrics->setFontStyle(fStyle);
-            toLyrics->setPropertyFlags(Pid::FONT_STYLE, fFlags);
-            toLyrics->setOffset(PointF(0.0, yOffset));
-
-            score()->undoAddElement(toLyrics);
-            score()->endCmd();
-            score()->select(toLyrics, SelectType::SINGLE, 0);
-            score()->setLayoutAll();
-            startEditText(toLyrics, PointF());
-            toLyrics->selectAll();
-            showItem(toLyrics);
-
-            return;
-        }
-    }
-
-    score()->startCmd(TranslatableString("undoableAction", "Navigate to next syllable"));
-    ChordRest* cr = nextSegment ? toChordRest(nextSegment->element(toLyricTrack)) : nullptr;
-    Lyrics* toLyrics = cr ? cr->lyrics(verse, placement) : nullptr;
-
-    if (!toLyrics && !cr) {
+    Lyrics* toLyrics = nullptr;
+    transaction(TranslatableString("undoableAction", "Navigate to next syllable"), [&](Transaction& tx) {
+        toLyrics = EditLyrics::navigateToNextSyllable(tx, score(), state);
+    });
+    if (!toLyrics) {
         return;
     }
 
-    // If no lyrics in current track, check others
-    if (!toLyrics) {
-        const track_idx_t strack = trackZeroVoice(track);
-        const track_idx_t etrack = strack + VOICES;
-        for (track_idx_t t = strack; t < etrack; ++t) {
-            if (t == track) {
-                continue;
-            }
-            cr = toChordRest(nextSegment->element(t));
-            if (cr) {
-                toLyrics = cr->lyrics(verse, placement);
-                if (toLyrics) {
-                    break;
-                }
-            }
-        }
-    }
-
-    // This will be a partial dash at the start of a measure after a repeat
-    // We don't want toLyrics
-    toLyrics = hasPrecedingRepeat && !fromLyrics ? nullptr : toLyrics;
-
-    // Make sure we end up with either the cr of toLyrics or cr on correct track
-    cr = !toLyrics ? toChordRest(nextSegment->element(track)) : cr;
-
-    // Disallow dashes between non-adjacent repeat sections eg. 1st volta -> 2nd volta
-    // Instead, try to add partial dashes
-    if (cr && fromLyrics) {
-        Measure* toLyricsMeasure = cr->measure();
-        Measure* fromLyricsMeasure = fromLyrics->measure();
-
-        if (toLyricsMeasure != fromLyricsMeasure && fromLyricsMeasure->lastChordRest(track)->hasFollowingJumpItem()) {
-            const std::vector<Measure*> previousRepeats = findPreviousRepeatMeasures(toLyricsMeasure);
-            const bool inPrecedingRepeatSeg = muse::contains(previousRepeats, fromLyricsMeasure);
-            if (!previousRepeats.empty() && !inPrecedingRepeatSeg) {
-                fromLyrics = nullptr;
-            }
-        }
-    }
-
-    const bool startIncomingPartialDash = hasPrecedingRepeat && !fromLyrics
-                                          && !prevPartialLyricsLine && lyrics->xmlText().empty();
-
-    const bool newLyrics = !toLyrics || startIncomingPartialDash;
-    if (newLyrics) {
-        /* Don't advance the cursor when starting an incoming partial dash after a repeat,
-         * i.e. when there is no adjacent preceding syllable to dash from: */
-        ChordRest* toLyricsChord = startIncomingPartialDash ? initialCR : cr;
-
-        toLyrics = Factory::createLyrics(toLyricsChord);
-        toLyrics->setTrack(track);
-
-        toLyrics->setVerse(verse);
-        toLyrics->setTextStyleType(styleType);
-
-        toLyrics->setPlacement(placement);
-        toLyrics->setPropertyFlags(Pid::PLACEMENT, pFlags);
-        toLyrics->setCenterBetweenStaves(centering);
-        toLyrics->setSyllabic(LyricsSyllabic::END);
-        toLyrics->setFontStyle(fStyle);
-        toLyrics->setPropertyFlags(Pid::FONT_STYLE, fFlags);
-        toLyrics->setOffset(PointF(0.0, yOffset));
-    } else {
-        // as we arrived at toLyrics by a dash, it cannot be initial or isolated
-        if (toLyrics->syllabic() == LyricsSyllabic::BEGIN) {
-            toLyrics->undoChangeProperty(Pid::SYLLABIC, int(LyricsSyllabic::MIDDLE));
-        } else if (toLyrics->syllabic() == LyricsSyllabic::SINGLE) {
-            toLyrics->undoChangeProperty(Pid::SYLLABIC, int(LyricsSyllabic::END));
-        }
-    }
-
-    if (fromLyrics) {
-        // as we moved away from fromLyrics by a dash,
-        // it can have syll. dashes before and after but cannot be isolated or terminal
-        switch (fromLyrics->syllabic()) {
-        case LyricsSyllabic::BEGIN:
-        case LyricsSyllabic::MIDDLE:
-            break;
-        case LyricsSyllabic::SINGLE:
-            fromLyrics->undoChangeProperty(Pid::SYLLABIC, int(LyricsSyllabic::BEGIN));
-            break;
-        case LyricsSyllabic::END:
-            fromLyrics->undoChangeProperty(Pid::SYLLABIC, int(LyricsSyllabic::MIDDLE));
-            break;
-        }
-        // for the same reason, it cannot have a melisma
-        fromLyrics->undoChangeProperty(Pid::LYRIC_TICKS, Fraction(0, 1));
-    } else if (hasPrecedingRepeat && !prevPartialLyricsLine) {
-        // No from lyrics - create incoming partial dash
-        PartialLyricsLine* dash = Factory::createPartialLyricsLine(score()->dummy());
-        dash->setIsEndMelisma(false);
-        dash->setVerse(verse);
-        dash->setPlacement(placement);
-        dash->setPropertyFlags(Pid::PLACEMENT, pFlags);
-        dash->setCenterBetweenStaves(centering);
-        dash->setTick(initialCR->tick());
-        dash->setTicks(hasPrecedingRepeat ? Fraction(0, 1) : initialCR->ticks());
-        dash->setTrack(initialCR->track());
-        dash->setTrack2(initialCR->track());
-
-        score()->undoAddElement(dash);
-    } else if (prevPartialLyricsLine) {
-        const Fraction tickDiff = cr->tick() - prevPartialLyricsLine->tick2();
-        prevPartialLyricsLine->undoMoveEnd(tickDiff);
-        score()->undoAddElement(prevPartialLyricsLine);
-        prevPartialLyricsLine->triggerLayout();
-    }
-
-    if (newLyrics) {
-        score()->undoAddElement(toLyrics);
-    }
-
-    score()->endCmd();
     score()->select(toLyrics, SelectType::SINGLE, 0);
     score()->setLayoutAll();
-
     startEditText(toLyrics, PointF());
-
     toLyrics->selectAll();
     showItem(toLyrics);
 }
 
-//! NOTE: Copied from ScoreView::lyricsUpDown
 void NotationInteraction::navigateToLyricsVerse(MoveDirection direction)
 {
     if (!m_editData.element || !m_editData.element->isLyrics()) {
         LOGW("nextLyricVerse called with invalid current element");
         return;
     }
-    mu::engraving::Lyrics* lyrics = toLyrics(m_editData.element);
-    engraving::track_idx_t track = lyrics->track();
-    ChordRest* cr = lyrics->chordRest();
-    int verse = lyrics->verse();
-    mu::engraving::PlacementV placement = lyrics->placement();
-    mu::engraving::PropertyFlags pFlags = lyrics->propertyFlags(mu::engraving::Pid::PLACEMENT);
-    mu::engraving::FontStyle fStyle = lyrics->fontStyle();
-    mu::engraving::PropertyFlags fFlags = lyrics->propertyFlags(mu::engraving::Pid::FONT_STYLE);
-    mu::engraving::AutoOnOff centering = lyrics->centerBetweenStaves();
-    mu::engraving::TextStyleType styleType = lyrics->textStyleType();
-
-    if (direction == MoveDirection::Up) {
-        if (verse == 0) {
-            return;
-        }
-        --verse;
-    } else {
-        ++verse;
-        if (verse > cr->lastVerse(placement)) {
-            return;
-        }
+    const EditLyrics::InitialState state = EditLyrics::initialState(toLyrics(m_editData.element));
+    const int verse = direction == MoveDirection::Up ? state.verse - 1 : state.verse + 1;
+    if (verse < 0 || verse > state.chordRest->lastVerse(state.placement)) {
+        return;
     }
 
     endEditText();
 
-    lyrics = cr->lyrics(verse, placement);
-    if (!lyrics) {
-        lyrics = Factory::createLyrics(cr);
-        lyrics->setTrack(track);
-        lyrics->setVerse(verse);
-        lyrics->setTextStyleType(styleType);
-        lyrics->setPlacement(placement);
-        lyrics->setPropertyFlags(mu::engraving::Pid::PLACEMENT, pFlags);
-        lyrics->setCenterBetweenStaves(centering);
-        lyrics->setFontStyle(fStyle);
-        lyrics->setPropertyFlags(mu::engraving::Pid::FONT_STYLE, fFlags);
-
-        score()->startCmd(TranslatableString("undoableAction", "Navigate to verse"));
-        score()->undoAddElement(lyrics);
-        score()->endCmd();
-    }
+    Lyrics* lyrics = nullptr;
+    transaction(TranslatableString("undoableAction", "Navigate to verse"), [&](Transaction& tx) {
+        lyrics = EditLyrics::navigateToVerse(tx, score(), state, verse);
+    });
 
     score()->select(lyrics, SelectType::SINGLE, 0);
     startEditText(lyrics, PointF());
@@ -8345,277 +8072,51 @@ void NotationInteraction::navigateToNearText(MoveDirection direction)
     }
 }
 
-//! NOTE: Copied from ScoreView::lyricsUnderscore
 void NotationInteraction::addMelisma()
 {
     if (!m_editData.element || !m_editData.element->isLyrics()) {
         LOGW("addMelisma called with invalid current element");
         return;
     }
-    Lyrics* lyrics = toLyrics(m_editData.element);
-    ChordRest* initialCR = lyrics->chordRest();
-    const bool hasPrecedingRepeat = initialCR->hasPrecedingJumpItem();
-    track_idx_t track = lyrics->track();
-    Segment* segment = lyrics->segment();
-    int verse = lyrics->verse();
-    PlacementV placement = lyrics->placement();
-    PropertyFlags pFlags = lyrics->propertyFlags(Pid::PLACEMENT);
-    FontStyle fStyle = lyrics->fontStyle();
-    PropertyFlags fFlags = lyrics->propertyFlags(Pid::FONT_STYLE);
-    double yOffset = lyrics->offset().y();
-    AutoOnOff centering = lyrics->centerBetweenStaves();
-    Fraction endTick = segment->tick(); // a previous melisma cannot extend beyond this point
+    const EditLyrics::InitialState state = EditLyrics::initialState(toLyrics(m_editData.element));
+
     endEditText();
 
-    // search next chord
-    Segment* nextSegment = segment;
-    while ((nextSegment = nextSegment->next1(SegmentType::ChordRest))) {
-        EngravingItem* el = nextSegment->element(track);
-        if (el && el->isChord()) {
-            break;
-        }
+    const TranslatableString actionName("undoableAction", "Enter lyrics extension line");
+    EditLyrics::MelismaEnds ends;
+    transaction(actionName, [&](Transaction& tx) {
+        ends = EditLyrics::addMelisma(tx, score(), state);
+    });
+
+    if (ends.isNewNextLyrics) {
+        transaction(actionName, [&](Transaction&) {
+            score()->undoAddElement(ends.nextLyrics);
+        });
     }
 
-    if (!segmentsAreAdjacent(segment, nextSegment)) {
-        nextSegment = nullptr;
+    if (ends.nextLyrics) {
+        score()->select(ends.nextLyrics, SelectType::SINGLE, 0);
+        startEditText(ends.nextLyrics, PointF());
+        ends.nextLyrics->selectAll();
+    } else if (ends.fromLyrics) {
+        score()->select(ends.fromLyrics, SelectType::SINGLE, 0);
     }
-
-    // look for the lyrics we are moving from; may be the current lyrics or a previous one
-    // we are extending with several underscores
-    Segment* curSeg = segment;
-    Lyrics* fromLyrics = nullptr;
-    PartialLyricsLine* prevPartialLyricsLine = nullptr;
-    while (segment && segmentsAreAdjacent(segment, curSeg)) {
-        ChordRest* cr = toChordRest(segment->element(track));
-        if (cr) {
-            fromLyrics = cr->lyrics(verse, placement);
-            if (fromLyrics) {
-                break;
-            }
-            // Check if there is a partial melisma to extend
-            auto spanners = score()->spannerMap().findOverlapping(cr->tick().ticks(), cr->endTick().ticks());
-            for (auto& spanner : spanners) {
-                if (!spanner.value->isPartialLyricsLine() || spanner.value->staffIdx() != cr->staffIdx()) {
-                    continue;
-                }
-                PartialLyricsLine* lyricsLine = toPartialLyricsLine(spanner.value);
-                if (lyricsLine->verse() != verse || lyricsLine->placement() != placement || !lyricsLine->isEndMelisma()) {
-                    continue;
-                }
-
-                prevPartialLyricsLine = lyricsLine;
-                break;
-            }
-
-            if (prevPartialLyricsLine) {
-                break;
-            }
-        }
-        segment = segment->prev1(SegmentType::ChordRest);
-    }
-
-    // one-chord melisma?
-    // if still at melisma initial chord and there is a valid next chord (if not,
-    // there will be no melisma anyway), set a temporary melisma duration
-    if (fromLyrics == lyrics && nextSegment) {
-        score()->startCmd(TranslatableString("undoableAction", "Enter lyrics extension line"));
-        lyrics->undoChangeProperty(Pid::LYRIC_TICKS, Lyrics::TEMP_MELISMA_TICKS);
-        score()->setLayoutAll();
-        score()->endCmd();
-    }
-
-    auto getPartialLyricLineEndSegment = [&]() -> Fraction {
-        Segment* endSegment = segment;
-        while (endSegment && endSegment->tick() < endTick) {
-            endSegment = endSegment->nextCR(track, true);
-        }
-        EngravingItem* endSegmentElement = endSegment->element(track);
-        if (endSegment->tick() == endTick && endSegmentElement && endSegmentElement->isChord()) {
-            Segment* endChordSeg = endSegment;
-            Chord* endChord = toChord(endSegmentElement);
-
-            endSegment = endChordSeg->nextCR(track, false);
-
-            if (!endSegment || endSegment->tick() > endChord->endTick()) {
-                endSegment = endChordSeg;
-                while (endSegment && endSegment->tick() < endChord->endTick()) {
-                    endSegment = endSegment->nextCR(muse::nidx, true);
-                }
-            }
-        }
-        return endSegment ? endSegment->tick() : score()->endTick();
-    };
-
-    if (!nextSegment) {
-        score()->startCmd(TranslatableString("undoableAction", "Enter lyrics extension line"));
-        if (fromLyrics) {
-            switch (fromLyrics->syllabic()) {
-            case LyricsSyllabic::SINGLE:
-            case LyricsSyllabic::END:
-                break;
-            default:
-                fromLyrics->undoChangeProperty(Pid::SYLLABIC, int(LyricsSyllabic::END));
-                break;
-            }
-            if (fromLyrics->segment()->tick() < endTick
-                || (endTick + initialCR->actualTicks() == segment->measure()->endTick() && initialCR->hasFollowingJumpItem())) {
-                Fraction ticks = std::max(endTick - fromLyrics->segment()->tick(), Lyrics::TEMP_MELISMA_TICKS);
-                fromLyrics->undoChangeProperty(Pid::LYRIC_TICKS, ticks);
-            }
-        }
-
-        if (hasPrecedingRepeat && !prevPartialLyricsLine) {
-            // No from lyrics - create incoming partial melisma
-            PartialLyricsLine* melisma = Factory::createPartialLyricsLine(score()->dummy());
-            melisma->setIsEndMelisma(true);
-            melisma->setVerse(verse);
-            melisma->setPlacement(placement);
-            melisma->setPropertyFlags(Pid::PLACEMENT, pFlags);
-            melisma->setCenterBetweenStaves(centering);
-            melisma->setTick(initialCR->tick());
-            melisma->setTicks(initialCR->ticks());
-            melisma->setTrack(initialCR->track());
-            melisma->setTrack2(initialCR->track());
-
-            score()->undoAddElement(melisma);
-        } else if (prevPartialLyricsLine) {
-            const Fraction segEndTick = getPartialLyricLineEndSegment();
-            const Fraction tickDiff = segEndTick - prevPartialLyricsLine->tick2();
-            prevPartialLyricsLine->undoMoveEnd(tickDiff);
-        }
-
-        if (fromLyrics) {
-            score()->select(fromLyrics, SelectType::SINGLE, 0);
-        }
-        score()->setLayoutAll();
-        score()->endCmd();
-        return;
-    }
-
-    // if a place for a new lyrics has been found, create a lyrics there
-    ChordRest* nextCR = toChordRest(nextSegment->element(track));
-
-    // Disallow melisma lines between non-adjacent repeat sections eg. 1st volta -> 2nd volta
-    // Instead, try to add partial melisma line
-    if (nextCR && fromLyrics) {
-        Measure* toLyricsMeasure = nextCR->measure();
-        Measure* fromLyricsMeasure = fromLyrics->measure();
-
-        if (toLyricsMeasure != fromLyricsMeasure && fromLyricsMeasure->lastChordRest(track)->hasFollowingJumpItem()) {
-            const std::vector<Measure*> previousRepeats = findPreviousRepeatMeasures(toLyricsMeasure);
-            const bool inPrecedingRepeatSeg = muse::contains(previousRepeats, fromLyricsMeasure);
-            if (!previousRepeats.empty() && !inPrecedingRepeatSeg) {
-                fromLyrics = nullptr;
-            }
-        }
-    }
-
-    score()->startCmd(TranslatableString("undoableAction", "Enter lyrics extension line"));
-    Lyrics* toLyrics = nextCR->lyrics(verse, placement);
-    bool newLyrics = (toLyrics == nullptr);
-    if (!toLyrics) {
-        toLyrics = Factory::createLyrics(nextCR);
-        toLyrics->setTrack(track);
-        toLyrics->setVerse(verse);
-        const TextStyleType styleType(toLyrics->isEven() ? TextStyleType::LYRICS_EVEN : TextStyleType::LYRICS_ODD);
-        toLyrics->setTextStyleType(styleType);
-
-        toLyrics->setPlacement(placement);
-        toLyrics->setPropertyFlags(Pid::PLACEMENT, pFlags);
-        toLyrics->setCenterBetweenStaves(centering);
-        toLyrics->setSyllabic(LyricsSyllabic::SINGLE);
-        toLyrics->setFontStyle(fStyle);
-        toLyrics->setPropertyFlags(Pid::FONT_STYLE, fFlags);
-        toLyrics->setOffset(PointF(0.0, yOffset));
-    }
-    // as we arrived at toLyrics by an underscore, it cannot have syllabic dashes before
-    else if (toLyrics->syllabic() == LyricsSyllabic::MIDDLE) {
-        toLyrics->undoChangeProperty(Pid::SYLLABIC, int(LyricsSyllabic::BEGIN));
-    } else if (toLyrics->syllabic() == LyricsSyllabic::END) {
-        toLyrics->undoChangeProperty(Pid::SYLLABIC, int(LyricsSyllabic::SINGLE));
-    }
-
-    if (fromLyrics) {
-        // as we moved away from fromLyrics by an underscore,
-        // it can be isolated or terminal but cannot have dashes after
-        switch (fromLyrics->syllabic()) {
-        case LyricsSyllabic::SINGLE:
-        case LyricsSyllabic::END:
-            break;
-        default:
-            fromLyrics->undoChangeProperty(Pid::SYLLABIC, int(LyricsSyllabic::END));
-            break;
-        }
-        // for the same reason, if it has a melisma, this cannot extend beyond toLyrics
-        if (fromLyrics->segment()->tick() < endTick) {
-            fromLyrics->undoChangeProperty(Pid::LYRIC_TICKS, endTick - fromLyrics->segment()->tick());
-        }
-    } else if (hasPrecedingRepeat && !prevPartialLyricsLine) {
-        // No from lyrics - create incoming partial melisma
-        PartialLyricsLine* melisma = Factory::createPartialLyricsLine(score()->dummy());
-        melisma->setIsEndMelisma(true);
-        melisma->setVerse(verse);
-        melisma->setPlacement(placement);
-        melisma->setPropertyFlags(Pid::PLACEMENT, pFlags);
-        melisma->setCenterBetweenStaves(centering);
-        melisma->setTick(initialCR->tick());
-        melisma->setTicks(initialCR->ticks());
-        melisma->setTrack(initialCR->track());
-        melisma->setTrack2(initialCR->track());
-
-        score()->undoAddElement(melisma);
-    } else if (prevPartialLyricsLine) {
-        const Fraction segEndTick = getPartialLyricLineEndSegment();
-        const Fraction tickDiff = segEndTick - prevPartialLyricsLine->tick2();
-        prevPartialLyricsLine->undoMoveEnd(tickDiff);
-        prevPartialLyricsLine->triggerLayout();
-    }
-    score()->endCmd();
-
-    score()->startCmd(TranslatableString("undoableAction", "Enter lyrics extension line"));
-    if (newLyrics) {
-        score()->undoAddElement(toLyrics);
-    }
-    score()->endCmd();
-
-    score()->select(toLyrics, SelectType::SINGLE, 0);
-    startEditText(toLyrics, PointF());
-
-    toLyrics->selectAll();
 }
 
-//! NOTE: Copied from ScoreView::lyricsReturn
 void NotationInteraction::addLyricsVerse()
 {
     if (!m_editData.element || !m_editData.element->isLyrics()) {
         LOGW("nextLyricVerse called with invalid current element");
         return;
     }
-    mu::engraving::Lyrics* oldLyrics = toLyrics(m_editData.element);
-    mu::engraving::FontStyle fStyle = oldLyrics->fontStyle();
-    mu::engraving::PropertyFlags fFlags = oldLyrics->propertyFlags(mu::engraving::Pid::FONT_STYLE);
-    mu::engraving::AutoOnOff centering = oldLyrics->centerBetweenStaves();
+    const EditLyrics::InitialState state = EditLyrics::initialState(toLyrics(m_editData.element));
 
     endEditText();
 
-    score()->startCmd(TranslatableString("undoableAction", "Add lyrics verse"));
-    int newVerse = oldLyrics->verse() + 1;
-
-    mu::engraving::Lyrics* lyrics = Factory::createLyrics(oldLyrics->chordRest());
-    lyrics->setTrack(oldLyrics->track());
-    lyrics->setPlacement(oldLyrics->placement());
-    lyrics->setPropertyFlags(mu::engraving::Pid::PLACEMENT, oldLyrics->propertyFlags(mu::engraving::Pid::PLACEMENT));
-    lyrics->setCenterBetweenStaves(centering);
-
-    lyrics->setVerse(newVerse);
-    const mu::engraving::TextStyleType styleType(lyrics->isEven() ? TextStyleType::LYRICS_EVEN : TextStyleType::LYRICS_ODD);
-    lyrics->setTextStyleType(styleType);
-
-    lyrics->setFontStyle(fStyle);
-    lyrics->setPropertyFlags(mu::engraving::Pid::FONT_STYLE, fFlags);
-
-    score()->undoAddElement(lyrics);
-    score()->endCmd();
+    Lyrics* lyrics = nullptr;
+    transaction(TranslatableString("undoableAction", "Add lyrics verse"), [&](Transaction& tx) {
+        lyrics = EditLyrics::addVerse(tx, score(), state);
+    });
 
     score()->select(lyrics, SelectType::SINGLE, 0);
     startEditText(lyrics, PointF());
@@ -8934,9 +8435,10 @@ void NotationInteraction::toggleArticulation(mu::engraving::SymId symId)
     apply();
 }
 
-void NotationInteraction::toggleOrnament(mu::engraving::SymId symId)
+void NotationInteraction::toggleOrnament(OrnamentType type)
 {
     startEdit(TranslatableString("undoableAction", "Toggle ornament"));
+    SymId symId = static_cast<SymId>(type);
     mu::engraving::EditNote::toggleOrnament(score(), symId);
     apply();
 }

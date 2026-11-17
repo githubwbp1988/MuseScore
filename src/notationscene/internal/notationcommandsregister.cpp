@@ -42,84 +42,19 @@ static const TranslatableString fret_X_TAB = TranslatableString("action", "Fret 
 static const TranslatableString enter_TAB_fret_X = TranslatableString("action", "Enter TAB: fret %1");
 
 static const std::vector<CommandInfo> s_commandInfos = {
-    // copy, cut, paste, delete, cancel
-    CommandInfo{
-        COPY_COMMAND,
-        TranslatableString("action", "&Copy"),
-        TranslatableString("action", "Copy the current notation element"),
-        InputSchema(),
-        Decoration(IconCode::Code::COPY)
-    },
-    CommandInfo{
-        COPY_PASTE_SWAP_COMMAND,
-        TranslatableString("action", "&Swap with clipboard"),
-        TranslatableString("action", "Copy/paste: swap with clipboard"),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
-        CUT_COMMAND,
-        TranslatableString("action", "Cu&t"),
-        TranslatableString("action", "Cut the current notation element"),
-        InputSchema(),
-        Decoration(IconCode::Code::CUT)
-    },
-    CommandInfo{
-        PASTE_COMMAND,
-        TranslatableString("action", "Past&e"),
-        TranslatableString("action", "Paste the current notation element"),
-        InputSchema(),
-        Decoration(IconCode::Code::PASTE)
-    },
-    CommandInfo{
-        PASTE_HALF_COMMAND,
-        TranslatableString("action", "Paste &half duration"),
-        TranslatableString("action", "Paste half duration"),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
-        PASTE_DOUBLE_COMMAND,
-        TranslatableString("action", "Paste &double duration"),
-        TranslatableString("action", "Paste double duration"),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
-        PASTE_SPECIAL_COMMAND,
-        TranslatableString("action", "Paste special"),
-        TranslatableString("action", "Paste special"),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
-        DELETE_COMMAND,
-        TranslatableString("action", "De&lete"),
-        TranslatableString("action", "Delete the current notation element"),
-        InputSchema(),
-        Decoration(IconCode::Code::DELETE_TANK)
-    },
-    CommandInfo{
-        CANCEL_COMMAND,
-        TranslatableString("action", "Cancel"),
-        TranslatableString("action", "Cancel the current notation operation"),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
-        UNDO_COMMAND,
-        TranslatableString("action", "Undo"),
-        TranslatableString("action", "Undo the last notation operation"),
-        InputSchema(),
-        Decoration(IconCode::Code::UNDO)
-    },
-    CommandInfo{
-        REDO_COMMAND,
-        TranslatableString("action", "Redo"),
-        TranslatableString("action", "Redo the last notation operation"),
-        InputSchema(),
-        Decoration(IconCode::Code::REDO)
-    },
+    makeCommandInfo<CancelCommand>(),
+    makeCommandInfo<UndoCommand>(),
+    makeCommandInfo<RedoCommand>(),
+    makeCommandInfo<CopyCommand>(),
+    makeCommandInfo<CopyPasteSwapCommand>(),
+    makeCommandInfo<CopyLyricsCommand>(),
+    makeCommandInfo<CutCommand>(),
+    makeCommandInfo<PasteCommand>(),
+    makeCommandInfo<PasteDefaultCommand>(),
+    makeCommandInfo<PasteHalfCommand>(),
+    makeCommandInfo<PasteDoubleCommand>(),
+    makeCommandInfo<PasteSpecialCommand>(),
+    makeCommandInfo<DeleteCommand>(),
 
     // navigation and selection commands
 
@@ -235,6 +170,151 @@ static const std::vector<CommandInfo> s_commandInfos = {
     makeCommandInfo<ToggleNaturalCommand>(),
     makeCommandInfo<ToggleSharpCommand>(),
     makeCommandInfo<ToggleSharp2Command>(),
+
+    makeCommandInfo<UseVoiceCommand>(),
+    makeCommandInfo<UseVoice1Command>(),
+    makeCommandInfo<UseVoice2Command>(),
+    makeCommandInfo<UseVoice3Command>(),
+    makeCommandInfo<UseVoice4Command>(),
+
+    makeCommandInfo<SwapVoicesCommand>(),
+    makeCommandInfo<SwapVoice12Command>(),
+    makeCommandInfo<SwapVoice13Command>(),
+    makeCommandInfo<SwapVoice14Command>(),
+    makeCommandInfo<SwapVoice23Command>(),
+    makeCommandInfo<SwapVoice24Command>(),
+    makeCommandInfo<SwapVoice34Command>(),
+
+    makeCommandInfo<AddTupletCommand>(),
+    makeCommandInfo<AddDupletCommand>(),
+    makeCommandInfo<AddTripletCommand>(),
+    makeCommandInfo<AddQuadrupletCommand>(),
+    makeCommandInfo<AddQuintupletCommand>(),
+    makeCommandInfo<AddSextupletCommand>(),
+    makeCommandInfo<AddSeptupletCommand>(),
+    makeCommandInfo<AddOctupletCommand>(),
+    makeCommandInfo<AddNonupletCommand>(),
+    makeCommandInfo<OpenTupletConfigureCommand>(),
+
+    makeCommandInfo<AddBoxesCommand>(),
+    makeCommandInfo<InsertHBoxCommand>(),
+    makeCommandInfo<InsertVBoxCommand>(),
+    makeCommandInfo<InsertTextFrameCommand>(),
+    makeCommandInfo<InsertFretFrameCommand>(),
+    makeCommandInfo<AppendHBoxCommand>(),
+    makeCommandInfo<AppendVBoxCommand>(),
+    makeCommandInfo<AppendTextFrameCommand>(),
+    makeCommandInfo<AppendFretFrameCommand>(),
+    makeCommandInfo<InsertMeasureCommand>(),
+    makeCommandInfo<AppendMeasureCommand>(),
+    makeCommandInfo<InsertMeasuresCommand>(),
+    makeCommandInfo<InsertMeasuresAfterSelectionCommand>(),
+    makeCommandInfo<InsertMeasuresAtStartOfScoreCommand>(),
+    makeCommandInfo<AppendMeasuresCommand>(),
+
+    makeCommandInfo<AddGraceNoteCommand>(),
+    makeCommandInfo<AddAcciaccaturaCommand>(),
+    makeCommandInfo<AddAppoggiaturaCommand>(),
+    makeCommandInfo<AddGrace4Command>(),
+    makeCommandInfo<AddGrace16Command>(),
+    makeCommandInfo<AddGrace32Command>(),
+    makeCommandInfo<AddGrace8AfterCommand>(),
+    makeCommandInfo<AddGrace16AfterCommand>(),
+    makeCommandInfo<AddGrace32AfterCommand>(),
+
+    makeCommandInfo<AddIntervalCommand>(),
+    makeCommandInfo<AddInterval1Command>(),
+    makeCommandInfo<AddInterval2Command>(),
+    makeCommandInfo<AddInterval3Command>(),
+    makeCommandInfo<AddInterval4Command>(),
+    makeCommandInfo<AddInterval5Command>(),
+    makeCommandInfo<AddInterval6Command>(),
+    makeCommandInfo<AddInterval7Command>(),
+    makeCommandInfo<AddInterval8Command>(),
+    makeCommandInfo<AddInterval9Command>(),
+    makeCommandInfo<AddInterval10Command>(),
+    makeCommandInfo<AddIntervalMinus2Command>(),
+    makeCommandInfo<AddIntervalMinus3Command>(),
+    makeCommandInfo<AddIntervalMinus4Command>(),
+    makeCommandInfo<AddIntervalMinus5Command>(),
+    makeCommandInfo<AddIntervalMinus6Command>(),
+    makeCommandInfo<AddIntervalMinus7Command>(),
+    makeCommandInfo<AddIntervalMinus8Command>(),
+    makeCommandInfo<AddIntervalMinus9Command>(),
+    makeCommandInfo<AddIntervalMinus10Command>(),
+
+    makeCommandInfo<AddTextCommand>(),
+    makeCommandInfo<AddTitleTextCommand>(),
+    makeCommandInfo<AddSubtitleTextCommand>(),
+    makeCommandInfo<AddComposerTextCommand>(),
+    makeCommandInfo<AddLyricistTextCommand>(),
+    makeCommandInfo<AddPartTextCommand>(),
+    makeCommandInfo<AddFrameTextCommand>(),
+    makeCommandInfo<AddSystemTextCommand>(),
+    makeCommandInfo<AddStaffTextCommand>(),
+    makeCommandInfo<AddExpressionTextCommand>(),
+    makeCommandInfo<AddRehearsalMarkTextCommand>(),
+    makeCommandInfo<AddInstrumentChangeTextCommand>(),
+    makeCommandInfo<AddFingeringTextCommand>(),
+    makeCommandInfo<AddStickingTextCommand>(),
+    makeCommandInfo<AddChordTextCommand>(),
+    makeCommandInfo<AddRomanNumeralTextCommand>(),
+    makeCommandInfo<AddNashvilleNumberTextCommand>(),
+    makeCommandInfo<AddLyricsCommand>(),
+    makeCommandInfo<AddTempoCommand>(),
+
+    makeCommandInfo<AddBeamCommand>(),
+    makeCommandInfo<AddBeamAutoCommand>(),
+    makeCommandInfo<AddBeamNoneCommand>(),
+    makeCommandInfo<AddBeamBeginCommand>(),
+    makeCommandInfo<AddBeamBegin16Command>(),
+    makeCommandInfo<AddBeamBegin32Command>(),
+    makeCommandInfo<AddBeamMidCommand>(),
+
+    makeCommandInfo<AddOrnamentCommand>(),
+    makeCommandInfo<AddOrnamentTurnCommand>(),
+    makeCommandInfo<AddOrnamentTurnInvertedCommand>(),
+    makeCommandInfo<AddOrnamentTurnSlashCommand>(),
+    makeCommandInfo<AddOrnamentTurnUpCommand>(),
+    makeCommandInfo<AddOrnamentTurnInvertedUpCommand>(),
+    makeCommandInfo<AddOrnamentTrillCommand>(),
+    makeCommandInfo<AddOrnamentShortTrillCommand>(),
+    makeCommandInfo<AddOrnamentMordentCommand>(),
+    makeCommandInfo<AddOrnamentHaydnCommand>(),
+    makeCommandInfo<AddOrnamentTremblementCommand>(),
+    makeCommandInfo<AddOrnamentPrallMordentCommand>(),
+    makeCommandInfo<AddOrnamentShakeCommand>(),
+    makeCommandInfo<AddOrnamentShakeMuffatCommand>(),
+    makeCommandInfo<AddOrnamentTremblementCouperinCommand>(),
+
+    // Tab
+    makeCommandInfo<AddFretCommand>(),
+    makeCommandInfo<AddFret0Command>(),
+    makeCommandInfo<AddFret1Command>(),
+    makeCommandInfo<AddFret2Command>(),
+    makeCommandInfo<AddFret3Command>(),
+    makeCommandInfo<AddFret4Command>(),
+    makeCommandInfo<AddFret5Command>(),
+    makeCommandInfo<AddFret6Command>(),
+    makeCommandInfo<AddFret7Command>(),
+    makeCommandInfo<AddFret8Command>(),
+    makeCommandInfo<AddFret9Command>(),
+    makeCommandInfo<AddFret10Command>(),
+    makeCommandInfo<AddFret11Command>(),
+    makeCommandInfo<AddFret12Command>(),
+    makeCommandInfo<AddFret13Command>(),
+    makeCommandInfo<AddFret14Command>(),
+
+    makeCommandInfo<EditTextAdvanceCommand>(),
+    makeCommandInfo<EditTextAdvanceLongaCommand>(),
+    makeCommandInfo<EditTextAdvanceBreveCommand>(),
+    makeCommandInfo<EditTextAdvance1Command>(),
+    makeCommandInfo<EditTextAdvance2Command>(),
+    makeCommandInfo<EditTextAdvance4Command>(),
+    makeCommandInfo<EditTextAdvance8Command>(),
+    makeCommandInfo<EditTextAdvance16Command>(),
+    makeCommandInfo<EditTextAdvance32Command>(),
+    makeCommandInfo<EditTextAdvance64Command>(),
 
     // navigation
     CommandInfo{
@@ -408,76 +488,6 @@ static const std::vector<CommandInfo> s_commandInfos = {
         InputSchema(),
         Decoration(IconCode::Code::STACCATO)
     },
-    CommandInfo{
-        USE_VOICE_1_COMMAND,
-        TranslatableString("action", "Voice 1"),
-        TranslatableString("action", "Use voice 1"),
-        InputSchema(),
-        Decoration(IconCode::Code::VOICE_1)
-    },
-    CommandInfo{
-        USE_VOICE_2_COMMAND,
-        TranslatableString("action", "Voice 2"),
-        TranslatableString("action", "Use voice 2"),
-        InputSchema(),
-        Decoration(IconCode::Code::VOICE_2)
-    },
-    CommandInfo{
-        USE_VOICE_3_COMMAND,
-        TranslatableString("action", "Voice 3"),
-        TranslatableString("action", "Use voice 3"),
-        InputSchema(),
-        Decoration(IconCode::Code::VOICE_3)
-    },
-    CommandInfo{
-        USE_VOICE_4_COMMAND,
-        TranslatableString("action", "Voice 4"),
-        TranslatableString("action", "Use voice 4"),
-        InputSchema(),
-        Decoration(IconCode::Code::VOICE_4)
-    },
-    CommandInfo{
-        SWAP_VOICE_X12_COMMAND,
-        TranslatableString("action", "Exchange voice &1-2"),
-        TranslatableString("action", "Exchange voice 1-2"),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
-        SWAP_VOICE_X13_COMMAND,
-        TranslatableString("action", "Exchange voice 1-3"),
-        TranslatableString("action", "Exchange voice 1-3"),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
-        SWAP_VOICE_X14_COMMAND,
-        TranslatableString("action", "Exchange voice 1-&4"),
-        TranslatableString("action", "Exchange voice 1-4"),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
-        SWAP_VOICE_X23_COMMAND,
-        TranslatableString("action", "Exchange voice &2-3"),
-        TranslatableString("action", "Exchange voice 2-3"),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
-        SWAP_VOICE_X24_COMMAND,
-        TranslatableString("action", "Exchange voice 2-4"),
-        TranslatableString("action", "Exchange voice 2-4"),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
-        SWAP_VOICE_X34_COMMAND,
-        TranslatableString("action", "Exchange voice &3-4"),
-        TranslatableString("action", "Exchange voice 3-4"),
-        InputSchema(),
-        Decoration()
-    },
 
     CommandInfo{
         VOICE_ASSIGNMENT_ALL_IN_INSTR_COMMAND,
@@ -522,85 +532,6 @@ static const std::vector<CommandInfo> s_commandInfos = {
         Decoration(IconCode::Code::REST)
     },
 
-    // tuplet
-    CommandInfo{
-        OPEN_TUPLET_CONFIGURE_COMMAND,
-        TranslatableString("action", "Othe&r…"),
-        TranslatableString("action", "Show tuplet configure"),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
-        ADD_TUPLET_COMMAND,
-        TranslatableString("action", "Tuplet"),
-        TranslatableString("action", "Enter tuplet"),
-        InputSchema({
-            { "ratio", Arg(DataType::String, u"Tuplet ratio (e.g. 3/2, 4/3, 5/4, 6/5, 7/6, 8/7, 9/8)") },
-            { "number-type", Arg(DataType::String, u"Tuplet number type (number, relation, none)") },
-            { "bracket-type", Arg(DataType::String, u"Tuplet bracket type (auto, show, none)") },
-            { "auto-baselen", Arg(DataType::Bool, u"Auto base length") },
-            { "selected-duration-as", Arg(DataType::String, u"Use selected duration as (subdivision, tuplet-length)") },
-        }),
-        Decoration()
-    },
-    CommandInfo{
-        ADD_DUPLET_COMMAND,
-        TranslatableString("action", "Duplet"),
-        TranslatableString("action", "Enter tuplet: duplet"),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
-        ADD_TRIPLET_COMMAND,
-        TranslatableString("action", "Triplet"),
-        TranslatableString("action", "Enter tuplet: triplet"),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
-        ADD_QUADRUPLET_COMMAND,
-        TranslatableString("action", "Quadruplet"),
-        TranslatableString("action", "Enter tuplet: quadruplet"),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
-        ADD_QUINTUPLET_COMMAND,
-        TranslatableString("action", "Quintuplet"),
-        TranslatableString("action", "Enter tuplet: quintuplet"),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
-        ADD_SEXTUPLET_COMMAND,
-        TranslatableString("action", "Sextuplet"),
-        TranslatableString("action", "Enter tuplet: sextuplet"),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
-        ADD_SEPTUPLET_COMMAND,
-        TranslatableString("action", "Septuplet"),
-        TranslatableString("action", "Enter tuplet: septuplet"),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
-        ADD_OCTUPLET_COMMAND,
-        TranslatableString("action", "Octuplet"),
-        TranslatableString("action", "Enter tuplet: octuplet"),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
-        ADD_NONUPLET_COMMAND,
-        TranslatableString("action", "Nonuplet"),
-        TranslatableString("action", "Enter tuplet: nonuplet"),
-        InputSchema(),
-        Decoration()
-    },
-
-    // text navigation commands
     CommandInfo{
         EDITTEXT_NEXT_WORD_COMMAND,
         TranslatableString("action", "Edit next word"),
@@ -636,70 +567,7 @@ static const std::vector<CommandInfo> s_commandInfos = {
         InputSchema(),
         Decoration()
     },
-    CommandInfo{
-        EDITTEXT_ADVANCE_LONGA_COMMAND,
-        TranslatableString("action", "Advance cursor: longa (chord symbols/figured bass)"),
-        TranslatableString("action", "Advance cursor: longa (chord symbols/figured bass)"),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
-        EDITTEXT_ADVANCE_BREVE_COMMAND,
-        TranslatableString("action", "Advance cursor: breve (chord symbols/figured bass)"),
-        TranslatableString("action", "Advance cursor: breve (chord symbols/figured bass)"),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
-        EDITTEXT_ADVANCE_1_COMMAND,
-        TranslatableString("action", "Advance cursor: whole note (chord symbols/figured bass)"),
-        TranslatableString("action", "Advance cursor: whole note (chord symbols/figured bass)"),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
-        EDITTEXT_ADVANCE_2_COMMAND,
-        TranslatableString("action", "Advance cursor: half note (chord symbols/figured bass)"),
-        TranslatableString("action", "Advance cursor: half note (chord symbols/figured bass)"),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
-        EDITTEXT_ADVANCE_4_COMMAND,
-        TranslatableString("action", "Advance cursor: quarter note (chord symbols/figured bass)"),
-        TranslatableString("action", "Advance cursor: quarter note (chord symbols/figured bass)"),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
-        EDITTEXT_ADVANCE_8_COMMAND,
-        TranslatableString("action", "Advance cursor: eighth note (chord symbols/figured bass)"),
-        TranslatableString("action", "Advance cursor: eighth note (chord symbols/figured bass)"),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
-        EDITTEXT_ADVANCE_16_COMMAND,
-        TranslatableString("action", "Advance cursor: 16th note (chord symbols/figured bass)"),
-        TranslatableString("action", "Advance cursor: 16th note (chord symbols/figured bass)"),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
-        EDITTEXT_ADVANCE_32_COMMAND,
-        TranslatableString("action", "Advance cursor: 32nd note (chord symbols/figured bass)"),
-        TranslatableString("action", "Advance cursor: 32nd note (chord symbols/figured bass)"),
-        InputSchema(),
-        Decoration()
-    },
 
-    CommandInfo{
-        EDITTEXT_ADVANCE_64_COMMAND,
-        TranslatableString("action", "Advance cursor: 64th note (chord symbols/figured bass)"),
-        TranslatableString("action", "Advance cursor: 64th note (chord symbols/figured bass)"),
-        InputSchema(),
-        Decoration()
-    },
     CommandInfo{
         EDITLYRIC_NEXT_VERSE_COMMAND,
         TranslatableString("action", "Next lyric verse"),
@@ -871,112 +739,6 @@ static const std::vector<CommandInfo> s_commandInfos = {
         JOIN_MEASURES_COMMAND,
         TranslatableString("action", "&Join selected measures"),
         TranslatableString("action", "Join selected measures"),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
-        INSERT_MEASURE_COMMAND,
-        TranslatableString("action", "&Insert one measure before selection"),
-        TranslatableString("action", "Insert one measure before selection"),
-        InputSchema(),
-        Decoration(IconCode::Code::INSERT_ONE_MEASURE)
-    },
-    CommandInfo{
-        INSERT_MEASURES_COMMAND,
-        TranslatableString("action", "Insert &before selection…"),
-        TranslatableString("action", "Insert measures before selection"),
-        InputSchema({
-            { "count", Arg(DataType::Int, u"Number of measures to insert") },
-        }),
-        Decoration()
-    },
-    CommandInfo{
-        INSERT_MEASURES_AFTER_SELECTION_COMMAND,
-        TranslatableString("action", "Insert &after selection…"),
-        TranslatableString("action", "Insert measures after selection"),
-        InputSchema({
-            { "count", Arg(DataType::Int, u"Number of measures to insert") },
-        }),
-        Decoration()
-    },
-    CommandInfo{
-        INSERT_MEASURES_AT_START_OF_SCORE_COMMAND,
-        TranslatableString("action", "Insert at &start of score…"),
-        TranslatableString("action", "Insert measures at start of score"),
-        InputSchema({
-            { "count", Arg(DataType::Int, u"Number of measures to insert") },
-        }),
-        Decoration()
-    },
-    CommandInfo{
-        APPEND_MEASURE_COMMAND,
-        TranslatableString("action", "Insert &one measure at end of score"),
-        TranslatableString("action", "Insert one measure at end of score"),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
-        APPEND_MEASURES_COMMAND,
-        TranslatableString("action", "Insert at &end of score…"),
-        TranslatableString("action", "Insert measures at end of score"),
-        InputSchema({
-            { "count", Arg(DataType::Int, u"Number of measures to insert") },
-        }),
-        Decoration()
-    },
-    CommandInfo{
-        INSERT_HBOX_COMMAND,
-        TranslatableString("action", "Insert &horizontal frame"),
-        TranslatableString("action", "Insert horizontal frame"),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
-        INSERT_VBOX_COMMAND,
-        TranslatableString("action", "Insert &vertical frame"),
-        TranslatableString("action", "Insert vertical frame"),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
-        INSERT_TEXTFRAME_COMMAND,
-        TranslatableString("action", "Insert &text frame"),
-        TranslatableString("action", "Insert text frame"),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
-        INSERT_FRETFRAME_COMMAND,
-        TranslatableString("action", "Insert &fretboard diagram legend"),
-        TranslatableString("action", "Insert fretboard diagram legend"),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
-        APPEND_HBOX_COMMAND,
-        TranslatableString("action", "&Horizontal frame"),
-        TranslatableString("action", "Insert horizontal frame at end of score"),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
-        APPEND_VBOX_COMMAND,
-        TranslatableString("action", "&Vertical frame"),
-        TranslatableString("action", "Insert vertical frame at end of score"),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
-        APPEND_TEXTFRAME_COMMAND,
-        TranslatableString("action", "&Text frame"),
-        TranslatableString("action", "Insert text frame at end of score"),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
-        APPEND_FRETFRAME_COMMAND,
-        TranslatableString("action", "&Fretboard diagram legend"),
-        TranslatableString("action", "Insert fretboard diagram legend at end of score"),
         InputSchema(),
         Decoration()
     },
@@ -1157,137 +919,10 @@ static const std::vector<CommandInfo> s_commandInfos = {
         Decoration()
     },
 
-    // add text commands
-    CommandInfo{
-        ADD_TITLE_TEXT_COMMAND,
-        TranslatableString("action", "&Title"),
-        TranslatableString("action", "Add text: title"),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
-        ADD_SUBTITLE_TEXT_COMMAND,
-        TranslatableString("action", "&Subtitle"),
-        TranslatableString("action", "Add text: subtitle"),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
-        ADD_COMPOSER_TEXT_COMMAND,
-        TranslatableString("action", "&Composer"),
-        TranslatableString("action", "Add text: composer"),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
-        ADD_LYRICIST_TEXT_COMMAND,
-        TranslatableString("action", "&Lyricist"),
-        TranslatableString("action", "Add text: lyricist"),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
-        ADD_PART_TEXT_COMMAND,
-        TranslatableString("action", "&Part name"),
-        TranslatableString("action", "Add text: part name"),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
-        ADD_FRAME_TEXT_COMMAND,
-        TranslatableString("action", "Text"),
-        TranslatableString("action", "Add frame text"),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
-        ADD_SYSTEM_TEXT_COMMAND,
-        TranslatableString("action", "Syst&em text"),
-        TranslatableString("action", "Add text: system text"),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
-        ADD_STAFF_TEXT_COMMAND,
-        TranslatableString("action", "St&aff text"),
-        TranslatableString("action", "Add text: staff text"),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
-        ADD_EXPRESSION_TEXT_COMMAND,
-        TranslatableString("action", "E&xpression text"),
-        TranslatableString("action", "Add text: expression text"),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
-        ADD_REHEARSALMARK_TEXT_COMMAND,
-        TranslatableString("action", "&Rehearsal mark"),
-        TranslatableString("action", "Add text: rehearsal mark"),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
-        ADD_INSTRUMENT_CHANGE_TEXT_COMMAND,
-        TranslatableString("action", "&Instrument change"),
-        TranslatableString("action", "Add text: instrument change"),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
-        ADD_FINGERING_TEXT_COMMAND,
-        TranslatableString("action", "&Fingering"),
-        TranslatableString("action", "Add text: fingering"),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
-        ADD_STICKING_TEXT_COMMAND,
-        TranslatableString("action", "Stic&king"),
-        TranslatableString("action", "Add text: sticking"),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
-        ADD_CHORD_TEXT_COMMAND,
-        TranslatableString("action", "C&hord symbol"),
-        TranslatableString("action", "Add text: chord symbol"),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
-        ADD_ROMAN_NUMERAL_TEXT_COMMAND,
-        TranslatableString("action", "R&oman numeral analysis"),
-        TranslatableString("action", "Add text: Roman numeral analysis"),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
-        ADD_NASHVILLE_NUMBER_TEXT_COMMAND,
-        TranslatableString("action", "&Nashville number"),
-        TranslatableString("action", "Add text: Nashville number"),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
-        ADD_LYRICS_COMMAND,
-        TranslatableString("action", "L&yrics"),
-        TranslatableString("action", "Add text: lyrics"),
-        InputSchema(),
-        Decoration()
-    },
     CommandInfo{
         ADD_FIGURED_BASS_COMMAND,
         TranslatableString("action", "Figured &bass"),
         TranslatableString("action", "Add text: figured bass"),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
-        ADD_TEMPO_COMMAND,
-        TranslatableString("action", "Tempo &marking"),
-        TranslatableString("action", "Add text: tempo marking"),
         InputSchema(),
         Decoration()
     },
@@ -1417,107 +1052,6 @@ static const std::vector<CommandInfo> s_commandInfos = {
         Decoration()
     },
 
-    // add grace notes commands
-    CommandInfo{
-        ADD_ACCIACCATURA_COMMAND,
-        TranslatableString("action", "Acciaccatura"),
-        TranslatableString("action", "Add grace note: acciaccatura"),
-        InputSchema(),
-        Decoration(IconCode::Code::ACCIACCATURA)
-    },
-    CommandInfo{
-        ADD_APPOGGIATURA_COMMAND,
-        TranslatableString("action", "Appoggiatura"),
-        TranslatableString("action", "Add grace note: appoggiatura"),
-        InputSchema(),
-        Decoration(IconCode::Code::APPOGGIATURA)
-    },
-    CommandInfo{
-        ADD_GRACE4_COMMAND,
-        TranslatableString("action", "Grace: quarter"),
-        TranslatableString("action", "Add grace note: quarter"),
-        InputSchema(),
-        Decoration(IconCode::Code::GRACE4)
-    },
-    CommandInfo{
-        ADD_GRACE16_COMMAND,
-        TranslatableString("action", "Grace: 16th"),
-        TranslatableString("action", "Add grace note: 16th"),
-        InputSchema(),
-        Decoration(IconCode::Code::GRACE16)
-    },
-    CommandInfo{
-        ADD_GRACE32_COMMAND,
-        TranslatableString("action", "Grace: 32nd"),
-        TranslatableString("action", "Add grace note: 32nd"),
-        InputSchema(),
-        Decoration(IconCode::Code::GRACE32)
-    },
-    CommandInfo{
-        ADD_GRACE8_AFTER_COMMAND,
-        TranslatableString("action", "Grace: 8th after"),
-        TranslatableString("action", "Add grace note: eighth after"),
-        InputSchema(),
-        Decoration(IconCode::Code::GRACE8_AFTER)
-    },
-    CommandInfo{
-        ADD_GRACE16_AFTER_COMMAND,
-        TranslatableString("action", "Grace: 16th after"),
-        TranslatableString("action", "Add grace note: 16th after"),
-        InputSchema(),
-        Decoration(IconCode::Code::GRACE16_AFTER)
-    },
-    CommandInfo{
-        ADD_GRACE32_AFTER_COMMAND,
-        TranslatableString("action", "Grace: 32nd after"),
-        TranslatableString("action", "Add grace note: 32nd after"),
-        InputSchema(),
-        Decoration(IconCode::Code::GRACE32_AFTER)
-    },
-
-    // add beam commands
-    CommandInfo{
-        ADD_BEAM_AUTO_COMMAND,
-        TranslatableString("action", "Auto beam"),
-        TranslatableString("action", "Add beam: auto"),
-        InputSchema(),
-        Decoration(IconCode::Code::AUTO_TEXT)
-    },
-    CommandInfo{
-        ADD_BEAM_NONE_COMMAND,
-        TranslatableString("action", "No beam"),
-        TranslatableString("action", "Add beam: none"),
-        InputSchema(),
-        Decoration(IconCode::Code::BEAM_NONE)
-    },
-    CommandInfo{
-        ADD_BEAM_BEGIN_COMMAND,
-        TranslatableString("action", "Break beam left"),
-        TranslatableString("action", "Break beam left"),
-        InputSchema(),
-        Decoration(IconCode::Code::BEAM_BREAK_LEFT)
-    },
-    CommandInfo{
-        ADD_BEAM_BEGIN16_COMMAND,
-        TranslatableString("action", "Break inner beams (8th)"),
-        TranslatableString("action", "Break inner beams (eighth)"),
-        InputSchema(),
-        Decoration(IconCode::Code::BEAM_BREAK_INNER_8TH)
-    },
-    CommandInfo{
-        ADD_BEAM_BEGIN32_COMMAND,
-        TranslatableString("action", "Break inner beams (16th)"),
-        TranslatableString("action", "Break inner beams (16th)"),
-        InputSchema(),
-        Decoration(IconCode::Code::BEAM_BREAK_INNER_16TH)
-    },
-    CommandInfo{
-        ADD_BEAM_MID_COMMAND,
-        TranslatableString("action", "Join beams"),
-        TranslatableString("action", "Join beams"),
-        InputSchema(),
-        Decoration(IconCode::Code::BEAM_JOIN)
-    },
     CommandInfo{
         ADD_BEAM_SELECTED_RANGE_COMMAND,
         TranslatableString("action", "Beam selected range"),
@@ -1547,107 +1081,6 @@ static const std::vector<CommandInfo> s_commandInfos = {
         TranslatableString("action", "Add parentheses to element"),
         InputSchema(),
         Decoration(IconCode::Code::BRACKET_PARENTHESES)
-    },
-
-    // add ornament commands
-    CommandInfo{
-        ADD_TURN_COMMAND,
-        TranslatableString("action", "Toggle turn"),
-        TranslatableString("action", "Add ornament: turn"),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
-        ADD_TURN_INVERTED_COMMAND,
-        TranslatableString("action", "Toggle inverted turn"),
-        TranslatableString("action", "Add ornament: inverted turn"),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
-        ADD_TURN_SLASH_COMMAND,
-        TranslatableString("action", "Toggle turn with slash"),
-        TranslatableString("action", "Add ornament: turn with slash"),
-        InputSchema(),
-        Decoration()
-    },
-
-    CommandInfo{
-        ADD_TURN_UP_COMMAND,
-        TranslatableString("action", "Toggle turn up"),
-        TranslatableString("action", "Add ornament: turn up"),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
-        ADD_TURN_INVERTED_UP_COMMAND,
-        TranslatableString("action", "Toggle vertical inverted turn"),
-        TranslatableString("action", "Add ornament: vertical inverted turn"),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
-        ADD_TRILL_COMMAND,
-        TranslatableString("action", "Toggle trill"),
-        TranslatableString("action", "Add ornament: trill"),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
-        ADD_SHORT_TRILL_COMMAND,
-        TranslatableString("action", "Toggle short trill"),
-        TranslatableString("action", "Add ornament: short trill"),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
-        ADD_MORDENT_COMMAND,
-        TranslatableString("action", "Toggle mordent"),
-        TranslatableString("action", "Add ornament: mordent"),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
-        ADD_HAYDN_COMMAND,
-        TranslatableString("action", "Toggle Haydn ornament"),
-        TranslatableString("action", "Add ornament: Haydn ornament"),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
-        ADD_TREMBLEMENT_COMMAND,
-        TranslatableString("action", "Toggle tremblement"),
-        TranslatableString("action", "Add ornament: tremblement"),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
-        ADD_PRALL_MORDENT_COMMAND,
-        TranslatableString("action", "Toggle prall mordent"),
-        TranslatableString("action", "Add ornament: prall mordent"),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
-        ADD_SHAKE_COMMAND,
-        TranslatableString("action", "Toggle shake"),
-        TranslatableString("action", "Add ornament: shake"),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
-        ADD_SHAKE_MUFFAT_COMMAND,
-        TranslatableString("action", "Toggle shake (Muffat)"),
-        TranslatableString("action", "Add ornament: shake (Muffat)"),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
-        ADD_TREMBLEMENT_COUPERIN_COMMAND,
-        TranslatableString("action", "Toggle tremblement appuyé (Couperin)"),
-        TranslatableString("action", "Add ornament: tremblement appuyé (Couperin)"),
-        InputSchema(),
-        Decoration()
     },
 
     // text editing commands
@@ -1787,13 +1220,6 @@ static const std::vector<CommandInfo> s_commandInfos = {
         Decoration()
     },
     CommandInfo{
-        COPY_LYRICS_COMMAND,
-        TranslatableString("action", "Copy &lyrics to clipboard"),
-        TranslatableString("action", "Copy lyrics"),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
         REPEAT_SELECTION_COMMAND,
         TranslatableString("action", "Repeat selection"),
         TranslatableString("action", "Repeat selection"),
@@ -1903,142 +1329,6 @@ static const std::vector<CommandInfo> s_commandInfos = {
         Decoration()
     },
 
-    // interval commands
-    CommandInfo{
-        ADD_INTERVAL_PLUS_1_COMMAND,
-        TranslatableString("action", "&Unison"),
-        TranslatableString("action", "Enter interval: unison"),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
-        ADD_INTERVAL_PLUS_2_COMMAND,
-        TranslatableString("action", "Se&cond above"),
-        TranslatableString("action", "Enter interval: second above"),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
-        ADD_INTERVAL_PLUS_3_COMMAND,
-        TranslatableString("action", "Thir&d above"),
-        TranslatableString("action", "Enter interval: third above"),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
-        ADD_INTERVAL_PLUS_4_COMMAND,
-        TranslatableString("action", "Fou&rth above"),
-        TranslatableString("action", "Enter interval: fourth above"),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
-        ADD_INTERVAL_PLUS_5_COMMAND,
-        TranslatableString("action", "Fift&h above"),
-        TranslatableString("action", "Enter interval: fifth above"),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
-        ADD_INTERVAL_PLUS_6_COMMAND,
-        TranslatableString("action", "Si&xth above"),
-        TranslatableString("action", "Enter interval: sixth above"),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
-        ADD_INTERVAL_PLUS_7_COMMAND,
-        TranslatableString("action", "Seve&nth above"),
-        TranslatableString("action", "Enter interval: seventh above"),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
-        ADD_INTERVAL_PLUS_8_COMMAND,
-        TranslatableString("action", "Octave &above"),
-        TranslatableString("action", "Enter interval: octave above"),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
-        ADD_INTERVAL_PLUS_9_COMMAND,
-        TranslatableString("action", "Ninth abov&e"),
-        TranslatableString("action", "Enter interval: ninth above"),
-
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
-        ADD_INTERVAL_PLUS_10_COMMAND,
-        TranslatableString("action", "Tenth above"),
-        TranslatableString("action", "Enter interval: tenth above"),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
-        ADD_INTERVAL_MINUS_2_COMMAND,
-        TranslatableString("action", "&Second below"),
-        TranslatableString("action", "Enter interval: second below"),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
-        ADD_INTERVAL_MINUS_3_COMMAND,
-        TranslatableString("action", "&Third below"),
-        TranslatableString("action", "Enter interval: third below"),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
-        ADD_INTERVAL_MINUS_4_COMMAND,
-        TranslatableString("action", "F&ourth below"),
-        TranslatableString("action", "Enter interval: fourth below"),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
-        ADD_INTERVAL_MINUS_5_COMMAND,
-        TranslatableString("action", "&Fifth below"),
-        TranslatableString("action", "Enter interval: fifth below"),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
-        ADD_INTERVAL_MINUS_6_COMMAND,
-        TranslatableString("action", "S&ixth below"),
-        TranslatableString("action", "Enter interval: sixth below"),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
-        ADD_INTERVAL_MINUS_7_COMMAND,
-        TranslatableString("action", "Se&venth below"),
-        TranslatableString("action", "Enter interval: seventh below"),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
-        ADD_INTERVAL_MINUS_8_COMMAND,
-        TranslatableString("action", "Octave &below"),
-        TranslatableString("action", "Enter interval: octave below"),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
-        ADD_INTERVAL_MINUS_9_COMMAND,
-        TranslatableString("action", "Ninth belo&w"),
-        TranslatableString("action", "Enter interval: ninth below"),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
-        ADD_INTERVAL_MINUS_10_COMMAND,
-        TranslatableString("action", "Tenth below"),
-        TranslatableString("action", "Enter interval: tenth below"),
-        InputSchema(),
-        Decoration()
-    },
-
     // TAB commands
     CommandInfo {
         SET_DURATION_WHOLE_TAB_COMMAND,
@@ -2121,112 +1411,6 @@ static const std::vector<CommandInfo> s_commandInfos = {
         ENTER_REST_TAB_COMMAND,
         X_TAB.arg(TranslatableString("action", "Rest")),
         X_TAB.arg(TranslatableString("action", "Enter rest")),
-        InputSchema(),
-        Decoration()
-    },
-
-    CommandInfo {
-        ENTER_FRET_0_COMMAND,
-        fret_X_TAB.arg(0),
-        enter_TAB_fret_X.arg(0),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo {
-        ENTER_FRET_1_COMMAND,
-        fret_X_TAB.arg(1),
-        enter_TAB_fret_X.arg(1),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo {
-        ENTER_FRET_2_COMMAND,
-        fret_X_TAB.arg(2),
-        enter_TAB_fret_X.arg(2),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo {
-        ENTER_FRET_3_COMMAND,
-        fret_X_TAB.arg(3),
-        enter_TAB_fret_X.arg(3),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo {
-        ENTER_FRET_4_COMMAND,
-        fret_X_TAB.arg(4),
-        enter_TAB_fret_X.arg(4),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo {
-        ENTER_FRET_5_COMMAND,
-        fret_X_TAB.arg(5),
-        enter_TAB_fret_X.arg(5),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo {
-        ENTER_FRET_6_COMMAND,
-        fret_X_TAB.arg(6),
-        enter_TAB_fret_X.arg(6),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo {
-        ENTER_FRET_7_COMMAND,
-        fret_X_TAB.arg(7),
-        enter_TAB_fret_X.arg(7),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo {
-        ENTER_FRET_8_COMMAND,
-        fret_X_TAB.arg(8),
-        enter_TAB_fret_X.arg(8),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo {
-        ENTER_FRET_9_COMMAND,
-        fret_X_TAB.arg(9),
-        enter_TAB_fret_X.arg(9),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo {
-        ENTER_FRET_10_COMMAND,
-        fret_X_TAB.arg(10),
-        enter_TAB_fret_X.arg(10),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo {
-        ENTER_FRET_11_COMMAND,
-        fret_X_TAB.arg(11),
-        enter_TAB_fret_X.arg(11),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo {
-        ENTER_FRET_12_COMMAND,
-        fret_X_TAB.arg(12),
-        enter_TAB_fret_X.arg(12),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo {
-        ENTER_FRET_13_COMMAND,
-        fret_X_TAB.arg(13),
-        enter_TAB_fret_X.arg(13),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo {
-        ENTER_FRET_14_COMMAND,
-        fret_X_TAB.arg(14),
-        enter_TAB_fret_X.arg(14),
         InputSchema(),
         Decoration()
     },

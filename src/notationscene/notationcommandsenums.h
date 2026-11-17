@@ -28,15 +28,12 @@
 #include "rcommand/enumcontract.h"
 #include "notation/notationtypes.h"
 #include "notation/types/noteinputtypes.h"
-#include "engraving/types/types.h"
 
 namespace mu::notation {
 template<typename E, std::size_t N>
 using EnumTable = muse::rcommand::EnumTable<E, N>;
 
 struct NoteNameContract {
-    static constexpr std::string_view key = "note";
-    static constexpr NoteName def = NoteName::C;
     static constexpr EnumTable<NoteName, 7> table = { {
         { "c", NoteName::C, "note C" },
         { "d", NoteName::D, "note D" },
@@ -49,8 +46,6 @@ struct NoteNameContract {
 };
 
 struct NoteInputMethodContract {
-    static constexpr std::string_view key = "method";
-    static constexpr NoteInputMethod def = NoteInputMethod::BY_NOTE_NAME;
     static constexpr EnumTable<NoteInputMethod, 8 > table { {
         { "default", NoteInputMethod::DEFAULT, "default note input method" },
         { "by-note-name", NoteInputMethod::BY_NOTE_NAME, "input by note name" },
@@ -64,8 +59,6 @@ struct NoteInputMethodContract {
 };
 
 struct DurationTypeContract {
-    static constexpr std::string_view key = "duration";
-    static constexpr DurationType def = DurationType::V_QUARTER;
     static constexpr EnumTable<DurationType, 13> table { {
         { "longa", DurationType::V_LONG, "longa" },
         { "breve", DurationType::V_BREVE, "breve" },
@@ -84,8 +77,6 @@ struct DurationTypeContract {
 };
 
 struct ChangeDurationModeContract {
-    static constexpr std::string_view key = "mode";
-    static constexpr ChangeDurationMode def = ChangeDurationMode::Double;
     static constexpr EnumTable<ChangeDurationMode, 4> table { {
         { "double", ChangeDurationMode::Double, "double" },
         { "halve", ChangeDurationMode::Halve, "halve" },
@@ -95,8 +86,6 @@ struct ChangeDurationModeContract {
 };
 
 struct NoteAddingModeContract {
-    static constexpr std::string_view key = "mode";
-    static constexpr NoteAddingMode def = NoteAddingMode::CurrentChord;
     static constexpr EnumTable<NoteAddingMode, 3> table { {
         { "to-current-chord", NoteAddingMode::CurrentChord, "add to current chord" },
         { "to-next-chord", NoteAddingMode::NextChord, "add to next chord" },
@@ -105,37 +94,32 @@ struct NoteAddingModeContract {
 };
 
 struct TupletNumberTypeContract {
-    static constexpr std::string_view key = "number-type";
-    static constexpr engraving::TupletNumberType def = engraving::TupletNumberType::SHOW_NUMBER;
-    static constexpr EnumTable<engraving::TupletNumberType, 3> table { {
-        { "number", engraving::TupletNumberType::SHOW_NUMBER, "show number" },
-        { "relation", engraving::TupletNumberType::SHOW_RELATION, "show relation" },
-        { "none", engraving::TupletNumberType::NO_TEXT, "no text" },
+    static constexpr EnumTable<TupletNumberType, 4> table { {
+        { "number", TupletNumberType::SHOW_NUMBER, "show number" },
+        { "relation", TupletNumberType::SHOW_RELATION, "show relation" },
+        { "none", TupletNumberType::NO_TEXT, "no text" },
+        { "default", TupletNumberType::DEFAULT, "default (from style)" },
     } };
 };
 
 struct TupletBracketTypeContract {
-    static constexpr std::string_view key = "bracket-type";
-    static constexpr engraving::TupletBracketType def = engraving::TupletBracketType::AUTO_BRACKET;
-    static constexpr EnumTable<engraving::TupletBracketType, 3> table { {
-        { "auto", engraving::TupletBracketType::AUTO_BRACKET, "auto bracket" },
-        { "show", engraving::TupletBracketType::SHOW_BRACKET, "show bracket" },
-        { "none", engraving::TupletBracketType::SHOW_NO_BRACKET, "no bracket" },
+    static constexpr EnumTable<TupletBracketType, 4> table { {
+        { "auto", TupletBracketType::AUTO_BRACKET, "auto bracket" },
+        { "show", TupletBracketType::SHOW_BRACKET, "show bracket" },
+        { "none", TupletBracketType::SHOW_NO_BRACKET, "no bracket" },
+        { "default", TupletBracketType::DEFAULT, "default (from style)" },
     } };
 };
 
 struct TupletSelectedDurationContract {
-    static constexpr std::string_view key = "selected-duration-as";
-    static constexpr engraving::TupletSelectedDuration def = engraving::TupletSelectedDuration::TUPLET_LENGTH;
-    static constexpr EnumTable<engraving::TupletSelectedDuration, 2> table { {
-        { "subdivision", engraving::TupletSelectedDuration::SUBDIVISION, "subdivision" },
-        { "tuplet-length", engraving::TupletSelectedDuration::TUPLET_LENGTH, "tuplet length" },
+    static constexpr EnumTable<TupletSelectedDuration, 3> table { {
+        { "subdivision", TupletSelectedDuration::SUBDIVISION, "subdivision" },
+        { "tuplet-length", TupletSelectedDuration::TUPLET_LENGTH, "tuplet length" },
+        { "default", TupletSelectedDuration::DEFAULT, "default (from configuration)" },
     } };
 };
 
 struct SelectionTargetContract {
-    static constexpr std::string_view key = "target";
-    static constexpr SelectionTarget def = SelectionTarget::FirstItem;
     static constexpr EnumTable<SelectionTarget, 34> table { {
         { "first-item", SelectionTarget::FirstItem, "select first item" },
         { "last-item", SelectionTarget::LastItem, "select last item" },
@@ -175,8 +159,6 @@ struct SelectionTargetContract {
 };
 
 struct PlayModeContract {
-    static constexpr std::string_view key = "play-mode";
-    static constexpr PlayMode def = PlayMode::NoPlay;
     static constexpr EnumTable<PlayMode, 3> table { {
         { "none", PlayMode::NoPlay, "no play" },
         { "note", PlayMode::PlayNote, "play note" },
@@ -185,8 +167,6 @@ struct PlayModeContract {
 };
 
 struct AccidentalTypeContract {
-    static constexpr std::string_view key = "type";
-    static constexpr AccidentalType def = AccidentalType::NATURAL;
     //! NOTE Only these types are used in the commands
     static constexpr EnumTable<AccidentalType, 5> table { {
         { "flat2", AccidentalType::FLAT2, "double flat" },
@@ -196,18 +176,119 @@ struct AccidentalTypeContract {
         { "sharp2", AccidentalType::SHARP2, "double sharp" },
     } };
 };
+
+struct BoxTypeContract {
+    static constexpr EnumTable<BoxType, 5> table { {
+        { "vertical", BoxType::Vertical, "vertical" },
+        { "horizontal", BoxType::Horizontal, "horizontal" },
+        { "measure", BoxType::Measure, "measure" },
+        { "text", BoxType::Text, "text" },
+        { "fret", BoxType::Fret, "fret" },
+    } };
+};
+
+struct AddBoxesTargetContract {
+    static constexpr EnumTable<AddBoxesTarget, 4> table { {
+        { "after-selection", AddBoxesTarget::AfterSelection, "after selection" },
+        { "before-selection", AddBoxesTarget::BeforeSelection, "before selection" },
+        { "at-start-of-score", AddBoxesTarget::AtStartOfScore, "at start of score" },
+        { "at-end-of-score", AddBoxesTarget::AtEndOfScore, "at end of score" },
+    } };
+};
+
+struct GraceNoteTypeContract {
+    static constexpr EnumTable<GraceNoteType, 9> table { {
+        { "normal", GraceNoteType::NORMAL, "normal" },
+        { "acciaccatura", GraceNoteType::ACCIACCATURA, "acciaccatura" },
+        { "appoggiatura", GraceNoteType::APPOGGIATURA, "appoggiatura" },
+        { "grace4", GraceNoteType::GRACE4, "grace4" },
+        { "grace16", GraceNoteType::GRACE16, "grace16" },
+        { "grace32", GraceNoteType::GRACE32, "grace32" },
+        { "grace8-after", GraceNoteType::GRACE8_AFTER, "grace8 after" },
+        { "grace16-after", GraceNoteType::GRACE16_AFTER, "grace16 after" },
+        { "grace32-after", GraceNoteType::GRACE32_AFTER, "grace32 after" },
+    } };
+};
+
+struct TextStyleTypeContract {
+    static constexpr EnumTable<TextStyleType, 18> table { {
+        { "title", TextStyleType::TITLE, "title" },
+        { "subtitle", TextStyleType::SUBTITLE, "subtitle" },
+        { "composer", TextStyleType::COMPOSER, "composer" },
+        { "lyricist", TextStyleType::LYRICIST, "lyricist" },
+        { "instrument-excerpt", TextStyleType::INSTRUMENT_EXCERPT, "instrument excerpt" },
+        { "frame", TextStyleType::FRAME, "frame" },
+        { "system", TextStyleType::SYSTEM, "system" },
+        { "staff", TextStyleType::STAFF, "staff" },
+        { "expression", TextStyleType::EXPRESSION, "expression" },
+        { "rehearsalmark", TextStyleType::REHEARSAL_MARK, "rehearsalmark" },
+        { "instrument-change", TextStyleType::INSTRUMENT_CHANGE, "instrument change" },
+        { "fingering", TextStyleType::FINGERING, "fingering" },
+        { "sticking", TextStyleType::STICKING, "sticking" },
+        { "chord", TextStyleType::HARMONY_A, "chord" },
+        { "roman-numeral", TextStyleType::HARMONY_ROMAN, "roman numeral" },
+        { "nashville-number", TextStyleType::HARMONY_NASHVILLE, "nashville number" },
+        { "lyrics", TextStyleType::LYRICS_ODD, "lyrics" },
+        { "tempo", TextStyleType::TEMPO, "tempo" },
+    } };
+};
+
+struct BeamModeContract {
+    static constexpr EnumTable<BeamMode, 6> table { {
+        { "auto", BeamMode::AUTO, "auto" },
+        { "none", BeamMode::NONE, "none" },
+        { "begin", BeamMode::BEGIN, "begin" },
+        { "begin16", BeamMode::BEGIN16, "begin16" },
+        { "begin32", BeamMode::BEGIN32, "begin32" },
+        { "mid", BeamMode::MID, "mid" }
+    } };
+};
+
+struct OrnamentTypeContract {
+    static constexpr EnumTable<OrnamentType, 14> table { { { "turn", OrnamentType::TURN, "turn" },
+        { "turn-inverted", OrnamentType::TURN_INVERTED, "turn inverted" },
+        { "turn-slash", OrnamentType::TURN_SLASH, "turn slash" },
+        { "turn-up", OrnamentType::TURN_UP, "turn up" },
+        { "turn-inverted-up", OrnamentType::TURN_INVERTED_UP, "turn inverted up" },
+        { "trill", OrnamentType::TRILL, "trill" },
+        { "short-trill", OrnamentType::SHORT_TRILL, "short trill" },
+        { "mordent", OrnamentType::MORDENT, "mordent" },
+        { "haydn", OrnamentType::HAYDN, "haydn" },
+        { "tremblement", OrnamentType::TREMBLEMENT, "tremblement" },
+        { "prall-mordent", OrnamentType::PRALL_MORDENT, "prall mordent" },
+        { "shake", OrnamentType::SHAKE, "shake" },
+        { "shake-muffat", OrnamentType::SHAKE_MUFFAT, "shake muffat" },
+        { "tremblement-couperin", OrnamentType::TREMBLEMENT_COUPERIN, "tremblement couperin" },
+    } };
+};
+
+struct PastingTypeContract {
+    static constexpr EnumTable<PastingType, 4> table { {
+        { "default", PastingType::Default, "default" },
+        { "half", PastingType::Half, "half duration" },
+        { "double", PastingType::Double, "double duration" },
+        { "special", PastingType::Special, "special" },
+    } };
+};
 }
 
 namespace muse::rcommand {
-DECLARE_ENUM_CONTRACT(mu::notation::NoteName, mu::notation::NoteNameContract);
-DECLARE_ENUM_CONTRACT(mu::notation::NoteInputMethod, mu::notation::NoteInputMethodContract);
-DECLARE_ENUM_CONTRACT(mu::engraving::DurationType, mu::notation::DurationTypeContract);
-DECLARE_ENUM_CONTRACT(mu::notation::ChangeDurationMode, mu::notation::ChangeDurationModeContract);
-DECLARE_ENUM_CONTRACT(mu::notation::NoteAddingMode, mu::notation::NoteAddingModeContract);
-DECLARE_ENUM_CONTRACT(mu::engraving::TupletNumberType, mu::notation::TupletNumberTypeContract);
-DECLARE_ENUM_CONTRACT(mu::engraving::TupletBracketType, mu::notation::TupletBracketTypeContract);
-DECLARE_ENUM_CONTRACT(mu::engraving::TupletSelectedDuration, mu::notation::TupletSelectedDurationContract);
-DECLARE_ENUM_CONTRACT(mu::notation::SelectionTarget, mu::notation::SelectionTargetContract);
-DECLARE_ENUM_CONTRACT(mu::notation::PlayMode, mu::notation::PlayModeContract);
-DECLARE_ENUM_CONTRACT(mu::notation::AccidentalType, mu::notation::AccidentalTypeContract);
+DECLARE_ENUM_CONTRACT(mu::notation::NoteNameContract);
+DECLARE_ENUM_CONTRACT(mu::notation::NoteInputMethodContract);
+DECLARE_ENUM_CONTRACT(mu::notation::DurationTypeContract);
+DECLARE_ENUM_CONTRACT(mu::notation::ChangeDurationModeContract);
+DECLARE_ENUM_CONTRACT(mu::notation::NoteAddingModeContract);
+DECLARE_ENUM_CONTRACT(mu::notation::TupletNumberTypeContract);
+DECLARE_ENUM_CONTRACT(mu::notation::TupletBracketTypeContract);
+DECLARE_ENUM_CONTRACT(mu::notation::TupletSelectedDurationContract);
+DECLARE_ENUM_CONTRACT(mu::notation::SelectionTargetContract);
+DECLARE_ENUM_CONTRACT(mu::notation::PlayModeContract);
+DECLARE_ENUM_CONTRACT(mu::notation::AccidentalTypeContract);
+DECLARE_ENUM_CONTRACT(mu::notation::BoxTypeContract);
+DECLARE_ENUM_CONTRACT(mu::notation::AddBoxesTargetContract);
+DECLARE_ENUM_CONTRACT(mu::notation::GraceNoteTypeContract);
+DECLARE_ENUM_CONTRACT(mu::notation::TextStyleTypeContract);
+DECLARE_ENUM_CONTRACT(mu::notation::BeamModeContract);
+DECLARE_ENUM_CONTRACT(mu::notation::OrnamentTypeContract);
+DECLARE_ENUM_CONTRACT(mu::notation::PastingTypeContract);
 }
