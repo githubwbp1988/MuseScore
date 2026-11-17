@@ -28,6 +28,7 @@
 
 #include "global/containers.h"
 
+#include "engraving/types/constants.h"
 #include "engraving/dom/articulation.h"
 #include "engraving/dom/chord.h"
 #include "engraving/dom/durationtype.h"
@@ -93,6 +94,10 @@ using staff_idx_t = mu::engraving::staff_idx_t;
 using GuitarBendType = mu::engraving::GuitarBendType;
 using Pid = mu::engraving::Pid;
 using VoiceAssignment = mu::engraving::VoiceAssignment;
+using TupletNumberType = mu::engraving::TupletNumberType;
+using TupletBracketType = mu::engraving::TupletBracketType;
+using TupletSelectedDuration = mu::engraving::TupletSelectedDuration;
+using OrnamentType = mu::engraving::OrnamentType;
 
 enum class DragMode : unsigned char
 {
@@ -307,20 +312,17 @@ enum class BracketsType : unsigned char
     Parentheses
 };
 
-static constexpr int MIN_NOTES_INTERVAL = -10;
-static constexpr int MAX_NOTES_INTERVAL = 10;
-
 static constexpr int MAX_FRET = 14;
 
 constexpr bool isNotesIntervalValid(int interval)
 {
-    return interval >= MIN_NOTES_INTERVAL && interval <= MAX_NOTES_INTERVAL
+    return interval >= mu::engraving::MIN_NOTES_INTERVAL && interval <= mu::engraving::MAX_NOTES_INTERVAL
            && interval != 0 && interval != -1;
 }
 
 constexpr bool isVoiceIndexValid(voice_idx_t voiceIndex)
 {
-    return voiceIndex < mu::engraving::VOICES;
+    return voiceIndex < mu::engraving::MAX_VOICES;
 }
 
 inline bool isVerticalBoxTextStyle(TextStyleType type)

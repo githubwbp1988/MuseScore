@@ -94,13 +94,10 @@ public:
     MOCK_METHOD(bool, moveSelectionAvailable, (MoveSelectionType), (const, override));
     MOCK_METHOD(void, moveSelectionDeprecated, (MoveDirection, MoveSelectionType), (override));
 
-    MOCK_METHOD(void, moveLyrics, (MoveDirection), (override));
-
     MOCK_METHOD(EngravingItem*, contextItem, (), (const, override));
 
+    MOCK_METHOD(bool, moveSelectedItems, (MoveDirection, bool), (override));
     MOCK_METHOD(void, movePitch, (MoveDirection, PitchMode), (override));
-    MOCK_METHOD(void, nudge, (MoveDirection, bool), (override));
-    MOCK_METHOD(void, nudgeAnchors, (MoveDirection), (override));
     MOCK_METHOD(void, moveChordRestToStaff, (MoveDirection), (override));
     MOCK_METHOD(void, swapChordRest, (MoveDirection), (override));
     MOCK_METHOD(void, toggleSnapToPrevious, (), (override));
@@ -201,8 +198,7 @@ public:
     MOCK_METHOD(void, changeSelectedElementsVoiceAssignment, (VoiceAssignment), (override));
     MOCK_METHOD(void, addAnchoredLineToSelectedNotes, (), (override));
 
-    MOCK_METHOD(void, addTextToTopFrame, (TextStyleType), (override));
-    MOCK_METHOD(void, addTextToItem, (TextStyleType, EngravingItem*), (override));
+    MOCK_METHOD(void, addText, (TextStyleType), (override));
 
     MOCK_METHOD(muse::Ret, canAddImageToItem, (const EngravingItem*), (const, override));
     MOCK_METHOD(void, addImageToItem, (const muse::io::path_t&, EngravingItem*), (override));
@@ -275,7 +271,7 @@ public:
     MOCK_METHOD(void, insertClef, (mu::engraving::ClefType), (override));
 
     MOCK_METHOD(void, toggleArticulation, (mu::engraving::SymId), (override));
-    MOCK_METHOD(void, toggleOrnament, (mu::engraving::SymId), (override));
+    MOCK_METHOD(void, toggleOrnament, (OrnamentType), (override));
     MOCK_METHOD(void, changeAccidental, (mu::engraving::AccidentalType), (override));
     MOCK_METHOD(void, transposeSemitone, (int), (override));
     MOCK_METHOD(void, transposeDiatonicAlterations, (mu::engraving::TransposeDirection), (override));

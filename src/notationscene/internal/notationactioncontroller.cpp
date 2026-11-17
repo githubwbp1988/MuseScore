@@ -98,9 +98,17 @@ void NotationActionController::init()
     TRACEFUNC;
 
     // global commands
-    registerCommand(CANCEL_COMMAND, &Controller::resetState);
-    registerCommand(UNDO_COMMAND, &Interaction::undo);
-    registerCommand(REDO_COMMAND, &Interaction::redo);
+    registerCommand<CancelCommand>(&Controller::resetState);
+    registerCommand<UndoCommand>(&Controller::undo);
+    registerCommand<RedoCommand>(&Controller::redo);
+
+    // editing commands
+    registerCommand<CopyCommand>(&Controller::copySelection);
+    registerCommand<CopyPasteSwapCommand>(&Controller::copyPasteSwap);
+    registerCommand<CopyLyricsCommand>(&Controller::copyLyrics);
+    registerCommand<CutCommand>(&Controller::cutSelection);
+    registerCommand<PasteCommand>(&Controller::pasteSelection);
+    registerCommand<DeleteCommand>(&Controller::deleteSelection);
 
     // navigation and selection commands
 
@@ -125,22 +133,30 @@ void NotationActionController::init()
 
     registerCommand<ToggleAccidentalCommand>(&Controller::toggleAccidental);
 
+    registerCommand<UseVoiceCommand>(&Controller::changeVoice);
+    registerCommand<SwapVoicesCommand>(&Controller::swapVoices);
+
+    registerCommand<AddTupletCommand>(&Controller::putTuplet);
+    registerCommand<OpenTupletConfigureCommand>([this]() { return openTupletOtherDialog(); });
+
+    registerCommand<AddBoxesCommand>(&Controller::addBoxes);
+    registerCommand<AddGraceNoteCommand>(&Controller::addGraceNotes);
+    registerCommand<AddIntervalCommand>(&Controller::addInterval);
+    registerCommand<AddTextCommand>(&Controller::addText);
+    registerCommand<AddBeamCommand>(&Controller::addBeam);
+    registerCommand<AddOrnamentCommand>(&Controller::addOrnament);
+    registerCommand<AddFretCommand>(&Controller::addFret);
+
+    registerCommand<EditTextAdvanceCommand>(&Controller::editTextAdvance);
+
+    registerCommand(ADD_BEAM_SELECTED_RANGE_COMMAND, &Interaction::beamSelectedRange);
+
     // text navigation commands
     registerCommand(EDITTEXT_NEXT_WORD_COMMAND, [this]() { nextWord(); });
     registerCommand(EDITTEXT_NEXT_ELEMENT_COMMAND, [this]() { nextTextElement(); });
     registerCommand(EDITTEXT_PREV_ELEMENT_COMMAND, [this]() { prevTextElement(); });
     registerCommand(EDITTEXT_NEXT_BEAT_COMMAND, &Controller::nextBeatTextElement, &Controller::textNavigationByBeatsAvailable);
     registerCommand(EDITTEXT_PREV_BEAT_COMMAND, &Controller::prevBeatTextElement, &Controller::textNavigationByBeatsAvailable);
-
-    registerNavigationByFractionCommand(EDITTEXT_ADVANCE_LONGA_COMMAND, Fraction(4, 1));
-    registerNavigationByFractionCommand(EDITTEXT_ADVANCE_BREVE_COMMAND, Fraction(2, 1));
-    registerNavigationByFractionCommand(EDITTEXT_ADVANCE_1_COMMAND, Fraction(1, 1));
-    registerNavigationByFractionCommand(EDITTEXT_ADVANCE_2_COMMAND, Fraction(1, 2));
-    registerNavigationByFractionCommand(EDITTEXT_ADVANCE_4_COMMAND, Fraction(1, 4));
-    registerNavigationByFractionCommand(EDITTEXT_ADVANCE_8_COMMAND, Fraction(1, 8));
-    registerNavigationByFractionCommand(EDITTEXT_ADVANCE_16_COMMAND, Fraction(1, 16));
-    registerNavigationByFractionCommand(EDITTEXT_ADVANCE_32_COMMAND, Fraction(1, 32));
-    registerNavigationByFractionCommand(EDITTEXT_ADVANCE_64_COMMAND, Fraction(1, 64));
 
     // lyrics editing commands
     registerCommand(EDITLYRIC_NEXT_VERSE_COMMAND, &Interaction::navigateToLyricsVerse, MoveDirection::Down);
@@ -169,43 +185,12 @@ void NotationActionController::init()
     registerCommand(TOGGLE_TENUTO_COMMAND, [this]() { toggleArticulation(SymbolId::articTenutoAbove); });
     registerCommand(TOGGLE_STACCATO_COMMAND, [this]() { toggleArticulation(SymbolId::articStaccatoAbove); });
 
-    registerCommand(USE_VOICE_1_COMMAND, [this]() { changeVoice(0); });
-    registerCommand(USE_VOICE_2_COMMAND, [this]() { changeVoice(1); });
-    registerCommand(USE_VOICE_3_COMMAND, [this]() { changeVoice(2); });
-    registerCommand(USE_VOICE_4_COMMAND, [this]() { changeVoice(3); });
-    registerCommand(SWAP_VOICE_X12_COMMAND, [this]() { swapVoices(0, 1); });
-    registerCommand(SWAP_VOICE_X13_COMMAND, [this]() { swapVoices(0, 2); });
-    registerCommand(SWAP_VOICE_X14_COMMAND, [this]() { swapVoices(0, 3); });
-    registerCommand(SWAP_VOICE_X23_COMMAND, [this]() { swapVoices(1, 2); });
-    registerCommand(SWAP_VOICE_X24_COMMAND, [this]() { swapVoices(1, 3); });
-    registerCommand(SWAP_VOICE_X34_COMMAND, [this]() { swapVoices(2, 3); });
-
     registerCommand<FlipCommand>(&Controller::flipSelection);
     registerCommand(FLIP_HORIZONTALLY_COMMAND, &Interaction::flipSelectionHorizontally);
 
     registerCommandWithParams(ADD_DRUM_NOTE_COMMAND, &Controller::addDrumNote);
 
     registerCommand(ENTER_REST_COMMAND, &Interaction::putRestToSelection);
-
-    registerCommand(OPEN_TUPLET_CONFIGURE_COMMAND, [this]() { openTupletOtherDialog(); });
-    registerCommandWithParams(ADD_TUPLET_COMMAND, &Controller::putTuplet);
-    registerCommand(ADD_DUPLET_COMMAND, [this]() { putTuplet(2); });
-    registerCommand(ADD_TRIPLET_COMMAND, [this]() { putTuplet(3); });
-    registerCommand(ADD_QUADRUPLET_COMMAND, [this]() { putTuplet(4); });
-    registerCommand(ADD_QUINTUPLET_COMMAND, [this]() { putTuplet(5); });
-    registerCommand(ADD_SEXTUPLET_COMMAND, [this]() { putTuplet(6); });
-    registerCommand(ADD_SEPTUPLET_COMMAND, [this]() { putTuplet(7); });
-    registerCommand(ADD_OCTUPLET_COMMAND, [this]() { putTuplet(8); });
-    registerCommand(ADD_NONUPLET_COMMAND, [this]() { putTuplet(9); });
-
-    registerCommand(INSERT_HBOX_COMMAND, [this]() { addBoxes(BoxType::Horizontal, 1, AddBoxesTarget::BeforeSelection); });
-    registerCommand(INSERT_VBOX_COMMAND, [this]() { addBoxes(BoxType::Vertical, 1, AddBoxesTarget::BeforeSelection); });
-    registerCommand(INSERT_TEXTFRAME_COMMAND, [this]() { addBoxes(BoxType::Text, 1, AddBoxesTarget::BeforeSelection); });
-    registerCommand(INSERT_FRETFRAME_COMMAND, [this]() { addBoxes(BoxType::Fret, 1, AddBoxesTarget::BeforeSelection); });
-    registerCommand(APPEND_HBOX_COMMAND, [this]() { addBoxes(BoxType::Horizontal, 1, AddBoxesTarget::AtEndOfScore); });
-    registerCommand(APPEND_VBOX_COMMAND, [this]() { addBoxes(BoxType::Vertical, 1, AddBoxesTarget::AtEndOfScore); });
-    registerCommand(APPEND_TEXTFRAME_COMMAND, [this]() { addBoxes(BoxType::Text, 1, AddBoxesTarget::AtEndOfScore); });
-    registerCommand(APPEND_FRETFRAME_COMMAND, [this]() { addBoxes(BoxType::Fret, 1, AddBoxesTarget::AtEndOfScore); });
 
     registerCommand(ADD_FRETBOARD_DIAGRAM_COMMAND, &Controller::addFretboardDiagram);
 
@@ -224,104 +209,18 @@ void NotationActionController::init()
     registerCommand(ADD_UP_BOW_COMMAND, &Interaction::toggleArticulation, mu::engraving::SymId::stringsUpBow);
     registerCommand(ADD_DOWN_BOW_COMMAND, &Interaction::toggleArticulation, mu::engraving::SymId::stringsDownBow);
 
-    // add text commands
-    registerCommand(ADD_TITLE_TEXT_COMMAND, [this]() { addText(TextStyleType::TITLE); });
-    registerCommand(ADD_SUBTITLE_TEXT_COMMAND, [this]() { addText(TextStyleType::SUBTITLE); });
-    registerCommand(ADD_COMPOSER_TEXT_COMMAND, [this]() { addText(TextStyleType::COMPOSER); });
-    registerCommand(ADD_LYRICIST_TEXT_COMMAND, [this]() { addText(TextStyleType::LYRICIST); });
-    registerCommand(ADD_PART_TEXT_COMMAND, [this]() { addText(TextStyleType::INSTRUMENT_EXCERPT); });
-    registerCommand(ADD_FRAME_TEXT_COMMAND, [this]() { addText(TextStyleType::FRAME); });
-    registerCommand(ADD_SYSTEM_TEXT_COMMAND, [this]() { addText(TextStyleType::SYSTEM); });
-    registerCommand(ADD_STAFF_TEXT_COMMAND, [this]() { addText(TextStyleType::STAFF); });
-    registerCommand(ADD_EXPRESSION_TEXT_COMMAND, [this]() { addText(TextStyleType::EXPRESSION); });
-    registerCommand(ADD_REHEARSALMARK_TEXT_COMMAND, [this]() { addText(TextStyleType::REHEARSAL_MARK); });
-    registerCommand(ADD_INSTRUMENT_CHANGE_TEXT_COMMAND, [this]() { addText(TextStyleType::INSTRUMENT_CHANGE); });
-    registerCommand(ADD_FINGERING_TEXT_COMMAND, [this]() { addText(TextStyleType::FINGERING); });
-    registerCommand(ADD_STICKING_TEXT_COMMAND, [this]() { addText(TextStyleType::STICKING); });
-    registerCommand(ADD_CHORD_TEXT_COMMAND, [this]() { addText(TextStyleType::HARMONY_A); });
-    registerCommand(ADD_ROMAN_NUMERAL_TEXT_COMMAND, [this]() { addText(TextStyleType::HARMONY_ROMAN); });
-    registerCommand(ADD_NASHVILLE_NUMBER_TEXT_COMMAND, [this]() { addText(TextStyleType::HARMONY_NASHVILLE); });
-    registerCommand(ADD_LYRICS_COMMAND, [this]() { addText(TextStyleType::LYRICS_ODD); });
-    registerCommand(ADD_TEMPO_COMMAND, [this]() { addText(TextStyleType::TEMPO); });
     registerCommand(ADD_FIGURED_BASS_COMMAND, [this]() { addFiguredBass(); });
-
-    // add grace notes commands
-    registerCommand(ADD_ACCIACCATURA_COMMAND, &Interaction::addGraceNotesToSelectedNotes, GraceNoteType::ACCIACCATURA);
-    registerCommand(ADD_APPOGGIATURA_COMMAND, &Interaction::addGraceNotesToSelectedNotes, GraceNoteType::APPOGGIATURA);
-    registerCommand(ADD_GRACE4_COMMAND, &Interaction::addGraceNotesToSelectedNotes, GraceNoteType::GRACE4);
-    registerCommand(ADD_GRACE16_COMMAND, &Interaction::addGraceNotesToSelectedNotes, GraceNoteType::GRACE16);
-    registerCommand(ADD_GRACE32_COMMAND, &Interaction::addGraceNotesToSelectedNotes, GraceNoteType::GRACE32);
-    registerCommand(ADD_GRACE8_AFTER_COMMAND, &Interaction::addGraceNotesToSelectedNotes, GraceNoteType::GRACE8_AFTER);
-    registerCommand(ADD_GRACE16_AFTER_COMMAND, &Interaction::addGraceNotesToSelectedNotes, GraceNoteType::GRACE16_AFTER);
-    registerCommand(ADD_GRACE32_AFTER_COMMAND, &Interaction::addGraceNotesToSelectedNotes, GraceNoteType::GRACE32_AFTER);
-
-    // add beam commands
-    registerCommand(ADD_BEAM_AUTO_COMMAND, &Interaction::addBeamToSelectedChordRests, BeamMode::AUTO);
-    registerCommand(ADD_BEAM_NONE_COMMAND, &Interaction::addBeamToSelectedChordRests, BeamMode::NONE);
-    registerCommand(ADD_BEAM_BEGIN_COMMAND, &Interaction::addBeamToSelectedChordRests, BeamMode::BEGIN);
-    registerCommand(ADD_BEAM_BEGIN16_COMMAND, &Interaction::addBeamToSelectedChordRests, BeamMode::BEGIN16);
-    registerCommand(ADD_BEAM_BEGIN32_COMMAND, &Interaction::addBeamToSelectedChordRests, BeamMode::BEGIN32);
-    registerCommand(ADD_BEAM_MID_COMMAND, &Interaction::addBeamToSelectedChordRests, BeamMode::MID);
-    registerCommand(ADD_BEAM_SELECTED_RANGE_COMMAND, &Interaction::beamSelectedRange);
 
     // add brackets commands
     registerCommand(ADD_BRACKETS_COMMAND, &Interaction::addBracketsToSelection, BracketsType::Brackets);
     registerCommand(ADD_BRACES_COMMAND, &Interaction::addBracketsToSelection, BracketsType::Braces);
     registerCommand(ADD_PARENTHESES_COMMAND, &Interaction::addBracketsToSelection, BracketsType::Parentheses);
 
-    // add ornament commands
-    registerCommand(ADD_TURN_COMMAND, &Interaction::toggleOrnament, mu::engraving::SymId::ornamentTurn);
-    registerCommand(ADD_TURN_INVERTED_COMMAND, &Interaction::toggleOrnament, mu::engraving::SymId::ornamentTurnInverted);
-    registerCommand(ADD_TURN_SLASH_COMMAND, &Interaction::toggleOrnament, mu::engraving::SymId::ornamentTurnSlash);
-    registerCommand(ADD_TURN_UP_COMMAND, &Interaction::toggleOrnament, mu::engraving::SymId::ornamentTurnUp);
-    registerCommand(ADD_TURN_INVERTED_UP_COMMAND, &Interaction::toggleOrnament, mu::engraving::SymId::ornamentTurnUpS);
-    registerCommand(ADD_TRILL_COMMAND, &Interaction::toggleOrnament, mu::engraving::SymId::ornamentTrill);
-    registerCommand(ADD_SHORT_TRILL_COMMAND, &Interaction::toggleOrnament, mu::engraving::SymId::ornamentShortTrill);
-    registerCommand(ADD_MORDENT_COMMAND, &Interaction::toggleOrnament, mu::engraving::SymId::ornamentMordent);
-    registerCommand(ADD_HAYDN_COMMAND, &Interaction::toggleOrnament, mu::engraving::SymId::ornamentHaydn);
-    registerCommand(ADD_TREMBLEMENT_COMMAND, &Interaction::toggleOrnament, mu::engraving::SymId::ornamentTremblement);
-    registerCommand(ADD_PRALL_MORDENT_COMMAND, &Interaction::toggleOrnament, mu::engraving::SymId::ornamentPrallMordent);
-    registerCommand(ADD_SHAKE_COMMAND, &Interaction::toggleOrnament, mu::engraving::SymId::ornamentShake3);
-    registerCommand(ADD_SHAKE_MUFFAT_COMMAND, &Interaction::toggleOrnament, mu::engraving::SymId::ornamentShakeMuffat1);
-    registerCommand(ADD_TREMBLEMENT_COUPERIN_COMMAND, &Interaction::toggleOrnament, mu::engraving::SymId::ornamentTremblementCouperin);
-
     // clef commands
     registerCommand(ADD_CLEF_VIOLIN_COMMAND, [this]() { insertClef(mu::engraving::ClefType::G); });
     registerCommand(ADD_CLEF_BASS_COMMAND, [this]() { insertClef(mu::engraving::ClefType::F); });
 
     registerCommand(ADD_FULL_MEASURE_REST_COMMAND, &Controller::addFullMeasureRest);
-
-    // interval commands
-    registerCommand(ADD_INTERVAL_PLUS_1_COMMAND, &Interaction::addIntervalToSelectedNotes, 1);
-    registerCommand(ADD_INTERVAL_PLUS_2_COMMAND, &Interaction::addIntervalToSelectedNotes, 2);
-    registerCommand(ADD_INTERVAL_PLUS_3_COMMAND, &Interaction::addIntervalToSelectedNotes, 3);
-    registerCommand(ADD_INTERVAL_PLUS_4_COMMAND, &Interaction::addIntervalToSelectedNotes, 4);
-    registerCommand(ADD_INTERVAL_PLUS_5_COMMAND, &Interaction::addIntervalToSelectedNotes, 5);
-    registerCommand(ADD_INTERVAL_PLUS_6_COMMAND, &Interaction::addIntervalToSelectedNotes, 6);
-    registerCommand(ADD_INTERVAL_PLUS_7_COMMAND, &Interaction::addIntervalToSelectedNotes, 7);
-    registerCommand(ADD_INTERVAL_PLUS_8_COMMAND, &Interaction::addIntervalToSelectedNotes, 8);
-    registerCommand(ADD_INTERVAL_PLUS_9_COMMAND, &Interaction::addIntervalToSelectedNotes, 9);
-    registerCommand(ADD_INTERVAL_PLUS_10_COMMAND, &Interaction::addIntervalToSelectedNotes, 10);
-    registerCommand(ADD_INTERVAL_MINUS_2_COMMAND, &Interaction::addIntervalToSelectedNotes, -2);
-    registerCommand(ADD_INTERVAL_MINUS_3_COMMAND, &Interaction::addIntervalToSelectedNotes, -3);
-    registerCommand(ADD_INTERVAL_MINUS_4_COMMAND, &Interaction::addIntervalToSelectedNotes, -4);
-    registerCommand(ADD_INTERVAL_MINUS_5_COMMAND, &Interaction::addIntervalToSelectedNotes, -5);
-    registerCommand(ADD_INTERVAL_MINUS_6_COMMAND, &Interaction::addIntervalToSelectedNotes, -6);
-    registerCommand(ADD_INTERVAL_MINUS_7_COMMAND, &Interaction::addIntervalToSelectedNotes, -7);
-    registerCommand(ADD_INTERVAL_MINUS_8_COMMAND, &Interaction::addIntervalToSelectedNotes, -8);
-    registerCommand(ADD_INTERVAL_MINUS_9_COMMAND, &Interaction::addIntervalToSelectedNotes, -9);
-    registerCommand(ADD_INTERVAL_MINUS_10_COMMAND, &Interaction::addIntervalToSelectedNotes, -10);
-
-    // editing commands
-    registerCommand(COPY_COMMAND, &Interaction::copySelection);
-    registerCommand(COPY_PASTE_SWAP_COMMAND, &Interaction::swapSelection);
-    registerCommand(COPY_LYRICS_COMMAND, &Interaction::copyLyrics);
-    registerCommand(CUT_COMMAND, &Controller::cutSelection);
-    registerCommand(PASTE_COMMAND, [this]() { pasteSelection(PastingType::Default); });
-    registerCommand(PASTE_HALF_COMMAND, [this]() { pasteSelection(PastingType::Half); });
-    registerCommand(PASTE_DOUBLE_COMMAND, [this]() { pasteSelection(PastingType::Double); });
-    registerCommand(PASTE_SPECIAL_COMMAND, [this]() { pasteSelection(PastingType::Special); });
-    registerCommand(DELETE_COMMAND, &Interaction::deleteSelection);
 
     // move commands
     registerCommand(MOVE_RIGHT_COMMAND, [this]() { move(MoveDirection::Right, false); });
@@ -376,23 +275,6 @@ void NotationActionController::init()
 
     registerCommand(SPLIT_MEASURE_COMMAND, &Interaction::splitSelectedMeasure);
     registerCommand(JOIN_MEASURES_COMMAND, &Interaction::joinSelectedMeasures);
-    registerCommand(INSERT_MEASURE_COMMAND, [this]() { addBoxes(BoxType::Measure, 1, AddBoxesTarget::BeforeSelection); });
-    registerCommandWithParams(INSERT_MEASURES_COMMAND, [this](const muse::rcommand::Params& params) {
-        return addMeasures(params, AddBoxesTarget::BeforeSelection);
-    });
-    registerCommandWithParams(INSERT_MEASURES_AFTER_SELECTION_COMMAND, [this](const muse::rcommand::Params& params) {
-        return addMeasures(params, AddBoxesTarget::AfterSelection);
-    });
-    registerCommandWithParams(INSERT_MEASURES_AT_START_OF_SCORE_COMMAND, [this](const muse::rcommand::Params& params) {
-        return addMeasures(params, AddBoxesTarget::AtStartOfScore);
-    });
-    registerCommand(APPEND_MEASURE_COMMAND, [this]() {
-        addBoxes(BoxType::Measure, 1, AddBoxesTarget::AtEndOfScore);
-    });
-    registerCommandWithParams(APPEND_MEASURES_COMMAND, [this](const muse::rcommand::Params& params) {
-        return addMeasures(params, AddBoxesTarget::AtEndOfScore);
-    });
-
     registerCommand(STRETCH_DECREASE_COMMAND, [this]() { addStretch(-STRETCH_STEP); });
     registerCommand(STRETCH_INCREASE_COMMAND, [this]() { addStretch(STRETCH_STEP); });
     registerCommand(STRETCH_RESET_COMMAND, &Controller::resetStretch);
@@ -495,22 +377,6 @@ void NotationActionController::init()
     registerCommand(SET_DURATION_256TH_TAB_COMMAND, [this]() { setDuration(DurationType::V_256TH); });
     registerCommand(SET_DURATION_512TH_TAB_COMMAND, [this]() { setDuration(DurationType::V_512TH); });
     registerCommand(SET_DURATION_1024TH_TAB_COMMAND, [this]() { setDuration(DurationType::V_1024TH); });
-
-    registerCommand(ENTER_FRET_0_COMMAND, [this]() { addFret(0); });
-    registerCommand(ENTER_FRET_1_COMMAND, [this]() { addFret(1); });
-    registerCommand(ENTER_FRET_2_COMMAND, [this]() { addFret(2); });
-    registerCommand(ENTER_FRET_3_COMMAND, [this]() { addFret(3); });
-    registerCommand(ENTER_FRET_4_COMMAND, [this]() { addFret(4); });
-    registerCommand(ENTER_FRET_5_COMMAND, [this]() { addFret(5); });
-    registerCommand(ENTER_FRET_6_COMMAND, [this]() { addFret(6); });
-    registerCommand(ENTER_FRET_7_COMMAND, [this]() { addFret(7); });
-    registerCommand(ENTER_FRET_8_COMMAND, [this]() { addFret(8); });
-    registerCommand(ENTER_FRET_9_COMMAND, [this]() { addFret(9); });
-    registerCommand(ENTER_FRET_10_COMMAND, [this]() { addFret(10); });
-    registerCommand(ENTER_FRET_11_COMMAND, [this]() { addFret(11); });
-    registerCommand(ENTER_FRET_12_COMMAND, [this]() { addFret(12); });
-    registerCommand(ENTER_FRET_13_COMMAND, [this]() { addFret(13); });
-    registerCommand(ENTER_FRET_14_COMMAND, [this]() { addFret(14); });
 
     registerCommand(ENTER_REST_TAB_COMMAND, &Interaction::putRestToSelection);
 
@@ -716,7 +582,7 @@ muse::async::Notification NotationActionController::notationStyleChanged() const
     return m_currentNotationStyleChanged;
 }
 
-void NotationActionController::resetState()
+muse::Ret NotationActionController::resetState()
 {
     TRACEFUNC;
 
@@ -726,28 +592,28 @@ void NotationActionController::resetState()
 
     auto noteInput = currentNotationNoteInput();
     if (!noteInput) {
-        return;
+        return muse::make_ret(muse::Ret::Code::InternalError);
     }
 
     if (noteInput->isNoteInputMode()) {
         noteInput->endNoteInput();
-        return;
+        return muse::make_ok();
     }
 
     auto interaction = currentNotationInteraction();
     if (!interaction) {
-        return;
+        return muse::make_ret(muse::Ret::Code::InternalError);
     }
 
     if (interaction->isGripEditStarted()) {
         // Exit grip edit but leave element selected
         interaction->endEditElement();
-        return;
+        return muse::make_ok();
     }
 
     if (interaction->isTextEditingStarted()) {
         interaction->endEditElement();
-        return;
+        return muse::make_ok();
     } else if (interaction->isEditingElement()) {
         interaction->endEditElement();
     }
@@ -759,6 +625,47 @@ void NotationActionController::resetState()
     if (automation()) {
         automation()->resetEditStateRequested().notify();
     }
+
+    return muse::make_ok();
+}
+
+muse::Ret NotationActionController::undo()
+{
+    auto interaction = currentNotationInteraction();
+    if (!interaction) {
+        return muse::make_ret(muse::Ret::Code::InternalError);
+    }
+
+    interaction->undo();
+
+    seekSelectedElement();
+
+    return muse::make_ok();
+}
+
+muse::Ret NotationActionController::redo()
+{
+    auto interaction = currentNotationInteraction();
+    if (!interaction) {
+        return muse::make_ret(muse::Ret::Code::InternalError);
+    }
+
+    interaction->redo();
+
+    seekSelectedElement();
+
+    return muse::make_ok();
+}
+
+muse::Ret NotationActionController::copySelection()
+{
+    auto interaction = currentNotationInteraction();
+    if (!interaction) {
+        return muse::make_ret(Ret::Code::InternalError);
+    }
+
+    interaction->copySelection();
+    return muse::make_ok();
 }
 
 muse::Ret NotationActionController::select(const SelectCommand& command)
@@ -927,7 +834,7 @@ muse::Ret NotationActionController::addDrumNote(const muse::rcommand::Params& pa
     TRACEFUNC;
 
     int pitch = params.at("pitch").toInt();
-    NoteAddingMode mode = EnumContract<NoteAddingMode>::get(params);
+    NoteAddingMode mode = EnumContract<NoteAddingMode>::enum_val(params.at("mode").toString()).value();
 
     NoteInputParams noteInputParams;
     noteInputParams.drumPitch = pitch;
@@ -1497,30 +1404,48 @@ void NotationActionController::toggleArticulation(SymbolId articulationSymbolId)
     }
 }
 
-muse::Ret NotationActionController::putTuplet(const muse::rcommand::Params& params)
+muse::Ret NotationActionController::putTuplet(const AddTupletCommand& command)
 {
-    TupletOptions options;
-    options.ratio = engraving::Fraction::fromString(muse::String::fromStdString(params.at("ratio").toString()));
-    options.numberType = EnumContract<TupletNumberType>::get(params);
-    options.bracketType = EnumContract<TupletBracketType>::get(params);
-    options.autoBaseLen = params.at("auto-baselen", Val(false)).toBool();
-    options.selectedDurationAs = EnumContract<TupletSelectedDuration>::get(params);
-
-    putTuplet(options);
-    return muse::make_ok();
-}
-
-void NotationActionController::putTuplet(const TupletOptions& options)
-{
-    TRACEFUNC;
     auto interaction = currentNotationInteraction();
     if (!interaction) {
-        return;
+        return muse::make_ret(muse::Ret::Code::InternalError);
     }
 
     auto noteInput = interaction->noteInput();
     if (!noteInput) {
-        return;
+        return muse::make_ret(muse::Ret::Code::InternalError);
+    }
+
+    TupletOptions options;
+    options.ratio = Fraction::fromString(command.ratio);
+    options.numberType = command.numberType;
+    options.bracketType = command.bracketType;
+    options.autoBaseLen = command.autoBaseLen;
+    options.selectedDurationAs = command.selectedDurationAs;
+
+    // resolve defaults
+    INotationStylePtr style = notationStyle();
+    if (!style) {
+        return muse::make_ret(muse::Ret::Code::InternalError);
+    }
+
+    if (options.bracketType == TupletBracketType::DEFAULT) {
+        int bracketType = style->styleValue(StyleId::tupletBracketType).toInt();
+        options.bracketType = static_cast<TupletBracketType>(bracketType);
+    }
+    if (options.numberType == TupletNumberType::DEFAULT) {
+        int numberType = style->styleValue(StyleId::tupletNumberType).toInt();
+        options.numberType = static_cast<TupletNumberType>(numberType);
+    }
+
+    if (options.autoBaseLen && options.selectedDurationAs == TupletSelectedDuration::DEFAULT) {
+        options.selectedDurationAs = configuration()->tupletCommandsSelectedDurationAs();
+    }
+
+    // e.g. a triplet of the selected duration
+    if (options.selectedDurationAs == TupletSelectedDuration::SUBDIVISION) {
+        const int numerator = options.ratio.numerator();
+        options.ratio.setDenominator(Tuplet::conventionalTupletDenominator(numerator));
     }
 
     if (noteInput->isNoteInputMode()) {
@@ -1528,30 +1453,7 @@ void NotationActionController::putTuplet(const TupletOptions& options)
     } else {
         interaction->addTupletToSelectedChordRests(options);
     }
-}
-
-void NotationActionController::putTuplet(int tupletCount)
-{
-    TRACEFUNC;
-
-    TupletOptions options;
-    options.ratio.setNumerator(tupletCount);
-    options.ratio.setDenominator(2);
-    options.autoBaseLen = true;
-    options.selectedDurationAs = configuration()->tupletCommandsSelectedDurationAs();
-    if (options.selectedDurationAs == TupletSelectedDuration::SUBDIVISION) {
-        // e.g. a triplet of the selected duration
-        options.ratio.setDenominator(engraving::Tuplet::conventionalTupletDenominator(tupletCount));
-    }
-    // get the bracket type from score style settings
-    if (INotationStylePtr style = notationStyle()) {
-        int bracketType = style->styleValue(StyleId::tupletBracketType).toInt();
-        options.bracketType = static_cast<engraving::TupletBracketType>(bracketType);
-        int numberType = style->styleValue(StyleId::tupletNumberType).toInt();
-        options.numberType = static_cast<engraving::TupletNumberType>(numberType);
-    }
-
-    putTuplet(options);
+    return muse::make_ok();
 }
 
 muse::Ret NotationActionController::changeDuration(const ChangeDurationCommand& command)
@@ -1647,7 +1549,8 @@ muse::Ret NotationActionController::moveWithRet(MoveDirection direction, bool qu
         return muse::make_ret(muse::Ret::Code::InternalError);
     }
 
-    const NoteInputState& state = interaction->noteInput()->state();
+    INotationNoteInputPtr noteInput = interaction->noteInput();
+    const NoteInputState& state = noteInput->state();
     const bool previousSelectionExists = currentNotationScore() && currentNotationScore()->selection().currentCR();
     if (interaction->selection()->isNone() && previousSelectionExists && !state.beyondScore()) {
         // Try to restore the previous selection...
@@ -1656,23 +1559,15 @@ muse::Ret NotationActionController::moveWithRet(MoveDirection direction, bool qu
         return muse::make_ok();
     }
 
-    const EngravingItem* selectedElement = interaction->selection()->element();
-    INotationNoteInputPtr noteInput = interaction->noteInput();
     bool playChord = false;
 
     switch (direction) {
     case MoveDirection::Up:
     case MoveDirection::Down:
-        if (!quickly && selectedElement && selectedElement->isLyrics()) {
-            interaction->moveLyrics(direction);
-        } else if (selectedElement && (selectedElement->isTextBase() || selectedElement->isArticulationFamily())) {
-            interaction->nudge(direction, quickly);
-        } else if (selectedElement && selectedElement->hasGrips() && interaction->isGripEditStarted()) {
-            interaction->nudgeAnchors(direction);
-        } else if (state.isValid() && noteInput->isNoteInputMode() && noteInput->usingNoteInputMethod(NoteInputMethod::BY_DURATION)) {
+        if (state.isValid() && noteInput->isNoteInputMode() && noteInput->usingNoteInputMethod(NoteInputMethod::BY_DURATION)) {
             moveInputNotes(direction == MoveDirection::Up, quickly ? PitchMode::OCTAVE : PitchMode::DIATONIC);
             return muse::make_ok();
-        } else if (noteInput->isNoteInputMode() && noteInput->state().staffGroup() == mu::engraving::StaffGroup::TAB) {
+        } else if (noteInput->isNoteInputMode() && state.staffGroup() == mu::engraving::StaffGroup::TAB) {
             if (quickly) {
                 interaction->movePitch(direction, PitchMode::OCTAVE);
             }
@@ -1681,7 +1576,7 @@ muse::Ret NotationActionController::moveWithRet(MoveDirection direction, bool qu
         } else if (interaction->selection()->isNone() && !state.beyondScore()) {
             interaction->select(SelectionTarget::FirstItem);
         } else {
-            interaction->movePitch(direction, quickly ? PitchMode::OCTAVE : PitchMode::CHROMATIC);
+            interaction->moveSelectedItems(direction, quickly);
         }
         break;
     case MoveDirection::Right:
@@ -1724,11 +1619,7 @@ muse::Ret NotationActionController::moveWithRet(MoveDirection direction, bool qu
             return muse::make_ok();
         }
 
-        if (selectedElement && selectedElement->isTextBase()) {
-            interaction->nudge(direction, quickly);
-        } else if (selectedElement && selectedElement->hasGrips() && interaction->isGripEditStarted()) {
-            interaction->nudgeAnchors(direction);
-        } else {
+        if (!interaction->moveSelectedItems(direction, quickly)) {
             if (interaction->selection()->isNone() && !state.beyondScore()) {
                 interaction->select(SelectionTarget::FirstItem);
             }
@@ -1783,26 +1674,31 @@ void NotationActionController::movePitchDiatonic(MoveDirection direction, bool)
     seekAndPlaySelectedElement(true);
 }
 
-void NotationActionController::changeVoice(voice_idx_t voiceIndex)
+muse::Ret NotationActionController::changeVoice(const UseVoiceCommand& command)
 {
     TRACEFUNC;
 
     INotationInteractionPtr interaction = currentNotationInteraction();
     if (!interaction) {
-        return;
+        return muse::make_ret(muse::Ret::Code::InternalError);
     }
 
     INotationNoteInputPtr noteInput = interaction->noteInput();
     if (!noteInput) {
-        return;
+        return muse::make_ret(muse::Ret::Code::InternalError);
     }
 
     if (interaction->selection()->isNone()) {
         if (!noteInput->isNoteInputMode() && !toggleNoteInputAllowed()) {
-            return;
+            return muse::make_ret(muse::Ret::Code::NotAllowed);
         }
 
         startNoteInput();
+    }
+
+    const voice_idx_t voiceIndex = command.voice - 1; // number to index conversion
+    IF_ASSERT_FAILED(voiceIndex < MAX_VOICES) {
+        return muse::make_ret(muse::Ret::Code::BadArgs);
     }
 
     noteInput->setCurrentVoice(voiceIndex);
@@ -1810,28 +1706,46 @@ void NotationActionController::changeVoice(voice_idx_t voiceIndex)
     if (!noteInput->isNoteInputMode()) {
         interaction->changeSelectedElementsVoice(voiceIndex);
     }
+
+    return muse::make_ok();
 }
 
-void NotationActionController::swapVoices(voice_idx_t voiceIndex1, voice_idx_t voiceIndex2)
+muse::Ret NotationActionController::swapVoices(const SwapVoicesCommand& command)
 {
     TRACEFUNC;
     auto interaction = currentNotationInteraction();
     if (!interaction) {
-        return;
+        return muse::make_ret(muse::Ret::Code::InternalError);
     }
 
-    interaction->swapVoices(voiceIndex1, voiceIndex2);
+    const voice_idx_t voiceAIndex = command.voiceA - 1; // number to index conversion
+    const voice_idx_t voiceBIndex = command.voiceB - 1; // number to index conversion
+
+    IF_ASSERT_FAILED(voiceAIndex < MAX_VOICES) {
+        return muse::make_ret(muse::Ret::Code::BadArgs);
+    }
+
+    IF_ASSERT_FAILED(voiceBIndex < MAX_VOICES) {
+        return muse::make_ret(muse::Ret::Code::BadArgs);
+    }
+
+    interaction->swapVoices(voiceAIndex, voiceBIndex);
+    return muse::make_ok();
 }
 
-void NotationActionController::cutSelection()
+muse::Ret NotationActionController::cutSelection()
 {
     TRACEFUNC;
     auto interaction = currentNotationInteraction();
     if (!interaction) {
-        return;
+        return muse::make_ret(muse::Ret::Code::InternalError);
     }
     interaction->copySelection();
     interaction->deleteSelection();
+
+    seekSelectedElement();
+
+    return muse::make_ok();
 }
 
 void NotationActionController::repeatSelection()
@@ -1844,18 +1758,63 @@ void NotationActionController::repeatSelection()
     seekAndPlaySelectedElement(true);
 }
 
-void NotationActionController::pasteSelection(PastingType type)
+muse::Ret NotationActionController::pasteSelection(const PasteCommand& command)
 {
     TRACEFUNC;
     auto interaction = currentNotationInteraction();
     if (!interaction) {
-        return;
+        return muse::make_ret(muse::Ret::Code::InternalError);
     }
 
-    Fraction scale = resolvePastingScale(interaction, type);
+    Fraction scale = resolvePastingScale(interaction, command.type);
     interaction->pasteSelection(scale);
 
     seekAndPlaySelectedElement(DONT_PLAY_CHORD);
+
+    return muse::make_ok();
+}
+
+muse::Ret NotationActionController::copyPasteSwap()
+{
+    TRACEFUNC;
+    auto interaction = currentNotationInteraction();
+    if (!interaction) {
+        return muse::make_ret(muse::Ret::Code::InternalError);
+    }
+
+    interaction->swapSelection();
+
+    seekSelectedElement();
+
+    return muse::make_ok();
+}
+
+muse::Ret NotationActionController::copyLyrics()
+{
+    TRACEFUNC;
+    auto interaction = currentNotationInteraction();
+    if (!interaction) {
+        return muse::make_ret(muse::Ret::Code::InternalError);
+    }
+
+    interaction->copyLyrics();
+
+    return muse::make_ok();
+}
+
+muse::Ret NotationActionController::deleteSelection()
+{
+    TRACEFUNC;
+    auto interaction = currentNotationInteraction();
+    if (!interaction) {
+        return muse::make_ret(muse::Ret::Code::InternalError);
+    }
+
+    interaction->deleteSelection();
+
+    seekSelectedElement();
+
+    return muse::make_ok();
 }
 
 Fraction NotationActionController::resolvePastingScale(const INotationInteractionPtr& interaction, PastingType type) const
@@ -1954,15 +1913,16 @@ void NotationActionController::addHammerOnPullOff()
     interaction->addHammerOnPullOffToSelection();
 }
 
-void NotationActionController::addFret(int num)
+muse::Ret NotationActionController::addFret(const AddFretCommand& command)
 {
     auto interaction = currentNotationInteraction();
     if (!interaction) {
-        return;
+        return muse::make_ret(muse::Ret::Code::InternalError);
     }
 
-    interaction->addFret(num);
+    interaction->addFret(command.num);
     seekAndPlaySelectedElement(currentNotationScore()->playChord());
+    return muse::make_ok();
 }
 
 void NotationActionController::insertClef(mu::engraving::ClefType type)
@@ -1973,35 +1933,6 @@ void NotationActionController::insertClef(mu::engraving::ClefType type)
     }
 
     interaction->insertClef(type);
-}
-
-void NotationActionController::addText(TextStyleType type)
-{
-    TRACEFUNC;
-
-    auto interaction = currentNotationInteraction();
-    if (!interaction) {
-        return;
-    }
-
-    EngravingItem* item = nullptr;
-
-    const INotationSelectionPtr sel = interaction->selection();
-    if (sel->isRange()) {
-        const INotationSelectionRangePtr range = sel->range();
-        item = range->rangeStartSegment()->firstElementForNavigation(range->startStaffIndex());
-    } else {
-        item = interaction->contextItem();
-    }
-
-    if (isVerticalBoxTextStyle(type)) {
-        if (!item || !item->isVBox()) {
-            interaction->addTextToTopFrame(type);
-            return;
-        }
-    }
-
-    interaction->addTextToItem(type, item);
 }
 
 void NotationActionController::addImage()
@@ -2175,31 +2106,93 @@ muse::Ret NotationActionController::startEditSelectedText(const muse::rcommand::
     return muse::make_ok();
 }
 
-muse::Ret NotationActionController::addMeasures(const muse::rcommand::Params& params, AddBoxesTarget target)
-{
-    if (params.contains("count")) {
-        int count = params.at("count").toInt();
-        addBoxes(BoxType::Measure, count, target);
-    } else {
-        interactive()->open("musescore://notation/selectmeasurescount")
-        .onResolve(this, [this, target](const Val& v) {
-            int count = v.toInt();
-            addBoxes(BoxType::Measure, count, target);
-        });
-    }
-
-    return muse::make_ok();
-}
-
-void NotationActionController::addBoxes(BoxType boxType, int count, AddBoxesTarget target)
+muse::Ret NotationActionController::addBoxes(const AddBoxesCommand& command)
 {
     TRACEFUNC;
     auto interaction = currentNotationInteraction();
     if (!interaction) {
-        return;
+        return muse::make_ret(muse::Ret::Code::InternalError);
     }
 
-    interaction->addBoxes(boxType, count, target);
+    if (command.needInputCount) {
+        interactive()->open("musescore://notation/selectmeasurescount")
+        .onResolve(this, [interaction, command](const Val& v) {
+            int count = v.toInt();
+            interaction->addBoxes(command.boxType, count, command.target);
+        });
+    } else {
+        interaction->addBoxes(command.boxType, command.count, command.target);
+    }
+    return muse::make_ok();
+}
+
+muse::Ret NotationActionController::addGraceNotes(const AddGraceNoteCommand& command)
+{
+    TRACEFUNC;
+    auto interaction = currentNotationInteraction();
+    if (!interaction) {
+        return muse::make_ret(muse::Ret::Code::InternalError);
+    }
+
+    interaction->addGraceNotesToSelectedNotes(command.type);
+
+    seekSelectedElement();
+
+    return muse::make_ok();
+}
+
+muse::Ret NotationActionController::addInterval(const AddIntervalCommand& command)
+{
+    TRACEFUNC;
+    auto interaction = currentNotationInteraction();
+    if (!interaction) {
+        return muse::make_ret(muse::Ret::Code::InternalError);
+    }
+
+    if (!isNotesIntervalValid(command.interval)) {
+        return muse::make_ret(muse::Ret::Code::BadArgs);
+    }
+
+    interaction->addIntervalToSelectedNotes(command.interval);
+
+    seekSelectedElement();
+
+    return muse::make_ok();
+}
+
+muse::Ret NotationActionController::addText(const AddTextCommand& command)
+{
+    TRACEFUNC;
+
+    auto interaction = currentNotationInteraction();
+    if (!interaction) {
+        return muse::make_ret(muse::Ret::Code::InternalError);
+    }
+
+    interaction->addText(command.type);
+    return muse::make_ok();
+}
+
+muse::Ret NotationActionController::addBeam(const AddBeamCommand& command)
+{
+    auto interaction = currentNotationInteraction();
+    if (!interaction) {
+        return muse::make_ret(muse::Ret::Code::InternalError);
+    }
+
+    interaction->addBeamToSelectedChordRests(command.mode);
+    return muse::make_ok();
+}
+
+muse::Ret NotationActionController::addOrnament(const AddOrnamentCommand& command)
+{
+    auto interaction = currentNotationInteraction();
+    if (!interaction) {
+        return muse::make_ret(muse::Ret::Code::InternalError);
+    }
+
+    interaction->toggleOrnament(command.type);
+    return muse::make_ok();
 }
 
 void NotationActionController::unrollRepeats()
@@ -2534,6 +2527,20 @@ void NotationActionController::navigateToTextElement(MoveDirection direction, bo
     }
 }
 
+muse::Ret NotationActionController::editTextAdvance(const EditTextAdvanceCommand& command)
+{
+    TRACEFUNC;
+
+    if (!textNavigationByFractionAvailable()) {
+        return muse::make_ret(muse::Ret::Code::NotAllowed);
+    }
+
+    const Fraction fraction = TDuration(command.duration).fraction();
+    navigateToTextItemByFraction(fraction);
+
+    return muse::make_ok();
+}
+
 void NotationActionController::navigateToTextItemByFraction(const Fraction& fraction)
 {
     const mu::engraving::EngravingItem* element = selectedElement();
@@ -2590,9 +2597,10 @@ bool NotationActionController::isEditingText() const
     return interaction->isTextEditingStarted();
 }
 
-void NotationActionController::openTupletOtherDialog()
+muse::Ret NotationActionController::openTupletOtherDialog()
 {
     interactive()->open("musescore://notation/othertupletdialog");
+    return muse::make_ok();
 }
 
 void NotationActionController::openStaffTextPropertiesDialog()
@@ -3074,14 +3082,6 @@ void NotationActionController::registerCommand(const muse::rcommand::Command& co
             }
         }
     }, enabler);
-}
-
-void NotationActionController::registerNavigationByFractionCommand(const muse::rcommand::Command& command, const Fraction& fraction)
-{
-    registerCommand(command, [this, fraction]() {
-        navigateToTextItemByFraction(
-            fraction);
-    }, &NotationActionController::textNavigationByFractionAvailable);
 }
 
 void NotationActionController::registerGetCommand(const muse::rcommand::Command& command,

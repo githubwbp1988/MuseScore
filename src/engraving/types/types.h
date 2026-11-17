@@ -1598,16 +1598,34 @@ enum class ActionIconType : signed char {
 };
 
 enum class TupletNumberType : unsigned char {
-    SHOW_NUMBER, SHOW_RELATION, NO_TEXT
+    SHOW_NUMBER, SHOW_RELATION, NO_TEXT, DEFAULT /*from style*/
 };
 
 enum class TupletBracketType : unsigned char {
-    AUTO_BRACKET, SHOW_BRACKET, SHOW_NO_BRACKET
+    AUTO_BRACKET, SHOW_BRACKET, SHOW_NO_BRACKET, DEFAULT /*from style*/
 };
 
 // what a tuplet command uses the selected duration as
 enum class TupletSelectedDuration : unsigned char {
-    SUBDIVISION, TUPLET_LENGTH
+    SUBDIVISION, TUPLET_LENGTH, DEFAULT /*from configuration*/
+};
+
+enum class OrnamentType {
+    UNDEFINED = (int)SymId::noSym,
+    TURN = (int)SymId::ornamentTurn,
+    TURN_INVERTED = (int)SymId::ornamentTurnInverted,
+    TURN_SLASH = (int)SymId::ornamentTurnSlash,
+    TURN_UP = (int)SymId::ornamentTurnUp,
+    TURN_INVERTED_UP = (int)SymId::ornamentTurnUpS,
+    TRILL = (int)SymId::ornamentTrill,
+    SHORT_TRILL = (int)SymId::ornamentShortTrill,
+    MORDENT = (int)SymId::ornamentMordent,
+    HAYDN = (int)SymId::ornamentHaydn,
+    TREMBLEMENT = (int)SymId::ornamentTremblement,
+    PRALL_MORDENT = (int)SymId::ornamentPrallMordent,
+    SHAKE = (int)SymId::ornamentShake3,
+    SHAKE_MUFFAT = (int)SymId::ornamentShakeMuffat1,
+    TREMBLEMENT_COUPERIN = (int)SymId::ornamentTremblementCouperin,
 };
 } // mu::engraving
 

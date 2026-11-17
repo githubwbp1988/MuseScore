@@ -22,17 +22,21 @@
 
 #pragma once
 
-#include <unordered_map>
+#include <functional>
+#include <map>
 
 #include "async/asyncable.h"
 #include "async/notifylist.h"
 
 #include "engraving/dom/score.h"
+#include "engraving/editing/editpart.h"
 
+#include "inotation_fwd.h"
 #include "inotationparts.h"
-#include "inotationstyle.h"
-#include "inotationundostack.h"
-#include "inotationinteraction.h"
+
+namespace muse {
+class TranslatableString;
+}
 
 namespace mu::notation {
 class IGetScore;
@@ -73,11 +77,10 @@ public:
     void removeParts(const muse::IDList& partsIds) override;
     void removeStaves(const muse::IDList& stavesIds) override;
 
-    void moveParts(const muse::IDList& sourcePartsIds, const muse::ID& destinationPartId, InsertMode mode = InsertMode::Before) override;
-    void moveStaves(const muse::IDList& sourceStavesIds, const muse::ID& destinationStaffId, InsertMode mode = InsertMode::Before) override;
+    void reorderParts(const muse::IDList& partIds, const std::vector<SystemObjectsMove>& systemObjectsMoves) override;
+    void reorderStaves(const muse::IDList& staffIds) override;
 
     bool appendStaff(Staff* staff, const muse::ID& destinationPartId) override;
-    bool appendStaffLinkedToMaster(Staff* staff, Staff* masterSourceStaff, const muse::ID& destinationPartId) override;
     bool appendLinkedStaff(Staff* staff, const muse::ID& sourceStaffId, const muse::ID& destinationPartId) override;
 
     void insertPart(Part* part, size_t index) override;
@@ -92,9 +95,6 @@ public:
 
     void addSystemObjects(const muse::IDList& stavesIds) override;
     void removeSystemObjects(const muse::IDList& stavesIds) override;
-    void moveSystemObjects(const muse::ID& sourceStaffId, const muse::ID& destinationStaffId) override;
-    void moveSystemObjectLayerBelowBottomStaff() override;
-    void moveSystemObjectLayerAboveBottomStaff() override;
 
     void toggleStaveSharing(bool on) override;
 
@@ -103,51 +103,20 @@ public:
 
     muse::async::Notification sharedPartsChanged() const override;
 
-protected:
-    mu::engraving::Score* score() const;
-    INotationUndoStackPtr undoStack() const;
-
-    Part* partModifiable(const muse::ID& partId) const;
-
-    void startEdit(const muse::TranslatableString& actionName);
-    void apply();
-    void rollback();
-
-    virtual void onPartsRemoved(const std::vector<Part*>& parts);
-
 private:
-    friend class MasterNotationParts;
+    mu::engraving::Score* score() const;
+
+    void transaction(const muse::TranslatableString& actionName, const std::function<void(engraving::Transaction&)>& func);
 
     void listenUndoStackChanges();
     void updatePartsAndSystemObjectStaves(const mu::engraving::ScoreChanges& changes = {});
     void listenStyleChanges();
 
-    void doSetScoreOrder(const ScoreOrder& order);
-    void doRemoveParts(const std::vector<Part*>& parts);
-    void doAppendStaff(Staff* staff, Part* destinationPart, bool createRests=true);
-    void doSetStaffConfig(Staff* staff, const StaffConfig& config, Fraction tick = Fraction(0, 1));
-    void doInsertPart(Part* part, size_t index);
-
-    Staff* staffModifiable(const muse::ID& staffId) const;
+    std::vector<engraving::EditPart::PartEntry> partEntries(const PartInstrumentList& parts) const;
 
     std::vector<Staff*> staves(const muse::IDList& stavesIds) const;
     std::vector<Part*> parts(const muse::IDList& partsIds) const;
-
-    void appendStaves(Part* part, const InstrumentTemplate& templ, const mu::engraving::KeyList& keyList);
-    void insertStaff(Staff* staff, engraving::staff_idx_t destinationStaffIndex, bool createRests=true);
-
-    void removeMissingParts(const PartInstrumentList& newParts);
-    void insertNewParts(const PartInstrumentList& parts, const mu::engraving::KeyList& keyList);
-    void insertNewParts(const PartInstrumentList& parts);
-    void updateSoloist(const PartInstrumentList& parts);
-    void sortParts(const PartInstrumentList& parts);
-
-    using PartByIdMap = std::unordered_map<uint64_t /*ID*/, Part*>;
-    PartByIdMap partsById() const;
-
-    std::vector<int> resolveInstrumentNumbers(const PartInstrumentList& parts, const PartByIdMap& existingParts) const;
-
-    void setBracketsAndBarlines();
+    std::vector<engraving::EditPart::SystemObjectsMove> editPartSystemObjectsMoves(const std::vector<SystemObjectsMove>& moves) const;
 
     void endInteractionWithScore();
 
