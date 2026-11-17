@@ -22,6 +22,10 @@
 
 #pragma once
 
+#include <QPainter>
+#include <QRectF>
+
+#include <functional>
 #include <map>
 
 #include "global/types/ret.h"

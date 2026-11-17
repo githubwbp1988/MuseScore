@@ -23,6 +23,11 @@
 #ifndef MU_PROJECT_IPROJECTWRITER_H
 #define MU_PROJECT_IPROJECTWRITER_H
 
+#include <QPainter>
+#include <QRectF>
+
+#include <functional>
+
 #include "types/ret.h"
 #include "types/val.h"
 
