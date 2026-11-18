@@ -28,8 +28,11 @@
 #include "engraving/dom/masterscore.h"
 #include "engraving/dom/measure.h"
 #include "engraving/dom/note.h"
+#include "engraving/dom/part.h"
 #include "engraving/dom/segment.h"
 #include "engraving/dom/staff.h"
+#include "engraving/dom/stafftype.h"
+#include "engraving/dom/stringdata.h"
 #include "engraving/dom/timesig.h"
 #include "engraving/dom/tuplet.h"
 #include "engraving/editing/edittuplet.h"
@@ -741,6 +744,35 @@ TEST_F(Engraving_TupletTests, addTupletKeepsSelection)
     EXPECT_EQ(rhythm(m1), "3:2[16 r16 r16] 8 8 8 8 8 8 8");
     EXPECT_EQ(score->selection().element(), note);
     EXPECT_EQ(score->inputState().duration(), TDuration(DurationType::V_QUARTER));
+    delete score;
+}
+
+TEST_F(Engraving_TupletTests, addTupletKeepsTabString)
+{
+    // staff 0 as a guitar TAB staff
+    MasterScore* score = ScoreRW::readScore(TUPLET_DATA_DIR + u"empty.mscx");
+    ASSERT_TRUE(score);
+    Staff* staff = score->staff(0);
+    staff->setStaffType(Fraction(0, 1), *StaffType::preset(StaffTypes::TAB_6COMMON));
+    int strings[] = { 40, 45, 50, 55, 59, 64 };
+    staff->part()->instrument()->setStringData(StringData(24, 6, strings));
+
+    // G4 at fret 8 on string 1, not its default string 0 (fret 3): the tuplet's first note keeps it
+    InputState& is = score->inputState();
+    is.setTrack(0);
+    is.setSegment(score->tick2segment(Fraction(0, 1), false, SegmentType::ChordRest));
+    is.setDuration(DurationType::V_QUARTER);
+    is.setNoteEntryMode(true);
+    is.setString(1);
+    score->transactionManager()->transaction(TranslatableString::untranslatable("Engraving tuplet tests"), [&](Transaction& tx) {
+        NoteInput::addFret(tx, score, 8);
+    });
+    ASSERT_TRUE(addTuplet(chordRestAt(measureAt(score, 0), 0), Fraction(3, 2), DurationType::V_QUARTER));
+    const Chord* chord = toChord(chordRestAt(measureAt(score, 0), 0));
+    ASSERT_TRUE(chord->tuplet());
+    EXPECT_EQ(chord->upNote()->string(), 1);
+    EXPECT_EQ(chord->upNote()->fret(), 8);
+
     delete score;
 }
 
@@ -1494,6 +1526,95 @@ TEST_F(Engraving_TupletTests, removeInsertedTimeMovesNestedTupletsBack)
     });
     EXPECT_TRUE(score->sanityCheck());
     EXPECT_EQ(rhythm(m1), "4 r4 r4 4");
+
+    delete score;
+}
+
+//-----------------------------------------
+//    addNestedTriplets
+//     fills a half note's length at the start of a bar with a quarter triplet
+//     of three eighth triplets, the given pitches in each,
+//     and returns the outer triplet
+//-----------------------------------------
+
+static Tuplet* addNestedTriplets(Measure* measure, const std::vector<int>& pitches)
+{
+    Score* score = measure->score();
+    score->transactionManager()->transaction(TranslatableString::untranslatable("Tuplet tests"), [&](Transaction&) {
+        score->setNoteRest(measure->first(SegmentType::ChordRest), 0, NoteVal(pitches[0]), Fraction(1, 2));
+    });
+    if (!addTuplet(chordRestAt(measure, 0), Fraction(3, 2), DurationType::V_QUARTER)) {
+        ADD_FAILURE() << "quarter triplet not added";
+        return nullptr;
+    }
+    for (size_t i = 0; i < 9; i += 3) {
+        if (!addTuplet(chordRestAt(measure, i), Fraction(3, 2), DurationType::V_EIGHTH)) {
+            ADD_FAILURE() << "eighth triplet not added at element " << i;
+            return nullptr;
+        }
+    }
+    score->transactionManager()->transaction(TranslatableString::untranslatable("Tuplet tests"), [&](Transaction&) {
+        for (size_t i = 0; i < 9; ++i) {
+            score->setNoteRest(chordRestAt(measure, i)->segment(), 0, NoteVal(pitches[i % 3]), Fraction(1, 8));
+        }
+    });
+    const std::string expected = "3:2[ 3:2[8 8 8] 3:2[8 8 8] 3:2[8 8 8]]";
+    const std::string result = rhythm(measure);
+    if (result.substr(0, expected.size()) != expected) {
+        ADD_FAILURE() << "unexpected rhythm: " << result;
+        return nullptr;
+    }
+    return chordRestAt(measure, 0)->tuplet()->tuplet();
+}
+
+static void changeProperty(EngravingItem* item, Pid pid, const PropertyValue& value)
+{
+    item->score()->transactionManager()->transaction(TranslatableString::untranslatable("Tuplet tests"), [&](Transaction&) {
+        item->undoChangeProperty(pid, value);
+    });
+}
+
+//-----------------------------------------
+//    nestedTupletsAvoidEachOther
+//     an outer tuplet's bracket or lone number clears
+//     the brackets of the tuplets nested inside it
+//-----------------------------------------
+
+TEST_F(Engraving_TupletTests, nestedTupletsAvoidEachOther)
+{
+    MasterScore* score = ScoreRW::readScore(TUPLET_DATA_DIR + u"empty.mscx");
+    ASSERT_TRUE(score);
+    // E4 F4 G4: stems up, all tuplets above
+    Measure* m1 = score->firstMeasure();
+    Tuplet* outer = addNestedTriplets(m1, { 64, 65, 67 });
+    ASSERT_TRUE(outer);
+
+    // nested tuplets with a bracket and no number
+    for (DurationElement* e : outer->elements()) {
+        changeProperty(toTuplet(e), Pid::NUMBER_TYPE, int(TupletNumberType::NO_TEXT));
+        changeProperty(toTuplet(e), Pid::BRACKET_TYPE, int(TupletBracketType::SHOW_BRACKET));
+    }
+    auto expectOuterClear = [&]() {
+        const Shape outerShape = outer->shape().translated(outer->pagePos());
+        for (const DurationElement* e : outer->elements()) {
+            const Tuplet* inner = toTuplet(e);
+            EXPECT_TRUE(inner->hasBracket());
+            EXPECT_FALSE(outerShape.intersects(inner->shape().translated(inner->pagePos())));
+        }
+    };
+
+    // the outer tuplet with a bracket and no number
+    changeProperty(outer, Pid::NUMBER_TYPE, int(TupletNumberType::NO_TEXT));
+    changeProperty(outer, Pid::BRACKET_TYPE, int(TupletBracketType::SHOW_BRACKET));
+    ASSERT_TRUE(outer->hasBracket());
+    expectOuterClear();
+
+    // the outer tuplet with a number and no bracket
+    changeProperty(outer, Pid::NUMBER_TYPE, int(TupletNumberType::SHOW_NUMBER));
+    changeProperty(outer, Pid::BRACKET_TYPE, int(TupletBracketType::SHOW_NO_BRACKET));
+    ASSERT_FALSE(outer->hasBracket());
+    ASSERT_TRUE(outer->number());
+    expectOuterClear();
 
     delete score;
 }
