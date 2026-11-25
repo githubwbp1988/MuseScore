@@ -30,7 +30,7 @@
 #include "engraving/editing/transaction/transaction.h"
 #include "engraving/editing/editposition.h"
 
-#include "notationscene/notationcommands.h"
+#include "notation/notationcommands.h"
 
 #include "types/commontypes.h"
 
@@ -289,7 +289,7 @@ void AppearanceSettingsModel::pushToFrontInOrder()
 
 void AppearanceSettingsModel::configureGrid()
 {
-    commandDispatcher()->dispatch(OPEN_EDITGRIDSIZE_COMMAND);
+    commandDispatcher()->dispatch(OpenEditGridSizeCommand::id);
 }
 
 void AppearanceSettingsModel::freezeCurrentPlacement()

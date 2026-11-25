@@ -96,7 +96,6 @@
 #include "../dom/tupletmap.h"
 #include "../dom/utils.h"
 #include "../dom/volta.h"
-#include "../infrastructure/messagebox.h"
 
 #include "addremoveelement.h"
 #include "editstaffbrackets.h"
@@ -271,9 +270,8 @@ Tuplet* Score::addTuplet(ChordRest* destinationChordRest, Fraction ratio, Tuplet
 
     Fraction fr = f * Fraction(1, _ratio.denominator());
     if (!TDuration::isValid(fr)) {
-        MessageBox(iocContext()).warning(muse::mtrc("engraving", "Cannot create tuplet with ratio %1 for duration %2")
-                                         .arg(_ratio.toString(), f.toString()).toStdString(),
-                                         std::string(), { MessageBox::Ok });
+        LOGD() << "cannot create tuplet with ratio " << _ratio.toString() << " for duration " << f.toString();
+        MScore::setError(MsError::TUPLET_RATIO_NOT_POSSIBLE);
         return nullptr;
     }
 
@@ -376,10 +374,9 @@ Tuplet* Score::addTuplet(ChordRest* destinationChordRest, const Fraction& ratio,
                          TupletNumberType numberType, TupletBracketType bracketType)
 {
     if (!canAddTuplet(destinationChordRest, ratio, baseLen)) {
-        const Fraction duration = baseLen.fraction() * ratio.denominator();
-        MessageBox(iocContext()).warning(muse::mtrc("engraving", "Cannot create tuplet with ratio %1 for duration %2")
-                                         .arg(ratio.toString(), duration.toString()).toStdString(),
-                                         std::string(), { MessageBox::Ok });
+        LOGD() << "cannot create tuplet with ratio " << ratio.toString()
+               << " for duration " << (baseLen.fraction() * ratio.denominator()).toString();
+        MScore::setError(isValidTuplet(ratio, baseLen) ? MsError::NO_SPACE_FOR_TUPLET : MsError::TUPLET_RATIO_NOT_POSSIBLE);
         return nullptr;
     }
 
@@ -3885,11 +3882,11 @@ void Score::updateInstrumentChangeTranspositions(KeySigEvent& key, Staff* staff,
 {
     DO_ASSERT(staff->score() == this);
     if (!key.forInstrumentChange()) {
-        KeyList* kl = staff->keyList();
-        int nextTick = kl->nextKeyTick(tick.ticks());
+        const KeyList& kl = staff->keyList();
+        int nextTick = kl.nextKeyTick(tick.ticks());
 
         while (nextTick != -1) {
-            KeySigEvent e = kl->key(nextTick);
+            KeySigEvent e = kl.key(nextTick);
             if (e.forInstrumentChange()) {
                 if (key.isAtonal() && !e.isAtonal()) {
                     e.setMode(KeyMode::NONE);
@@ -3914,7 +3911,7 @@ void Score::updateInstrumentChangeTranspositions(KeySigEvent& key, Staff* staff,
                 if (keySig) {
                     undo(new ChangeKeySig(keySig, e, keySig->showCourtesy()));
                 }
-                nextTick = kl->nextKeyTick(nextTick);
+                nextTick = kl.nextKeyTick(nextTick);
             } else {
                 nextTick = -1;
             }

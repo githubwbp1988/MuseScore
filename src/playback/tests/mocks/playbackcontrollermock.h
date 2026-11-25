@@ -37,6 +37,8 @@ public:
     MOCK_METHOD(muse::audio::secs_t, playbackPosition, (), (const, override));
     MOCK_METHOD(muse::async::Channel<muse::audio::secs_t>, playbackPositionChanged, (), (const, override));
 
+    MOCK_METHOD(void, reset, (), (override));
+
     MOCK_METHOD(bool, isPlaybackInited, (), (const, override));
     MOCK_METHOD(muse::async::Channel<bool>, playbackInitedChanged, (), (const, override));
 
@@ -121,6 +123,9 @@ public:
     MOCK_METHOD((const std::map<muse::audio::TrackId, muse::audio::AudioResourceMeta>&), onlineSounds, (), (const, override));
     MOCK_METHOD(muse::async::Notification, onlineSoundsChanged, (), (const, override));
     MOCK_METHOD(muse::Progress, onlineSoundsProcessingProgress, (), (const, override));
+
+    MOCK_METHOD(void, setKeyboardPlayOffset, (int), (override));
+    MOCK_METHOD(int, keyboardPlayOffset, (), (const, override));
 };
 }
 

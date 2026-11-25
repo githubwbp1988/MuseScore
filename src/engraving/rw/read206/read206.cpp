@@ -837,7 +837,7 @@ static void readStaff(Staff* staff, XmlReader& e, ReadContext& ctx)
         } else if (tag == "hideSystemBarLine") {
             staff->setHideSystemBarLine(e.readInt());
         } else if (tag == "keylist") {
-            read400::TRead::read(staff->keyList(), e, ctx);
+            read400::TRead::read(&staff->keyList(), e, ctx);
         } else if (tag == "bracket") {
             int col = e.intAttribute("col", -1);
             if (col == -1) {
@@ -1410,6 +1410,8 @@ static bool readTextProperties206(XmlReader& e, ReadContext& ctx, TextBase* t)
             t->ryoffset() += .5 * ctx.spatium();           // HACK: bbox is different in 2.x
         }
         adjustPlacement(t);
+    } else if (tag == "subtype") {
+        e.skipCurrentElement();     // unused
     } else if (!read400::TRead::readTextProperties(t, e, ctx)) {
         return false;
     }

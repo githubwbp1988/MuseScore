@@ -25,7 +25,6 @@
 #include <algorithm>
 
 #include <QItemSelectionModel>
-#include <QTimer>
 
 #include <QProcess>
 #include "notation/imasternotation.h"
@@ -440,27 +439,27 @@ void ExportDialogModel::setUnitType(UnitType unitType)
     emit selectedUnitTypeChanged(unitType);
 }
 
-// build the command to merge video and audio
-void mergeVideo(QString videoFile, QString audioFile, double offset) {
-    QString tmpFile = videoFile;
-    tmpFile.replace(".mp4", ".tmp.mp4");
+// // build the command to merge video and audio
+// void mergeVideo(QString videoFile, QString audioFile, double offset) {
+//     QString tmpFile = videoFile;
+//     tmpFile.replace(".mp4", ".tmp.mp4");
 
-    // execute ffmpeg
-    QProcess::execute("ffmpeg", QStringList() << "-y" << "-i" << videoFile 
-                                            << "-itsoffset" << QString::number(offset)
-                                            << "-i" << audioFile
-                                            << "-c:v" << "copy" << "-c:a" << "aac"
-                                            << "-map" << "0:v:0" << "-map" << "1:a:0"
-                                            << "-shortest" << tmpFile);
+//     // execute ffmpeg
+//     QProcess::execute("ffmpeg", QStringList() << "-y" << "-i" << videoFile 
+//                                             << "-itsoffset" << QString::number(offset)
+//                                             << "-i" << audioFile
+//                                             << "-c:v" << "copy" << "-c:a" << "aac"
+//                                             << "-map" << "0:v:0" << "-map" << "1:a:0"
+//                                             << "-shortest" << tmpFile);
 
-    // execute mv
-    QProcess::execute("mv", QStringList() << tmpFile << videoFile);
+//     // execute mv
+//     QProcess::execute("mv", QStringList() << tmpFile << videoFile);
 
-    // delete audio file
-    QProcess::execute("rm", QStringList() << audioFile);
-}
+//     // delete audio file
+//     QProcess::execute("rm", QStringList() << audioFile);
+// }
 
-bool ExportDialogModel::exportScores()
+void ExportDialogModel::exportScores()
 {
     INotationPtrList notations;
 
@@ -469,85 +468,87 @@ bool ExportDialogModel::exportScores()
     }
 
     if (notations.empty()) {
-        return false;
+        return;
     }
 
-    std::shared_ptr<IExportProjectScenario> scenario = exportProjectScenario();
+    exportProjectScenario()->askExportPath(notations, m_selectedExportType, m_selectedUnitType, m_exportDirPath)
+    .onResolve(this, [this, notations](const muse::io::path_t& exportPath) {
+        if (exportPath.empty()) {
+            return;
+        }
 
-    RetVal<muse::io::path_t> exportPath
-        = scenario->askExportPath(notations, m_selectedExportType, m_selectedUnitType, m_exportDirPath);
-    if (!exportPath.ret) {
-        return false;
-    }
+        m_exportDirPath = io::absoluteDirpath(exportPath);
 
-    m_exportDirPath = io::absoluteDirpath(exportPath.val);
+        exportProjectScenario()->exportScores(notations, exportPath, m_selectedUnitType, shouldDestinationFolderBeOpenedOnExport());
 
-    struct Params {
-        INotationPtrList notations;
-        muse::io::path_t exportPath;
-        project::INotationWriter::UnitType selectedUnitType;
-        bool openFolderOnExport = false;
-    };
-
-    //! NOTE We want to call the scenario method on the next event loop.
-    //! But by that point, the dialog may already be destroyed.
-    //! Therefore, we save everything we need in variables
-    //! and pass them to the lambda.
-    //! We can't access the dialog class member in the lambda body.
-    Params params{ notations, exportPath.val, m_selectedUnitType,
-                   shouldDestinationFolderBeOpenedOnExport() };
-
-    // std::string suffix = io::suffix(params.exportPath);
-    // if (suffix.empty()) {
-    //     LOGE() << "Export path has no suffix: " << params.exportPath.toQString();
-    //     return false;
-    // }
-    // if (suffix.compare("mp4") == 0) {
-    //     QTimer::singleShot(0, [scenario, params]() {
-    //         muse::io::path_t m_exportPath1(params.exportPath.toQString().toStdString());
-    //         project::INotationWriter::UnitType m_selectedUnitType1 = params.selectedUnitType;
-    //         QString audioFile = params.exportPath.toQString();
-    //         audioFile = audioFile.left(audioFile.lastIndexOf('.')) + ".wav";
-    //         muse::io::path_t audioPath(audioFile.toStdString());
-            
-    //         bool ret = scenario->exportScores(params.notations, audioPath, params.selectedUnitType, params.openFolderOnExport);
-            
-    //         if (ret) {
-    //             LOGI() << "audio export success ... ";
-                
-    //             bool ret1 = scenario->exportScores(params.notations, m_exportPath1, params.selectedUnitType, params.openFolderOnExport);
-    //             if (ret1) {
-    //                 LOGI() << "video export success ... ";
-    //                 LOGI() << "merge video and audio to a single video file ... ";
-    //                 QString videoFile = m_exportPath1.toQString();
-    //                 QString audioFile = videoFile;
-    //                 audioFile.replace(".mp4", ".wav");
-    //                 mergeVideo(videoFile, audioFile, 3.0);
-    //                 LOGI() << "video and audio merged successfully, replacing original video file ... ";
-    //             } else {
-    //                 LOGE() << "video export failed ... ";
-    //             }
-    //         } else {
-    //             LOGE() << "audio export failed ... ";
-    //         }
-    //     });
-    // } else {
-    //     //! NOTE We can't use Async here
-    //     // because the async::processMessages is called deep within the functions,
-    //     // and this can't be done in Async's callback.
-    //     QTimer::singleShot(0, [scenario, params]() {
-    //         scenario->exportScores(params.notations, params.exportPath, params.selectedUnitType, params.openFolderOnExport);
-    //     });
-    // }
-
-    //! NOTE We can't use Async here
-    // because the async::processMessages is called deep within the functions,
-    // and this can't be done in Async's callback.
-    QTimer::singleShot(0, [scenario, params]() {
-        scenario->exportScores(params.notations, params.exportPath, params.selectedUnitType, params.openFolderOnExport);
+        emit exportStarted();
     });
 
-    return true;
+    // // --- old version
+    // struct Params {
+    //     INotationPtrList notations;
+    //     muse::io::path_t exportPath;
+    //     project::INotationWriter::UnitType selectedUnitType;
+    //     bool openFolderOnExport = false;
+    // };
+
+    // //! NOTE We want to call the scenario method on the next event loop.
+    // //! But by that point, the dialog may already be destroyed.
+    // //! Therefore, we save everything we need in variables
+    // //! and pass them to the lambda.
+    // //! We can't access the dialog class member in the lambda body.
+    // Params params{ notations, exportPath.val, m_selectedUnitType,
+    //                shouldDestinationFolderBeOpenedOnExport() };
+
+    // // std::string suffix = io::suffix(params.exportPath);
+    // // if (suffix.empty()) {
+    // //     LOGE() << "Export path has no suffix: " << params.exportPath.toQString();
+    // //     return false;
+    // // }
+    // // if (suffix.compare("mp4") == 0) {
+    // //     QTimer::singleShot(0, [scenario, params]() {
+    // //         muse::io::path_t m_exportPath1(params.exportPath.toQString().toStdString());
+    // //         project::INotationWriter::UnitType m_selectedUnitType1 = params.selectedUnitType;
+    // //         QString audioFile = params.exportPath.toQString();
+    // //         audioFile = audioFile.left(audioFile.lastIndexOf('.')) + ".wav";
+    // //         muse::io::path_t audioPath(audioFile.toStdString());
+            
+    // //         bool ret = scenario->exportScores(params.notations, audioPath, params.selectedUnitType, params.openFolderOnExport);
+            
+    // //         if (ret) {
+    // //             LOGI() << "audio export success ... ";
+                
+    // //             bool ret1 = scenario->exportScores(params.notations, m_exportPath1, params.selectedUnitType, params.openFolderOnExport);
+    // //             if (ret1) {
+    // //                 LOGI() << "video export success ... ";
+    // //                 LOGI() << "merge video and audio to a single video file ... ";
+    // //                 QString videoFile = m_exportPath1.toQString();
+    // //                 QString audioFile = videoFile;
+    // //                 audioFile.replace(".mp4", ".wav");
+    // //                 mergeVideo(videoFile, audioFile, 3.0);
+    // //                 LOGI() << "video and audio merged successfully, replacing original video file ... ";
+    // //             } else {
+    // //                 LOGE() << "video export failed ... ";
+    // //             }
+    // //         } else {
+    // //             LOGE() << "audio export failed ... ";
+    // //         }
+    // //     });
+    // // } else {
+    // //     //! NOTE We can't use Async here
+    // //     // because the async::processMessages is called deep within the functions,
+    // //     // and this can't be done in Async's callback.
+    // //     QTimer::singleShot(0, [scenario, params]() {
+    // //         scenario->exportScores(params.notations, params.exportPath, params.selectedUnitType, params.openFolderOnExport);
+    // //     });
+    // // }
+
+    // //! NOTE We can't use Async here
+    // // because the async::processMessages is called deep within the functions,
+    // // and this can't be done in Async's callback.
+    // QTimer::singleShot(0, [scenario, params]() {
+    //     scenario->exportScores(params.notations, params.exportPath, params.selectedUnitType, params.openFolderOnExport);
+    // });
 }
 
 int ExportDialogModel::pdfResolution() const

@@ -50,7 +50,7 @@
 #include "notation/inotationstyle.h"
 #include "notation/inotationviewstate.h" // IWYU pragma: keep
 
-#include "notationscene/notationcommands.h"
+#include "notation/notationcommands.h"
 
 using namespace muse::rcommand;
 using namespace mu;
@@ -1554,7 +1554,8 @@ QVariant NotationViewInputController::inputMethodQuery(Qt::InputMethodQuery quer
 
 void NotationViewInputController::dragEnterEvent(QDragEnterEvent* event)
 {
-    if (m_readonly) {
+    //! NOTE Another drop would replace the one that waits for the user's answer
+    if (m_readonly || m_pendingDrop) {
         event->ignore();
         return;
     }
@@ -1661,7 +1662,10 @@ void NotationViewInputController::dragLeaveEvent(QDragLeaveEvent*)
         dropEvent(m_lastDragMoveEvent);
     }
 
-    viewInteraction()->endDrop();
+    //! NOTE The drop that waits for the user's answer is ended after the answer
+    if (!m_pendingDrop) {
+        viewInteraction()->endDrop();
+    }
     m_mouseDownInfo.dragAction = MouseDownInfo::Nothing;
 }
 
@@ -1706,10 +1710,78 @@ bool NotationViewInputController::dropEvent(const DragMoveEvent& event, const QM
         bool isMove = isInternal && event.dropAction == Qt::MoveAction;
         isAccepted = viewInteraction()->dropRange(mimeData->data(mimeStaffListFormat), pos, isMove);
     } else {
-        isAccepted = viewInteraction()->dropSingle(pos, modifiers);
+        isAccepted = dropSingle(pos, modifiers);
     }
 
     return isAccepted;
+}
+
+bool NotationViewInputController::dropSingle(const PointF& pos, Qt::KeyboardModifiers modifiers)
+{
+    INotationInteractionPtr interaction = viewInteraction();
+    const Ret canDrop = interaction->canDropSingle(pos);
+    const bool needsInstrument = interaction->isDroppingInstrumentChange();
+
+    if (canDrop && !needsInstrument) {
+        return interaction->dropSingle(pos, modifiers);
+    }
+
+    //! NOTE The element is dropped once the user confirms the drop and/or chooses the instrument,
+    //! and the drop is kept until then
+    m_pendingDrop = PendingDrop { interaction, pos, modifiers };
+
+    if (canDrop) {
+        selectInstrumentForPendingDrop();
+        return true;
+    }
+
+    interactive()->askToContinue(canDrop).onResolve(this, [this, needsInstrument](bool proceed) {
+        if (proceed && needsInstrument) {
+            selectInstrumentForPendingDrop();
+        } else {
+            finishPendingDrop(proceed);
+        }
+    });
+
+    return true;
+}
+
+void NotationViewInputController::selectInstrumentForPendingDrop()
+{
+    //! NOTE The notation may be closed while the user confirms the drop
+    if (m_pendingDrop->interaction.expired()) {
+        finishPendingDrop(false);
+        return;
+    }
+
+    selectInstrumentScenario()->selectInstrument()
+    .onResolve(this, [this](const InstrumentTemplate& instrument) {
+        finishPendingDrop(true, instrument);
+    })
+    .onReject(this, [this](int, const std::string&) {
+        finishPendingDrop(false);
+    });
+}
+
+void NotationViewInputController::finishPendingDrop(bool drop, const std::optional<InstrumentTemplate>& instrument)
+{
+    IF_ASSERT_FAILED(m_pendingDrop) {
+        return;
+    }
+
+    const PendingDrop pendingDrop = *m_pendingDrop;
+    m_pendingDrop.reset();
+
+    INotationInteractionPtr interaction = pendingDrop.interaction.lock();
+    if (!interaction) {
+        return;
+    }
+
+    if (drop) {
+        interaction->dropSingle(pendingDrop.pos, pendingDrop.modifiers, instrument);
+    }
+
+    interaction->endDrop();
 }
 
 std::vector<int> NotationViewInputController::pitchesBeingDragged() const
@@ -1768,6 +1840,11 @@ muse::PointF NotationViewInputController::selectionElementPos() const
     return muse::PointF();
 }
 
+bool NotationViewInputController::elementHasEditPopup(const EngravingItem* item) const
+{
+    return AbstractElementPopupModel::hasElementEditPopup(item);
+}
+
 void NotationViewInputController::togglePopupForItemIfSupports(const EngravingItem* item)
 {
     if (!item) {
@@ -1776,7 +1853,7 @@ void NotationViewInputController::togglePopupForItemIfSupports(const EngravingIt
 
     ElementType type = item->type();
 
-    if (AbstractElementPopupModel::hasElementEditPopup(item)) {
+    if (elementHasEditPopup(item)) {
         m_view->toggleElementPopup(type);
     }
 }

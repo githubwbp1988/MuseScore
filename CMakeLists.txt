@@ -83,8 +83,6 @@ set(MUSE_APP_BUILD_MODE "dev" CACHE STRING "Build mode")
 
 set(MUSESCORE_REVISION "" CACHE STRING "Build revision")
 
-option(MUSE_MODULE_DOCKWINDOW_KDDOCKWIDGETS_V2 "Use KDDockWidgets v2" ON)
-
 include(${MUSE_FRAMEWORK_SRC_PATH}/cmake/MuseDeclareOptions.cmake)
 
 # Modules (alphabetical order please)
@@ -198,6 +196,7 @@ set(QT_CONCURRENT_SUPPORTED ON)
 set(QT_NO_PRIVATE_MODULE_WARNING ON)
 set(MUSE_MODULE_MULTIWINDOWS_SINGLEPROC_MODE ON)
 set(MUSE_MODULE_SHORTCUTS_V2 ON)
+set(MUSE_MODULE_RCOMMAND_HANDLER_AUTOUNBLOCK OFF)
 
 if(EXISTS "${CMAKE_CURRENT_LIST_DIR}/SetupConfigure.local.cmake")
     include(${CMAKE_CURRENT_LIST_DIR}/SetupConfigure.local.cmake)

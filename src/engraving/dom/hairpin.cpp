@@ -247,7 +247,7 @@ void HairpinSegment::dragGrip(EditData& ed)
 //   propertyDelegate
 //---------------------------------------------------------
 
-EngravingObject* HairpinSegment::propertyDelegate(Pid pid) const
+PropertyDelegate HairpinSegment::resolvePropertyDelegate(Pid pid) const
 {
     if (pid == Pid::HAIRPIN_TYPE
         || pid == Pid::VELO_CHANGE
@@ -261,9 +261,9 @@ EngravingObject* HairpinSegment::propertyDelegate(Pid pid) const
         || pid == Pid::DIRECTION
         || pid == Pid::CENTER_BETWEEN_STAVES
         ) {
-        return spanner();
+        return PropertyDelegate(spanner());
     }
-    return TextLineBaseSegment::propertyDelegate(pid);
+    return TextLineBaseSegment::resolvePropertyDelegate(pid);
 }
 
 //---------------------------------------------------------
@@ -818,6 +818,8 @@ void Hairpin::reset()
 {
     undoResetProperty(Pid::DIRECTION);
     undoResetProperty(Pid::CENTER_BETWEEN_STAVES);
+    undoResetProperty(Pid::SNAP_BEFORE);
+    undoResetProperty(Pid::SNAP_AFTER);
     TextLineBase::reset();
 }
 

@@ -39,7 +39,7 @@
 #include "notation/inotationelements.h" // IWYU pragma: keep
 #include "notation/inotationinteraction.h"
 #include "notation/inotationnoteinput.h" // IWYU pragma: keep
-#include "notationscene/notationcommands.h"
+#include "notation/notationcommands.h"
 
 #include "braille.h"
 #include "braillecode.h"
@@ -564,6 +564,11 @@ void NotationBraille::setKeys(const QString& sequence)
                 return;
             }
 
+            //! NOTE There is no one to ask whether to remove a measure repeat for it
+            if (!interaction()->noteInput()->canAddNote(NoteAddingMode::NextChord)) {
+                return;
+            }
+
             interaction()->noteInput()->addNote(params, NoteAddingMode::NextChord);
 
             if (brailleInput()->addedOctave() != -1) {
@@ -624,6 +629,11 @@ void NotationBraille::setKeys(const QString& sequence)
             const int note = static_cast<int>(brailleInput()->noteName());
             bool ok = mu::engraving::NoteInput::resolveNoteInputParams(score(), note, /*addFlag*/ true, params);
             if (!ok) {
+                return;
+            }
+
+            //! NOTE There is no one to ask whether to remove a measure repeat for it
+            if (!interaction()->noteInput()->canAddNote(NoteAddingMode::CurrentChord)) {
                 return;
             }
 

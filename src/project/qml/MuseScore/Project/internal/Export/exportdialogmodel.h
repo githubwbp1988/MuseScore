@@ -155,7 +155,7 @@ public:
     void setUnitType(int unitType);
     void setUnitType(project::INotationWriter::UnitType unitType);
 
-    Q_INVOKABLE bool exportScores();
+    Q_INVOKABLE void exportScores();
 
     int pdfResolution() const;
     void setPdfResolution(const int& resolution);
@@ -251,6 +251,7 @@ public:
 
 signals:
     void selectionChanged();
+    void exportStarted();
 
     void selectedExportTypeChanged(QVariantMap newExportType);
     void selectedUnitTypeChanged(project::INotationWriter::UnitType newUnitType);

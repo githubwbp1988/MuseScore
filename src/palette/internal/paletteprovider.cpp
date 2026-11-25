@@ -593,7 +593,23 @@ bool UserPaletteController::applyPaletteElement(const QModelIndex& index, Qt::Ke
         return false;
     }
 
-    return notation->interaction()->applyPaletteElement(cell->element.get(), modifiers);
+    mu::notation::INotationInteractionPtr interaction = notation->interaction();
+    mu::engraving::ElementPtr element = cell->element;
+
+    Ret ret = interaction->canApplyPaletteElement(element.get());
+    if (!ret) {
+        //! NOTE The element is applied once the user agrees, unless the notation is closed or changed meanwhile
+        std::weak_ptr<mu::notation::INotation> weakNotation = notation;
+        interactive()->askToContinue(ret).onResolve(this, [this, weakNotation, element, modifiers](bool proceed) {
+            mu::notation::INotationPtr notation = weakNotation.lock();
+            if (proceed && notation && notation == projectSession()->currentNotation()) {
+                notation->interaction()->applyPaletteElement(element.get(), modifiers);
+            }
+        });
+        return true;
+    }
+
+    return interaction->applyPaletteElement(element.get(), modifiers);
 }
 
 // ========================================================
@@ -895,7 +911,7 @@ void PaletteProvider::doResetPalette(const QModelIndex& index)
     m_userPaletteModel->setData(newIndex, wasExpanded, PaletteTreeModel::PaletteExpandedRole);
 }
 
-QString PaletteProvider::getPaletteFilename(bool open, const QString& name) const
+muse::async::Promise<muse::io::path_t> PaletteProvider::selectPaletteFile(bool open, const QString& name) const
 {
     std::string title;
     std::vector<std::string> filter;
@@ -924,50 +940,51 @@ QString PaletteProvider::getPaletteFilename(bool open, const QString& name) cons
         defaultPath = myName.absoluteFilePath();
     }
 
-    muse::io::path_t fn;
     if (open) {
-        fn = interactive()->selectOpeningFileSync(title, defaultPath, filter);
-    } else {
-        fn = interactive()->selectSavingFileSync(title, defaultPath, filter);
+        return interactive()->selectOpeningFile(title, defaultPath, filter);
     }
-    return fn.toQString();
+
+    return interactive()->selectSavingFile(title, defaultPath, filter);
 }
 
-bool PaletteProvider::savePalette(const QModelIndex& index)
+void PaletteProvider::savePalette(const QModelIndex& index)
 {
-    const QModelIndex srcIndex = convertProxyIndex(index, m_userPaletteModel);
+    //! NOTE The palette can be moved or removed while the user chooses the file
+    const QPersistentModelIndex srcIndex = convertProxyIndex(index, m_userPaletteModel);
     const Palette* pp = m_userPaletteModel->findPalette(srcIndex);
     if (!pp) {
-        return false;
+        return;
     }
 
-    const QString path = getPaletteFilename(/* load? */ false, pp->translatedName());
+    selectPaletteFile(/* load? */ false, pp->translatedName()).onResolve(this, [this, srcIndex](const muse::io::path_t& path) {
+        const Palette* pp = m_userPaletteModel->findPalette(srcIndex);
+        if (!pp || path.empty()) {
+            return;
+        }
 
-    if (path.isEmpty()) {
-        return false;
-    }
-    return pp->writeToFile(path);
+        pp->writeToFile(path.toQString());
+    });
 }
 
-bool PaletteProvider::loadPalette(const QModelIndex& index)
+void PaletteProvider::loadPalette(const QModelIndex& index)
 {
-    const QString path = getPaletteFilename(/* load? */ true);
-    if (path.isEmpty()) {
-        return false;
-    }
+    const QPersistentModelIndex srcIndex = convertProxyIndex(index, m_userPaletteModel);
 
-    PalettePtr pp = std::make_shared<Palette>(iocContext());
-    if (!pp->readFromFile(path)) {
-        return false;
-    }
-    pp->setType(Palette::Type::Custom);   // mark the loaded palette custom
+    selectPaletteFile(/* load? */ true).onResolve(this, [this, srcIndex](const muse::io::path_t& path) {
+        if (path.empty()) {
+            return;
+        }
 
-    const QModelIndex srcIndex = convertProxyIndex(index, m_userPaletteModel);
+        PalettePtr pp = std::make_shared<Palette>(iocContext());
+        if (!pp->readFromFile(path.toQString())) {
+            return;
+        }
+        pp->setType(Palette::Type::Custom);   // mark the loaded palette custom
 
-    const int row = srcIndex.row();
-    const QModelIndex parent = srcIndex.parent();
-
-    return m_userPaletteModel->insertPalette(pp, row, parent);
+        //! NOTE If the palette is removed meanwhile, the loaded one goes to the end
+        const int row = srcIndex.isValid() ? srcIndex.row() : m_userPaletteModel->rowCount(srcIndex.parent());
+        m_userPaletteModel->insertPalette(pp, row, srcIndex.parent());
+    });
 }
 
 void PaletteProvider::setUserPaletteTree(PaletteTreePtr tree)

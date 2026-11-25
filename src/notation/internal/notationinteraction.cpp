@@ -30,7 +30,6 @@
 #include <QApplication> // for QApplication::cursorFlashTime()
 #include <QClipboard>
 #include <QDrag>
-#include <QEventLoop>
 #include <QGuiApplication>
 #include <QKeyEvent>
 #include <QKeySequence>
@@ -79,6 +78,7 @@
 #include "engraving/dom/lyrics.h"
 #include "engraving/dom/masterscore.h"
 #include "engraving/dom/measure.h"
+#include "engraving/dom/measurerepeat.h"
 #include "engraving/dom/mscore.h"
 #include "engraving/dom/page.h"
 #include "engraving/dom/part.h"
@@ -114,6 +114,7 @@
 #include "engraving/editing/regroup.h"
 #include "engraving/editing/reset.h"
 #include "engraving/editing/navigation.h"
+#include "engraving/editing/editmeasurerepeat.h"
 #include "engraving/editing/noteinput.h"
 #include "engraving/editing/editpart.h"
 #include "engraving/editing/editlyrics.h"
@@ -2499,7 +2500,33 @@ bool NotationInteraction::updateDropRange(const PointF& pos, std::optional<bool>
 }
 
 //! NOTE Copied from ScoreView::dropEvent
-bool NotationInteraction::dropSingle(const PointF& pos, Qt::KeyboardModifiers modifiers)
+Ret NotationInteraction::canDropSingle(const PointF& pos)
+{
+    if (!m_dropData.elementDropData.has_value()) {
+        return make_ok();
+    }
+
+    ElementDropData& edd = m_dropData.elementDropData.value();
+
+    const EngravingItem* dropElement = edd.ed.dropElement;
+    if (!dropElement || !dropElement->isMeasureRepeat()) {
+        return make_ok();
+    }
+
+    // the same target as in dropSingle()
+    if (edd.ed.pos.isNull()) {
+        edd.ed.pos = pos;
+    }
+
+    EngravingItem* target = edd.dropTarget ? edd.dropTarget : dropTarget(edd.ed);
+    if (EditMeasureRepeat::droppingReplacesContents(target, edd.ed.track, toMeasureRepeat(dropElement)->numMeasures())) {
+        return make_ret(notation::Err::MeasureRepeatReplacesContents);
+    }
+
+    return make_ok();
+}
+
+bool NotationInteraction::doDropSingle(const PointF& pos, Qt::KeyboardModifiers modifiers)
 {
     if (!m_dropData.elementDropData.has_value()) {
         return false;
@@ -2655,6 +2682,27 @@ bool NotationInteraction::dropSingle(const PointF& pos, Qt::KeyboardModifiers mo
     return accepted;
 }
 
+bool NotationInteraction::isDroppingInstrumentChange() const
+{
+    if (!m_dropData.elementDropData.has_value()) {
+        return false;
+    }
+
+    const EngravingItem* dropElement = m_dropData.elementDropData->ed.dropElement;
+    return dropElement && dropElement->isInstrumentChange();
+}
+
+bool NotationInteraction::dropSingle(const PointF& pos, Qt::KeyboardModifiers modifiers,
+                                     const std::optional<InstrumentTemplate>& instrument)
+{
+    m_chosenInstrument = instrument;
+    DEFER {
+        m_chosenInstrument.reset();
+    };
+
+    return doDropSingle(pos, modifiers);
+}
+
 //! NOTE: Helper method for NotationInteraction::drop. Handles drop logic for majority of elements (returns "accepted")
 bool NotationInteraction::doDropStandard(engraving::Transaction& tx)
 {
@@ -2677,10 +2725,12 @@ bool NotationInteraction::doDropStandard(engraving::Transaction& tx)
     EngravingItem* dropElement = el->drop(tx, edd.ed);
 
     if (dropElement && dropElement->isInstrumentChange()) {
-        if (!selectInstrument(toInstrumentChange(dropElement))) {
+        IF_ASSERT_FAILED(m_chosenInstrument) {
             rollback();
             return true; // Really?
         }
+
+        setupInstrumentChange(toInstrumentChange(dropElement), *m_chosenInstrument);
     }
 
     score()->addRefresh(el->canvasBoundingRect());
@@ -2812,55 +2862,28 @@ bool NotationInteraction::dropRange(const QByteArray& data, const PointF& pos, b
     return succeeded;
 }
 
-bool NotationInteraction::selectInstrument(mu::engraving::InstrumentChange* instrumentChange)
+void NotationInteraction::setupInstrumentChange(mu::engraving::InstrumentChange* instrumentChange, const InstrumentTemplate& instrument)
 {
-    if (!instrumentChange) {
-        return false;
+    Instrument newInstrument = Instrument::fromTemplate(&instrument);
+
+    // If switching back to the part's original instrument, restore its player number
+    if (Part* part = instrumentChange->part()) {
+        const Instrument* baseInstrument = part->instrument();
+        if (baseInstrument && baseInstrument->id() == newInstrument.id()) {
+            InstrumentLabel& newLabel = newInstrument.instrumentLabel();
+            const InstrumentLabel& baseLabel = baseInstrument->instrumentLabel();
+            newLabel.setNumber(baseLabel.number());
+            newLabel.setShowNumberLong(baseLabel.showNumberLong());
+            newLabel.setShowNumberShort(baseLabel.showNumberShort());
+        }
     }
 
-#ifdef MUE_CONFIGURATION_IS_APPWEB
-    interactive()->info("", muse::trc("notation", "Sorry, instrument change on the web is not supported at this time."));
-    return false;
-#else
+    instrumentChange->setInit(true);
+    instrumentChange->setupInstrument(&newInstrument);
 
-    //! HACK To remake the asynchronous mode, a lot of refactoring is needed,
-    //! so for now this is a hack
-    bool result = false;
-    QEventLoop loop;
-    async::Promise<InstrumentTemplate> templ = selectInstrumentScenario()->selectInstrument();
-    templ.onResolve(this, [this, instrumentChange, &loop, &result](const InstrumentTemplate& val) {
-        Instrument newInstrument = Instrument::fromTemplate(&val);
-
-        // If switching back to the part's original instrument, restore its player number
-        if (Part* part = instrumentChange->part()) {
-            const Instrument* baseInstrument = part->instrument();
-            if (baseInstrument && baseInstrument->id() == newInstrument.id()) {
-                InstrumentLabel& newLabel = newInstrument.instrumentLabel();
-                const InstrumentLabel& baseLabel = baseInstrument->instrumentLabel();
-                newLabel.setNumber(baseLabel.number());
-                newLabel.setShowNumberLong(baseLabel.showNumberLong());
-                newLabel.setShowNumberShort(baseLabel.showNumberShort());
-            }
-        }
-
-        instrumentChange->setInit(true);
-        instrumentChange->setupInstrument(&newInstrument);
-
-        if (newInstrument.useDrumset()) {
-            cleanupDrumsetChanges(instrumentChange);
-        }
-
-        result = true;
-        loop.quit();
-    }).onReject(this, [&loop, &result](int, const std::string&) {
-        result = false;
-        loop.quit();
-    });
-
-    loop.exec();
-
-    return result;
-#endif
+    if (newInstrument.useDrumset()) {
+        cleanupDrumsetChanges(instrumentChange);
+    }
 }
 
 void NotationInteraction::cleanupDrumsetChanges(mu::engraving::InstrumentChange* instrumentChange) const
@@ -2889,12 +2912,70 @@ void NotationInteraction::cleanupDrumsetChanges(mu::engraving::InstrumentChange*
 }
 
 //! NOTE Copied from Palette::applyPaletteElement
+Ret NotationInteraction::canApplyPaletteElement(EngravingItem* element) const
+{
+    if (!element || !element->isMeasureRepeat()) {
+        return make_ok();
+    }
+
+    const mu::engraving::Score* score = this->score();
+    if (!score) {
+        return make_ok();
+    }
+
+    // the same targets as in applyPaletteElementToList() and applyPaletteElementToRange()
+    bool unique = false;
+    const int numMeasures = toMeasureRepeat(element)->numMeasures();
+    for (EngravingItem* target : mu::engraving::filterTargetElements(score->selection(), element, unique)) {
+        if (EditMeasureRepeat::droppingReplacesContents(target, target->track(), numMeasures)) {
+            return make_ret(notation::Err::MeasureRepeatReplacesContents);
+        }
+    }
+
+    return make_ok();
+}
+
 bool NotationInteraction::applyPaletteElement(mu::engraving::EngravingItem* element, Qt::KeyboardModifiers modifiers)
 {
     IF_ASSERT_FAILED(element) {
         return false;
     }
 
+    mu::engraving::Score* score = this->score();
+    if (!score) {
+        return false;
+    }
+
+    if (score->selection().isNone()) {
+        return false;
+    }
+
+    if (element->isInstrumentChange()) {
+        applyInstrumentChangePaletteElement(element, modifiers);
+        return true;
+    }
+
+    return doApplyPaletteElement(element, modifiers);
+}
+
+void NotationInteraction::applyInstrumentChangePaletteElement(EngravingItem* element, Qt::KeyboardModifiers modifiers)
+{
+    //! NOTE The instrument is chosen before the edit, so that the edit doesn't wait for the user.
+    //! The palette element is copied, as it may be gone by then
+    std::shared_ptr<EngravingItem> copy(element->clone());
+
+    selectInstrumentScenario()->selectInstrument().onResolve(this, [this, copy, modifiers](const InstrumentTemplate& instrument) {
+        m_chosenInstrument = instrument;
+        DEFER {
+            m_chosenInstrument.reset();
+        };
+
+        doApplyPaletteElement(copy.get(), modifiers);
+    });
+}
+
+bool NotationInteraction::doApplyPaletteElement(EngravingItem* element, Qt::KeyboardModifiers modifiers)
+{
     mu::engraving::Score* score = this->score();
     if (!score) {
         return false;
@@ -3412,10 +3493,12 @@ void NotationInteraction::applyDropPaletteElement(mu::engraving::Score* score, m
         EngravingItem* el = target->drop(tx, *dropData);
 
         if (el && el->isInstrumentChange()) {
-            if (!selectInstrument(toInstrumentChange(el))) {
+            IF_ASSERT_FAILED(m_chosenInstrument) {
                 rollback();
                 return;
             }
+
+            setupInstrumentChange(toInstrumentChange(el), *m_chosenInstrument);
         }
 
         if (el && el->hasVoiceAssignmentProperties()) {
@@ -4429,82 +4512,69 @@ void NotationInteraction::swapChordRest(MoveDirection direction)
     apply();
 }
 
-void NotationInteraction::toggleSnapToPrevious()
+void NotationInteraction::toggleSnapTo(SnapDirection direction)
 {
-    bool newSnapValue = false;
+    const bool snapBefore = direction == SnapDirection::Prev;
+    const Pid pid = snapBefore ? Pid::SNAP_BEFORE : Pid::SNAP_AFTER;
 
-    // Collect items to toggle...
-    std::unordered_set<Hairpin*> hairpins;
-    for (EngravingItem* e : score()->selection().elements()) {
-        if (e->isHairpinSegment()) {
-            Hairpin* h = toHairpinSegment(e)->hairpin();
-            // If any item in the selection has a false snapping value, then we should
-            // toggle all to true (handles mixed/indeterminate state)
-            if (!h->snapToItemBefore() && !newSnapValue) {
-                newSnapValue = true;
-            }
-            hairpins.emplace(h);
-        }
-    }
-    if (hairpins.empty()) {
-        return;
-    }
-
-    // Do toggle...
-    startEdit(TranslatableString("undoableAction", "Toggle snap to previous"));
-    for (Hairpin* h : hairpins) {
-        if (h->snapToItemBefore() == newSnapValue) {
-            continue;
-        }
-        h->undoChangeProperty(Pid::SNAP_BEFORE, PropertyValue(newSnapValue));
-    }
-    apply();
-}
-
-void NotationInteraction::toggleSnapToNext()
-{
-    bool newSnapValue = false;
-
-    // Collect items to toggle...
+    // Collect items to toggle.
+    // `GradualTempoChange` only has the "after" end, so it takes part in the
+    // "next" direction only.
     std::unordered_set<Hairpin*> hairpins;
     std::unordered_set<GradualTempoChange*> gradualTempoChanges;
-    for (EngravingItem* e : score()->selection().elements()) {
+
+    auto collect = [&](EngravingItem* e) {
         if (e->isHairpinSegment()) {
             Hairpin* h = toHairpinSegment(e)->hairpin();
-            // If any item in the selection has a false snapping value, then we should
-            // toggle all to true (handles mixed/indeterminate state)
-            if (!h->snapToItemAfter() && !newSnapValue) {
-                newSnapValue = true;
-            }
             hairpins.emplace(h);
+        } else if (!snapBefore && e->isGradualTempoChangeSegment()) {
+            gradualTempoChanges.emplace(toGradualTempoChangeSegment(e)->tempoChange());
         }
-        if (e->isGradualTempoChangeSegment()) {
-            GradualTempoChange* gtc = toGradualTempoChangeSegment(e)->tempoChange();
-            // Same here (see above)
-            if (!gtc->snapToItemAfter() && !newSnapValue) {
-                newSnapValue = true;
-            }
-            gradualTempoChanges.emplace(gtc);
-        }
+    };
+    for (EngravingItem* e : score()->selection().elements()) {
+        collect(e);
     }
+
     if (hairpins.empty() && gradualTempoChanges.empty()) {
         return;
     }
 
-    // Do toggle...
-    startEdit(TranslatableString("undoableAction", "Toggle snap to next"));
-    for (Hairpin* h : hairpins) {
-        if (h->snapToItemAfter() == newSnapValue) {
-            continue;
+    // If any item in the selection has a false snapping value, then we toggle
+    // all to true (handles the mixed/indeterminate state).
+    bool newSnapValue = false;
+    for (const Hairpin* h : hairpins) {
+        if (snapBefore ? !h->snapToItemBefore() : !h->snapToItemAfter()) {
+            newSnapValue = true;
+            break;
         }
-        h->undoChangeProperty(Pid::SNAP_AFTER, PropertyValue(newSnapValue));
+    }
+    if (!newSnapValue) {
+        for (const GradualTempoChange* gtc : gradualTempoChanges) {
+            if (!gtc->snapToItemAfter()) {
+                newSnapValue = true;
+                break;
+            }
+        }
+    }
+
+    // Do toggle...
+    const TranslatableString actionName = snapBefore
+                                          ? TranslatableString("undoableAction", "Toggle snap to previous")
+                                          : TranslatableString("undoableAction", "Toggle snap to next");
+    startEdit(actionName);
+
+    for (Hairpin* h : hairpins) {
+        const bool current = snapBefore ? h->snapToItemBefore() : h->snapToItemAfter();
+        if (current != newSnapValue) {
+            h->undoChangeProperty(pid, PropertyValue(newSnapValue));
+        }
     }
     for (GradualTempoChange* gtc : gradualTempoChanges) {
-        if (gtc->snapToItemAfter() == newSnapValue) {
-            continue;
+        if (gtc->snapToItemAfter() != newSnapValue) {
+            gtc->undoChangeProperty(pid, PropertyValue(newSnapValue));
         }
-        gtc->undoChangeProperty(Pid::SNAP_AFTER, PropertyValue(newSnapValue));
     }
+
     apply();
 }
 
@@ -6356,6 +6426,8 @@ void NotationInteraction::addTupletToSelectedChordRests(const TupletOptions& opt
                                options.selectedDurationAs);
     });
     notifyAboutNotationChanged();
+
+    checkAndShowError();
 }
 
 void NotationInteraction::addBeamToSelectedChordRests(BeamMode mode)
@@ -6743,6 +6815,15 @@ void NotationInteraction::addIntervalToSelectedNotes(int interval)
     apply();
 }
 
+Ret NotationInteraction::canAddFret() const
+{
+    if (NoteInput::addFretRemovesMeasureRepeat(score())) {
+        return make_ret(notation::Err::NoteInputRemovesMeasureRepeat);
+    }
+
+    return make_ok();
+}
+
 void NotationInteraction::addFret(int fretIndex)
 {
     transaction(TranslatableString("undoableAction", "Enter note at fret %1").arg(fretIndex), [&](auto& tx) {
@@ -6750,6 +6831,8 @@ void NotationInteraction::addFret(int fretIndex)
     });
 
     notifyAboutNotationChanged();
+    // e.g. a tuplet waiting here that doesn't fit
+    checkAndShowError();
 }
 
 void NotationInteraction::changeSelectedElementsVoice(voice_idx_t voiceIndex)
@@ -6889,10 +6972,22 @@ void NotationInteraction::addTextToItem(TextStyleType type, EngravingItem* item)
         return;
     }
 
+    if (type == TextStyleType::INSTRUMENT_CHANGE) {
+        addInstrumentChangeToItem(item);
+        return;
+    }
+
     doAddText(type, item);
 }
 
-void NotationInteraction::doAddText(TextStyleType type, EngravingItem* item)
+void NotationInteraction::addInstrumentChangeToItem(EngravingItem* item)
+{
+    selectInstrumentScenario()->selectInstrument().onResolve(this, [this, item](const InstrumentTemplate& instrument) {
+        doAddText(TextStyleType::INSTRUMENT_CHANGE, item, &instrument);
+    });
+}
+
+void NotationInteraction::doAddText(TextStyleType type, EngravingItem* item, const InstrumentTemplate* instrument)
 {
     if (m_noteInput->isNoteInputMode()) {
         m_noteInput->endNoteInput();
@@ -6907,10 +7002,12 @@ void NotationInteraction::doAddText(TextStyleType type, EngravingItem* item)
     }
 
     if (text->isInstrumentChange()) {
-        if (!selectInstrument(toInstrumentChange(text))) {
+        IF_ASSERT_FAILED(instrument) {
             rollback();
             return;
         }
+
+        setupInstrumentChange(toInstrumentChange(text), *instrument);
     }
 
     if (text->hasVoiceAssignmentProperties()) {
@@ -8346,7 +8443,7 @@ bool NotationInteraction::needEndTextEdit() const
     return false;
 }
 
-void NotationInteraction::toggleFontStyle(mu::engraving::FontStyle style)
+void NotationInteraction::toggleTextFontStyle(mu::engraving::FontStyle style)
 {
     if (!m_editData.element || !m_editData.element->isTextBase()) {
         LOGW("toggleFontStyle called with invalid current element");
@@ -8361,10 +8458,10 @@ void NotationInteraction::toggleFontStyle(mu::engraving::FontStyle style)
     notifyAboutTextEditingChanged();
 }
 
-void NotationInteraction::toggleVerticalAlignment(VerticalAlignment align)
+void NotationInteraction::toggleTextVAlign(VerticalAlignment align)
 {
     if (!m_editData.element || !m_editData.element->isTextBase()) {
-        LOGW("toggleVerticalAlignment called with invalid current element");
+        LOGW("toggleValign called with invalid current element");
         return;
     }
     mu::engraving::TextBase* text = toTextBase(m_editData.element);
@@ -8388,36 +8485,6 @@ void NotationInteraction::toggleVerticalAlignment(VerticalAlignment align)
                              mu::engraving::PropertyFlags::UNSTYLED);
     score()->endCmd();
     notifyAboutTextEditingChanged();
-}
-
-void NotationInteraction::toggleBold()
-{
-    toggleFontStyle(mu::engraving::FontStyle::Bold);
-}
-
-void NotationInteraction::toggleItalic()
-{
-    toggleFontStyle(mu::engraving::FontStyle::Italic);
-}
-
-void NotationInteraction::toggleUnderline()
-{
-    toggleFontStyle(mu::engraving::FontStyle::Underline);
-}
-
-void NotationInteraction::toggleStrike()
-{
-    toggleFontStyle(mu::engraving::FontStyle::Strike);
-}
-
-void NotationInteraction::toggleSubScript()
-{
-    toggleVerticalAlignment(VerticalAlignment::AlignSubScript);
-}
-
-void NotationInteraction::toggleSuperScript()
-{
-    toggleVerticalAlignment(VerticalAlignment::AlignSuperScript);
 }
 
 template<typename P>

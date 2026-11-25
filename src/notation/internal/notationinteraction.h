@@ -22,6 +22,7 @@
 #pragma once
 
 #include <memory>
+#include <optional>
 #include <vector>
 
 #include <QTimer>
@@ -250,14 +251,21 @@ public:
     bool startDropImage(const QUrl& url) override;
     bool updateDropSingle(const muse::PointF& pos, Qt::KeyboardModifiers modifiers) override;
     bool updateDropRange(const muse::PointF& pos, std::optional<bool> preserveMeasureAlignment = std::nullopt) override;
-    bool dropSingle(const muse::PointF& pos, Qt::KeyboardModifiers modifiers) override;
+
+    muse::Ret canDropSingle(const muse::PointF& pos) override;
+    bool isDroppingInstrumentChange() const override;
+    bool dropSingle(const muse::PointF& pos, Qt::KeyboardModifiers modifiers,
+                    const std::optional<InstrumentTemplate>& instrument = std::nullopt) override;
+
     bool dropRange(const QByteArray& data, const muse::PointF& pos, bool deleteSourceMaterial) override;
     void setDropTarget(EngravingItem* item, bool notify = true) override;
     void setDropRects(const std::vector<muse::RectF>& rects) override;
     void endDrop() override;
     muse::async::Notification dropChanged() const override;
 
+    muse::Ret canApplyPaletteElement(mu::engraving::EngravingItem* element) const override;
     bool applyPaletteElement(mu::engraving::EngravingItem* element, Qt::KeyboardModifiers modifiers = {}) override;
+
     void undo() override;
     void redo() override;
     void undoRedoToIndex(size_t idx) override;
@@ -267,8 +275,7 @@ public:
     void movePitch(MoveDirection d, PitchMode mode) override;
     void moveChordRestToStaff(MoveDirection d) override;
     void swapChordRest(MoveDirection d) override;
-    void toggleSnapToPrevious() override;
-    void toggleSnapToNext() override;
+    void toggleSnapTo(SnapDirection direction) override;
 
     // Text edit
     bool isTextSelected() const override;
@@ -364,7 +371,10 @@ public:
     bool transpose(const TransposeOptions& options) override;
     void swapVoices(voice_idx_t voiceIndex1, voice_idx_t voiceIndex2) override;
     void addIntervalToSelectedNotes(int interval) override;
+
+    muse::Ret canAddFret() const override;
     void addFret(int fretIndex) override;
+
     void changeSelectedElementsVoice(voice_idx_t voiceIndex) override;
     void changeSelectedElementsVoiceAssignment(VoiceAssignment voiceAssignment) override;
     void addAnchoredLineToSelectedNotes() override;
@@ -431,12 +441,10 @@ public:
     void addGuitarBend(GuitarBendType bendType) override;
     void addFretboardDiagram() override;
 
-    void toggleBold() override;
-    void toggleItalic() override;
-    void toggleUnderline() override;
-    void toggleStrike() override;
-    void toggleSubScript() override;
-    void toggleSuperScript() override;
+    void toggleTextFontStyle(FontStyle style) override;
+
+    void toggleTextVAlign(VerticalAlignment align) override;
+
     void toggleArticulation(mu::engraving::SymId) override;
     void toggleOrnament(OrnamentType type) override;
     void toggleAutoplace(bool) override;
@@ -494,6 +502,7 @@ private:
     void applyPaletteElementToRange(EngravingItem* element, mu::engraving::Score* score, const mu::engraving::Selection& sel,
                                     Qt::KeyboardModifiers modifiers = {});
 
+    bool doDropSingle(const muse::PointF& pos, Qt::KeyboardModifiers modifiers);
     bool doDropStandard(mu::engraving::Transaction& tx);
     bool doDropTextBaseAndSymbols(mu::engraving::Transaction& tx, const muse::PointF& pos, bool applyUserOffset);
 
@@ -510,8 +519,7 @@ private:
     void notifyAboutNoteInputStateChanged();
     void doDragLasso(const muse::PointF& p);
     void endLasso();
-    void toggleFontStyle(mu::engraving::FontStyle);
-    void toggleVerticalAlignment(mu::engraving::VerticalAlignment);
+
     void navigateToLyrics(bool, bool, bool);
 
     mu::engraving::Harmony* editedHarmony() const;
@@ -525,7 +533,8 @@ private:
 
     void addTextToTopFrame(TextStyleType type);
     void addTextToItem(TextStyleType type, EngravingItem* item);
-    void doAddText(TextStyleType type, EngravingItem* item = nullptr);
+    void doAddText(TextStyleType type, EngravingItem* item = nullptr, const InstrumentTemplate* instrument = nullptr);
+    void addInstrumentChangeToItem(EngravingItem* item);
 
     void startEditText(mu::engraving::TextBase* text);
     bool needEndTextEdit() const;
@@ -576,7 +585,9 @@ private:
 
     void doFinishAddFretboardDiagram();
 
-    bool selectInstrument(mu::engraving::InstrumentChange* instrumentChange);
+    void setupInstrumentChange(mu::engraving::InstrumentChange* instrumentChange, const InstrumentTemplate& instrument);
+    void applyInstrumentChangePaletteElement(mu::engraving::EngravingItem* element, Qt::KeyboardModifiers modifiers);
+    bool doApplyPaletteElement(mu::engraving::EngravingItem* element, Qt::KeyboardModifiers modifiers);
     void cleanupDrumsetChanges(mu::engraving::InstrumentChange* instrumentChange) const;
 
     void applyDropPaletteElement(mu::engraving::Score* score, mu::engraving::EngravingItem* target, mu::engraving::EngravingItem* e,
@@ -777,6 +788,9 @@ private:
     mu::engraving::Lasso* m_lasso = nullptr;
 
     bool m_notifyAboutDropChanged = false;
+
+    //! NOTE The instrument of the instrument change being applied or dropped, chosen before the edit
+    std::optional<InstrumentTemplate> m_chosenInstrument;
     HitElementContext m_hitElementContext;
 
     muse::async::Channel<ShowItemRequest> m_showItemRequested;
