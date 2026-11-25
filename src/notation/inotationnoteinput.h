@@ -46,14 +46,28 @@ public:
     virtual bool usingNoteInputMethod(NoteInputMethod method) const = 0;
     virtual void setNoteInputMethod(NoteInputMethod method) = 0;
 
+    virtual muse::Ret canAddNote(NoteAddingMode addingMode) const = 0;
     virtual void addNote(const NoteInputParams& params, NoteAddingMode addingMode) = 0;
+
     virtual void setDuration(engraving::DurationType duration) = 0;
     virtual void toggleRest() = 0;
     virtual void toggleDots(int dots) = 0;
+
+    virtual muse::Ret canPutNote(const muse::PointF& pos) const = 0;
     virtual muse::Ret putNote(const muse::PointF& pos, bool replace, bool insert) = 0;
+
     virtual void removeNote(const muse::PointF& pos) = 0;
 
     virtual void addTuplet(const TupletOptions& options) = 0;
+
+    // In By duration and Rhythm input, a tuplet waits for the next duration
+    virtual bool tupletPending() const = 0;
+    virtual void setPendingTuplet(const TupletOptions& options) = 0;
+    virtual void cancelPendingTuplet() = 0;
+    // Escape: the tuplets that waited so far don't come back with undo
+    virtual void forgetPendingTuplets() = 0;
+    // e.g. "Triplet waiting for a duration", or empty if no tuplet is pending
+    virtual muse::String pendingTupletInfo() const = 0;
 
     virtual void doubleNoteInputDuration() = 0;
     virtual void halveNoteInputDuration() = 0;

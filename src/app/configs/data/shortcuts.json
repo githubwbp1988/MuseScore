@@ -107,10 +107,10 @@
         {"command": "command://notation/add-note/insert-chord/f",  "sequences": ["Ctrl+Shift+F"]},
         {"command": "command://notation/add-note/insert-chord/g",  "sequences": ["Ctrl+Shift+G"]},
         {"command": "command://notation/enter-rest",  "sequences": ["0","Num+0"]},
-        {"command": "command://notation/toggle-staccato",  "sequences": ["Shift+S"]},
-        {"command": "command://notation/toggle-tenuto",  "sequences": ["Shift+N"]},
-        {"command": "command://notation/toggle-marcato",  "sequences": ["Shift+O"]},
-        {"command": "command://notation/toggle-sforzato",  "sequences": ["Shift+V"]},
+        {"command": "command://notation/toggle-articulation/staccato",  "sequences": ["Shift+S"]},
+        {"command": "command://notation/toggle-articulation/tenuto",  "sequences": ["Shift+N"]},
+        {"command": "command://notation/toggle-articulation/marcato",  "sequences": ["Shift+O"]},
+        {"command": "command://notation/toggle-articulation/sforzato",  "sequences": ["Shift+V"]},
         {"command": "command://notation/toggle-sharp",  "sequences": ["+","Num++"]},
         {"command": "command://notation/toggle-natural",  "sequences": ["="]},
         {"command": "command://notation/toggle-flat",  "sequences": ["-","Num+-"]},
@@ -140,6 +140,14 @@
         {"command": "command://notation/append-measures",  "sequences": ["Alt+Shift+B"]},
         {"command": "command://notation/insert-measure",  "sequences": ["Ins"]},
         {"command": "command://notation/insert-measures",  "sequences": ["Ctrl+Ins"]},
+        {"command": "command://notation/add-tuplet/duplet",  "sequences": ["Ctrl+2"]},
+        {"command": "command://notation/add-tuplet/triplet",  "sequences": ["Ctrl+3"]},
+        {"command": "command://notation/add-tuplet/quadruplet",  "sequences": ["Ctrl+4"]},
+        {"command": "command://notation/add-tuplet/quintuplet",  "sequences": ["Ctrl+5"]},
+        {"command": "command://notation/add-tuplet/sextuplet",  "sequences": ["Ctrl+6"]},
+        {"command": "command://notation/add-tuplet/septuplet",  "sequences": ["Ctrl+7"]},
+        {"command": "command://notation/add-tuplet/octuplet",  "sequences": ["Ctrl+8"]},
+        {"command": "command://notation/add-tuplet/nonuplet",  "sequences": ["Ctrl+9"]},
         {"command": "command://notation/set-duration/longa",  "sequences": ["9","Num+9"]},
         {"command": "command://notation/set-duration/breve",  "sequences": ["8","Num+8"]},
         {"command": "command://notation/set-duration/whole",  "sequences": ["7","Num+7"]},
@@ -269,15 +277,7 @@
         {"command": "command://notation/add-chord-symbol",  "sequences": ["Ctrl+K"]},
         {"command": "command://notation/add-rehearsalmark",  "sequences": ["Ctrl+M"]},
         {"command": "command://notation/add-grace-note/acciaccatura",  "sequences": ["/","Num+/"]},
-        {"command": "command://notation/add-figured-bass",  "sequences": ["Ctrl+G"]},
-        {"command": "command://notation/add-tuplet/duplet",  "sequences": ["Ctrl+2"]},
-        {"command": "command://notation/add-tuplet/triplet",  "sequences": ["Ctrl+3"]},
-        {"command": "command://notation/add-tuplet/quadruplet",  "sequences": ["Ctrl+4"]},
-        {"command": "command://notation/add-tuplet/quintuplet",  "sequences": ["Ctrl+5"]},
-        {"command": "command://notation/add-tuplet/sextuplet",  "sequences": ["Ctrl+6"]},
-        {"command": "command://notation/add-tuplet/septuplet",  "sequences": ["Ctrl+7"]},
-        {"command": "command://notation/add-tuplet/octuplet",  "sequences": ["Ctrl+8"]},
-        {"command": "command://notation/add-tuplet/nonuplet",  "sequences": ["Ctrl+9"]}
+        {"command": "command://notation/add-figured-bass",  "sequences": ["Ctrl+G"]}
       ]
     },
     {
@@ -298,7 +298,7 @@
       "shortcuts": [
         {"command": "command://notation/move-measure-to-prev-system",  "sequences": ["Alt+Up"]},
         {"command": "command://notation/move-measure-to-next-system",  "sequences": ["Alt+Down"]},
-        {"command": "command://notation/add-beam-selected-range",  "sequences": ["Alt+="]}
+        {"command": "command://notation/set-beam/selected-range",  "sequences": ["Alt+="]}
       ]
     },
     {
@@ -313,9 +313,9 @@
     {
         "scope": "NOTATION_TEXT_EDITING",
         "shortcuts": [
-            {"command": "command://notation/edittext-toggle-bold",  "sequences": ["Ctrl+B"]},
-            {"command": "command://notation/edittext-toggle-italic",  "sequences": ["Ctrl+I"]},
-            {"command": "command://notation/edittext-toggle-underline",  "sequences": ["Ctrl+U"]},
+            {"command": "command://notation/edittext/fontstyle/bold",  "sequences": ["Ctrl+B"]},
+            {"command": "command://notation/edittext/fontstyle/italic",  "sequences": ["Ctrl+I"]},
+            {"command": "command://notation/edittext/fontstyle/underline",  "sequences": ["Ctrl+U"]},
             {"command": "command://notation/edittext-advance/longa",  "sequences": ["Ctrl+9"]},
             {"command": "command://notation/edittext-advance/breve",  "sequences": ["Ctrl+8"]},
             {"command": "command://notation/edittext-advance/1",  "sequences": ["Ctrl+7"]},
@@ -325,15 +325,15 @@
             {"command": "command://notation/edittext-advance/16",  "sequences": ["Ctrl+3"]},
             {"command": "command://notation/edittext-advance/32",  "sequences": ["Ctrl+2"]},
             {"command": "command://notation/edittext-advance/64",  "sequences": ["Ctrl+1"]},
-            {"command": "command://notation/edittext-prev-beat",  "sequences": [":"]},
-            {"command": "command://notation/edittext-next-beat",  "sequences": [";"]},
-            {"command": "command://notation/edittext-next-word", "sequences": ["Space"] },
-            {"command": "command://notation/edittext-next-element", "sequences": ["Right"] },
-            {"command": "command://notation/edittext-prev-element", "sequences": ["Left", "Shift+Space", "Backspace"] },
-            {"command": "command://notation/editlyrics-next-syllable",  "sequences": ["-","Num+-"]},
+            {"command": "command://notation/text-navigate/prev-beat",  "sequences": [":"]},
+            {"command": "command://notation/text-navigate/next-beat",  "sequences": [";"]},
+            {"command": "command://notation/text-navigate/next-word", "sequences": ["Space"] },
+            {"command": "command://notation/text-navigate/next-element", "sequences": ["Right"] },
+            {"command": "command://notation/text-navigate/prev-element", "sequences": ["Left", "Shift+Space", "Backspace"] },
+            {"command": "command://notation/lyrics-navigate/next-syllable",  "sequences": ["-","Num+-"]},
             {"command": "command://notation/editlyrics-add-melisma",  "sequences": ["_"]},
-            {"command": "command://notation/editlyrics-next-verse",  "sequences": ["Down"]},
-            {"command": "command://notation/editlyrics-prev-verse",  "sequences": ["Up"]},
+            {"command": "command://notation/lyrics-navigate/next-verse",  "sequences": ["Down"]},
+            {"command": "command://notation/lyrics-navigate/prev-verse",  "sequences": ["Up"]},
             {"command": "command://notation/editlyrics-add-verse",  "sequences": ["Return","Enter"]}
         ]
     },

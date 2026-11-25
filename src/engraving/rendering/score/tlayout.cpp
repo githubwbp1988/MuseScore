@@ -2306,56 +2306,14 @@ static void layoutLines(const FiguredBass* item, FiguredBass::LayoutData* ldata,
     double printedLineLength = lastCR ? lastCR->pageX() - item->pageX() + 1.5 * item->spatium() : 3 * item->spatium();
     ldata->printedLineLength = printedLineLength;
 
-    // get duration indicator line(s) from page position of nextSegm
-    const std::vector<System*>& systems = ctx.dom().systems();
-    System* s1  = item->segment()->measure()->system();
-    System* s2  = nextSegm->measure()->system();
-    system_idx_t sysIdx1 = muse::indexOf(systems, s1);
-    system_idx_t sysIdx2 = muse::indexOf(systems, s2);
-
-    if (sysIdx2 == muse::nidx || sysIdx2 < sysIdx1) {
-        sysIdx2 = sysIdx1;
+    // get duration indicator line from page position of nextSegm
+    // TODO: lines on the following systems, when the duration ends on another system. The systems after
+    // the item's own may not have been laid out yet, so this needs an approach like that for spanners.
+    if (nextSegm->measure()->system() != item->segment()->measure()->system()) {
         nextSegm = item->segment()->next1();
-        // TODO
-        // During layout of figured bass next systems' numbers may be still
-        // undefined (then sysIdx2 == muse::nidx) or change in the future.
-        // A layoutSystem() approach similar to that for spanners should
-        // probably be implemented.
     }
-
-    system_idx_t i;
-    int len;
-    size_t segIdx = 0;
-    for (i = sysIdx1, segIdx = 0; i <= sysIdx2; ++i, ++segIdx) {
-        len = 0;
-        if (sysIdx1 == sysIdx2 || i == sysIdx1) {
-            // single line
-            len = nextSegm->pageX() - item->pageX() - 4;               // stop 4 raster units before next segm
-        } else if (i == sysIdx1) {
-            // initial line
-            double w   = s1->staff(item->staffIdx())->bbox().right();
-            double x   = s1->pageX() + w;
-            len = x - item->pageX();
-        } else if (i > 0 && i != sysIdx2) {
-            // middle line
-            LOGD("FiguredBass: duration indicator middle line not implemented");
-        } else if (i == sysIdx2) {
-            // end line
-            LOGD("FiguredBass: duration indicator end line not implemented");
-        }
-        // store length item, reusing array items if already present
-        if (lineLengths.size() <= segIdx) {
-            lineLengths.push_back(len);
-        } else {
-            lineLengths[segIdx] = len;
-        }
-    }
-    // if more array items than needed, truncate array
-    if (lineLengths.size() > segIdx) {
-        lineLengths.resize(segIdx);
-    }
-
-    ldata->lineLengths = lineLengths;
+    int len = nextSegm->pageX() - item->pageX() - 4;               // stop 4 raster units before next segm
+    ldata->lineLengths = { static_cast<double>(len) };
 }
 
 void TLayout::layoutFiguredBass(const FiguredBass* item, FiguredBass::LayoutData* ldata, const LayoutContext& ctx)
@@ -2462,7 +2420,7 @@ void TLayout::layoutFingering(const Fingering* item, Fingering::LayoutData* ldat
                     // force extra space above staff & chord (but not other fingerings)
                     double top = 0.0;
                     if (chord->up() && chord->beam() && stem) {
-                        top = stem->y() + stem->ldata()->bbox().top();
+                        top = std::min(0.0, stem->y() + stem->ldata()->bbox().top());
                     } else {
                         const Note* un = chord->upNote();
                         top = std::min(0.0, un->y() + un->ldata()->bbox().top());
@@ -2492,7 +2450,7 @@ void TLayout::layoutFingering(const Fingering* item, Fingering::LayoutData* ldat
                     // force extra space below staff & chord (but not other fingerings)
                     double bottom;
                     if (!chord->up() && chord->beam() && stem) {
-                        bottom = stem->y() + stem->ldata()->bbox().bottom();
+                        bottom = std::max(vStaff->staffHeight(item->tick()), stem->y() + stem->ldata()->bbox().bottom());
                     } else {
                         const Note* dn = chord->downNote();
                         bottom = std::max(vStaff->staffHeight(item->tick()), dn->y() + dn->ldata()->bbox().bottom());
@@ -3185,12 +3143,15 @@ void TLayout::manageHairpinSnapping(HairpinSegment* item, LayoutContext& ctx)
         ldata->connectItemSnappedAfter(possibleSnapAfterElement);
     }
 
-    // In case of dynamics/expressions before or after, make space for them horizontally
+    if (!item->autoplace()) {
+        return;
+    }
+
     double mag = item->staff()->staffMag(item);
     double hairpinDistToDynOrExpr = ctx.conf().style().styleAbsolute(Sid::autoplaceHairpinDynamicsDistance) * mag;
 
-    bool makeSpaceBefore = (doSnapBefore && possibleSnapBeforeElement->isTextBase())
-                           || (possibleSnapBeforeElement && possibleSnapBeforeElement->isDynamic());
+    bool makeSpaceBefore = possibleSnapBeforeElement && possibleSnapBeforeElement->isTextBase()
+                           && possibleSnapBeforeElement->autoplace();
 
     if (makeSpaceBefore && possibleSnapBeforeElement->findAncestor(ElementType::SYSTEM) == item->system()) {
         double xItemPos = possibleSnapBeforeElement->pageX() - item->system()->pageX();
@@ -3203,8 +3164,8 @@ void TLayout::manageHairpinSnapping(HairpinSegment* item, LayoutContext& ctx)
         }
     }
 
-    bool makeSpaceAfter = (doSnapAfter && possibleSnapAfterElement->isTextBase())
-                          || (possibleSnapAfterElement && possibleSnapAfterElement->isDynamic());
+    bool makeSpaceAfter = possibleSnapAfterElement && possibleSnapAfterElement->isTextBase()
+                          && possibleSnapAfterElement->autoplace();
 
     if (makeSpaceAfter && possibleSnapAfterElement->findAncestor(ElementType::SYSTEM) == item->system()) {
         double xItemPos = possibleSnapAfterElement->pageX() - item->system()->pageX();
@@ -3715,7 +3676,7 @@ void TLayout::layoutKeySig(const KeySig* item, KeySig::LayoutData* ldata, const 
                     layoutNaturals();
                 }
             } else if (prevKsEvent.custom()) {
-                Fraction prevKeyTick = Fraction::fromTicks(item->staff()->keyList()->currentKeyTick(
+                Fraction prevKeyTick = Fraction::fromTicks(item->staff()->keyList().currentKeyTick(
                                                                (item->tick() - Fraction::eps()).ticks()));
                 Segment* prevKsSeg = item->score()->tick2segment(prevKeyTick, true, SegmentType::KeySig);
                 if (prevKsSeg) {

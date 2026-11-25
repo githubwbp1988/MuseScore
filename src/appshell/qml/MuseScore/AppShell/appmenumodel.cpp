@@ -33,14 +33,14 @@
 
 #include "notation/inotation.h"
 #include "notation/inotationundostack.h"
-#include "notationscene/notationcommands.h"
+#include "notation/notationcommands.h"
 
 #include "appshell/appshellcommands.h"
 #include "project/projectcommands.h"
-#include "notationscene/notationcommands.h"
+#include "notation/notationcommands.h"
 #include "playback/playbackcommands.h"
 #include "palette/palettecommands.h"
-#include "dockwindow_v2/dockcommands.h"
+#include "dockwindow/dockcommands.h"
 #include "update/updatecommands.h"
 #include "diagnostics/diagnosticscommands.h"
 #include "musesampler/musesamplercommands.h"
@@ -213,7 +213,7 @@ MenuItem* AppMenuModel::makeFileMenu()
         makeMenuItem(PROJECT_EXPORT_COMMAND),
         makeSeparator(),
         makeMenuItem(PROJECT_PROPERTIES_COMMAND),
-        makeMenuItem(OPEN_PARTS_COMMAND),
+        makeMenuItem(OpenPartsCommand::id),
         makeSeparator(),
         makeMenuItem(PROJECT_PRINT_COMMAND),
         makeSeparator(),
@@ -301,12 +301,12 @@ MenuItem* AppMenuModel::makeViewMenu()
 #endif
         makeSeparator(),
         makeMenu(TranslatableString("appshell/menu/view", "&Show"), {
-            makeMenuItem(SHOW_INVISIBLE_COMMAND),
-            makeMenuItem(SHOW_UNPRINTABLE_COMMAND),
-            makeMenuItem(SHOW_FRAMES_COMMAND),
-            makeMenuItem(SHOW_PAGEBORDERS_COMMAND),
-            makeMenuItem(SHOW_IRREGULAR_COMMAND),
-            makeMenuItem(SHOW_SOUNDFLAGS_COMMAND),
+            makeMenuItem(ShowInvisibleCommand::id),
+            makeMenuItem(ShowUnprintableCommand::id),
+            makeMenuItem(ShowFramesCommand::id),
+            makeMenuItem(ShowPageBordersCommand::id),
+            makeMenuItem(ShowIrregularCommand::id),
+            makeMenuItem(ShowSoundFlagsCommand::id),
         }, "menu-show"),
         makeSeparator(),
         makeMenuItem(DOCK_RESTORE_DEFAULT_LAYOUT_COMMAND),
@@ -337,9 +337,9 @@ MenuItem* AppMenuModel::makeFormatMenu()
 {
     MenuItemList formatItems {
         makeMenuItem(OPEN_EDIT_STYLE_COMMAND),
-        makeMenuItem(OPEN_PAGE_SETTINGS_COMMAND),
+        makeMenuItem(OpenPageSettingsCommand::id),
         makeSeparator(),
-        makeMenuItem(OPEN_BREAKS_COMMAND),
+        makeMenuItem(OpenBreaksCommand::id),
         makeMenu(TranslatableString("appshell/menu/format", "Str&etch"), {
             makeMenuItem(STRETCH_INCREASE_COMMAND),
             makeMenuItem(STRETCH_DECREASE_COMMAND),
@@ -351,8 +351,8 @@ MenuItem* AppMenuModel::makeFormatMenu()
         makeMenuItem(RESET_SHAPES_AND_POSITIONS_COMMAND),
         makeMenuItem(RESET_TO_DEFAULT_LAYOUT_COMMAND),
         makeSeparator(),
-        makeMenuItem(LOAD_STYLE_COMMAND),
-        makeMenuItem(SAVE_STYLE_COMMAND)
+        makeMenuItem(LoadStyleCommand::id),
+        makeMenuItem(SaveStyleCommand::id)
     };
 
     return makeMenu(TranslatableString("appshell/menu/format", "F&ormat"), formatItems, "menu-format");
@@ -361,11 +361,11 @@ MenuItem* AppMenuModel::makeFormatMenu()
 MenuItem* AppMenuModel::makeToolsMenu()
 {
     MenuItemList toolsItems {
-        makeMenuItem(OPEN_TRANSPOSE_COMMAND),
+        makeMenuItem(OpenTransposeCommand::id),
         makeSeparator(),
         makeMenuItem(STAFF_EXPLODE_COMMAND),
         makeMenuItem(STAFF_IMPLODE_COMMAND),
-        makeMenuItem(OPEN_REALIZECHORDSYMBOLS_COMMAND),
+        makeMenuItem(OpenRealizeChordSymbolsCommand::id),
         makeMenu(TranslatableString("appshell/menu/tools", "&Voices"), {
             makeMenuItem(SwapVoice12Command::id),
             makeMenuItem(SwapVoice13Command::id),
@@ -720,11 +720,11 @@ MenuItemList AppMenuModel::makeTextItems()
 MenuItemList AppMenuModel::makeLinesItems()
 {
     MenuItemList items {
-        makeMenuItem(ADD_SLUR_COMMAND),
+        makeMenuItem(AddSlurCommand::id),
         makeMenuItem(ADD_HAIRPIN_COMMAND),
         makeMenuItem(ADD_HAIRPIN_REVERSE_COMMAND),
-        makeMenuItem(ADD_OTTAVA_8VA_COMMAND),
-        makeMenuItem(ADD_OTTAVA_8VB_COMMAND),
+        makeMenuItem(AddOttava8vaCommand::id),
+        makeMenuItem(AddOttava8vbCommand::id),
         makeMenuItem(ADD_NOTELINE_COMMAND)
     };
 

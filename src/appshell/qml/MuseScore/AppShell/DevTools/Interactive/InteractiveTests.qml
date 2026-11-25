@@ -98,16 +98,16 @@ Rectangle {
             width: 200
             navigation.panel: navPanel
             navigation.row: 0
-            text: "[cpp] showProgress"
-            onClicked: testModel.showProgress()
+            text: "[cpp] selectMultipleDirectories"
+            onClicked: testModel.selectMultipleDirectories()
         }
 
         FlatButton {
             width: 200
             navigation.panel: navPanel
             navigation.row: 0
-            text: "[cpp] Sample dialog sync"
-            onClicked: testModel.openSampleDialogSync()
+            text: "[cpp] showProgress"
+            onClicked: testModel.showProgress()
         }
 
         FlatButton {
@@ -136,18 +136,6 @@ Rectangle {
             navigation.row: 2
             text: "[cpp] Sample dialog async with promise"
             onClicked: testModel.openSampleDialogAsyncWithPromise()
-        }
-
-        FlatButton {
-            width: 200
-            navigation.panel: navPanel
-            navigation.row: 3
-            text: "[qml] Sample dialog sync"
-            onClicked: {
-                console.log("qml: before open")
-                api.launcher.openSync("muse://devtools/interactive/sample?color=#EF8605")
-                console.log("qml: after open")
-            }
         }
 
         FlatButton {
@@ -252,14 +240,6 @@ Rectangle {
             navigation.row: 12
             text: "Require"
             onClicked: testModel.require()
-        }
-
-        FlatButton {
-            width: 200
-            navigation.panel: navPanel
-            navigation.row: 13
-            text: "Widget dialog"
-            onClicked: testModel.openWidgetDialog()
         }
 
         FlatButton {

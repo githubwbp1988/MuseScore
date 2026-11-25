@@ -22,6 +22,7 @@
 
 #pragma once
 
+#include <optional>
 #include <set>
 #include <vector>
 #include <utility>
@@ -46,11 +47,18 @@ struct NoteVal;
 struct Position;
 
 enum class AccidentalType : unsigned char;
+enum class TupletNumberType : unsigned char;
 enum class SymId;
 
 struct NoteInputParams {
     int step = 0;
     int drumPitch = -1;
+};
+
+// the tuplet waiting at the input position
+struct TupletPreview {
+    Fraction ratio;
+    TupletNumberType numberType {};
 };
 
 class NoteInput
@@ -92,7 +100,13 @@ public:
     static void addPitch(Transaction& tx, Score* score, int step, bool addFlag, bool insert);
     static void addFret(Transaction& tx, Score* score, int fret);
 
+    static bool putNoteRemovesMeasureRepeat(Score* score, const muse::PointF& pos);
+    static bool addPitchRemovesMeasureRepeat(Score* score, bool addFlag);
+    static bool addFretRemovesMeasureRepeat(Score* score);
+
     static void setDuration(Transaction& tx, Score* score, DurationType duration);
+    static std::optional<TupletPreview> tupletPreview(const Score* score);
+    static void useSelectedNoteForRhythm(Score* score);
     static void toggleRest(Transaction& tx, Score* score);
     static void toggleDots(Transaction& tx, Score* score, int dots, bool toggleForSelectionOnly = false);
     static void increaseDuration(Transaction& tx, Score* score);

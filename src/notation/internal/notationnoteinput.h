@@ -61,14 +61,25 @@ public:
     bool usingNoteInputMethod(NoteInputMethod method) const override;
     void setNoteInputMethod(NoteInputMethod method) override;
 
+    muse::Ret canAddNote(NoteAddingMode addingMode) const override;
     void addNote(const NoteInputParams& params, NoteAddingMode addingMode) override;
+
     void setDuration(DurationType duration) override;
     void toggleRest() override;
     void toggleDots(int dots) override;
+
+    muse::Ret canPutNote(const muse::PointF& pos) const override;
     muse::Ret putNote(const muse::PointF& pos, bool replace, bool insert) override;
+
     void removeNote(const muse::PointF& pos) override;
 
     void addTuplet(const TupletOptions& options) override;
+
+    bool tupletPending() const override;
+    void setPendingTuplet(const TupletOptions& options) override;
+    void cancelPendingTuplet() override;
+    void forgetPendingTuplets() override;
+    muse::String pendingTupletInfo() const override;
 
     void addSlur(mu::engraving::Slur* slur) override;
     void resetSlur() override;
@@ -105,6 +116,9 @@ private:
     EngravingItem* resolveNoteInputStartPosition() const;
 
     bool shouldSetupInputNote() const;
+
+    void cancelPendingTupletIfMoved();
+    void announcePendingTupletChange();
     void setupInputNote();
 
     NoteVal noteValForLine(int line) const;
@@ -128,6 +142,9 @@ private:
     muse::async::Notification m_noteInputEnded;
 
     std::function<muse::RectF()> m_getViewRectFunc;
+
+    // a tuplet was pending at the last state change
+    bool m_tupletWasPending = false;
 };
 }
 

@@ -22,6 +22,8 @@
 
 #include "tuplet.h"
 
+#include "translation.h"
+
 #include "../editing/elementeditdata.h"
 #include "style/textstyle.h"
 
@@ -73,6 +75,8 @@ Tuplet::Tuplet(DummyParentOr<Measure> parent)
     m_number       = 0;
     m_hasBracket   = false;
     m_isUp         = true;
+    // Temporary value to prevent initElementStyle laying out from the start of the score when m_tick is 0
+    m_tick = parent.as<Measure>() ? parent.as<Measure>()->tick() : Fraction(0, 1);
     initElementStyle(&tupletStyle);
 }
 
@@ -155,7 +159,7 @@ void Tuplet::setColor(const Color& col)
     }
 }
 
-EngravingObject* Tuplet::propertyDelegate(Pid id) const
+PropertyDelegate Tuplet::resolvePropertyDelegate(Pid id) const
 {
     switch (id) {
     case Pid::FONT_FACE:
@@ -164,9 +168,9 @@ EngravingObject* Tuplet::propertyDelegate(Pid id) const
     case Pid::ALIGN:
     case Pid::POSITION:
     case Pid::SIZE_SPATIUM_DEPENDENT:
-        return m_number;
+        return PropertyDelegate(m_number);
     default:
-        return nullptr;
+        return PropertyDelegate();
     }
 }
 
@@ -195,6 +199,60 @@ void Tuplet::resetNumberProperty(Text* number)
     for (auto p : { Pid::FONT_FACE, Pid::FONT_STYLE, Pid::FONT_SIZE, Pid::ALIGN, Pid::POSITION, Pid::SIZE_SPATIUM_DEPENDENT }) {
         number->resetProperty(p);
     }
+}
+
+//---------------------------------------------------------
+//   typeUserName
+//    "Triplet" etc., from the number of notes in the tuplet
+//---------------------------------------------------------
+
+String Tuplet::typeUserName(int numerator)
+{
+    switch (numerator) {
+    case 2:
+        return muse::mtrc("engraving", "Duplet");
+    case 3:
+        return muse::mtrc("engraving", "Triplet");
+    case 4:
+        return muse::mtrc("engraving", "Quadruplet");
+    case 5:
+        return muse::mtrc("engraving", "Quintuplet");
+    case 6:
+        return muse::mtrc("engraving", "Sextuplet");
+    case 7:
+        return muse::mtrc("engraving", "Septuplet");
+    case 8:
+        return muse::mtrc("engraving", "Octuplet");
+    case 9:
+        return muse::mtrc("engraving", "Nonuplet");
+    default:
+        //: %1 is tuplet ratio numerator (i.e. the number of notes in the tuplet)
+        return muse::mtrc("engraving", "%1 note tuplet").arg(numerator);
+    }
+}
+
+//---------------------------------------------------------
+//   numberText
+//    The number shown above a tuplet, as XML text
+//---------------------------------------------------------
+
+String Tuplet::numberText(const Fraction& ratio, TupletNumberType numberType, bool useSymbols)
+{
+    String numberString = (numberType == TupletNumberType::SHOW_NUMBER)
+                          ? String(u"%1").arg(ratio.numerator())
+                          : String(u"%1:%2").arg(ratio.numerator(), ratio.denominator());
+    if (!useSymbols) {
+        return numberString;
+    }
+
+    String smuflNum;
+    for (size_t i = 0; i < numberString.size(); ++i) {
+        smuflNum.append(u"<sym>tuplet");
+        smuflNum.append(numberString.at(i).unicode());
+        smuflNum.append(u"</sym>");
+    }
+    smuflNum.replace(String(u":"), String(u"Colon"));
+    return smuflNum;
 }
 
 //---------------------------------------------------------
@@ -566,8 +624,8 @@ Fraction Tuplet::elementsDuration()
 
 PropertyValue Tuplet::getProperty(Pid propertyId) const
 {
-    if (EngravingObject* delegate = propertyDelegate(propertyId)) {
-        return delegate->getProperty(propertyId);
+    if (const PropertyDelegate d = resolvePropertyDelegate(propertyId); d.hasDelegate) {
+        return d.delegate ? d.delegate->getProperty(propertyId) : propertyDefault(propertyId);
     }
     switch (propertyId) {
     case Pid::DIRECTION:
@@ -598,8 +656,8 @@ PropertyValue Tuplet::getProperty(Pid propertyId) const
 
 bool Tuplet::setProperty(Pid propertyId, const PropertyValue& v)
 {
-    if (EngravingObject* delegate = propertyDelegate(propertyId)) {
-        return delegate->setProperty(propertyId, v);
+    if (const PropertyDelegate d = resolvePropertyDelegate(propertyId); d.hasDelegate) {
+        return d.delegate ? d.delegate->setProperty(propertyId, v) : false;
     }
     switch (propertyId) {
     case Pid::DIRECTION:

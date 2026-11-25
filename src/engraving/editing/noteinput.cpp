@@ -36,8 +36,6 @@
 #include "transaction/transaction.h"
 #include "transpose.h"
 
-#include "../infrastructure/messagebox.h"
-
 #include "../dom/accidental.h"
 #include "../dom/chord.h"
 #include "../dom/chordline.h"
@@ -57,6 +55,7 @@
 #include "../dom/score.h"
 #include "../dom/segment.h"
 #include "../dom/select.h"
+#include "../dom/sig.h"
 #include "../dom/slur.h"
 #include "../dom/staff.h"
 #include "../dom/stafftype.h"
@@ -728,6 +727,218 @@ std::pair<Note*, Note*> NoteInput::repitchReplaceNote(Transaction&, Score* score
 }
 
 //---------------------------------------------------------
+//   where the entry points enter the note
+//    shared with the checks whether they remove a measure repeat
+//---------------------------------------------------------
+
+//! Where a click puts the note
+static bool clickPosition(Score* score, const PointF& pos, Position& p)
+{
+    return score->getPosition(&p, pos, score->inputState().voice());
+}
+
+//! Whether a click repitches the note there, instead of putting one
+static bool clickRepitches(const Position& p)
+{
+    Score* posScore = p.segment->score();
+    // it is not safe to call repitchNote() if p is on a TAB staff
+    bool isTablature = posScore->staff(p.staffIdx)->isTabStaff(p.segment->tick());
+    return posScore->inputState().usingNoteEntryMethod(NoteEntryMethod::REPITCH) && !isTablature;
+}
+
+//! Where the notes are entered from the keyboard
+static Position inputPosition(const InputState& is)
+{
+    Position pos;
+    pos.segment = is.segment();
+    pos.staffIdx = is.track() / VOICES;
+    pos.beyondScore = is.beyondScore();
+    return pos;
+}
+
+//! The note, to whose chord a note is added
+static Note* selectedNote(const Score* score)
+{
+    EngravingItem* el = score->selection().element();
+    return el && el->isNote() ? toNote(el) : nullptr;
+}
+
+//! Whether entering a note at `pos` removes the measure repeat there
+static bool removesMeasureRepeat(const Position& pos)
+{
+    if (!pos.segment || pos.beyondScore) {
+        return false;
+    }
+
+    const Measure* measure = pos.segment->measure();
+    return measure && measure->isMeasureRepeatGroup(pos.staffIdx);
+}
+
+//---------------------------------------------------------
+//   pendingTupletRatio
+//    The ratio of the pending tuplet when `duration` sizes
+//    it, also when it can't divide `duration`
+//---------------------------------------------------------
+
+static Fraction pendingTupletRatio(const PendingTuplet& pending, const TDuration& duration)
+{
+    Fraction ratio = pending.ratio;
+    if (!pending.durationAsSubdivision && pending.autoBaseLen) {
+        ratio.setDenominator(Tuplet::computeTupletDenominator(ratio.numerator(), duration.fraction()));
+    }
+    return ratio;
+}
+
+//---------------------------------------------------------
+//   pendingTupletShape
+//    The ratio and subdivision of the pending tuplet when
+//    `duration` sizes it: `duration` is its subdivision, or
+//    its length divided
+//---------------------------------------------------------
+
+struct PendingTupletShape {
+    Fraction ratio;
+    TDuration baseLen;
+};
+
+static std::optional<PendingTupletShape> pendingTupletShape(const PendingTuplet& pending, const TDuration& duration)
+{
+    if (pending.durationAsSubdivision) {
+        return PendingTupletShape { pending.ratio, duration };
+    }
+
+    const Fraction ratio = pendingTupletRatio(pending, duration);
+    if (ratio.denominator() <= 0) {
+        return std::nullopt;
+    }
+    const Fraction noteValue = duration.fraction() / ratio.denominator();
+    if (!TDuration::isValid(noteValue)) {
+        return std::nullopt;
+    }
+    const TDuration baseLen(noteValue);
+    if (!baseLen.isValid() || baseLen < TDuration(DurationType::V_1024TH)) {
+        return std::nullopt;
+    }
+    return PendingTupletShape { ratio, baseLen };
+}
+
+//---------------------------------------------------------
+//   pendingTupletFits
+//    Whether the tuplet waiting at the input position fits
+//    there when `duration` sizes it
+//---------------------------------------------------------
+
+static bool pendingTupletFits(const Score* score, const TDuration& duration)
+{
+    const InputState& is = score->inputState();
+    const std::optional<PendingTupletShape> shape = pendingTupletShape(*is.pendingTuplet(), duration);
+    if (!shape) {
+        return false;
+    }
+
+    if (is.beyondScore()) {
+        // the measure appendMeasures() adds: the nominal time signature there, stretched by the staff's local one
+        const Fraction measureLen = score->sigmap()->timesig(score->endTick()).nominal();
+        const Staff* staff = score->staff(track2staff(is.track()));
+        const Fraction timeStretch = staff ? staff->timeStretch(score->endTick()) : Fraction(1, 1);
+        return actualTicks(shape->baseLen.fraction() * shape->ratio.denominator(), nullptr, timeStretch) <= measureLen;
+    }
+
+    // addPendingTuplet removes a measure repeat first, leaving an empty measure
+    const Measure* measure = is.segment()->measure();
+    const staff_idx_t staffIdx = track2staff(is.track());
+    if (measure->isMeasureRepeatGroup(staffIdx)) {
+        const Fraction timeStretch = score->staff(staffIdx)->timeStretch(measure->tick());
+        return actualTicks(shape->baseLen.fraction() * shape->ratio.denominator(), nullptr, timeStretch) <= measure->endTick() - is.tick();
+    }
+
+    // at a chord or rest, in an empty voice, or in a longer chord or rest that addPendingTuplet shortens
+    return score->canAddTuplet(is.segment(), is.track(), shape->ratio, shape->baseLen);
+}
+
+//---------------------------------------------------------
+//   tupletPreview
+//    The tuplet waiting at the input position for the
+//    duration that sizes it
+//---------------------------------------------------------
+
+std::optional<TupletPreview> NoteInput::tupletPreview(const Score* score)
+{
+    const InputState& is = score->inputState();
+    if (!is.segment() || !is.pendingTupletHere()) {
+        return std::nullopt;
+    }
+
+    const PendingTuplet& pending = *is.pendingTuplet();
+    TupletPreview preview;
+    // its ratio as if the input duration sized it, also when that duration can't
+    preview.ratio = pendingTupletRatio(pending, is.duration());
+    preview.numberType = pending.numberType;
+    return preview;
+}
+
+//---------------------------------------------------------
+//   addPendingTuplet
+//    Create the tuplet waiting at the input position, sized
+//    by the input duration, and make its note value the input
+//    duration. If it can't, set the error.
+//---------------------------------------------------------
+
+static bool addPendingTuplet(Transaction& tx, Score* score)
+{
+    InputState& is = score->inputState();
+    if (!is.pendingTupletHere()) {
+        is.setPendingTuplet(std::nullopt);
+        return true;
+    }
+
+    const PendingTuplet pending = *is.pendingTuplet();
+    const std::optional<PendingTupletShape> shape = pendingTupletShape(pending, is.duration());
+    if (!shape) {
+        MScore::setError(MsError::TUPLET_RATIO_NOT_POSSIBLE);
+        return false;
+    }
+    if (!pendingTupletFits(score, is.duration())) {
+        MScore::setError(MsError::NO_SPACE_FOR_TUPLET);
+        return false;
+    }
+
+    if (is.beyondScore()) {
+        score->appendMeasures(1);
+        is.moveToNextInputPos();
+    }
+    // like addPitch: remove a measure repeat
+    Measure* measure = is.segment()->measure();
+    const staff_idx_t staffIdx = track2staff(is.track());
+    if (measure->isMeasureRepeatGroup(staffIdx)) {
+        score->deleteItem(measure->measureRepeatElement(staffIdx));
+    }
+    score->expandVoice();
+    // like addPitch: shorten a longer chord or rest that starts earlier
+    if (!is.cr()) {
+        ChordRest* prevCr = is.segment()->nextChordRest(is.track(), /*backwards*/ true, /*stopAtMeasureBoundary*/ true);
+        if (prevCr && prevCr->endTick() > is.tick()) {
+            const InputState inputStateToRestore = is; // because truncateChordRest will alter the input state
+            NoteInput::truncateChordRest(tx, score, prevCr, is.tick(), /*fillWithRest*/ true);
+            is = inputStateToRestore;
+        }
+    }
+    ChordRest* cr = is.cr();
+    Tuplet* tuplet = cr ? score->addTuplet(cr, shape->ratio, shape->baseLen, pending.numberType, pending.bracketType) : nullptr;
+    if (!tuplet || tuplet->elements().empty()) {
+        MScore::setError(MsError::NO_SPACE_FOR_TUPLET);
+        return false;
+    }
+
+    // addTuplet can reselect the selection, which moves the input position to its voice
+    is.setTrack(tuplet->track());
+    is.setPendingTuplet(std::nullopt);
+    is.setSegment(toChordRest(tuplet->elements().front())->segment());
+    is.setDuration(shape->baseLen);
+    return true;
+}
+
+//---------------------------------------------------------
 //   putNote
 //    mouse click in state NoteType::ENTRY
 //---------------------------------------------------------
@@ -735,14 +946,12 @@ std::pair<Note*, Note*> NoteInput::repitchReplaceNote(Transaction&, Score* score
 Ret NoteInput::putNote(Transaction& tx, Score* score, const PointF& pos, bool replace, bool insert)
 {
     Position p;
-    if (!score->getPosition(&p, pos, score->inputState().voice())) {
+    if (!clickPosition(score, pos, p)) {
         LOGD("cannot put note here, get position failed");
         return make_ret(Ret::Code::UnknownError);
     }
 
     Score* posScore = p.segment->score();
-    // it is not safe to call repitchNote() if p is on a TAB staff
-    bool isTablature = posScore->staff(p.staffIdx)->isTabStaff(p.segment->tick());
 
     //  calculate actual clicked line from staffType offset and stepOffset
     Staff* ss = posScore->staff(p.staffIdx);
@@ -751,7 +960,7 @@ Ret NoteInput::putNote(Transaction& tx, Score* score, const PointF& pos, bool re
     double lineDist = ss->staffType(p.segment->tick())->lineDistance().val();
     p.line -= stepOffset + 2 * stYOffset / lineDist;
 
-    if (posScore->inputState().usingNoteEntryMethod(NoteEntryMethod::REPITCH) && !isTablature) {
+    if (clickRepitches(p)) {
         return repitchNote(tx, posScore, p, replace);
     } else {
         if (insert || posScore->inputState().usingNoteEntryMethod(NoteEntryMethod::TIMEWISE)) {
@@ -772,7 +981,9 @@ Ret NoteInput::putNote(Transaction& tx, Score* score, const Position& p, bool re
     is.setTrack(p.staffIdx * VOICES + is.voice());
     is.setSegment(s);
 
-    if (p.beyondScore) {
+    // a tuplet waiting here adds the measure itself, below
+    const bool pendingTupletHere = is.pendingTupletHere() && p.beyondScore == is.beyondScore();
+    if (p.beyondScore && !pendingTupletHere) {
         score->appendMeasures(1);
         is.moveToNextInputPos();
     }
@@ -792,18 +1003,21 @@ Ret NoteInput::putNote(Transaction& tx, Score* score, const Position& p, bool re
         return make_ret(Ret::Code::UnknownError);
     }
 
-    // warn and delete MeasureRepeat if necessary
+    // a note entered where a tuplet waits takes it up, sized by the input duration, in a drum's own voice
+    if (pendingTupletHere) {
+        const Drumset* ds = is.drumset();
+        if (ds && ds->isValid(nval.pitch)) {
+            is.moveToDrumVoice(ds->voice(nval.pitch));
+        }
+        if (!addPendingTuplet(tx, score)) {
+            return make_ret(Ret::Code::UnknownError);
+        }
+    }
+
+    // delete MeasureRepeat if necessary, the user is asked beforehand
     Measure* m = is.segment()->measure();
     staff_idx_t staffIdx = track2staff(is.track());
     if (m->isMeasureRepeatGroup(staffIdx)) {
-        auto b = MessageBox(score->iocContext()).warning(muse::trc("engraving", "Note input will remove measure repeat"),
-                                                         muse::trc("engraving", "This measure contains a measure repeat."
-                                                                                " If you enter notes here, it will be deleted."
-                                                                                " Do you want to continue?"));
-        if (b == MessageBox::Cancel) {
-            return make_ret(Ret::Code::Cancel);
-        }
-
         score->deleteItem(m->measureRepeatElement(staffIdx));
     }
 
@@ -886,11 +1100,17 @@ Ret NoteInput::putNote(Transaction& tx, Score* score, const Position& p, bool re
                                 LOGD("can't increase fret to %d", fret);
                             }
                         }
-                        // set fret number (original or combined) in all linked notes
-                        int tpc1 = note->tpc1default(nval.pitch);
-                        int tpc2 = note->tpc2default(nval.pitch);
-                        EditNote::undoChangeFretting(score, note, nval.pitch, nval.string, nval.fret, tpc1, tpc2);
+                        int tpc1 = note->firstTiedNote()->tpc1default(nval.pitch);
+                        int tpc2 = note->firstTiedNote()->tpc2default(nval.pitch);
+                        for (Note* tiedNote : note->tiedNotes()) {
+                            // set fret number (original or combined) in all linked notes
+                            EditNote::undoChangeFretting(score, tiedNote, nval.pitch, nval.string, nval.fret, tpc1, tpc2);
+                        }
                         score->setPlayNote(true);
+                        // the tuplet's first note: select it, as when it's entered
+                        if (pendingTupletHere) {
+                            score->select(note, SelectType::SINGLE, 0);
+                        }
                         return muse::make_ok();
                     }
                 }
@@ -901,6 +1121,9 @@ Ret NoteInput::putNote(Transaction& tx, Score* score, const Position& p, bool re
                 if (note) {
                     if (chord->notes().size() > 1) {
                         score->undoRemoveElement(note);
+                    } else if (pendingTupletHere) {
+                        // the tuplet's first note is already there: select it, as when it's entered
+                        score->select(note, SelectType::SINGLE, 0);
                     }
                     return muse::make_ok();
                 }
@@ -1177,7 +1400,12 @@ Ret NoteInput::insertChordByInsertingTime(Transaction& tx, Score* score, const P
     Segment* s = measure->undoGetSegment(SegmentType::ChordRest, tick);
     Position p(pos);
     p.segment = s;
+    // the inserted time is the input duration: a tuplet waiting here doesn't take up the note
+    InputState& is = score->inputState();
+    const std::optional<PendingTuplet> pendingTuplet = is.pendingTuplet();
+    is.setPendingTuplet(std::nullopt);
     putNote(tx, score, p, true);
+    is.setPendingTuplet(pendingTuplet);
 
     return muse::make_ok();
 }
@@ -1255,7 +1483,7 @@ void NoteInput::addPitch(Transaction& tx, Score* score, const NoteInputParams& p
     const Drumset* ds = is.drumset();
     if (ds) {
         is.setDrumNote(params.drumPitch);
-        is.setVoice(ds->voice(params.drumPitch));
+        is.moveToDrumVoice(ds->voice(params.drumPitch));
     }
 
     addPitch(tx, score, params.step, addFlag, insert);
@@ -1268,10 +1496,8 @@ void NoteInput::addPitch(Transaction& tx, Score* score, int step, bool addFlag, 
     insert = insert || is.usingNoteEntryMethod(NoteEntryMethod::TIMEWISE);
     Position pos;
     if (addFlag) {
-        EngravingItem* el = score->selection().element();
-        if (el && el->isNote()) {
-            Note* selectedNote = toNote(el);
-            Chord* chord  = selectedNote->chord();
+        if (Note* note = selectedNote(score)) {
+            Chord* chord  = note->chord();
             Segment* seg  = chord->segment();
             pos.segment   = seg;
             pos.staffIdx  = chord->vStaffIdx();
@@ -1297,11 +1523,9 @@ void NoteInput::addPitch(Transaction& tx, Score* score, int step, bool addFlag, 
         }
     }
 
-    pos.segment   = is.segment();
-    pos.staffIdx  = is.track() / VOICES;
+    pos           = inputPosition(is);
     ClefType clef = score->staff(pos.staffIdx)->clef(pos.segment->tick());
     pos.line      = relStep(step, clef);
-    pos.beyondScore = is.beyondScore();
 
     if (is.usingNoteEntryMethod(NoteEntryMethod::REPITCH)) {
         repitchNote(tx, score, pos, !addFlag);
@@ -1331,13 +1555,48 @@ void NoteInput::addFret(Transaction& tx, Score* score, int fret)
         return;
     }
     is.setRest(false);
-    Position pos;
-    pos.segment   = is.segment();
-    pos.staffIdx  = is.track() / VOICES;
+    Position pos  = inputPosition(is);
     pos.line      = score->staff(pos.staffIdx)->staffType(is.tick())->physStringToVisual(is.string());
     pos.fret      = fret;
-    pos.beyondScore = is.beyondScore();
     putNote(tx, score, pos, false);
+}
+
+bool NoteInput::putNoteRemovesMeasureRepeat(Score* score, const PointF& pos)
+{
+    Position p;
+    if (!clickPosition(score, pos, p) || clickRepitches(p)) {
+        return false;
+    }
+
+    return removesMeasureRepeat(p);
+}
+
+bool NoteInput::addPitchRemovesMeasureRepeat(Score* score, bool addFlag)
+{
+    const InputState& is = score->inputState();
+    if (!is.isValid()) {
+        return false;
+    }
+
+    if (addFlag && selectedNote(score)) {
+        return false; // added to the chord
+    }
+
+    if (is.usingNoteEntryMethod(NoteEntryMethod::REPITCH)) {
+        return false;
+    }
+
+    return removesMeasureRepeat(inputPosition(is));
+}
+
+bool NoteInput::addFretRemovesMeasureRepeat(Score* score)
+{
+    const InputState& is = score->inputState();
+    if (is.track() == muse::nidx || !is.segment()) {
+        return false;
+    }
+
+    return removesMeasureRepeat(inputPosition(is));
 }
 
 //---------------------------------------------------------
@@ -1387,6 +1646,25 @@ static bool durationTooShortForDots(const TDuration& duration, int dots)
 }
 
 //---------------------------------------------------------
+//   useSelectedNoteForRhythm
+//    Rhythm input enters the selected note: make it the
+//    input note
+//---------------------------------------------------------
+
+void NoteInput::useSelectedNoteForRhythm(Score* score)
+{
+    InputState& is = score->inputState();
+    if (is.rest() || !score->usingNoteEntryMethod(NoteEntryMethod::RHYTHM)) {
+        return;
+    }
+
+    const EngravingItem* selectedItem = score->selection().element();
+    if (selectedItem && selectedItem->isNote()) {
+        is.setNotes({ toNote(selectedItem)->noteVal() });
+    }
+}
+
+//---------------------------------------------------------
 //   setDuration
 //    Set the note input duration (and apply it to the selection).
 //---------------------------------------------------------
@@ -1416,18 +1694,27 @@ void NoteInput::setDuration(Transaction& tx, Score* score, DurationType duration
                 toggleDots(tx, score, oldDuration.dots());
             }
 
+            // in Rhythm input, the selected note's drum sets the voice below
+            useSelectedNoteForRhythm(score);
+
+            // a drum in another voice takes a tuplet waiting here to that voice
+            const std::optional<voice_idx_t> drumVoice = is.otherDrumVoice();
+            if (drumVoice && is.pendingTupletHere()) {
+                is.moveToDrumVoice(*drumVoice);
+            }
+
+            // a tuplet waiting for this duration takes the note or rest; if it can't, nothing is entered
+            const bool pendingTupletHere = is.pendingTupletHere();
+            if (is.pendingTuplet() && !addPendingTuplet(tx, score)) {
+                is.setDuration(oldDuration);
+                return;
+            }
+
             if (is.rest()) {
                 // Enter a rest
                 score->setNoteRest(is.segment(), is.track(), NoteVal(), is.duration().fraction());
                 is.moveToNextInputPos();
             } else {
-                if (score->usingNoteEntryMethod(NoteEntryMethod::RHYTHM)) {
-                    const EngravingItem* selectedItem = score->selection().element();
-                    if (selectedItem && selectedItem->isNote()) {
-                        is.setNotes({ toNote(selectedItem)->noteVal() });
-                    }
-                }
-
                 if (is.beyondScore()) {
                     score->appendMeasures(1);
                     is.moveToNextInputPos();
@@ -1441,6 +1728,10 @@ void NoteInput::setDuration(Transaction& tx, Score* score, DurationType duration
 
                 for (const NoteVal& nval : is.notes()) {
                     if (chord && chord->findNote(nval.pitch)) {
+                        // the tuplet's first note is already there: select it, as when it's entered
+                        if (pendingTupletHere) {
+                            score->select(chord->findNote(nval.pitch), SelectType::SINGLE, 0);
+                        }
                         is.moveToNextInputPos();
                         continue;
                     }
@@ -1542,6 +1833,7 @@ void NoteInput::applyToSelection(Score* score, const TDuration& oldDuration, boo
                                  AccidentalType oldAccidentalType, bool toggleForSelectionOnly, bool restToggle)
 {
     InputState& is = score->inputState();
+    const bool pendingTupletHere = is.pendingTupletHere();
 
     if (score->noteEntryMode()) {
         if (!toggleForSelectionOnly || score->selection().isNone()) {
@@ -1664,6 +1956,10 @@ void NoteInput::applyToSelection(Score* score, const TDuration& oldDuration, boo
         if (score->noteEntryMode()) {
             if (is.lastSegment() == is.segment()) {
                 is.moveToNextInputPos();
+            }
+            // a pending tuplet follows the input position when the previous note changes length
+            if (pendingTupletHere) {
+                is.movePendingTupletHere();
             }
         }
     }

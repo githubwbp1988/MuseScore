@@ -38,7 +38,7 @@
 #include "notation/inotationinteraction.h" // IWYU pragma: keep
 
 #include "palette/palettecommands.h"
-#include "notationscene/notationcommands.h"
+#include "notation/notationcommands.h"
 
 #include "log.h"
 
@@ -306,7 +306,7 @@ void TextSettingsModel::insertSpecialCharacters()
 
 void TextSettingsModel::showStaffTextProperties()
 {
-    commandDispatcher()->dispatch(OPEN_STAFF_TEXT_PROPERTIES_COMMAND);
+    commandDispatcher()->dispatch(OpenStaffTextPropertiesCommand::id);
 }
 
 PropertyItem* TextSettingsModel::fontFamily() const

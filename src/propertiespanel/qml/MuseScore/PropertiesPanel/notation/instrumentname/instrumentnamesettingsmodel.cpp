@@ -25,7 +25,7 @@
 #include "engraving/dom/instrumentname.h"
 
 #include "notation/inotationselection.h" // IWYU pragma: keep
-#include "notationscene/notationcommands.h"
+#include "notation/notationcommands.h"
 
 using namespace mu::propertiespanel;
 using namespace mu::notation;
@@ -59,7 +59,7 @@ void InstrumentNameSettingsModel::openStyleSettings()
 
 void InstrumentNameSettingsModel::openStaffAndPartProperties()
 {
-    commandDispatcher()->dispatch(OPEN_STAFF_PROPERTIES_COMMAND);
+    commandDispatcher()->dispatch(OpenStaffPropertiesCommand::id);
 }
 
 const mu::engraving::InstrumentName* InstrumentNameSettingsModel::selectedInstrumentName() const
