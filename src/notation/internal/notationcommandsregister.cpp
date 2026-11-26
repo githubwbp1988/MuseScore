@@ -460,16 +460,7 @@ static const std::vector<CommandInfo> s_commandInfos = {
     makeCommandInfo<FlipCommand>(),
     makeCommandInfo<FlipHorizontallyCommand>(),
 
-    CommandInfo{
-        ADD_DRUM_NOTE_COMMAND,
-        TranslatableString("action", "Add drum note"),
-        TranslatableString("action", "Add drum note"),
-        InputSchema({
-            { "pitch", Arg(DataType::Int, u"Drum pitch (e.g. 35, 36, 37, 38, 39, 40, 41)", Val(0), Val(127)) },
-            { "mode", Arg(DataType::String, u"Adding mode (current, next, insert)") },
-        }),
-        Decoration()
-    },
+    makeCommandInfo<AddDrumNoteCommand>(),
 
     makeCommandInfo<EnterRestCommand>(),
 
@@ -489,13 +480,7 @@ static const std::vector<CommandInfo> s_commandInfos = {
     makeCommandInfo<EditLyricsAddVerseCommand>(),
 
     // properties commands
-    CommandInfo{
-        TOGGLE_VISIBLE_COMMAND,
-        TranslatableString("action", "Toggle visibility of elements"),
-        TranslatableString("action", "Toggle visibility of elements"),
-        InputSchema(),
-        Decoration()
-    },
+    makeCommandInfo<ToggleVisibleCommand>(),
 
     // snap commands
     makeCommandInfo<ToggleSnapToCommand>(),
@@ -642,13 +627,7 @@ static const std::vector<CommandInfo> s_commandInfos = {
     makeCommandInfo<SaveStyleCommand>(),
 
     // fretboard diagram commands
-    CommandInfo{
-        ADD_FRETBOARD_DIAGRAM_COMMAND,
-        TranslatableString("action", "Add &fretboard diagram"),
-        TranslatableString("action", "Add fretboard diagram"),
-        InputSchema(),
-        Decoration()
-    },
+    makeCommandInfo<AddFretboardDiagramCommand>(),
 
     makeCommandInfo<AddOttavaCommand>(),
     makeCommandInfo<AddOttava8vaCommand>(),
@@ -660,34 +639,12 @@ static const std::vector<CommandInfo> s_commandInfos = {
         InputSchema(),
         Decoration()
     },
-    CommandInfo{
-        ADD_HAIRPIN_COMMAND,
-        TranslatableString("action", "&Crescendo"),
-        TranslatableString("action", "Add hairpin: crescendo"),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
-        ADD_HAIRPIN_REVERSE_COMMAND,
-        TranslatableString("action", "&Diminuendo"),
-        TranslatableString("action", "Add hairpin: diminuendo"),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
-        INCREASE_DYNAMIC_COMMAND,
-        TranslatableString("action", "Increase dynamics"),
-        TranslatableString("action", "Increase selected dynamics"),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
-        DECREASE_DYNAMIC_COMMAND,
-        TranslatableString("action", "Decrease dynamics"),
-        TranslatableString("action", "Decrease selected dynamics"),
-        InputSchema(),
-        Decoration()
-    },
+    makeCommandInfo<AddHairpinCommand>(),
+    makeCommandInfo<AddHairpinCrescendoCommand>(),
+    makeCommandInfo<AddHairpinDiminuendoCommand>(),
+    makeCommandInfo<ChangeDynamicCommand>(),
+    makeCommandInfo<IncreaseDynamicCommand>(),
+    makeCommandInfo<DecreaseDynamicCommand>(),
     CommandInfo{
         ADD_NOTELINE_COMMAND,
         TranslatableString("action", "&Note-anchored line"),
@@ -703,73 +660,20 @@ static const std::vector<CommandInfo> s_commandInfos = {
         Decoration()
     },
 
-    CommandInfo{
-        ADD_FIGURED_BASS_COMMAND,
-        TranslatableString("action", "Figured &bass"),
-        TranslatableString("action", "Add text: figured bass"),
-        InputSchema(),
-        Decoration()
-    },
+    makeCommandInfo<AddFiguredBassCommand>(),
 
     // layout commands: stretch
-    CommandInfo{
-        STRETCH_DECREASE_COMMAND,
-        TranslatableString("action", "&Decrease layout stretch"),
-        TranslatableString("action", "Decrease layout stretch"),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
-        STRETCH_INCREASE_COMMAND,
-        TranslatableString("action", "&Increase layout stretch"),
-        TranslatableString("action", "Increase layout stretch"),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
-        STRETCH_RESET_COMMAND,
-        TranslatableString("action", "&Reset layout stretch"),
-        TranslatableString("action", "Reset layout stretch"),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
-        RESET_TEXT_STYLE_OVERRIDES_COMMAND,
-        TranslatableString("action", "Reset &text style overrides"),
-        TranslatableString("action", "Reset all text style overrides to default"),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
-        RESET_BEAMS_COMMAND,
-        TranslatableString("action", "Reset &beams"),
-        TranslatableString("action", "Reset beams to default grouping"),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
-        RESET_SHAPES_AND_POSITIONS_COMMAND,
-        TranslatableString("action", "Reset s&hapes and positions"),
-        TranslatableString("action", "Reset shapes and positions"),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
-        RESET_TO_DEFAULT_LAYOUT_COMMAND,
-        TranslatableString("action", "Reset entire score to &default layout"),
-        TranslatableString("action", "Reset entire score to default layout"),
-        InputSchema(),
-        Decoration()
-    },
+    makeCommandInfo<ChangeStretchCommand>(),
+    makeCommandInfo<IncreaseStretchCommand>(),
+    makeCommandInfo<DecreaseStretchCommand>(),
+    makeCommandInfo<ResetStretchCommand>(),
+    makeCommandInfo<ResetTextStyleOverridesCommand>(),
+    makeCommandInfo<ResetBeamsCommand>(),
+    makeCommandInfo<ResetShapesAndPositionsCommand>(),
+    makeCommandInfo<ResetToDefaultLayoutCommand>(),
 
     // appearance commands
-    CommandInfo{
-        FREEZE_CURRENT_PLACEMENT_COMMAND,
-        TranslatableString("action", "Freeze current placement"),
-        TranslatableString("action", "Turn off auto-place and freeze the selection’s current position"),
-        InputSchema(),
-        Decoration()
-    },
+    makeCommandInfo<FreezeCurrentPlacementCommand>(),
 
     // show commands
     makeCommandInfo<ToggleScoreConfigCommand>(),
@@ -779,13 +683,7 @@ static const std::vector<CommandInfo> s_commandInfos = {
     makeCommandInfo<ShowPageBordersCommand>(),
     makeCommandInfo<ShowSoundFlagsCommand>(),
     makeCommandInfo<ShowIrregularCommand>(),
-    CommandInfo{
-        TOGGLE_CONCERT_PITCH_COMMAND,
-        TranslatableString("action", "Concert pitch"),
-        TranslatableString("action", "Toggle concert pitch"),
-        InputSchema(),
-        Decoration(IconCode::Code::TUNING_FORK, rcommand::Checkable::Yes)
-    },
+    makeCommandInfo<ToggleConcertPitchCommand>(),
     CommandInfo{
         STAFF_EXPLODE_COMMAND,
         TranslatableString("action", "&Explode"),
@@ -901,34 +799,10 @@ static const std::vector<CommandInfo> s_commandInfos = {
         Decoration()
     },
 
-    CommandInfo{
-        REGROUP_RHYTHMS_COMMAND,
-        TranslatableString("action", "Regroup &rhythms"),
-        TranslatableString("action", "Regroup rhythms"),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
-        RESEQUENCE_REHEARSAL_MARKS_COMMAND,
-        TranslatableString("action", "Resequence re&hearsal marks"),
-        TranslatableString("action", "Resequence rehearsal marks"),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
-        UNROLL_REPEATS_COMMAND,
-        TranslatableString("action", "U&nroll repeats"),
-        TranslatableString("action", "Unroll repeats"),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
-        REPEAT_SELECTION_COMMAND,
-        TranslatableString("action", "Repeat selection"),
-        TranslatableString("action", "Repeat selection"),
-        InputSchema(),
-        Decoration()
-    },
+    makeCommandInfo<RegroupRhythmsCommand>(),
+    makeCommandInfo<ResequenceRehearsalMarksCommand>(),
+    makeCommandInfo<UnrollRepeatsCommand>(),
+    makeCommandInfo<RepeatSelectionCommand>(),
 
     CommandInfo{
         ADD_UP_BOW_COMMAND,
@@ -944,20 +818,9 @@ static const std::vector<CommandInfo> s_commandInfos = {
         InputSchema(),
         Decoration()
     },
-    CommandInfo{
-        TRANSPOSE_UP_COMMAND,
-        TranslatableString("action", "Transpose up"),
-        TranslatableString("action", "Transpose up a semitone"),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
-        TRANSPOSE_DOWN_COMMAND,
-        TranslatableString("action", "Transpose down"),
-        TranslatableString("action", "Transpose down a semitone"),
-        InputSchema(),
-        Decoration()
-    },
+    makeCommandInfo<TransposeSemitoneCommand>(),
+    makeCommandInfo<TransposeSemitoneUpCommand>(),
+    makeCommandInfo<TransposeSemitoneDownCommand>(),
     CommandInfo{
         TOGGLE_MMREST_COMMAND,
         TranslatableString("action", "Toggle multimeasure rests"),
@@ -972,34 +835,16 @@ static const std::vector<CommandInfo> s_commandInfos = {
         InputSchema(),
         Decoration()
     },
-    CommandInfo{
-        MIRROR_NOTEHEAD_COMMAND,
-        TranslatableString("action", "Mirror notehead"),
-        TranslatableString("action", "Mirror notehead"),
-        InputSchema(),
-        Decoration()
-    },
+    makeCommandInfo<MirrorNoteheadCommand>(),
 
-    // clef commands
     // clef commands
     makeCommandInfo<AddClefCommand>(),
     makeCommandInfo<AddClefViolinCommand>(),
     makeCommandInfo<AddClefBassCommand>(),
 
-    CommandInfo{
-        SET_VISIBLE_COMMAND,
-        TranslatableString("action", "Set visible"),
-        TranslatableString("action", "Make selected element(s) visible"),
-        InputSchema(),
-        Decoration()
-    },
-    CommandInfo{
-        UNSET_VISIBLE_COMMAND,
-        TranslatableString("action", "Set invisible"),
-        TranslatableString("action", "Make selected element(s) invisible"),
-        InputSchema(),
-        Decoration()
-    },
+    makeCommandInfo<SetVisibleCommand>(),
+    makeCommandInfo<SetVisibleOnCommand>(),
+    makeCommandInfo<SetVisibleOffCommand>(),
     CommandInfo{
         TOGGLE_AUTOPLACE_COMMAND,
         TranslatableString("action", "Toggle automatic placement for selected elements"),

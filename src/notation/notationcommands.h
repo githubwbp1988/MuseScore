@@ -1061,6 +1061,22 @@ struct AddNoteB_ToInsertChordCommand {
     cprop_decl redirect = AddNoteCommand(NoteName::B, NoteAddingMode::InsertChord);
 };
 
+// drum note commands
+struct AddDrumNoteCommand {
+    cprop_decl id = Command("command://notation/add-drum-note");
+    cprop_decl title = MnemonicString("action", "Add drum note");
+    cprop_decl description = TranslatableString("action", "Add drum note");
+    cprop_decl availabilities = Availability::API;
+
+    int pitch = 0;
+    NoteAddingMode mode = NoteAddingMode::NextChord;
+
+    cprop_decl input = FieldsScheme {
+        Field{ "pitch", &AddDrumNoteCommand::pitch, "Drum pitch (e.g. 35, 36, 37, 38, 39, 40, 41)", 0, 127 },
+        Field{ "mode", &AddDrumNoteCommand::mode, "Adding mode" },
+    };
+};
+
 // accidental commands
 struct ToggleAccidentalCommand {
     cprop_decl id = Command("command://notation/toggle-accidental");
@@ -2621,14 +2637,14 @@ struct ToggleStaccatoCommand {
 inline static const muse::rcommand::Command VOICE_ASSIGNMENT_ALL_IN_INSTR_COMMAND("command://notation/voice-assignment-all-in-instrument");
 inline static const muse::rcommand::Command VOICE_ASSIGNMENT_ALL_IN_STAFF_COMMAND("command://notation/voice-assignment-all-in-staff");
 
-//inline static const muse::rcommand::Command FLIP_COMMAND("command://notation/flip");
-
-//inline static const muse::rcommand::Command ADD_NOTE_COMMAND("command://notation/add-note"); // with params
-inline static const muse::rcommand::Command ADD_DRUM_NOTE_COMMAND("command://notation/add-drum-note"); // with params
-
 // add commands
 
-inline static const muse::rcommand::Command ADD_FRETBOARD_DIAGRAM_COMMAND("command://notation/add-fretboard-diagram");
+struct AddFretboardDiagramCommand {
+    cprop_decl id = Command("command://notation/add-fretboard-diagram");
+    cprop_decl title = MnemonicString("action", "Add &fretboard diagram");
+    cprop_decl description = TranslatableString("action", "Add fretboard diagram");
+    cprop_decl availabilities = Availability::All;
+};
 
 struct AddOttavaCommand {
     cprop_decl id = Command("command://notation/add-ottava");
@@ -2660,10 +2676,65 @@ struct AddOttava8vbCommand {
 };
 
 inline static const muse::rcommand::Command ADD_DYNAMIC_COMMAND("command://notation/add-dynamic");
-inline static const muse::rcommand::Command ADD_HAIRPIN_COMMAND("command://notation/add-hairpin");
-inline static const muse::rcommand::Command ADD_HAIRPIN_REVERSE_COMMAND("command://notation/add-hairpin-reverse");
-inline static const muse::rcommand::Command INCREASE_DYNAMIC_COMMAND("command://notation/increase-dynamic");
-inline static const muse::rcommand::Command DECREASE_DYNAMIC_COMMAND("command://notation/decrease-dynamic");
+
+struct AddHairpinCommand {
+    cprop_decl id = Command("command://notation/add-hairpin");
+    cprop_decl title = MnemonicString("action", "Add hairpin");
+    cprop_decl description = TranslatableString("action", "Add hairpin");
+    cprop_decl availabilities = Availability::API;
+
+    HairpinType type = HairpinType::CRESC_HAIRPIN;
+
+    cprop_decl input = FieldsScheme {
+        Field{ "type", &AddHairpinCommand::type, "Hairpin type" },
+    };
+};
+
+struct AddHairpinCrescendoCommand {
+    cprop_decl id = Command("command://notation/add-hairpin/crescendo");
+    cprop_decl title = MnemonicString("action", "&Crescendo");
+    cprop_decl description = TranslatableString("action", "Add hairpin: crescendo");
+    cprop_decl availabilities = Availability::UI;
+    cprop_decl redirect = AddHairpinCommand(HairpinType::CRESC_HAIRPIN);
+};
+
+struct AddHairpinDiminuendoCommand {
+    cprop_decl id = Command("command://notation/add-hairpin/diminuendo");
+    cprop_decl title = MnemonicString("action", "&Diminuendo");
+    cprop_decl description = TranslatableString("action", "Add hairpin: diminuendo");
+    cprop_decl availabilities = Availability::UI;
+    cprop_decl redirect = AddHairpinCommand(HairpinType::DIM_HAIRPIN);
+};
+
+struct ChangeDynamicCommand {
+    cprop_decl id = Command("command://notation/change-dynamic");
+    cprop_decl title = MnemonicString("action", "Change dynamics");
+    cprop_decl description = TranslatableString("action", "Change selected dynamics");
+    cprop_decl availabilities = Availability::API;
+
+    int delta = 1;
+
+    cprop_decl input = FieldsScheme {
+        Field{ "delta", &ChangeDynamicCommand::delta, "Delta (+1 increase, -1 decrease)" },
+    };
+};
+
+struct IncreaseDynamicCommand {
+    cprop_decl id = Command("command://notation/change-dynamic/increase");
+    cprop_decl title = MnemonicString("action", "Increase dynamics");
+    cprop_decl description = TranslatableString("action", "Increase selected dynamics");
+    cprop_decl availabilities = Availability::UI;
+    cprop_decl redirect = ChangeDynamicCommand(1);
+};
+
+struct DecreaseDynamicCommand {
+    cprop_decl id = Command("command://notation/change-dynamic/decrease");
+    cprop_decl title = MnemonicString("action", "Decrease dynamics");
+    cprop_decl description = TranslatableString("action", "Decrease selected dynamics");
+    cprop_decl availabilities = Availability::UI;
+    cprop_decl redirect = ChangeDynamicCommand(-1);
+};
+
 inline static const muse::rcommand::Command ADD_NOTELINE_COMMAND("command://notation/add-noteline");
 
 inline static const muse::rcommand::Command ADD_IMAGE_COMMAND("command://notation/add-image");
@@ -2673,7 +2744,12 @@ inline static const muse::rcommand::Command ADD_DOWN_BOW_COMMAND("command://nota
 
 // add text commands
 
-inline static const muse::rcommand::Command ADD_FIGURED_BASS_COMMAND("command://notation/add-figured-bass");
+struct AddFiguredBassCommand {
+    cprop_decl id = Command("command://notation/add-figured-bass");
+    cprop_decl title = MnemonicString("action", "Figured &bass");
+    cprop_decl description = TranslatableString("action", "Add text: figured bass");
+    cprop_decl availabilities = Availability::All;
+};
 
 // add brackets commands
 inline static const muse::rcommand::Command ADD_BRACKETS_COMMAND("command://notation/add-brackets");
@@ -2737,7 +2813,13 @@ inline static const muse::rcommand::Command PITCH_UP_DIATONIC_ALTERATIONS_COMMAN
 inline static const muse::rcommand::Command PITCH_DOWN_DIATONIC_ALTERATIONS_COMMAND("command://notation/pitch-down-diatonic-alterations");
 
 // properties commands
-inline static const muse::rcommand::Command TOGGLE_VISIBLE_COMMAND("command://notation/toggle-visible");
+
+struct ToggleVisibleCommand {
+    cprop_decl id = Command("command://notation/toggle-visible");
+    cprop_decl title = MnemonicString("action", "Toggle visibility of elements");
+    cprop_decl description = TranslatableString("action", "Toggle visibility of elements");
+    cprop_decl availabilities = Availability::All;
+};
 
 // snap commands
 
@@ -2803,9 +2885,42 @@ inline static const muse::rcommand::Command MAKE_INTO_PAGE_COMMAND("command://no
 inline static const muse::rcommand::Command TOGGLE_SCORE_LOCK_COMMAND("command://notation/toggle-score-lock");
 
 // layout commands: stretch
-inline static const muse::rcommand::Command STRETCH_DECREASE_COMMAND("command://notation/stretch-decrease");
-inline static const muse::rcommand::Command STRETCH_INCREASE_COMMAND("command://notation/stretch-increase");
-inline static const muse::rcommand::Command STRETCH_RESET_COMMAND("command://notation/stretch-reset");
+
+struct ChangeStretchCommand {
+    cprop_decl id = Command("command://notation/change-stretch");
+    cprop_decl title = MnemonicString("action", "Change layout stretch");
+    cprop_decl description = TranslatableString("action", "Change layout stretch");
+    cprop_decl availabilities = Availability::API;
+
+    double value = 0.1;
+
+    cprop_decl input = FieldsScheme {
+        Field{ "value", &ChangeStretchCommand::value, "Stretch delta" },
+    };
+};
+
+struct IncreaseStretchCommand {
+    cprop_decl id = Command("command://notation/change-stretch/increase");
+    cprop_decl title = MnemonicString("action", "&Increase layout stretch");
+    cprop_decl description = TranslatableString("action", "Increase layout stretch");
+    cprop_decl availabilities = Availability::UI;
+    cprop_decl redirect = ChangeStretchCommand(0.1);
+};
+
+struct DecreaseStretchCommand {
+    cprop_decl id = Command("command://notation/change-stretch/decrease");
+    cprop_decl title = MnemonicString("action", "&Decrease layout stretch");
+    cprop_decl description = TranslatableString("action", "Decrease layout stretch");
+    cprop_decl availabilities = Availability::UI;
+    cprop_decl redirect = ChangeStretchCommand(-0.1);
+};
+
+struct ResetStretchCommand {
+    cprop_decl id = Command("command://notation/stretch-reset");
+    cprop_decl title = MnemonicString("action", "&Reset layout stretch");
+    cprop_decl description = TranslatableString("action", "Reset layout stretch");
+    cprop_decl availabilities = Availability::All;
+};
 
 // open properties
 
@@ -2904,16 +3019,53 @@ struct SaveStyleCommand {
 };
 
 inline static const muse::rcommand::Command OPEN_EDIT_STYLE_COMMAND("command://notation/open-edit-style");
-inline static const muse::rcommand::Command TOGGLE_CONCERT_PITCH_COMMAND("command://notation/toggle-concert-pitch");
+
+struct ToggleConcertPitchCommand {
+    cprop_decl id = Command("command://notation/toggle-concert-pitch");
+    cprop_decl title = MnemonicString("action", "Concert pitch");
+    cprop_decl description = TranslatableString("action", "Toggle concert pitch");
+    cprop_decl decoration = Decoration(muse::ui::IconCode::Code::TUNING_FORK, Checkable::Yes);
+    cprop_decl availabilities = Availability::All;
+};
 
 // reset commands
-inline static const muse::rcommand::Command RESET_TEXT_STYLE_OVERRIDES_COMMAND("command://notation/reset-text-style-overrides");
-inline static const muse::rcommand::Command RESET_BEAMS_COMMAND("command://notation/reset-beams");
-inline static const muse::rcommand::Command RESET_SHAPES_AND_POSITIONS_COMMAND("command://notation/reset-shapes-and-positions");
-inline static const muse::rcommand::Command RESET_TO_DEFAULT_LAYOUT_COMMAND("command://notation/reset-to-default-layout");
+
+struct ResetTextStyleOverridesCommand {
+    cprop_decl id = Command("command://notation/reset-text-style-overrides");
+    cprop_decl title = MnemonicString("action", "Reset &text style overrides");
+    cprop_decl description = TranslatableString("action", "Reset all text style overrides to default");
+    cprop_decl availabilities = Availability::All;
+};
+
+struct ResetBeamsCommand {
+    cprop_decl id = Command("command://notation/reset-beams");
+    cprop_decl title = MnemonicString("action", "Reset &beams");
+    cprop_decl description = TranslatableString("action", "Reset beams to default grouping");
+    cprop_decl availabilities = Availability::All;
+};
+
+struct ResetShapesAndPositionsCommand {
+    cprop_decl id = Command("command://notation/reset-shapes-and-positions");
+    cprop_decl title = MnemonicString("action", "Reset s&hapes and positions");
+    cprop_decl description = TranslatableString("action", "Reset shapes and positions");
+    cprop_decl availabilities = Availability::All;
+};
+
+struct ResetToDefaultLayoutCommand {
+    cprop_decl id = Command("command://notation/reset-to-default-layout");
+    cprop_decl title = MnemonicString("action", "Reset entire score to &default layout");
+    cprop_decl description = TranslatableString("action", "Reset entire score to default layout");
+    cprop_decl availabilities = Availability::All;
+};
 
 // appearance commands
-inline static const muse::rcommand::Command FREEZE_CURRENT_PLACEMENT_COMMAND("command://notation/freeze-current-placement");
+
+struct FreezeCurrentPlacementCommand {
+    cprop_decl id = Command("command://notation/freeze-current-placement");
+    cprop_decl title = MnemonicString("action", "Freeze current placement");
+    cprop_decl description = TranslatableString("action", "Turn off auto-place and freeze the selection’s current position");
+    cprop_decl availabilities = Availability::All;
+};
 
 // show commands
 
@@ -3010,17 +3162,103 @@ inline static const muse::rcommand::Command SCREEN_EDIT_TEXT_COMMAND("command://
 inline static const muse::rcommand::Command SCREEN_EDIT_ELEMENT_COMMAND("command://notation/screen-edit-element"); // with params
 
 // others commands
-inline static const muse::rcommand::Command REGROUP_RHYTHMS_COMMAND("command://notation/regroup-rhythms");
-inline static const muse::rcommand::Command RESEQUENCE_REHEARSAL_MARKS_COMMAND("command://notation/resequence-rehearsal-marks");
-inline static const muse::rcommand::Command UNROLL_REPEATS_COMMAND("command://notation/unroll-repeats");
-inline static const muse::rcommand::Command REPEAT_SELECTION_COMMAND("command://notation/repeat-selection");
-inline static const muse::rcommand::Command TRANSPOSE_UP_COMMAND("command://notation/transpose-up");
-inline static const muse::rcommand::Command TRANSPOSE_DOWN_COMMAND("command://notation/transpose-down");
+
+struct RegroupRhythmsCommand {
+    cprop_decl id = Command("command://notation/regroup-rhythms");
+    cprop_decl title = MnemonicString("action", "Regroup &rhythms");
+    cprop_decl description = TranslatableString("action", "Regroup rhythms");
+    cprop_decl availabilities = Availability::All;
+};
+
+struct ResequenceRehearsalMarksCommand {
+    cprop_decl id = Command("command://notation/resequence-rehearsal-marks");
+    cprop_decl title = MnemonicString("action", "Resequence re&hearsal marks");
+    cprop_decl description = TranslatableString("action", "Resequence rehearsal marks");
+    cprop_decl availabilities = Availability::All;
+};
+
+struct UnrollRepeatsCommand {
+    cprop_decl id = Command("command://notation/unroll-repeats");
+    cprop_decl title = MnemonicString("action", "U&nroll repeats");
+    cprop_decl description = TranslatableString("action", "Unroll repeats");
+    cprop_decl availabilities = Availability::All;
+};
+
+struct RepeatSelectionCommand {
+    cprop_decl id = Command("command://notation/repeat-selection");
+    cprop_decl title = MnemonicString("action", "Repeat selection");
+    cprop_decl description = TranslatableString("action", "Repeat selection");
+    cprop_decl availabilities = Availability::All;
+};
+
+struct TransposeSemitoneCommand {
+    cprop_decl id = Command("command://notation/transpose-semitone");
+    cprop_decl title = MnemonicString("action", "Transpose by semitone");
+    cprop_decl description = TranslatableString("action", "Transpose by one semitone");
+    cprop_decl availabilities = Availability::API;
+
+    TransposeDirection direction = TransposeDirection::UP;
+
+    cprop_decl input = FieldsScheme {
+        Field{ "direction", &TransposeSemitoneCommand::direction, "Transpose direction" },
+    };
+};
+
+struct TransposeSemitoneUpCommand {
+    cprop_decl id = Command("command://notation/transpose-semitone/up");
+    cprop_decl title = MnemonicString("action", "Transpose up");
+    cprop_decl description = TranslatableString("action", "Transpose up a semitone");
+    cprop_decl availabilities = Availability::UI;
+    cprop_decl redirect = TransposeSemitoneCommand(TransposeDirection::UP);
+};
+
+struct TransposeSemitoneDownCommand {
+    cprop_decl id = Command("command://notation/transpose-semitone/down");
+    cprop_decl title = MnemonicString("action", "Transpose down");
+    cprop_decl description = TranslatableString("action", "Transpose down a semitone");
+    cprop_decl availabilities = Availability::UI;
+    cprop_decl redirect = TransposeSemitoneCommand(TransposeDirection::DOWN);
+};
+
 inline static const muse::rcommand::Command TOGGLE_MMREST_COMMAND("command://notation/toggle-mmrest");
 inline static const muse::rcommand::Command TOGGLE_HIDE_EMPTY_COMMAND("command://notation/toggle-hide-empty");
-inline static const muse::rcommand::Command MIRROR_NOTEHEAD_COMMAND("command://notation/mirror-notehead");
-inline static const muse::rcommand::Command SET_VISIBLE_COMMAND("command://notation/set-visible");
-inline static const muse::rcommand::Command UNSET_VISIBLE_COMMAND("command://notation/unset-visible");
+
+struct MirrorNoteheadCommand {
+    cprop_decl id = Command("command://notation/mirror-notehead");
+    cprop_decl title = MnemonicString("action", "Mirror notehead");
+    cprop_decl description = TranslatableString("action", "Mirror notehead");
+    cprop_decl availabilities = Availability::All;
+};
+
+struct SetVisibleCommand {
+    cprop_decl id = Command("command://notation/set-visible");
+    cprop_decl title = MnemonicString("action", "Set visibility");
+    cprop_decl description = TranslatableString("action", "Set visibility of selected element(s)");
+    cprop_decl availabilities = Availability::API;
+
+    bool visible = true;
+
+    cprop_decl input = FieldsScheme {
+        Field{ "visible", &SetVisibleCommand::visible, "Visible" },
+    };
+};
+
+struct SetVisibleOnCommand {
+    cprop_decl id = Command("command://notation/set-visible/on");
+    cprop_decl title = MnemonicString("action", "Set visible");
+    cprop_decl description = TranslatableString("action", "Make selected element(s) visible");
+    cprop_decl availabilities = Availability::UI;
+    cprop_decl redirect = SetVisibleCommand(true);
+};
+
+struct SetVisibleOffCommand {
+    cprop_decl id = Command("command://notation/set-visible/off");
+    cprop_decl title = MnemonicString("action", "Set invisible");
+    cprop_decl description = TranslatableString("action", "Make selected element(s) invisible");
+    cprop_decl availabilities = Availability::UI;
+    cprop_decl redirect = SetVisibleCommand(false);
+};
+
 inline static const muse::rcommand::Command TOGGLE_AUTOPLACE_COMMAND("command://notation/toggle-autoplace");
 inline static const muse::rcommand::Command AUTOPLACE_ENABLED_COMMAND("command://notation/autoplace-enabled");
 inline static const muse::rcommand::Command TOGGLE_AUTOMATION_COMMAND("command://notation/toggle-automation");

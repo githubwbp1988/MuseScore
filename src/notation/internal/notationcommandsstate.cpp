@@ -69,11 +69,12 @@ static const std::vector<Command> HAS_SELECTION_REQUIRED_COMMANDS = {
     ChangeDurationHalveDottedCommand::id,
     ToggleSnapToPrevCommand::id,
     ToggleSnapToNextCommand::id,
-    MIRROR_NOTEHEAD_COMMAND,
+    MirrorNoteheadCommand::id,
     MOVE_UP_COMMAND,
     MOVE_DOWN_COMMAND,
-    INCREASE_DYNAMIC_COMMAND,
-    DECREASE_DYNAMIC_COMMAND
+    ChangeDynamicCommand::id,
+    IncreaseDynamicCommand::id,
+    DecreaseDynamicCommand::id,
 };
 
 static const std::vector<Command> UNDO_REDO_COMMANDS = {
@@ -234,8 +235,8 @@ static const std::vector<Command> TUPLET_COMMANDS = {
 
 static const std::vector<Command> NOTE_OR_REST_SELECTED_COMMANDS = {
     ADD_DYNAMIC_COMMAND,
-    ADD_HAIRPIN_COMMAND,
-    ADD_HAIRPIN_REVERSE_COMMAND
+    AddHairpinCrescendoCommand::id,
+    AddHairpinDiminuendoCommand::id,
 };
 
 static const std::map<Command, MoveSelectionType> MOVE_SELECTION_COMMANDS = {
@@ -267,7 +268,7 @@ static const std::map<Command, ScoreConfigType> SCORE_CONFIG_COMMANDS = {
 };
 
 static const std::vector<Command> STYLE_COMMANDS = {
-    TOGGLE_CONCERT_PITCH_COMMAND
+    ToggleConcertPitchCommand::id
 };
 
 static const std::vector<Command> TAB_COMMANDS = {

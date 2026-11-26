@@ -173,7 +173,7 @@ private:
 
     muse::Ret addNote(const AddNoteCommand& command);
     muse::Ret addNote(NoteName noteName, NoteAddingMode addingMode);
-    muse::Ret addDrumNote(const muse::rcommand::Params& params);
+    muse::Ret addDrumNote(const AddDrumNoteCommand& command);
     void doAddNote(const NoteInputParams& params, const NoteAddingMode& addingMode);
 
     muse::Ret toggleAccidental(const ToggleAccidentalCommand& command);
@@ -190,9 +190,12 @@ private:
     muse::Ret setBeamMode(const SetBeamCommand& command);
     muse::Ret addOrnament(const AddOrnamentCommand& command);
     muse::Ret addOttava(const AddOttavaCommand& command);
+    muse::Ret addHairpin(const AddHairpinCommand& command);
+    muse::Ret changeDynamic(const ChangeDynamicCommand& command);
     muse::Ret flipSelection();
     muse::Ret flipSelectionHorizontally();
     muse::Ret extendToNextNote();
+    muse::Ret toggleVisible();
 
     // Tab
     muse::Ret addFret(const AddFretCommand& command);
@@ -209,7 +212,7 @@ private:
     void moveInputNotes(bool up, PitchMode mode);
     void movePitchDiatonic(MoveDirection direction, bool);
 
-    void repeatSelection();
+    muse::Ret repeatSelection();
     muse::Ret addTie();
     muse::Ret addLaissezVib();
     muse::Ret addSlur();
@@ -220,23 +223,32 @@ private:
 
     void addDynamic();
     void addImage();
-    void addFiguredBass();
+    muse::Ret addFiguredBass();
     void addGuitarBend(GuitarBendType bendType);
-    void addFretboardDiagram();
+    muse::Ret addFretboardDiagram();
 
     muse::Ret startEditSelectedElement(const muse::rcommand::Params& params);
     muse::Ret startEditSelectedText(const muse::rcommand::Params& params);
 
-    void addStretch(qreal value);
+    muse::Ret changeStretch(const ChangeStretchCommand& command);
 
-    void unrollRepeats();
+    muse::Ret unrollRepeats();
 
     void toggleMmrest();
     void toggleHideEmpty();
     void addFullMeasureRest();
 
-    void resetStretch();
-    void resetBeamMode();
+    muse::Ret resetStretch();
+    muse::Ret resetTextStyleOverrides();
+    muse::Ret resetBeams();
+    muse::Ret resetShapesAndPositions();
+    muse::Ret resetToDefaultLayout();
+    muse::Ret freezeCurrentPlacement();
+    muse::Ret regroupRhythms();
+    muse::Ret resequenceRehearsalMarks();
+    muse::Ret mirrorNotehead();
+    muse::Ret setVisible(const SetVisibleCommand& command);
+    muse::Ret transposeSemitone(const TransposeSemitoneCommand& command);
 
     muse::Ret openEditStyleDialog(const muse::rcommand::Params& params);
     muse::Ret openPageSettingsDialog();
@@ -255,7 +267,7 @@ private:
     muse::async::Promise<muse::io::path_t> selectStyleFile(bool forLoad);
 
     muse::Ret toggleScoreConfig(const ToggleScoreConfigCommand& command);
-    void toggleConcertPitch();
+    muse::Ret toggleConcertPitch();
 
     void seekAndPlaySelectedElement(bool playChord = true);
     void seekSelectedElement();
