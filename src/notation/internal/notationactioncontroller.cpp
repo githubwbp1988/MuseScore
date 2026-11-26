@@ -62,8 +62,6 @@ using namespace muse::rcommand;
 using namespace mu::notation;
 using namespace mu::engraving;
 
-static constexpr qreal STRETCH_STEP = 0.1;
-
 static constexpr bool DONT_PLAY_CHORD = false;
 
 static const muse::Uri NOTATION_REVIEW_PAGE_URI("musescore://notation/review");
@@ -165,19 +163,17 @@ void NotationActionController::init()
     registerCommand<FlipCommand>(&Controller::flipSelection);
     registerCommand<FlipHorizontallyCommand>(&Controller::flipSelectionHorizontally);
 
-    registerCommandWithParams(ADD_DRUM_NOTE_COMMAND, &Controller::addDrumNote);
+    registerCommand<AddDrumNoteCommand>(&Controller::addDrumNote);
 
     registerCommand<EnterRestCommand>(&Controller::putRestToSelection);
 
-    registerCommand(ADD_FRETBOARD_DIAGRAM_COMMAND, &Controller::addFretboardDiagram);
+    registerCommand<AddFretboardDiagramCommand>(&Controller::addFretboardDiagram);
 
     registerCommand<AddOttavaCommand>(&Controller::addOttava);
+    registerCommand<AddHairpinCommand>(&Controller::addHairpin);
+    registerCommand<ChangeDynamicCommand>(&Controller::changeDynamic);
 
     registerCommand(ADD_DYNAMIC_COMMAND, &Interaction::toggleDynamicPopup);
-    registerCommand(ADD_HAIRPIN_COMMAND, &Interaction::addHairpinsToSelection, HairpinType::CRESC_HAIRPIN);
-    registerCommand(ADD_HAIRPIN_REVERSE_COMMAND, &Interaction::addHairpinsToSelection, HairpinType::DIM_HAIRPIN);
-    registerCommand(INCREASE_DYNAMIC_COMMAND, &Interaction::increaseDecreaseSelectedDynamicsValues, /*delta*/ 1);
-    registerCommand(DECREASE_DYNAMIC_COMMAND, &Interaction::increaseDecreaseSelectedDynamicsValues, /*delta*/ -1);
     registerCommand(ADD_NOTELINE_COMMAND, &Interaction::addAnchoredLineToSelectedNotes);
 
     registerCommand(ADD_IMAGE_COMMAND, [this]() { addImage(); });
@@ -185,7 +181,7 @@ void NotationActionController::init()
     registerCommand(ADD_UP_BOW_COMMAND, &Interaction::toggleArticulation, mu::engraving::SymId::stringsUpBow);
     registerCommand(ADD_DOWN_BOW_COMMAND, &Interaction::toggleArticulation, mu::engraving::SymId::stringsDownBow);
 
-    registerCommand(ADD_FIGURED_BASS_COMMAND, [this]() { addFiguredBass(); });
+    registerCommand<AddFiguredBassCommand>(&Controller::addFiguredBass);
 
     // add brackets commands
     registerCommand(ADD_BRACKETS_COMMAND, &Interaction::addBracketsToSelection, BracketsType::Brackets);
@@ -223,7 +219,7 @@ void NotationActionController::init()
                     PlayMode::PlayNote);
 
     // properties commands
-    registerCommand(TOGGLE_VISIBLE_COMMAND, &Interaction::toggleVisible);
+    registerCommand<ToggleVisibleCommand>(&Controller::toggleVisible);
 
     // snap commands
     registerCommand<ToggleSnapToCommand>(&Controller::toggleSnapTo);
@@ -249,9 +245,8 @@ void NotationActionController::init()
 
     registerCommand(SPLIT_MEASURE_COMMAND, &Interaction::splitSelectedMeasure);
     registerCommand(JOIN_MEASURES_COMMAND, &Interaction::joinSelectedMeasures);
-    registerCommand(STRETCH_DECREASE_COMMAND, [this]() { addStretch(-STRETCH_STEP); });
-    registerCommand(STRETCH_INCREASE_COMMAND, [this]() { addStretch(STRETCH_STEP); });
-    registerCommand(STRETCH_RESET_COMMAND, &Controller::resetStretch);
+    registerCommand<ChangeStretchCommand>(&Controller::changeStretch);
+    registerCommand<ResetStretchCommand>(&Controller::resetStretch);
 
     // open properties
     registerCommand<OpenPageSettingsCommand>(&Controller::openPageSettingsDialog);
@@ -272,16 +267,16 @@ void NotationActionController::init()
     registerCommand<LoadStyleCommand>(&Controller::loadStyle);
     registerCommand<SaveStyleCommand>(&Controller::saveStyle);
     registerCommandWithParams(OPEN_EDIT_STYLE_COMMAND, &Controller::openEditStyleDialog);
-    registerCommand(TOGGLE_CONCERT_PITCH_COMMAND, &Controller::toggleConcertPitch);
+    registerCommand<ToggleConcertPitchCommand>(&Controller::toggleConcertPitch);
 
     // reset commands
-    registerCommand(RESET_TEXT_STYLE_OVERRIDES_COMMAND, &Interaction::resetTextStyleOverrides);
-    registerCommand(RESET_BEAMS_COMMAND, &Controller::resetBeamMode);
-    registerCommand(RESET_SHAPES_AND_POSITIONS_COMMAND, &Interaction::resetShapesAndPosition);
-    registerCommand(RESET_TO_DEFAULT_LAYOUT_COMMAND, &Interaction::resetToDefaultLayout);
+    registerCommand<ResetTextStyleOverridesCommand>(&Controller::resetTextStyleOverrides);
+    registerCommand<ResetBeamsCommand>(&Controller::resetBeams);
+    registerCommand<ResetShapesAndPositionsCommand>(&Controller::resetShapesAndPositions);
+    registerCommand<ResetToDefaultLayoutCommand>(&Controller::resetToDefaultLayout);
 
     // appearance commands
-    registerCommand(FREEZE_CURRENT_PLACEMENT_COMMAND, &Interaction::freezeSelectionPosition);
+    registerCommand<FreezeCurrentPlacementCommand>(&Controller::freezeCurrentPlacement);
 
     // show commands
     registerCommand<ToggleScoreConfigCommand>(&Controller::toggleScoreConfig);
@@ -314,17 +309,15 @@ void NotationActionController::init()
     registerCommandWithParams(EDIT_ELEMENT_COMMAND, &Controller::startEditSelectedElement); // same as screen edit element command, no params
 
     // others commands
-    registerCommand(REGROUP_RHYTHMS_COMMAND, &Interaction::regroupNotesAndRests);
-    registerCommand(RESEQUENCE_REHEARSAL_MARKS_COMMAND, &Interaction::resequenceRehearsalMarks);
-    registerCommand(UNROLL_REPEATS_COMMAND, &Controller::unrollRepeats);
-    registerCommand(REPEAT_SELECTION_COMMAND, &Controller::repeatSelection);
-    registerCommand(TRANSPOSE_UP_COMMAND, &Interaction::transposeSemitone, 1, PlayMode::PlayNote);
-    registerCommand(TRANSPOSE_DOWN_COMMAND, &Interaction::transposeSemitone, -1, PlayMode::PlayNote);
+    registerCommand<RegroupRhythmsCommand>(&Controller::regroupRhythms);
+    registerCommand<ResequenceRehearsalMarksCommand>(&Controller::resequenceRehearsalMarks);
+    registerCommand<UnrollRepeatsCommand>(&Controller::unrollRepeats);
+    registerCommand<RepeatSelectionCommand>(&Controller::repeatSelection);
+    registerCommand<TransposeSemitoneCommand>(&Controller::transposeSemitone);
     registerCommand(TOGGLE_MMREST_COMMAND, &Controller::toggleMmrest);
     registerCommand(TOGGLE_HIDE_EMPTY_COMMAND, &Controller::toggleHideEmpty);
-    registerCommand(MIRROR_NOTEHEAD_COMMAND, &Interaction::mirrorNotes);
-    registerCommand(SET_VISIBLE_COMMAND, &Interaction::setSelectionVisible, true);
-    registerCommand(UNSET_VISIBLE_COMMAND, &Interaction::setSelectionVisible, false);
+    registerCommand<MirrorNoteheadCommand>(&Controller::mirrorNotehead);
+    registerCommand<SetVisibleCommand>(&Controller::setVisible);
     registerCommand(TOGGLE_AUTOPLACE_COMMAND, &Interaction::toggleAutoplace, false);
     registerCommand(AUTOPLACE_ENABLED_COMMAND, &Interaction::toggleAutoplace, true);
 
@@ -796,6 +789,17 @@ muse::Ret NotationActionController::flipSelection()
     return muse::make_ok();
 }
 
+muse::Ret NotationActionController::toggleVisible()
+{
+    INotationInteractionPtr interaction = currentNotationInteraction();
+    if (!interaction) {
+        return muse::make_ret(Ret::Code::InternalError);
+    }
+
+    interaction->toggleVisible();
+    return muse::make_ok();
+}
+
 muse::Ret NotationActionController::flipSelectionHorizontally()
 {
     INotationInteractionPtr interaction = currentNotationInteraction();
@@ -841,17 +845,14 @@ muse::Ret NotationActionController::addNote(NoteName note, NoteAddingMode mode)
     return muse::make_ok();
 }
 
-muse::Ret NotationActionController::addDrumNote(const muse::rcommand::Params& params)
+muse::Ret NotationActionController::addDrumNote(const AddDrumNoteCommand& command)
 {
     TRACEFUNC;
 
-    int pitch = params.at("pitch").toInt();
-    NoteAddingMode mode = EnumContract<NoteAddingMode>::enum_val(params.at("mode").toString()).value();
-
     NoteInputParams noteInputParams;
-    noteInputParams.drumPitch = pitch;
+    noteInputParams.drumPitch = command.pitch;
 
-    doAddNote(noteInputParams, mode);
+    doAddNote(noteInputParams, command.mode);
 
     return muse::make_ok();
 }
@@ -1833,14 +1834,16 @@ muse::Ret NotationActionController::cutSelection()
     return muse::make_ok();
 }
 
-void NotationActionController::repeatSelection()
+muse::Ret NotationActionController::repeatSelection()
 {
     auto interaction = currentNotationInteraction();
     if (!interaction) {
-        return;
+        return muse::make_ret(Ret::Code::InternalError);
     }
+
     interaction->repeatSelection();
     seekAndPlaySelectedElement(true);
+    return muse::make_ok();
 }
 
 muse::Ret NotationActionController::pasteSelection(const PasteCommand& command)
@@ -2094,16 +2097,17 @@ void NotationActionController::addImage()
     });
 }
 
-void NotationActionController::addFiguredBass()
+muse::Ret NotationActionController::addFiguredBass()
 {
     TRACEFUNC;
 
     auto interaction = currentNotationInteraction();
     if (!interaction) {
-        return;
+        return muse::make_ret(Ret::Code::InternalError);
     }
 
     interaction->addFiguredBass();
+    return muse::make_ok();
 }
 
 void NotationActionController::addGuitarBend(GuitarBendType bendType)
@@ -2118,16 +2122,17 @@ void NotationActionController::addGuitarBend(GuitarBendType bendType)
     interaction->addGuitarBend(bendType);
 }
 
-void NotationActionController::addFretboardDiagram()
+muse::Ret NotationActionController::addFretboardDiagram()
 {
     TRACEFUNC;
 
     auto interaction = currentNotationInteraction();
     if (!interaction) {
-        return;
+        return muse::make_ret(Ret::Code::InternalError);
     }
 
     interaction->addFretboardDiagram();
+    return muse::make_ok();
 }
 
 muse::Ret NotationActionController::openSelectionMoreOptions()
@@ -2344,10 +2349,41 @@ muse::Ret NotationActionController::addOttava(const AddOttavaCommand& command)
     return muse::make_ok();
 }
 
-void NotationActionController::unrollRepeats()
+muse::Ret NotationActionController::addHairpin(const AddHairpinCommand& command)
+{
+    auto interaction = currentNotationInteraction();
+    if (!interaction) {
+        return muse::make_ret(muse::Ret::Code::InternalError);
+    }
+
+    if (interaction->selection()->isNone()) {
+        return muse::make_ret(muse::Ret::Code::NotAllowed);
+    }
+
+    interaction->addHairpinsToSelection(command.type);
+    return muse::make_ok();
+}
+
+muse::Ret NotationActionController::changeDynamic(const ChangeDynamicCommand& command)
+{
+    auto interaction = currentNotationInteraction();
+    if (!interaction) {
+        return muse::make_ret(muse::Ret::Code::InternalError);
+    }
+
+    if (interaction->selection()->isNone()) {
+        return muse::make_ret(muse::Ret::Code::NotAllowed);
+    }
+
+    interaction->increaseDecreaseSelectedDynamicsValues(command.delta);
+    return muse::make_ok();
+}
+
+muse::Ret NotationActionController::unrollRepeats()
 {
     NOT_IMPLEMENTED;
     // TODO: https://github.com/musescore/MuseScore/issues/9670
+    return muse::make_ret(Ret::Code::NotImplemented);
 }
 
 void NotationActionController::toggleMmrest()
@@ -2380,62 +2416,169 @@ void NotationActionController::addFullMeasureRest()
     interaction->execute(&mu::engraving::Score::cmdFullMeasureRest, TranslatableString("undoableAction", "Enter full measure rest"));
 }
 
-void NotationActionController::addStretch(qreal value)
+muse::Ret NotationActionController::changeStretch(const ChangeStretchCommand& command)
 {
     TRACEFUNC;
     auto interaction = currentNotationInteraction();
     if (!interaction) {
-        return;
+        return muse::make_ret(Ret::Code::InternalError);
     }
 
     auto selection = currentNotationSelection();
-    if (!selection) {
-        return;
+    if (!selection || !selection->isRange()) {
+        return muse::make_ret(Ret::Code::NotAllowed);
     }
 
-    if (!selection->isRange()) {
-        return;
-    }
-
-    interaction->addStretch(value);
+    interaction->addStretch(command.value);
+    return muse::make_ok();
 }
 
-void NotationActionController::resetStretch()
+muse::Ret NotationActionController::resetStretch()
 {
     TRACEFUNC;
     auto interaction = currentNotationInteraction();
     if (!interaction) {
-        return;
+        return muse::make_ret(Ret::Code::InternalError);
     }
 
     auto selection = currentNotationSelection();
-    if (!selection) {
-        return;
-    }
-
-    if (!selection->isRange()) {
-        return;
+    if (!selection || !selection->isRange()) {
+        return muse::make_ret(Ret::Code::NotAllowed);
     }
 
     interaction->resetStretch();
+    return muse::make_ok();
 }
 
-void NotationActionController::resetBeamMode()
+muse::Ret NotationActionController::resetTextStyleOverrides()
 {
     TRACEFUNC;
     auto interaction = currentNotationInteraction();
     if (!interaction) {
-        return;
+        return muse::make_ret(Ret::Code::InternalError);
+    }
+
+    interaction->resetTextStyleOverrides();
+    return muse::make_ok();
+}
+
+muse::Ret NotationActionController::resetBeams()
+{
+    TRACEFUNC;
+    auto interaction = currentNotationInteraction();
+    if (!interaction) {
+        return muse::make_ret(Ret::Code::InternalError);
     }
 
     auto selection = currentNotationSelection();
     if (!selection) {
-        return;
+        return muse::make_ret(Ret::Code::InternalError);
     }
 
     if (selection->isNone() || selection->isRange()) {
         interaction->resetBeamMode();
+        return muse::make_ok();
     }
+
+    return muse::make_ret(Ret::Code::NotAllowed);
+}
+
+muse::Ret NotationActionController::resetShapesAndPositions()
+{
+    TRACEFUNC;
+    auto interaction = currentNotationInteraction();
+    if (!interaction) {
+        return muse::make_ret(Ret::Code::InternalError);
+    }
+
+    interaction->resetShapesAndPosition();
+    return muse::make_ok();
+}
+
+muse::Ret NotationActionController::resetToDefaultLayout()
+{
+    TRACEFUNC;
+    auto interaction = currentNotationInteraction();
+    if (!interaction) {
+        return muse::make_ret(Ret::Code::InternalError);
+    }
+
+    interaction->resetToDefaultLayout();
+    return muse::make_ok();
+}
+
+muse::Ret NotationActionController::freezeCurrentPlacement()
+{
+    TRACEFUNC;
+    auto interaction = currentNotationInteraction();
+    if (!interaction) {
+        return muse::make_ret(Ret::Code::InternalError);
+    }
+
+    interaction->freezeSelectionPosition();
+    return muse::make_ok();
+}
+
+muse::Ret NotationActionController::regroupRhythms()
+{
+    TRACEFUNC;
+    auto interaction = currentNotationInteraction();
+    if (!interaction) {
+        return muse::make_ret(Ret::Code::InternalError);
+    }
+
+    interaction->regroupNotesAndRests();
+    return muse::make_ok();
+}
+
+muse::Ret NotationActionController::resequenceRehearsalMarks()
+{
+    TRACEFUNC;
+    auto interaction = currentNotationInteraction();
+    if (!interaction) {
+        return muse::make_ret(Ret::Code::InternalError);
+    }
+
+    interaction->resequenceRehearsalMarks();
+    return muse::make_ok();
+}
+
+muse::Ret NotationActionController::mirrorNotehead()
+{
+    TRACEFUNC;
+    auto interaction = currentNotationInteraction();
+    if (!interaction) {
+        return muse::make_ret(Ret::Code::InternalError);
+    }
+
+    interaction->mirrorNotes();
+    return muse::make_ok();
+}
+
+muse::Ret NotationActionController::setVisible(const SetVisibleCommand& command)
+{
+    TRACEFUNC;
+    auto interaction = currentNotationInteraction();
+    if (!interaction) {
+        return muse::make_ret(Ret::Code::InternalError);
+    }
+
+    interaction->setSelectionVisible(command.visible);
+    return muse::make_ok();
+}
+
+muse::Ret NotationActionController::transposeSemitone(const TransposeSemitoneCommand& command)
+{
+    TRACEFUNC;
+    auto interaction = currentNotationInteraction();
+    if (!interaction) {
+        return muse::make_ret(Ret::Code::InternalError);
+    }
+
+    const int step = command.direction == TransposeDirection::UP ? 1 : -1;
+    interaction->transposeSemitone(step);
+    seekAndPlaySelectedElement(/*playChord*/ false);
+    return muse::make_ok();
 }
 
 muse::Ret NotationActionController::openEditStyleDialog(const muse::rcommand::Params& params)
@@ -2918,12 +3061,12 @@ muse::Ret NotationActionController::toggleScoreConfig(const ToggleScoreConfigCom
     return muse::make_ok();
 }
 
-void NotationActionController::toggleConcertPitch()
+muse::Ret NotationActionController::toggleConcertPitch()
 {
     TRACEFUNC;
     INotationStylePtr style = notationStyle();
     if (!style) {
-        return;
+        return muse::make_ret(Ret::Code::InternalError);
     }
 
     bool toggle = !style->styleValue(StyleId::concertPitch).toBool();
@@ -2935,6 +3078,8 @@ void NotationActionController::toggleConcertPitch()
     currentNotationUndoStack()->prepareChanges(actionName);
     style->setStyleValue(StyleId::concertPitch, toggle);
     currentNotationUndoStack()->commitChanges();
+
+    return muse::make_ok();
 }
 
 void NotationActionController::seekAndPlaySelectedElement(bool playChord)

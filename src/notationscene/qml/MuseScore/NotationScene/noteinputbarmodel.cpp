@@ -401,7 +401,7 @@ MenuItemList NoteInputBarModel::makeTextItems()
         makeMenuItem(AddRomanNumeralTextCommand::id),
         makeMenuItem(AddNashvilleNumberTextCommand::id),
         makeMenuItem(AddLyricsCommand::id),
-        makeMenuItem(ADD_FIGURED_BASS_COMMAND),
+        makeMenuItem(AddFiguredBassCommand::id),
         makeMenuItem(AddTempoCommand::id)
     };
 
@@ -412,8 +412,8 @@ MenuItemList NoteInputBarModel::makeLinesItems()
 {
     MenuItemList items {
         makeMenuItem(AddSlurCommand::id),
-        makeMenuItem(ADD_HAIRPIN_COMMAND),
-        makeMenuItem(ADD_HAIRPIN_REVERSE_COMMAND),
+        makeMenuItem(AddHairpinCrescendoCommand::id),
+        makeMenuItem(AddHairpinDiminuendoCommand::id),
         makeMenuItem(AddOttava8vaCommand::id),
         makeMenuItem(AddOttava8vbCommand::id),
         makeMenuItem(ADD_NOTELINE_COMMAND)
@@ -426,7 +426,7 @@ MenuItemList NoteInputBarModel::makeChordAndFretboardDiagramsItems()
 {
     MenuItemList items {
         makeMenuItem(AddChordTextCommand::id),
-        makeMenuItem(ADD_FRETBOARD_DIAGRAM_COMMAND),
+        makeMenuItem(AddFretboardDiagramCommand::id),
         makeSeparator(),
         makeMenuItem(InsertFretFrameCommand::id, TranslatableString("notation", "Fretboard diagram legend"))
     };
